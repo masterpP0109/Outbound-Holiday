@@ -1,0 +1,6 @@
+{
+  "name": "Outbound Holidays & African Art Marketplace",
+  "description": "Zimbabwe's trusted Victoria Falls travel specialist and curated authentic African art e-commerce platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

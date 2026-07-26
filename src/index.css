@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --vf-blue: #0B5E8E;
+    --zambezi-green: #3F6B3C;
+    --golden-savannah: #C9A66B;
+    --sunset-orange: #E67E22;
+    --clean-white: #FFFFFF;
+    --charcoal-grey: #2F3A44;
+  }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    color: var(--charcoal-grey);
+    background-color: var(--clean-white);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .font-serif {
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .font-sans {
+    font-family: 'Manrope', sans-serif;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Custom color utility classes for direct usage if needed */
+.bg-vf-blue { background-color: #0B5E8E; }
+.text-vf-blue { color: #0B5E8E; }
+.border-vf-blue { border-color: #0B5E8E; }
+
+.bg-zambezi-green { background-color: #3F6B3C; }
+.text-zambezi-green { color: #3F6B3C; }
+
+.bg-golden-savannah { background-color: #C9A66B; }
+.text-golden-savannah { color: #C9A66B; }
+.border-golden-savannah { border-color: #C9A66B; }
+
+.bg-sunset-orange { background-color: #E67E22; }
+.text-sunset-orange { color: #E67E22; }
+
+.bg-charcoal-grey { background-color: #2F3A44; }
+.text-charcoal-grey { color: #2F3A44; }
+
