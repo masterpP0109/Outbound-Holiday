@@ -27,15 +27,15 @@ const HERO_SLIDES: HeroSlide[] = [
     id: 'family-tour',
     imageUrl: familyTourImg,
     fallbackUrl: 'https://images.unsplash.com/photo-1614527961817-21789c629fb4?auto=format&fit=crop&q=80&w=2400',
-    titleTag: 'Zimbabwean Family Victoria Falls Tour',
+    titleTag: 'PLANNED BY LOCAL VICTORIA FALLS SPECIALISTS',
     headline: (
       <>
-        Zimbabwe’s Family <br className="hidden sm:inline" />
-        Victoria Falls Specialists
+        Planning Your Family’s Trip <br className="hidden sm:inline" />
+        to Victoria Falls?
       </>
     ),
-    description: 'Explore Mosi-oa-Tunya with guided rainforest walking tours, dramatic waterfall mist vistas, and custom family itineraries for all ages.',
-    primaryCtaText: 'Plan Family Holiday',
+    description: 'We’ll help you choose the right accommodation, activities, and itinerary for every member of the family—so you can explore Mosi-oa-Tunya with complete confidence.',
+    primaryCtaText: 'Plan Your Family Holiday',
     badgeIcon: <Users className="w-3.5 h-3.5 text-[#C9A66B]" />,
     altText: 'Zimbabwean family exploring Mosi-oa-Tunya Victoria Falls with mist and waterfall vistas',
   },
@@ -43,15 +43,15 @@ const HERO_SLIDES: HeroSlide[] = [
     id: 'couple-honeymoon',
     imageUrl: coupleHoneymoonImg,
     fallbackUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=2400',
-    titleTag: 'Zimbabwean Couple Romantic Honeymoon',
+    titleTag: 'TRAVEL WITH CONFIDENCE',
     headline: (
       <>
-        Romantic Honeymoons & <br className="hidden sm:inline" />
-        Sunset Zambezi Cruises
+        Looking for a Honeymoon <br className="hidden sm:inline" />
+        You’ll Never Forget?
       </>
     ),
-    description: 'Celebrate love with golden hour Zambezi river sunset cruises, luxury intimate lodges, and tailored couples getaways in Victoria Falls.',
-    primaryCtaText: 'Plan Honeymoon Escape',
+    description: 'We’ll create a romantic Victoria Falls escape designed around your story, combining golden hour Zambezi river cruises with luxury intimate lodge stays.',
+    primaryCtaText: 'Plan Your Honeymoon Escape',
     badgeIcon: <Heart className="w-3.5 h-3.5 text-[#E67E22]" />,
     altText: 'Zimbabwean couple enjoying a romantic sunset Zambezi River cruise',
   },
@@ -59,15 +59,15 @@ const HERO_SLIDES: HeroSlide[] = [
     id: 'family-safari',
     imageUrl: familySafariImg,
     fallbackUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=2400',
-    titleTag: 'Family Wildlife Safari & Experience',
+    titleTag: 'EXPERT LOCAL TRAVEL ADVISORS',
     headline: (
       <>
-        Guided African Wildlife <br className="hidden sm:inline" />
-        Safaris & Game Drives
+        Dreaming of Seeing <br className="hidden sm:inline" />
+        Africa’s Wildlife Up Close?
       </>
     ),
-    description: 'Embark on thrilling Big Five game drives across Hwange and Victoria Falls with expert Zimbabwean rangers and child-friendly safari vehicles.',
-    primaryCtaText: 'Plan Safari Tour',
+    description: 'Let our local specialists build a safari experience combining Victoria Falls with unforgettable Big Five game drives across Hwange alongside expert rangers.',
+    primaryCtaText: 'Plan Your Safari Experience',
     badgeIcon: <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />,
     altText: 'Family guided African wildlife safari discovery tour in Victoria Falls and Hwange',
   },
@@ -170,13 +170,15 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
           </div>
 
           {/* Reassurance Line */}
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5 text-xs sm:text-sm text-white/90 font-medium drop-shadow-xs">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5 text-xs sm:text-sm text-white/95 font-medium drop-shadow-xs">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-              No obligation custom quote
+              Travel with Confidence
             </span>
             <span className="hidden sm:inline text-white/40">•</span>
-            <span>Free concierge support</span>
+            <span>No-obligation custom itineraries</span>
+            <span className="hidden sm:inline text-white/40">•</span>
+            <span>Local Victoria Falls specialists</span>
           </div>
 
           {/* Carousel Slide Indicators / Dots */}
