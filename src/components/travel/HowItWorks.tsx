@@ -1,132 +1,163 @@
-import React, { useState, useRef } from 'react';
-import { ClipboardList, Sparkles, UserCheck, ArrowRight } from 'lucide-react';
-import { useScrollReveal } from '../../hooks';
+import React, { useState } from 'react';
+import { ClipboardList, Sparkles, UserCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface HowItWorksProps {
   onStartPlanning: () => void;
 }
 
 export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
-  const [activeStep, setActiveStep] = useState(0);
-  const { ref, isVisible } = useScrollReveal(0.1);
-  const staggerRef = useRef<HTMLDivElement>(null);
+  const [activeStep, setActiveStep] = useState<number>(0);
 
   const steps = [
     {
       num: '01',
-      title: 'Tell Us About Your Trip',
-      desc: 'Use our 3-minute Holiday Builder\u2122 to specify your travel dates, party size, preferred comfort tier, and must-see activities.',
-      icon: <ClipboardList className="w-6 h-6" />,
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&q=80&w=800',
+      title: 'Tell us what you have in mind',
+      desc: 'Dates, party size, travel interests, and your approximate budget.',
+      detail: 'Specify whether you want a weekend getaway or a 5-day safari combo. Our builder adapts to couples, families, or solo explorers.',
+      imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800',
+      icon: <ClipboardList className="w-5 h-5" />,
     },
     {
       num: '02',
-      title: 'Receive Personalised Plan',
-      desc: 'Get an immediate estimated budget and custom itinerary breakdown tailored to your dates and preferences.',
-      icon: <Sparkles className="w-6 h-6" />,
-      image: 'https://images.unsplash.com/photo-1469854523086-cc02e5f4f009?auto=format&fit=crop&q=80&w=800',
+      title: 'Receive thoughtful recommendations',
+      desc: 'We create options that genuinely suit your travel style and expectations.',
+      detail: 'Our intelligent concierge matches your stay tier with essential Victoria Falls activities, sunset river cruises, and safari extensions.',
+      imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800',
+      icon: <Sparkles className="w-5 h-5" />,
     },
     {
       num: '03',
-      title: 'Finalise With Local Specialist',
-      desc: 'Connect via WhatsApp or phone with a Victoria Falls travel concierge to refine details, confirm availability, and secure your deposit.',
-      icon: <UserCheck className="w-6 h-6" />,
-      image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800',
+      title: 'Finalise with a local specialist',
+      desc: 'We confirm availability, handle logistics, and support you on the ground.',
+      detail: 'Connect directly with Fungai or our local concierges in Victoria Falls via WhatsApp or email to lock in your booking effortlessly.',
+      imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
+      icon: <UserCheck className="w-5 h-5" />,
     },
   ];
 
   return (
-    <section className="py-20 md:py-24 bg-white">
-      <div
-        ref={ref}
-        className={`container-center ${isVisible ? 'animate-reveal visible' : 'animate-reveal'}`}
-      >
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className="section-label">Seamless & Stress-Free</span>
-          <h2 className="section-heading text-[#0B5E8E]">
-            How Outbound Holidays Works
+    <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-[#FDFBF7] border-b border-gray-200/60">
+      <div className="max-w-[1280px] mx-auto">
+        
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
+          <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block mb-2">
+            Simple 3-Step Process
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight mb-3">
+            Planning your holiday is simple.
           </h2>
-          <p className="text-[#2F3A44] text-base sm:text-lg mx-auto">
-            We simplify travel planning into three effortless steps—guided by genuine Zimbabwean hospitality.
+          <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed">
+            Zero stress, no hidden surprises, guided by genuine Zimbabwean hospitality.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-12">
-          {/* Step Tabs */}
-          <div className="lg:col-span-4 space-y-4">
-            {steps.map((step, idx) => (
-              <button
+        {/* 3 Interactive Cards Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12 items-stretch">
+          {steps.map((step, idx) => {
+            const isActive = activeStep === idx;
+            return (
+              <div
                 key={idx}
                 onClick={() => setActiveStep(idx)}
-                className={`w-full text-left p-6 rounded-2xl border transition-all duration-500 group ${
-                  activeStep === idx
-                    ? 'bg-[#0B5E8E] border-[#0B5E8E] text-white shadow-card'
-                    : 'bg-white border-gray-200 hover:border-gray-300 text-[#2F3A44]'
+                tabIndex={0}
+                role="button"
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setActiveStep(idx)}
+                className={`rounded-[24px] p-6 sm:p-8 cursor-pointer transition-all duration-500 flex flex-col justify-between border ${
+                  isActive
+                    ? 'bg-[#0B5E8E] text-white border-[#0B5E8E] shadow-[0_20px_50px_rgba(11,94,142,0.22)] transform -translate-y-2 lg:scale-[1.03] z-10'
+                    : 'bg-white text-[#2F3A44] border-gray-200 hover:border-gray-300 hover:shadow-md'
                 }`}
               >
-                <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300 ${
-                    activeStep === idx
-                      ? 'bg-white/20 text-white'
-                      : 'bg-[#0B5E8E]/10 text-[#0B5E8E]'
-                  }`}>
-                    {step.icon}
-                  </div>
-                  <div>
-                    <span className={`text-2xl font-extrabold font-serif block mb-1 ${
-                      activeStep === idx ? 'text-white/60' : 'text-gray-300'
-                    }`}>
+                <div>
+                  {/* Step Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold transition-colors ${
+                        isActive
+                          ? 'bg-white text-[#0B5E8E]'
+                          : 'bg-[#0B5E8E]/10 text-[#0B5E8E]'
+                      }`}
+                    >
+                      {step.icon}
+                    </div>
+                    <span
+                      className={`font-serif font-bold text-2xl tracking-tight ${
+                        isActive ? 'text-[#C9A66B]' : 'text-gray-300'
+                      }`}
+                    >
                       {step.num}
                     </span>
-                    <h3 className={`font-bold text-base mb-1 transition-colors ${
-                      activeStep === idx ? 'text-white' : 'text-[#0B5E8E]'
-                    }`}>
-                      {step.title}
-                    </h3>
-                    <p className={`text-xs leading-relaxed ${
-                      activeStep === idx ? 'text-white/80' : 'text-gray-500'
-                    }`}>
-                      {step.desc}
-                    </p>
                   </div>
-                </div>
-              </button>
-            ))}
-          </div>
 
-          {/* Active Step Showcase */}
-          <div className="lg:col-span-8 rounded-3xl overflow-hidden bg-white border border-gray-200 shadow-card">
-            <div key={steps[activeStep].num} className="relative h-72 sm:h-80 md:h-96 overflow-hidden">
-              <img
-                src={steps[activeStep].image}
-                alt={steps[activeStep].title}
-                className="w-full h-full object-cover transition-opacity duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0B5E8E]/80 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 sm:left-8 text-white">
-                <span className="inline-block bg-[#C9A66B] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg mb-2">
-                  Step {steps[activeStep].num}
-                </span>
-                <h3 className="text-xl sm:text-2xl font-bold font-serif">
-                  {steps[activeStep].title}
-                </h3>
+                  {/* Title & Desc */}
+                  <h3
+                    className={`text-xl font-bold font-serif mb-2 leading-snug ${
+                      isActive ? 'text-white' : 'text-[#0B5E8E]'
+                    }`}
+                  >
+                    {step.title}
+                  </h3>
+                  <p
+                    className={`text-xs sm:text-sm leading-relaxed mb-4 ${
+                      isActive ? 'text-white/90' : 'text-[#2F3A44]/80'
+                    }`}
+                  >
+                    {step.desc}
+                  </p>
+
+                  {/* Active Preview Details & Supporting Image */}
+                  {isActive && (
+                    <div className="mt-4 pt-4 border-t border-white/20 animate-fade-in space-y-3">
+                      <p className="text-xs text-white/80 leading-relaxed italic">
+                        "{step.detail}"
+                      </p>
+                      <div className="h-32 rounded-xl overflow-hidden relative border border-white/20">
+                        <img
+                          src={step.imageUrl}
+                          alt={step.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2.5">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#C9A66B]" />
+                            Step {step.num} Preview Active
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer status / click prompt */}
+                <div className="pt-6 mt-4 border-t border-gray-100/20 text-xs font-semibold flex items-center justify-between">
+                  <span className={isActive ? 'text-[#C9A66B]' : 'text-gray-400'}>
+                    {isActive ? 'Currently Viewing' : 'Click to preview step'}
+                  </span>
+                  <span
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                      isActive ? 'bg-[#C9A66B] text-white' : 'bg-gray-100 text-gray-400'
+                    }`}
+                  >
+                    →
+                  </span>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
+        {/* Primary CTA */}
         <div className="text-center">
           <button
             onClick={onStartPlanning}
-            className="inline-flex items-center gap-2 bg-[#E67E22] hover:bg-[#d67118] text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+            className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-10 py-4 rounded-xl shadow-lg hover:shadow-xl inline-flex items-center gap-3 transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
             <span>Start Building My Holiday</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-5 h-5" />
           </button>
-          <p className="text-xs text-gray-500 mt-3 font-medium">
-            Complimentary consultation &bull; Zero obligation to book
-          </p>
         </div>
+
       </div>
     </section>
   );

@@ -1,92 +1,100 @@
 import React, { useState } from 'react';
-import { HelpCircle } from 'lucide-react';
-import { useScrollReveal } from '../../hooks';
+import { ChevronDown, HelpCircle, ArrowRight } from 'lucide-react';
 
-export const FaqSection: React.FC = () => {
+interface FaqSectionProps {
+  onOpenGuide?: () => void;
+}
+
+export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenGuide }) => {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
-  const { ref, isVisible } = useScrollReveal(0.1);
 
   const faqs = [
     {
-      q: 'How much should I budget for a Victoria Falls holiday?',
-      a: 'A 3-day holiday in Victoria Falls ranges from $650 per person for Comfort lodges up to $1,850+ per person for 5-star luxury riverfront resorts. Our Holiday Builder\u2122 provides instant estimated costs including accommodation, transfers, and activities.',
+      q: 'How much should I budget for a Victoria Falls trip?',
+      a: 'Trips typically start from $350 per person for smart budget stays up to $2,150+ for luxury all-inclusive riverfront lodges. Packages usually include accommodation, transfers, guided rainforest tours, and sunset cruises. We tailor every itinerary to match your exact budget.',
     },
     {
-      q: 'Is the travel planning consultation free?',
-      a: 'Yes, 100% complimentary! Our local Zimbabwean travel specialists offer free, no-obligation planning advice and custom itinerary proposals.',
+      q: 'Can I pay a deposit to secure my booking?',
+      a: 'Yes! You can secure your lodge dates and activity reservations with a small deposit (typically 20% - 30%), and pay the remaining balance closer to your arrival date. We offer flexible payment arrangements.',
     },
     {
-      q: 'Can I pay a deposit to hold my reservation?',
-      a: 'Absolutely. We offer flexible payment arrangements allowing you to secure your preferred lodge and activity slots with a deposit, paying the remaining balance closer to your travel date.',
+      q: 'Is the initial planning consultation free?',
+      a: '100% free with zero obligation to book! You can speak or chat with our Victoria Falls travel specialists, receive itemized quote options, and ask as many questions as you need without paying anything.',
     },
     {
-      q: 'Can you assist families traveling with young children?',
-      a: 'Yes! We select family-friendly resort lodges with dedicated kids pools, interconnected rooms, and safe child-friendly activities like guided rainforest walks, gentle canopy ziplines, and crocodile sanctuaries.',
+      q: 'Can you plan around my specific budget or custom dates?',
+      a: 'Absolutely. Whether you have 2 days or 2 weeks, a tight budget or an unrestricted luxury vision, our local team builds custom itineraries from scratch specifically for your dates and party size.',
     },
     {
       q: 'How quickly will I receive my custom quotation?',
-      a: 'You will receive an instant estimated budget range on screen in the Holiday Builder\u2122. One of our senior Zimbabwean travel concierges will email your formal itemized proposal within 2 hours.',
-    },
-    {
-      q: 'Is the estimated Holiday Builder price final?',
-      a: 'The Builder provides an accurate estimate based on published supplier rates. Final quotes may vary slightly depending on exact seasonal lodge promotions, room availability, and custom upgrades.',
+      a: 'Once you submit your details via our 3-minute Holiday Builder or WhatsApp, a Victoria Falls specialist will review your preferences and send an itemized quotation within 2 to 4 hours during office hours.',
     },
   ];
 
   return (
-    <section className="py-20 md:py-24 bg-white">
-      <div
-        ref={ref}
-        className={`container-center ${isVisible ? 'animate-reveal visible' : 'animate-reveal'}`}
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-          {/* Heading */}
-          <div className="lg:col-span-5">
-            <span className="section-label">Clear Answers</span>
-            <h2 className="section-heading text-[#0B5E8E]">
-              Frequently Asked Questions
+    <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100">
+      <div className="max-w-[1280px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          
+          {/* Left Column (35-40% width) - Heading & Intro */}
+          <div className="lg:col-span-5 space-y-4">
+            <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
+              Clear Answers
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight">
+              You may be wondering…
             </h2>
-            <p className="text-[#2F3A44] text-base sm:text-lg">
-              Everything you need to know about planning your Victoria Falls trip with confidence.
+            <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed max-w-md">
+              Everything you need to know about planning your Victoria Falls holiday with total confidence.
             </p>
+
+            {onOpenGuide && (
+              <div className="pt-4">
+                <button
+                  onClick={onOpenGuide}
+                  className="inline-flex items-center gap-2 text-xs font-bold text-[#0B5E8E] hover:text-[#E67E22] transition-colors cursor-pointer group"
+                >
+                  <span>Explore our complete Victoria Falls Insider Guide</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* FAQ Accordion */}
-          <div className="lg:col-span-7">
-            <div className="space-y-0">
-              {faqs.map((faq, idx) => (
+          {/* Right Column (60-65% width) - Clean Accordion */}
+          <div className="lg:col-span-7 space-y-3">
+            {faqs.map((faq, idx) => {
+              const isOpen = openIdx === idx;
+              return (
                 <div
                   key={idx}
-                  className="border-b border-gray-200 last:border-b-0"
+                  className="border border-gray-200/80 rounded-[18px] overflow-hidden bg-[#FAFAFA] transition-all duration-300"
                 >
                   <button
-                    onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-                    className="w-full text-left py-5 flex items-center justify-between gap-4 font-bold text-[#0B5E8E] text-sm sm:text-base hover:opacity-70 transition-opacity group"
+                    onClick={() => setOpenIdx(isOpen ? null : idx)}
+                    className="w-full text-left p-5 flex items-center justify-between gap-4 font-bold text-[#0B5E8E] text-sm sm:text-base hover:bg-white transition-colors cursor-pointer"
                   >
                     <span className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-xl bg-[#0B5E8E]/10 flex items-center justify-center shrink-0 group-hover:bg-[#0B5E8E] group-hover:text-white transition-colors duration-300">
-                        <HelpCircle className="w-4 h-4" />
-                      </span>
-                      {faq.q}
+                      <HelpCircle className="w-5 h-5 text-[#C9A66B] shrink-0" />
+                      <span className="font-serif">{faq.q}</span>
                     </span>
-                    <span className="text-xs text-gray-400 font-semibold shrink-0">
-                      {openIdx === idx ? 'Close' : 'Open'}
-                    </span>
+                    <ChevronDown
+                      className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${
+                        isOpen ? 'rotate-180 text-[#0B5E8E]' : ''
+                      }`}
+                    />
                   </button>
 
-                  <div
-                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                      openIdx === idx ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed pl-11">
+                  {isOpen && (
+                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#2F3A44] leading-relaxed border-t border-gray-200/60 bg-white">
                       {faq.a}
-                    </p>
-                  </div>
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
+
         </div>
       </div>
     </section>

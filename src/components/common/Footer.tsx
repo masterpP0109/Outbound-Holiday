@@ -1,153 +1,130 @@
 import React from 'react';
-import { ActivePortal } from '../../types';
-import {
-  Compass,
-  Sparkles,
-  Phone,
-  Mail,
-  MapPin,
-  CreditCard,
-  ShieldCheck,
-  Globe
-} from 'lucide-react';
+import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
 
 interface FooterProps {
-  activePortal: ActivePortal;
   onNavigateSection: (sectionId: string) => void;
   onOpenPlanHoliday: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
-  activePortal,
   onNavigateSection,
   onOpenPlanHoliday,
 }) => {
   return (
-    <footer className="bg-[#2F3A44] text-white pt-16 pb-12">
-      <div className="container-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 pb-12 border-b border-gray-700">
+    <footer className="bg-[#0B5E8E] text-white pt-16 pb-12 border-t border-white/10">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/15">
           {/* Col 1: Brand Info */}
-          <div className="lg:col-span-1 space-y-5">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-[#0B5E8E] flex items-center justify-center text-white">
-                <Compass className="w-5 h-5 text-[#E67E22]" />
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#0B5E8E] shadow-sm">
+                <Compass className="w-6 h-6 text-[#C9A66B]" />
               </div>
               <div>
-                <span className="font-bold text-lg text-white block leading-none">
+                <span className="font-bold text-xl text-white block leading-none font-serif">
                   Outbound Holidays
                 </span>
-                <span className="text-[9px] font-bold text-[#C9A66B] uppercase tracking-widest">
-                  & African Art Marketplace
+                <span className="text-[10px] font-bold text-[#C9A66B] uppercase tracking-widest mt-1 block">
+                  Victoria Falls Travel Specialists
                 </span>
               </div>
             </div>
 
-            <p className="text-xs text-gray-300 leading-relaxed max-w-xs">
-              Zimbabwe's trusted Victoria Falls travel specialists and curated African art marketplace.
+            <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-sm">
+              Zimbabwe’s trusted Victoria Falls travel specialists. Dedicated to seamless travel planning, curated lodge accommodation, sunset Zambezi cruises, and unforgettable African safari experiences.
             </p>
 
-            <div className="flex items-center gap-2 text-xs text-gray-300">
-              <MapPin className="w-3.5 h-3.5 text-[#E67E22]" />
-              <span>Victoria Falls, Zimbabwe</span>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-gray-300">
-              <Phone className="w-3.5 h-3.5 text-[#E67E22]" />
-              <span>+263 77 123 4567</span>
+            <div className="pt-2 space-y-2 text-xs text-white/80">
+              <div className="flex items-center gap-2.5">
+                <MapPin className="w-4 h-4 text-[#C9A66B] shrink-0" />
+                <span>Mosi-oa-Tunya Commercial Centre, Victoria Falls, Zimbabwe</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <PhoneCall className="w-4 h-4 text-[#C9A66B] shrink-0" />
+                <span>+263 77 123 4567 / +263 13 44000</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-[#C9A66B] shrink-0" />
+                <span>travel@outboundholidays.co.zw</span>
+              </div>
             </div>
           </div>
 
           {/* Col 2: Victoria Falls Travel */}
           <div className="space-y-4">
-            <h4 className="font-bold text-[11px] uppercase tracking-widest text-[#C9A66B]">
-              Victoria Falls Travel
+            <h4 className="font-bold text-xs uppercase tracking-widest text-[#C9A66B]">
+              Explore Victoria Falls
             </h4>
-            <ul className="space-y-3 text-sm text-gray-300">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
               <li>
-                <button onClick={() => onNavigateSection('travel-packages')} className="hover:text-white transition-colors">
-                  Curated Packages
+                <button onClick={() => onNavigateSection('travel-guide')} className="hover:text-white transition-colors cursor-pointer">
+                  Vic Falls Guide
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('travel-guide')} className="hover:text-white transition-colors">
-                  Victoria Falls Guide
+                <button onClick={() => onNavigateSection('travel-experiences')} className="hover:text-white transition-colors cursor-pointer">
+                  Experiences & Safaris
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('travel-accommodations')} className="hover:text-white transition-colors">
-                  Lodge Accommodation
+                <button onClick={() => onNavigateSection('travel-packages')} className="hover:text-white transition-colors cursor-pointer">
+                  Holiday Packages
                 </button>
               </li>
               <li>
-                <button onClick={onOpenPlanHoliday} className="hover:text-[#E67E22] font-semibold transition-colors">
-                  Plan My Holiday
+                <button onClick={onOpenPlanHoliday} className="hover:text-[#C9A66B] font-bold transition-colors cursor-pointer">
+                  Plan Your Trip
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: African Art Marketplace */}
+          {/* Col 3: Company & Contact */}
           <div className="space-y-4">
-            <h4 className="font-bold text-[11px] uppercase tracking-widest text-[#C9A66B]">
-              Art Marketplace
+            <h4 className="font-bold text-xs uppercase tracking-widest text-[#C9A66B]">
+              Outbound Holidays
             </h4>
-            <ul className="space-y-3 text-sm text-gray-300">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
               <li>
-                <button onClick={() => onNavigateSection('art-shop')} className="hover:text-white transition-colors">
-                  Shop All Artworks
+                <button onClick={() => onNavigateSection('about-us')} className="hover:text-white transition-colors font-medium cursor-pointer">
+                  About Us & Promises
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('art-categories')} className="hover:text-white transition-colors">
-                  Featured Categories
+                <button onClick={() => onNavigateSection('contact-us')} className="hover:text-white transition-colors font-medium cursor-pointer">
+                  Contact Specialist
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('art-artists')} className="hover:text-white transition-colors">
-                  Verified Artists
+                <button onClick={() => onNavigateSection('faqs')} className="hover:text-white transition-colors cursor-pointer">
+                  Frequently Asked Questions
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('art-why-us')} className="hover:text-white transition-colors">
-                  Why Shop With Us
-                </button>
+                <span className="text-white/60">Licensed Zimbabwe Tourism Authority Partner</span>
               </li>
-            </ul>
-          </div>
-
-          {/* Col 4: Support & Legal */}
-          <div className="space-y-4">
-            <h4 className="font-bold text-[11px] uppercase tracking-widest text-[#C9A66B]">
-              Customer Support
-            </h4>
-            <ul className="space-y-3 text-sm text-gray-300">
-              <li><a href="#help" className="hover:text-white transition-colors">Help Centre</a></li>
-              <li><a href="#shipping" className="hover:text-white transition-colors">Shipping Information</a></li>
-              <li><a href="#returns" className="hover:text-white transition-colors">Returns Policy</a></li>
-              <li><a href="#privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#contact" className="hover:text-white transition-colors">Contact Details</a></li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar: Payment Badges & Copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-gray-400">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/70">
           <p className="text-center sm:text-left">
-            &copy; 2026 Outbound Holidays & African Art Marketplace. All rights reserved.{' '}
+            &copy; 2026 Outbound Holidays Zimbabwe. All rights reserved.{' '}
             <button
               onClick={onOpenPlanHoliday}
-              className="text-[#C9A66B] font-bold hover:underline"
+              className="text-[#C9A66B] font-bold hover:underline ml-1 cursor-pointer"
             >
-              Talk to a Travel Expert
+              Talk to a Local Specialist
             </button>
           </p>
 
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] text-gray-400 font-semibold uppercase">Secure Payments:</span>
-            <span className="bg-gray-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold border border-gray-700">VISA</span>
-            <span className="bg-gray-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold border border-gray-700">Mastercard</span>
-            <span className="bg-gray-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold border border-gray-700">EcoCash</span>
-            <span className="bg-gray-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold border border-gray-700">PayPal</span>
+          {/* Payment Badges */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/60 font-semibold uppercase">Accepted Payments:</span>
+            <span className="bg-white/10 text-white px-2.5 py-1 rounded-md text-[10px] font-bold border border-white/15">VISA</span>
+            <span className="bg-white/10 text-white px-2.5 py-1 rounded-md text-[10px] font-bold border border-white/15">Mastercard</span>
+            <span className="bg-white/10 text-white px-2.5 py-1 rounded-md text-[10px] font-bold border border-white/15">EcoCash</span>
           </div>
         </div>
       </div>
