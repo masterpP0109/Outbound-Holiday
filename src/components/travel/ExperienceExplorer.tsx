@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Compass, Shield, Trees, Heart, Utensils, ArrowRight } from 'lucide-react';
 
+import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
+import footerZambeziDuskImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
+import intentBomaImg from '../../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
+import intentGorgeHelicopterImg from '../../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
+
 interface ExperienceExplorerProps {
   onExploreExperiences: () => void;
 }
@@ -29,7 +34,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
       id: 'first-visit',
       label: 'First Visit',
       icon: <Compass className="w-3.5 h-3.5" />,
-      imageUrl: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200',
+      imageUrl: intentVicFallsIconicImg,
       title: 'Victoria Falls Essentials',
       subtitle: 'The iconic highlights recommended for anyone visiting for the first time.',
       items: [
@@ -38,21 +43,21 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           desc: 'Walk along the 16 viewpoints opposite Mosi-oa-Tunya.', 
           duration: '2.5 Hours',
           whyWeRecommend: 'If it’s your first visit to Victoria Falls, this is where we suggest you start. It gives you the best introduction to the Falls, the rainforest, and the history behind one of the Seven Natural Wonders of the World.',
-          imageUrl: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=600'
+          imageUrl: intentVicFallsIconicImg
         },
         { 
           title: 'Upper Zambezi Sunset River Cruise', 
           desc: 'Watch hippos & elephants with complimentary sundowners.', 
           duration: '2 Hours',
           whyWeRecommend: 'One of our favourite ways to end the day. Relax on the Zambezi River, enjoy incredible sunsets, and often spot hippos, crocodiles, and elephants along the riverbanks.',
-          imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=600'
+          imageUrl: footerZambeziDuskImg
         },
         { 
           title: 'The Boma - Dinner & Drum Show', 
           desc: 'Traditional feast, face painting, and energetic African drumming.', 
           duration: '3 Hours',
           whyWeRecommend: 'A festive, warm cultural celebration that brings everyone together for traditional dishes and interactive drumming.',
-          imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=600'
+          imageUrl: intentBomaImg
         },
         { 
           title: 'Chobe Day Safari Trip (Botswana)', 
@@ -121,7 +126,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           desc: 'Soar directly above the curtain of mist and gorge.', 
           duration: '15 Mins',
           whyWeRecommend: 'The only way to comprehend the sheer scale of Mosi-oa-Tunya. Unmatched aerial photography opportunities.',
-          imageUrl: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=600'
+          imageUrl: intentGorgeHelicopterImg
         },
         { 
           title: 'Gorge Swing & Zip Line', 
@@ -256,14 +261,14 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
         {/* Experience Showcase Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch bg-gray-50 rounded-2xl p-6 sm:p-8 border border-gray-200">
           {/* Left: Changing Featured Category Cover Photo */}
-          <div className="lg:col-span-5 relative rounded-xl overflow-hidden min-h-[340px] shadow-md group">
+          <div className="lg:col-span-5 relative rounded-xl overflow-hidden min-h-[360px] lg:min-h-[440px] h-full shadow-md group bg-gray-900">
             <img
               src={activeCategory.imageUrl}
               alt={activeCategory.title}
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+              className="w-full h-full object-cover object-center sm:object-[center_25%] transition-all duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
             
             <div className="absolute bottom-6 left-6 right-6 text-white">
               <span className="inline-flex items-center gap-1 bg-[#D97706] text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-widest mb-2 shadow-xs">
@@ -289,12 +294,12 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
                   >
                     {/* Activity Specific Thumbnail Photo */}
                     {item.imageUrl && (
-                      <div className="w-full sm:w-28 md:w-32 h-28 sm:h-24 rounded-lg overflow-hidden shrink-0 relative bg-gray-100 group/img">
+                      <div className="w-full sm:w-32 md:w-36 h-36 sm:h-28 rounded-lg overflow-hidden shrink-0 relative bg-gray-100 group/img shadow-2xs">
                         <img
                           src={item.imageUrl}
                           alt={item.title}
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover object-center group-hover/img:scale-105 transition-transform duration-300"
                         />
                       </div>
                     )}
