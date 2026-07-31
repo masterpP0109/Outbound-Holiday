@@ -27,7 +27,7 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
       tagline: 'Comfortable, memorable and carefully budgeted',
       priceRangeUSD: 650,
       priceLabel: `From ${formatPrice(650)} per person`,
-      idealFor: 'First-time visitors & smart budget travellers',
+      perfectFor: ['First-time visitors', 'Young couples', 'Small families'],
       stayLevel: '3-Star Boutique Lodge / Safari Chalet',
       experiences: [
         'Guided Rainforest Falls Tour',
@@ -43,7 +43,7 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
       tagline: 'Prime locations and a balanced range of experiences',
       priceRangeUSD: 1250,
       priceLabel: `From ${formatPrice(1250)} per person`,
-      idealFor: 'Couples, families & comfort seekers',
+      perfectFor: ['Couples', 'Families', 'Most travellers'],
       stayLevel: '4-Star Luxury Lodge / Riverfront Hotel',
       experiences: [
         'All Smart Value Experiences',
@@ -59,7 +59,7 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
       tagline: 'Exceptional accommodation and private experiences',
       priceRangeUSD: 2150,
       priceLabel: `From ${formatPrice(2150)} per person`,
-      idealFor: 'Honeymooners, luxury escapes & VIP milestones',
+      perfectFor: ['Honeymoons', 'Special celebrations', 'Luxury travellers'],
       stayLevel: '5-Star Ultra-Luxury River Suite / Villa',
       experiences: [
         'Flight of Angels Helicopter Flight',
@@ -113,23 +113,30 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
                     {tier.priceLabel}
                   </span>
                   <span className="text-[11px] text-gray-500">
-                    Typical 3-4 day package cost
+                    Typical 3-4 day package investment
                   </span>
                 </div>
 
-                <div className="space-y-3 text-xs text-gray-700 mb-6">
+                <div className="space-y-3.5 text-xs text-gray-700 mb-6">
                   <div>
-                    <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-0.5">
-                      Ideal Traveller:
+                    <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-1">
+                      Perfect for:
                     </strong>
-                    <span>{tier.idealFor}</span>
+                    <ul className="space-y-1">
+                      {tier.perfectFor.map((item, i) => (
+                        <li key={i} className="flex items-center gap-1.5 text-gray-700 font-medium">
+                          <Check className="w-3.5 h-3.5 text-[#3F6B3C] shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
                   <div>
                     <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-0.5">
                       Accommodation Level:
                     </strong>
-                    <span>{tier.stayLevel}</span>
+                    <span className="text-gray-600">{tier.stayLevel}</span>
                   </div>
 
                   <div>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { CheckCircle2, MessageSquare, PhoneCall } from 'lucide-react';
 
+import furqalFounderImg from '../../assets/images/furqal_founder_guide_1785494119753.jpg';
+
 interface MeetYourGuideProps {
   onOpenConsultation: () => void;
 }
@@ -14,19 +16,19 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white">
               <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1000"
-                alt="Victoria Falls Travel Specialist Consultation"
-                className="w-full h-[380px] object-cover"
+                src={furqalFounderImg}
+                alt="Furqal - Lead Victoria Falls Travel Specialist at Outbound Holidays"
+                className="w-full h-[380px] object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               
-              <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md p-3.5 rounded-xl border border-white/40 shadow-lg text-[#1A2E35]">
+              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-white/40 shadow-lg text-[#1A2E35]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#0D5C75] text-white flex items-center justify-center font-bold text-sm shrink-0">
                     FK
                   </div>
                   <div>
-                    <h4 className="font-bold text-xs text-[#0D5C75]">Fungai & The Victoria Falls Concierge Team</h4>
+                    <h4 className="font-bold text-xs text-[#0D5C75]">Furqal & The Outbound Concierge Team</h4>
                     <p className="text-[11px] text-gray-600">On-ground in Victoria Falls, Zimbabwe</p>
                   </div>
                 </div>
@@ -45,7 +47,11 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
             </h2>
 
             <p className="text-gray-700 text-xs sm:text-base leading-relaxed">
-              There are dozens of lodges, activity operators, and conflicting prices online. We help you cut through the clutter to understand what is worth your money—and what will genuinely suit your trip.
+              Planning a Victoria Falls holiday shouldn't feel overwhelming. With so many accommodation options, activities, and prices online, it's hard to know what truly suits your trip. Our local travel specialists take the guesswork away, helping you plan with confidence from your first enquiry to your return home.
+            </p>
+
+            <p className="text-xs sm:text-sm font-semibold text-[#0D5C75] bg-[#0D5C75]/5 p-3 rounded-lg border-l-4 border-[#D97706]">
+              Trusted by families, couples, and adventure travellers planning unforgettable Victoria Falls holidays.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">

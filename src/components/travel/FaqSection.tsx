@@ -42,7 +42,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenGuide }) => {
               Clear Answers
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight">
-              You may be wondering…
+              Planning a trip to Victoria Falls? We've answered some of the questions we hear most often.
             </h2>
             <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed max-w-md">
               Everything you need to know about planning your Victoria Falls holiday with total confidence.
@@ -54,7 +54,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenGuide }) => {
                   onClick={onOpenGuide}
                   className="inline-flex items-center gap-2 text-xs font-bold text-[#0B5E8E] hover:text-[#E67E22] transition-colors cursor-pointer group"
                 >
-                  <span>Explore our complete Victoria Falls Insider Guide</span>
+                  <span>Read the Outbound Victoria Falls Travel Guide</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

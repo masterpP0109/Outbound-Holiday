@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { ClipboardList, Sparkles, UserCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 
+import step1FamilyImg from '../../assets/images/planning_step1_family_1785494085250.jpg';
+import step2AdvisorImg from '../../assets/images/planning_step2_advisor_1785494096633.jpg';
+import step3WelcomeImg from '../../assets/images/planning_step3_welcome_1785494109119.jpg';
+
 interface HowItWorksProps {
   onStartPlanning: () => void;
 }
@@ -11,26 +15,26 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
   const steps = [
     {
       num: '01',
-      title: 'Tell us what you have in mind',
+      title: 'Tell us about your trip',
       desc: 'Dates, party size, travel interests, and your approximate budget.',
       detail: 'Specify whether you want a weekend getaway or a 5-day safari combo. Our builder adapts to couples, families, or solo explorers.',
-      imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800',
+      imageUrl: step1FamilyImg,
       icon: <ClipboardList className="w-5 h-5" />,
     },
     {
       num: '02',
-      title: 'Receive thoughtful recommendations',
+      title: 'Receive personalised recommendations',
       desc: 'We create options that genuinely suit your travel style and expectations.',
       detail: 'Our intelligent concierge matches your stay tier with essential Victoria Falls activities, sunset river cruises, and safari extensions.',
-      imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800',
+      imageUrl: step2AdvisorImg,
       icon: <Sparkles className="w-5 h-5" />,
     },
     {
       num: '03',
-      title: 'Finalise with a local specialist',
+      title: 'Book with confidence',
       desc: 'We confirm availability, handle logistics, and support you on the ground.',
-      detail: 'Connect directly with Fungai or our local concierges in Victoria Falls via WhatsApp or email to lock in your booking effortlessly.',
-      imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
+      detail: 'Connect directly with Furqal or our local concierges in Victoria Falls via WhatsApp or email to lock in your booking effortlessly.',
+      imageUrl: step3WelcomeImg,
       icon: <UserCheck className="w-5 h-5" />,
     },
   ];
@@ -153,7 +157,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
             onClick={onStartPlanning}
             className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-10 py-4 rounded-xl shadow-lg hover:shadow-xl inline-flex items-center gap-3 transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Start Building My Holiday</span>
+            <span>Start Planning with Confidence</span>
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>

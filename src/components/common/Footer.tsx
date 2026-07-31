@@ -1,6 +1,8 @@
 import React from 'react';
 import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
 
+import footerZambeziImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
+
 interface FooterProps {
   onNavigateSection: (sectionId: string) => void;
   onOpenPlanHoliday: () => void;
@@ -11,8 +13,18 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenPlanHoliday,
 }) => {
   return (
-    <footer className="bg-[#0B5E8E] text-white pt-16 pb-12 border-t border-white/10">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="bg-[#0B5E8E] text-white pt-16 pb-12 border-t border-white/10 relative overflow-hidden">
+      {/* Subtle Panoramic Backdrop Image */}
+      <div className="absolute inset-0 pointer-events-none opacity-15">
+        <img
+          src={footerZambeziImg}
+          alt="Zambezi River dusk panorama backdrop"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B5E8E] via-transparent to-[#0B5E8E]" />
+      </div>
+
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/15">
           {/* Col 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">

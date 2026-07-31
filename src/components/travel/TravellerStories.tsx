@@ -42,10 +42,10 @@ export const TravellerStories: React.FC = () => {
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75] mb-2">
-            Real trips. Real memories. Real travellers.
+            Why travellers choose Outbound Holidays
           </h2>
           <p className="text-gray-600 text-xs sm:text-sm">
-            Read what fellow Zimbabweans and international visitors say about planning with Outbound Holidays.
+            Read how fellow Zimbabweans and international visitors experience Victoria Falls with our local specialist team.
           </p>
         </div>
 

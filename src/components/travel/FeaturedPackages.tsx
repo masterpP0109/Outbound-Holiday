@@ -60,7 +60,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
               Handcrafted Itineraries
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight mb-2">
-              Curated Holiday Packages
+              Recommended Victoria Falls Holidays
             </h2>
             <p className="text-sm sm:text-base text-[#2F3A44]/85 leading-relaxed">
               Thoughtfully balanced itineraries designed by Victoria Falls travel specialists.
@@ -132,7 +132,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                   {/* Price Starting From */}
                   <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white flex items-end justify-between">
                     <div>
-                      <span className="text-[10px] uppercase font-semibold text-gray-200 block">Starting from</span>
+                      <span className="text-[10px] uppercase font-semibold text-gray-200 block">Typical investment</span>
                       <span className="text-xl font-bold font-serif text-white leading-none">
                         {formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">/ person</span>
                       </span>
@@ -157,7 +157,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                   {/* Inclusions list */}
                   <div className="pt-3 border-t border-gray-100">
                     <span className="text-[10px] font-bold text-[#0B5E8E] uppercase tracking-wider block mb-1.5">
-                      Package Includes:
+                      Holiday Includes:
                     </span>
                     <ul className="space-y-1 text-xs text-[#2F3A44]">
                       {pkg.highlights.slice(0, 3).map((item, idx) => (

@@ -103,7 +103,7 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
       <div 
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        className="relative w-full min-h-[640px] sm:min-h-[720px] bg-[#0B5E8E] text-white flex flex-col items-center justify-center p-6 sm:p-12 lg:p-20 shadow-md group/hero"
+        className="relative w-full min-h-[640px] sm:min-h-[720px] bg-[#0B5E8E] text-white flex flex-col items-start justify-center p-6 sm:p-12 lg:p-20 shadow-md group/hero"
       >
         
         {/* Carousel Background Images with Cross-Fade Effect */}
@@ -129,11 +129,11 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
           );
         })}
 
-        {/* Balanced Dark Overlay for high text contrast while keeping background photos clearly visible */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0B5E8E]/65 via-black/40 to-[#0B5E8E]/85" />
+        {/* Dark Gradient Overlay for left-aligned text contrast */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0B5E8E]/95 via-[#0B5E8E]/70 to-black/30 md:to-transparent" />
 
-        {/* Main Content Area - Wide & Centered with smooth dynamic text transition */}
-        <div key={currentSlideIndex} className="relative z-10 max-w-4xl mx-auto text-center space-y-6 flex flex-col items-center justify-center my-auto animate-fadeIn duration-500">
+        {/* Main Content Area - Left-aligned with max-width container */}
+        <div key={currentSlideIndex} className="relative z-10 max-w-2xl text-left space-y-6 flex flex-col items-start justify-center my-auto animate-fadeIn duration-500 max-w-[1280px] w-full">
           
           {/* Active Carousel Category Pill Label */}
           <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-md border border-[#C9A66B]/60 rounded-full px-5 py-2 text-xs font-semibold text-[#C9A66B] tracking-wide uppercase shadow-sm transition-all duration-300">
@@ -141,18 +141,18 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
             <span className="text-white">{HERO_SLIDES[currentSlideIndex].titleTag}</span>
           </div>
 
-          {/* Dynamic Headline - Tailored to active slide */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif text-white leading-[1.12] tracking-tight max-w-3xl drop-shadow-md">
+          {/* Dynamic Headline - Left Aligned */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif text-white leading-[1.12] tracking-tight drop-shadow-md">
             {HERO_SLIDES[currentSlideIndex].headline}
           </h1>
 
-          {/* Dynamic Description - Tailored to active slide */}
-          <p className="text-sm sm:text-base lg:text-xl text-white/95 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow-sm">
+          {/* Dynamic Description - Left Aligned */}
+          <p className="text-sm sm:text-base lg:text-xl text-white/95 font-normal leading-relaxed drop-shadow-sm max-w-2xl">
             {HERO_SLIDES[currentSlideIndex].description}
           </p>
 
-          {/* Centered Action Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+          {/* Left-aligned Action Buttons */}
+          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4 w-full sm:w-auto">
             <button
               onClick={onOpenPlanHoliday}
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-9 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 group cursor-pointer"
@@ -169,8 +169,8 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
             </button>
           </div>
 
-          {/* Reassurance Line */}
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5 text-xs sm:text-sm text-white/95 font-medium drop-shadow-xs">
+          {/* Reassurance Line - Left Aligned */}
+          <div className="pt-2 flex flex-wrap items-center justify-start gap-3.5 text-xs sm:text-sm text-white/95 font-medium drop-shadow-xs">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
               Travel with Confidence
@@ -181,8 +181,8 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
             <span>Local Victoria Falls specialists</span>
           </div>
 
-          {/* Carousel Slide Indicators / Dots */}
-          <div className="pt-4 flex items-center justify-center gap-2.5 z-20">
+          {/* Carousel Slide Indicators / Dots - Left Aligned */}
+          <div className="pt-4 flex items-center justify-start gap-2.5 z-20">
             {HERO_SLIDES.map((slide, idx) => (
               <button
                 key={slide.id}
