@@ -260,6 +260,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
             <img
               src={activeCategory.imageUrl}
               alt={activeCategory.title}
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
@@ -292,6 +293,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
                         <img
                           src={item.imageUrl}
                           alt={item.title}
+                          referrerPolicy="no-referrer"
                           className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
                         />
                       </div>
