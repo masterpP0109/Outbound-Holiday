@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, ShieldCheck } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
+import { useScrollReveal } from '../../hooks';
 
 export const FaqSection: React.FC = () => {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const { ref, isVisible } = useScrollReveal(0.1);
 
   const faqs = [
     {
       q: 'How much should I budget for a Victoria Falls holiday?',
-      a: 'A 3-day holiday in Victoria Falls ranges from $650 per person for Comfort lodges up to $1,850+ per person for 5-star luxury riverfront resorts. Our Holiday Builder™ provides instant estimated costs including accommodation, transfers, and activities.',
+      a: 'A 3-day holiday in Victoria Falls ranges from $650 per person for Comfort lodges up to $1,850+ per person for 5-star luxury riverfront resorts. Our Holiday Builder\u2122 provides instant estimated costs including accommodation, transfers, and activities.',
     },
     {
       q: 'Is the travel planning consultation free?',
@@ -23,7 +25,7 @@ export const FaqSection: React.FC = () => {
     },
     {
       q: 'How quickly will I receive my custom quotation?',
-      a: 'You will receive an instant estimated budget range on screen in the Holiday Builder™. One of our senior Zimbabwean travel concierges will email your formal itemized proposal within 2 hours.',
+      a: 'You will receive an instant estimated budget range on screen in the Holiday Builder\u2122. One of our senior Zimbabwean travel concierges will email your formal itemized proposal within 2 hours.',
     },
     {
       q: 'Is the estimated Holiday Builder price final?',
@@ -32,48 +34,59 @@ export const FaqSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-200">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block mb-2">
-            Clear Answers
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#0B5E8E] font-serif mb-3">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-[#2F3A44] text-sm sm:text-base">
-            Everything you need to know about planning your Victoria Falls trip with confidence.
-          </p>
-        </div>
+    <section className="py-20 md:py-24 bg-white">
+      <div
+        ref={ref}
+        className={`container-center ${isVisible ? 'animate-reveal visible' : 'animate-reveal'}`}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          {/* Heading */}
+          <div className="lg:col-span-5">
+            <span className="section-label">Clear Answers</span>
+            <h2 className="section-heading text-[#0B5E8E]">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-[#2F3A44] text-base sm:text-lg">
+              Everything you need to know about planning your Victoria Falls trip with confidence.
+            </p>
+          </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, idx) => (
-            <div
-              key={idx}
-              className="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50 transition-all"
-            >
-              <button
-                onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-                className="w-full text-left p-5 flex items-center justify-between gap-4 font-bold text-[#0B5E8E] text-sm sm:text-base hover:bg-gray-100/80 transition-colors"
-              >
-                <span className="flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                  {faq.q}
-                </span>
-                <ChevronDown
-                  className={`w-5 h-5 text-gray-500 transition-transform ${
-                    openIdx === idx ? 'rotate-180 text-[#0B5E8E]' : ''
-                  }`}
-                />
-              </button>
+          {/* FAQ Accordion */}
+          <div className="lg:col-span-7">
+            <div className="space-y-0">
+              {faqs.map((faq, idx) => (
+                <div
+                  key={idx}
+                  className="border-b border-gray-200 last:border-b-0"
+                >
+                  <button
+                    onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
+                    className="w-full text-left py-5 flex items-center justify-between gap-4 font-bold text-[#0B5E8E] text-sm sm:text-base hover:opacity-70 transition-opacity group"
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className="w-8 h-8 rounded-xl bg-[#0B5E8E]/10 flex items-center justify-center shrink-0 group-hover:bg-[#0B5E8E] group-hover:text-white transition-colors duration-300">
+                        <HelpCircle className="w-4 h-4" />
+                      </span>
+                      {faq.q}
+                    </span>
+                    <span className="text-xs text-gray-400 font-semibold shrink-0">
+                      {openIdx === idx ? 'Close' : 'Open'}
+                    </span>
+                  </button>
 
-              {openIdx === idx && (
-                <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#2F3A44] leading-relaxed border-t border-gray-200/60 bg-white">
-                  {faq.a}
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openIdx === idx ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed pl-11">
+                      {faq.a}
+                    </p>
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

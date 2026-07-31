@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { ActivePortal, Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { 
-  Compass, 
-  ShoppingBag, 
-  Heart, 
-  Search, 
-  Menu, 
-  X, 
-  ChevronDown, 
-  Palmtree, 
+import {
+  Compass,
+  ShoppingBag,
+  Heart,
+  Search,
+  Menu,
+  X,
+  ChevronDown,
+  Palmtree,
   Sparkles,
   PhoneCall,
-  UserCheck
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -48,17 +47,16 @@ export const Header: React.FC<HeaderProps> = ({
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#C9A66B]/30 shadow-xs">
-      {/* Top Banner Switcher */}
-      <div className="bg-[#2F3A44] text-white text-xs px-4 py-2 border-b border-gray-700">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          {/* Brand Portal Selector */}
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/80">
+      {/* Utility Bar */}
+      <div className="bg-[#2F3A44] text-white">
+        <div className="container-center flex flex-wrap items-center justify-between gap-3 py-2">
           <div className="flex items-center gap-1 bg-[#1A232A] p-1 rounded-full text-xs">
             <button
               onClick={() => setActivePortal('travel')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-semibold transition-all ${
                 activePortal === 'travel'
-                  ? 'bg-[#0B5E8E] text-white shadow-xs'
+                  ? 'bg-[#0B5E8E] text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -69,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setActivePortal('art')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-semibold transition-all ${
                 activePortal === 'art'
-                  ? 'bg-[#0B5E8E] text-white shadow-xs'
+                  ? 'bg-[#0B5E8E] text-white'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -86,14 +84,12 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          {/* Quick Info & Currency Switcher */}
-          <div className="flex items-center gap-4 text-gray-300">
+          <div className="flex items-center gap-4 text-xs text-gray-300 font-medium">
             <span className="hidden lg:inline-flex items-center gap-1">
               <PhoneCall className="w-3 h-3 text-[#C9A66B]" />
               Zimbabwe Travel Line: +263 77 123 4567
             </span>
 
-            {/* Currency Selector Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
@@ -104,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               {currencyDropdownOpen && (
-                <div className="absolute right-0 mt-1 w-28 bg-white text-[#2F3A44] rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                <div className="absolute right-0 mt-1 w-28 bg-white text-[#2F3A44] rounded-xl shadow-lg border border-gray-200 py-1 z-50">
                   {(Object.keys(CURRENCY_RATES) as Currency[]).map((curr) => (
                     <button
                       key={curr}
@@ -128,31 +124,31 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+      <div className="container-center flex items-center justify-between gap-4 h-[76px]">
         {/* Brand Logo */}
-        <div 
+        <div
           onClick={() => onNavigateSection('hero')}
-          className="cursor-pointer flex items-center gap-2 group"
+          className="cursor-pointer flex items-center gap-2.5 group shrink-0"
         >
-          <div className="w-10 h-10 rounded-lg bg-[#0B5E8E] flex items-center justify-center text-white shadow-xs group-hover:bg-[#0B5E8E]/90 transition-colors">
+          <div className="w-10 h-10 rounded-xl bg-[#0B5E8E] flex items-center justify-center text-white group-hover:bg-[#0B5E8E]/90 transition-colors">
             {activePortal === 'art' ? (
-              <Sparkles className="w-6 h-6 text-[#C9A66B]" />
+              <Sparkles className="w-5 h-5 text-[#C9A66B]" />
             ) : (
-              <Compass className="w-6 h-6 text-[#E67E22]" />
+              <Compass className="w-5 h-5 text-[#E67E22]" />
             )}
           </div>
           <div>
-            <span className="font-bold text-xl tracking-tight text-[#0B5E8E] block leading-none">
+            <span className="font-bold text-lg tracking-tight text-[#0B5E8E] block leading-none">
               {activePortal === 'art' ? 'African Art Marketplace' : 'Outbound Holidays'}
             </span>
-            <span className="text-[11px] font-semibold text-[#3F6B3C] tracking-wider uppercase block mt-0.5">
+            <span className="text-[10px] font-semibold text-[#3F6B3C] tracking-wider uppercase block mt-0.5">
               {activePortal === 'art' ? 'Authentic Crafts & Gallery' : 'Victoria Falls Specialists'}
             </span>
           </div>
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-sm text-[#2F3A44]">
+        <nav className="hidden lg:flex items-center gap-6 font-semibold text-sm text-[#2F3A44]">
           {activePortal === 'art' ? (
             <>
               <button onClick={() => onNavigateSection('art-shop')} className="hover:text-[#C9A66B] transition-colors">
@@ -199,17 +195,17 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Action Controls & CTA */}
-        <div className="flex items-center gap-3">
-          {/* Search Input (Art Portal / General) */}
-          <div className="relative hidden lg:block w-48 xl:w-56">
+        <div className="flex items-center gap-2 lg:gap-3">
+          {/* Search Input */}
+          <div className="relative hidden lg:block w-44 xl:w-52">
             <input
               type="text"
               placeholder={activePortal === 'art' ? "Search art, artists..." : "Search packages..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-full py-1.5 pl-8 pr-3 text-xs focus:outline-hidden focus:ring-2 focus:ring-[#0B5E8E]"
+              className="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-9 pr-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0B5E8E] transition-shadow"
             />
-            <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-2.5" />
           </div>
 
           {/* Wishlist Button */}
@@ -243,7 +239,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Primary High-Priority Sunset Orange CTA */}
           <button
             onClick={onOpenPlanHoliday}
-            className="bg-[#E67E22] hover:bg-[#d67118] text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-md shadow-xs hover:shadow-md transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
+            className="bg-[#E67E22] hover:bg-[#d67118] text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
           >
             Plan My Holiday
           </button>
@@ -251,7 +247,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-[#2F3A44]"
+            className="lg:hidden p-2 text-[#2F3A44]"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -260,87 +256,87 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-4 space-y-3">
+        <div className="lg:hidden bg-white border-t border-gray-200 px-6 py-4 space-y-3">
           <div className="relative mb-3">
             <input
               type="text"
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-lg py-2 pl-9 pr-3 text-sm"
+              className="w-full bg-gray-100 border border-gray-200 rounded-xl py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
             />
-            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
           </div>
 
           <div className="grid grid-cols-1 gap-2 font-semibold text-sm text-[#2F3A44]">
             {activePortal === 'art' ? (
               <>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('art-shop'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Shop Art
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('art-categories'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Categories
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('art-artists'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Artists
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('art-why-us'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Why Shop With Us
                 </button>
               </>
             ) : (
               <>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('hero'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Home
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('travel-guide'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Victoria Falls Guide
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('travel-accommodations'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Accommodation
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('travel-experiences'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Experiences
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('travel-packages'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Packages
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('about-us'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   About Us
                 </button>
-                <button 
+                <button
                   onClick={() => { onNavigateSection('contact-us'); setMobileMenuOpen(false); }}
-                  className="text-left py-1.5 px-2 hover:bg-gray-50 rounded-md"
+                  className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl"
                 >
                   Contact
                 </button>
