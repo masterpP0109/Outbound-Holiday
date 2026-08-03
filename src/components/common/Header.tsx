@@ -109,9 +109,10 @@ export const Header: React.FC<HeaderProps> = ({
         <nav className="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-xs sm:text-sm text-[#2F3A44]">
           <button 
             onClick={() => onNavigateSection('travel-guide')} 
-            className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
+            className="bg-[#0D5C75]/10 hover:bg-[#0D5C75]/20 text-[#0D5C75] font-bold px-3.5 py-1.5 rounded-lg border border-[#0D5C75]/30 transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
           >
-            Vic Falls Guide
+            <span>Victoria Falls Guide</span>
+            <span className="bg-[#D97706] text-white text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">11 Ch</span>
           </button>
           <button 
             onClick={() => onNavigateSection('travel-experiences')} 

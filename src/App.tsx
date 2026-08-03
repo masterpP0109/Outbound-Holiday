@@ -12,6 +12,7 @@ import { HowItWorks } from './components/travel/HowItWorks';
 import { FaqSection } from './components/travel/FaqSection';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
+import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
 import { AboutUsView } from './components/travel/AboutUsView';
 import { ContactUsView } from './components/travel/ContactUsView';
 import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
@@ -21,7 +22,8 @@ import { Footer } from './components/common/Footer';
 import { Check } from 'lucide-react';
 
 export default function App() {
-  // Application State
+  // Application View & Navigation State
+  const [activeView, setActiveView] = useState<'home' | 'guide'>('home');
   const [currency, setCurrency] = useState<Currency>('USD');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -46,8 +48,29 @@ export default function App() {
     setPlanHolidayOpen(true);
   };
 
-  // Smooth Section Navigation
+  // Smooth Section & Page Navigation
   const handleNavigateSection = (sectionId: string) => {
+    if (sectionId === 'travel-guide' || sectionId === 'guide') {
+      setActiveView('guide');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (activeView !== 'home') {
+      setActiveView('home');
+      setTimeout(() => {
+        if (sectionId === 'hero') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        const elem = document.getElementById(sectionId);
+        if (elem) {
+          elem.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 50);
+      return;
+    }
+
     if (sectionId === 'hero') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -81,90 +104,108 @@ export default function App() {
         onNavigateSection={handleNavigateSection}
       />
 
-      {/* Main Content Area - Guided Journey Layout */}
+      {/* Main Content Area - Render Dedicated Page or Home Layout */}
       <main className="flex-1">
-        <div className="space-y-0">
-          {/* 1. Emotional Hero */}
-          <TravelHero
+        {activeView === 'guide' ? (
+          <VicFallsGuidePage
             onOpenPlanHoliday={() => {
               setPreselectedPackage(null);
               setPlanHolidayOpen(true);
             }}
-            onBrowsePackages={() => handleNavigateSection('travel-packages')}
-          />
-
-          {/* 2. Choose Your Travel Intention */}
-          <IntentCards
-            onSelectIntent={() => {
-              setPlanHolidayOpen(true);
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
+        ) : (
+          <div className="space-y-0">
+            {/* 1. Emotional Hero */}
+            <TravelHero
+              onOpenPlanHoliday={() => {
+                setPreselectedPackage(null);
+                setPlanHolidayOpen(true);
+              }}
+              onBrowsePackages={() => handleNavigateSection('travel-packages')}
+            />
 
-          {/* 3. Meet Your Local Guide */}
-          <MeetYourGuide
-            onOpenConsultation={() => {
-              setPlanHolidayOpen(true);
-            }}
-          />
-
-          {/* 4. Explore Experiences */}
-          <div id="travel-experiences">
-            <ExperienceExplorer
-              onExploreExperiences={() => {
+            {/* 2. Choose Your Travel Intention */}
+            <IntentCards
+              onSelectIntent={() => {
                 setPlanHolidayOpen(true);
               }}
             />
-          </div>
 
-          {/* 5. Choose a Budget Style */}
-          <BudgetSelector
-            currency={currency}
-            onSelectBudgetStyle={() => {
-              setPlanHolidayOpen(true);
-            }}
-          />
-
-          {/* 6. Recommended Packages */}
-          <FeaturedPackages
-            currency={currency}
-            onSelectPackage={handleSelectPackageDetail}
-            onPlanHolidayWithPackage={handlePlanHolidayWithPackage}
-          />
-
-          {/* 7. Traveller Stories */}
-          <TravellerStories />
-
-          {/* 8. Simple 3-Step Planning Process */}
-          <HowItWorks
-            onStartPlanning={() => setPlanHolidayOpen(true)}
-          />
-
-          {/* 9. Questions & Answers (FAQ) */}
-          <div id="faqs">
-            <FaqSection
-              onOpenGuide={() => handleNavigateSection('travel-guide')}
+            {/* 3. Meet Your Local Guide */}
+            <MeetYourGuide
+              onOpenConsultation={() => {
+                setPlanHolidayOpen(true);
+              }}
             />
+
+            {/* 4. Explore Experiences */}
+            <div id="travel-experiences">
+              <ExperienceExplorer
+                onExploreExperiences={() => {
+                  setPlanHolidayOpen(true);
+                }}
+              />
+            </div>
+
+            {/* 5. Choose a Budget Style */}
+            <BudgetSelector
+              currency={currency}
+              onSelectBudgetStyle={() => {
+                setPlanHolidayOpen(true);
+              }}
+            />
+
+            {/* 6. Recommended Packages */}
+            <FeaturedPackages
+              currency={currency}
+              onSelectPackage={handleSelectPackageDetail}
+              onPlanHolidayWithPackage={handlePlanHolidayWithPackage}
+            />
+
+            {/* 7. Traveller Stories */}
+            <TravellerStories />
+
+            {/* 8. Simple 3-Step Planning Process */}
+            <HowItWorks
+              onStartPlanning={() => setPlanHolidayOpen(true)}
+            />
+
+            {/* 9. Questions & Answers (FAQ) */}
+            <div id="faqs">
+              <FaqSection
+                onOpenGuide={() => handleNavigateSection('travel-guide')}
+              />
+            </div>
+
+            {/* 10. Warm Final Conversion Banner */}
+            <FinalCtaBanner
+              onOpenPlanHoliday={() => {
+                setPreselectedPackage(null);
+                setPlanHolidayOpen(true);
+              }}
+            />
+
+            {/* Victoria Falls Comprehensive Insider Guide & Accommodations */}
+            <VicFallsGuide
+              onOpenFullGuide={() => {
+                setActiveView('guide');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+
+            {/* About Us & Promises (Linked from Footer) */}
+            <AboutUsView
+              onOpenPlanHoliday={() => setPlanHolidayOpen(true)}
+            />
+
+            {/* Contact Section */}
+            <ContactUsView />
           </div>
-
-          {/* 10. Warm Final Conversion Banner */}
-          <FinalCtaBanner
-            onOpenPlanHoliday={() => {
-              setPreselectedPackage(null);
-              setPlanHolidayOpen(true);
-            }}
-          />
-
-          {/* Victoria Falls Comprehensive Insider Guide & Accommodations */}
-          <VicFallsGuide />
-
-          {/* About Us & Promises (Linked from Footer) */}
-          <AboutUsView
-            onOpenPlanHoliday={() => setPlanHolidayOpen(true)}
-          />
-
-          {/* Contact Section */}
-          <ContactUsView />
-        </div>
+        )}
 
         {/* Global Travel Newsletter Section */}
         <Newsletter />

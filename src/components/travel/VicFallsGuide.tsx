@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { VIC_FALLS_SPOTS, ACCOMMODATIONS } from '../../data/travelData';
 import { MapPin, Info, Star, Compass, BedDouble, Camera, Lightbulb, Sparkles } from 'lucide-react';
 
-export const VicFallsGuide: React.FC = () => {
+interface VicFallsGuideProps {
+  onOpenFullGuide?: () => void;
+}
+
+export const VicFallsGuide: React.FC<VicFallsGuideProps> = ({ onOpenFullGuide }) => {
   const [activeTab, setActiveTab] = useState<'spots' | 'hotels'>('spots');
   const [selectedSpotId, setSelectedSpotId] = useState(VIC_FALLS_SPOTS[0].id);
 
@@ -13,16 +17,29 @@ export const VicFallsGuide: React.FC = () => {
       <div className="max-w-[1280px] mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block mb-2">
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-3">
+          <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
             Local Zimbabwean Knowledge
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight mb-3">
+          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight">
             Victoria Falls Insider Guide & Stays
           </h2>
           <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed">
             Discover the iconic landmarks, hidden viewpoints, and handpicked accommodations across Mosi-oa-Tunya.
           </p>
+
+          {/* Featured Banner Link to Dedicated Guide Page */}
+          {onOpenFullGuide && (
+            <div className="pt-2">
+              <button
+                onClick={onOpenFullGuide}
+                className="bg-[#D97706] hover:bg-[#b86303] text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Read The Ultimate First-Time Visitor Guide Page →</span>
+              </button>
+            </div>
+          )}
 
           {/* Guide / Accommodations Switcher Pills */}
           <div className="inline-flex p-1.5 bg-gray-200/80 rounded-2xl mt-6">
