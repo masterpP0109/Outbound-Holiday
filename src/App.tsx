@@ -102,6 +102,7 @@ export default function App() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onNavigateSection={handleNavigateSection}
+        isGuideActive={activeView === 'guide'}
       />
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}

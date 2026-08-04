@@ -18,6 +18,7 @@ interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   onNavigateSection: (sectionId: string) => void;
+  isGuideActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -27,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   searchQuery,
   setSearchQuery,
   onNavigateSection,
+  isGuideActive = false,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
@@ -105,15 +107,25 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Simplified Main Navigation Links */}
+        {/* Main Navigation Links */}
         <nav className="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-xs sm:text-sm text-[#2F3A44]">
+          {/* Victoria Falls Guide Link with Active Highlight */}
           <button 
             onClick={() => onNavigateSection('travel-guide')} 
-            className="bg-[#0D5C75]/10 hover:bg-[#0D5C75]/20 text-[#0D5C75] font-bold px-3.5 py-1.5 rounded-lg border border-[#0D5C75]/30 transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
+            aria-current={isGuideActive ? 'page' : undefined}
+            className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
+              isGuideActive
+                ? 'border-[#C9A66B] text-[#0B5E8E]'
+                : 'border-transparent text-[#2F3A44] hover:text-[#0B5E8E] hover:border-[#C9A66B]/50'
+            }`}
           >
+            {/* Visual Indicator Dot */}
+            <span className={`w-2 h-2 rounded-full transition-all ${
+              isGuideActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
+            }`} />
             <span>Victoria Falls Guide</span>
-            <span className="bg-[#D97706] text-white text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">11 Ch</span>
           </button>
+
           <button 
             onClick={() => onNavigateSection('travel-experiences')} 
             className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
@@ -161,6 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-[#0B5E8E]"
+            aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -184,9 +197,18 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="grid grid-cols-1 gap-2 font-semibold text-sm text-[#2F3A44]">
             <button 
               onClick={() => { onNavigateSection('travel-guide'); setMobileMenuOpen(false); }}
-              className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
+              aria-current={isGuideActive ? 'page' : undefined}
+              className={`text-left py-2.5 px-3.5 rounded-xl flex items-center justify-between transition-colors ${
+                isGuideActive 
+                  ? 'bg-[#0B5E8E]/10 text-[#0B5E8E] font-bold border-l-4 border-[#C9A66B]' 
+                  : 'hover:bg-gray-50 text-[#2F3A44]'
+              }`}
             >
-              <span>Victoria Falls Guide</span>
+              <div className="flex items-center gap-2">
+                {isGuideActive && <span className="w-2 h-2 rounded-full bg-[#C9A66B]" />}
+                <span>Victoria Falls Guide</span>
+              </div>
+              {isGuideActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
             </button>
             <button 
               onClick={() => { onNavigateSection('travel-experiences'); setMobileMenuOpen(false); }}
