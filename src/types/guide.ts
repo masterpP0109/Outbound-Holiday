@@ -65,6 +65,41 @@ export interface FaqItem {
   category?: string;
 }
 
+export interface TimelineItem {
+  day: string;
+  title: string;
+  activities: string[];
+  note?: string;
+}
+
+export interface TimelineBlockData {
+  title: string;
+  duration?: string;
+  idealFor?: string;
+  investment?: string;
+  style?: string;
+  bestTime?: string;
+  pace?: string;
+  items: TimelineItem[];
+  whyRecommend?: string;
+}
+
+export interface TableData {
+  title?: string;
+  headers: string[];
+  rows: string[][];
+}
+
+export interface PricingCard {
+  title: string;
+  price: string;
+  period?: string;
+  idealFor?: string;
+  description?: string;
+  features: string[];
+  highlight?: boolean;
+}
+
 export type BlockType = 
   | 'text'
   | 'heading'
@@ -73,7 +108,10 @@ export type BlockType =
   | 'pullquote'
   | 'practical_info'
   | 'traveller_cards'
-  | 'bullet_list';
+  | 'bullet_list'
+  | 'timeline'
+  | 'table'
+  | 'pricing_cards';
 
 export interface ArticleBlock {
   type: BlockType;
@@ -88,6 +126,9 @@ export interface ArticleBlock {
   callout?: CalloutBlock;
   pullQuote?: PullQuote;
   practicalPanel?: PracticalInfoPanel;
+  timeline?: TimelineBlockData;
+  table?: TableData;
+  pricingCards?: PricingCard[];
 }
 
 export interface GuideSection {
@@ -122,7 +163,7 @@ export interface GuideArticle {
   seo: SEOConfig;
   quickFacts: QuickFact[];
   sections: GuideSection[];
-  travellerTypes: TravellerTypeCard[];
-  faqs: FaqItem[];
+  travellerTypes?: TravellerTypeCard[];
+  faqs?: FaqItem[];
   relatedGuides: RelatedGuideCard[];
 }

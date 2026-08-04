@@ -36,7 +36,7 @@ export const VicFallsGuide: React.FC<VicFallsGuideProps> = ({ onOpenFullGuide })
                 className="bg-[#D97706] hover:bg-[#b86303] text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Read The Ultimate First-Time Visitor Guide Page →</span>
+                <span>Explore Victoria Falls Guide Hub →</span>
               </button>
             </div>
           )}
