@@ -825,37 +825,62 @@ export const MASTER_FIRST_TIME_VISITOR_GUIDE: GuideArticle = {
     {
       category: 'Money & Payments',
       question: 'Which currency is used in Victoria Falls?',
-      answer: 'The US Dollar (USD) is the most widely accepted currency in Victoria Falls. Visa and Mastercard are accepted at most hotels, restaurants, and activity operators, but carrying cash USD in small denominations is recommended for tipping and craft markets.'
+      answer: 'The US Dollar (USD) is the most widely accepted currency in Victoria Falls. Visa and Mastercard are accepted at most hotels, restaurants, and activity operators, but carrying cash USD in small denominations ($1, $5, $10, $20) is recommended for tipping, local craft markets, and taxi fares.'
+    },
+    {
+      category: 'Money & Payments',
+      question: 'Are credit cards accepted and how much cash should I bring?',
+      answer: 'Major credit cards (Visa and Mastercard) are accepted at almost all hotels, established restaurants, and safari operators. However, ATMs can occasionally run out of cash or experience connectivity issues. We advise bringing around $200–$300 in small USD cash notes per person for incidental expenses, park fees, tips, and market shopping.'
     },
     {
       category: 'Activities',
       question: 'What are the must-do experiences for first-timers?',
-      answer: 'If it’s your first visit, we recommend: 1) Guided Tour of the Falls, 2) Zambezi Sunset Cruise, 3) Flight of Angels Helicopter Flight, 4) Chobe National Park Day Trip or local Game Drive, and 5) The Boma Dinner & Drum Show.'
+      answer: 'If it’s your first visit, we recommend: 1) Guided Tour of Victoria Falls rainforest, 2) Zambezi Sunset Cruise, 3) Flight of Angels Helicopter Flight over the gorge, 4) Chobe National Park Day Trip or local Zambezi National Park Game Drive, and 5) The Boma Dinner & Drum Show.'
     },
     {
       category: 'Activities',
       question: 'Can I visit both Zimbabwe and Zambia during my stay?',
-      answer: 'Yes! You can cross the Victoria Falls Bridge between both countries easily. Obtaining the KAZA Univisa ($50 USD) on arrival allows unlimited cross-border travel between Zimbabwe and Zambia for 30 days.'
+      answer: 'Yes! You can cross the Victoria Falls Bridge between both countries easily. Obtaining the KAZA Univisa ($50 USD) on arrival at immigration allows unlimited cross-border travel between Zimbabwe and Zambia for up to 30 days.'
     },
     {
       category: 'Health & Safety',
       question: 'Is Victoria Falls safe for tourists?',
-      answer: 'Victoria Falls is widely considered one of Southern Africa’s safest tourist destinations. The town is compact, welcoming, and easy to navigate. Normal travel precautions apply.'
+      answer: 'Victoria Falls is widely considered one of Southern Africa’s safest tourist destinations. The town is compact, welcoming, peaceful, and easy to navigate. Dedicated tourist police and local guides ensure visitors feel safe day and night.'
     },
     {
       category: 'Health & Safety',
       question: 'Do I need malaria medication and is tap water safe?',
-      answer: 'Victoria Falls is in a low-risk malaria zone, so we recommend consulting your doctor before travel. Most hotels provide filtered or bottled drinking water, which we recommend using during your stay.'
+      answer: 'Victoria Falls is situated in a low-risk malaria zone, so we recommend consulting your doctor or travel clinic before departing for recommended prophylaxis. Most hotels provide filtered or bottled drinking water, which we recommend using during your stay for drinking and brushing teeth.'
+    },
+    {
+      category: 'Weather',
+      question: 'What is the weather like and what should I pack for Victoria Falls?',
+      answer: 'Victoria Falls enjoys a warm climate year-round. Summer (November to March) is warm to hot with occasional afternoon rain showers. Winter (May to August) brings clear sunny days (20°C–25°C) and cool evenings (8°C–12°C). Pack lightweight breathable clothing, comfortable walking shoes, a waterproof jacket or raincoat for the rainforest spray, sun protection (hat, sunglasses, sunscreen), and warm layers for early morning safaris and winter evenings.'
+    },
+    {
+      category: 'Weather',
+      question: 'Will I get wet when viewing Victoria Falls?',
+      answer: 'During peak flow months (March to July), you will experience heavy spray and rain-like mist in the rainforest national park. You will definitely get soaked on certain viewpoints, which is part of the exhilarating experience! Ponchos and waterproof phone cases can be rented at the entrance or provided by your guide.'
     },
     {
       category: 'Wildlife',
       question: 'Will I see elephants and the Big Five?',
-      answer: 'Elephants are frequently seen along the Zambezi River and on game drives. Nearby national parks like Hwange and Chobe offer world-class opportunities to spot lions, buffalo, elephants, rhinos, and leopards.'
+      answer: 'Elephants are frequently seen along the Zambezi River and in surrounding national parks. Local game drives in Zambezi National Park offer sightings of lions, buffalo, giraffes, zebras, and antelopes. For guaranteed Big Five viewing, a day trip to Chobe National Park in Botswana or a multi-day safari extension to Hwange National Park is highly recommended.'
+    },
+    {
+      category: 'Accommodation',
+      question: 'Where should I stay in Victoria Falls (Boutique Lodges vs Town Hotels)?',
+      answer: 'Choosing accommodation depends on your preference: 1) Riverside Boutique Lodges offer serene luxury, direct Zambezi river views, and inclusive dining, 2) Town Hotels offer convenient walking access to local markets, cafes, and the Falls rainforest, and 3) Safari Camps inside national parks offer immersive bush stays.'
     },
     {
       category: 'Booking with Outbound Holidays',
       question: 'Why should I book through Outbound Holidays?',
-      answer: 'We don’t believe in one-size-fits-all templates. Based in Victoria Falls, our local specialists carefully curate your accommodation, transfers, and activities around your specific budget and travel style with 24/7 on-ground concierge support.'
+      answer: 'We don’t believe in one-size-fits-all templates. Based directly in Victoria Falls, our local specialists carefully curate your accommodation, transfers, and activities around your specific budget and travel style with 24/7 on-ground concierge support and zero hidden fees.'
+    },
+    {
+      category: 'Booking with Outbound Holidays',
+      question: 'How far in advance should I book my Victoria Falls trip?',
+      answer: 'For peak travel months (June to October) and festive holiday periods, we recommend booking 4 to 6 months in advance to secure preferred boutique lodges, private safari vehicles, and prime flight slots. However, our local team can also arrange seamless last-minute itineraries.'
     }
   ],
   relatedGuides: [

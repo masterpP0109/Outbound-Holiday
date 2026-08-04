@@ -20,37 +20,7 @@ const LOCAL_SPECIALISTS_AUTHOR = {
 };
 
 // 1. FIRST TIME VISITOR OVERVIEW ARTICLE (FLAGSHIP)
-export const FIRST_TIME_VISITOR_ARTICLE: GuideArticle = {
-  ...MASTER_FIRST_TIME_VISITOR_GUIDE,
-  sections: [
-    ...MASTER_FIRST_TIME_VISITOR_GUIDE.sections,
-    {
-      id: 'section-overview-links',
-      tocTitle: 'Detailed Planning Guides',
-      heading: 'Explore Our Complete Victoria Falls Standalone Guides',
-      blocks: [
-        {
-          type: 'text',
-          content: 'For deep-dive information on specific topics, browse our dedicated standalone guides below. Each guide contains full local insights, pricing details, and practical checklists.'
-        },
-        {
-          type: 'bullet_list',
-          items: [
-            'Best Time to Visit Victoria Falls: Complete seasonal flow breakdown & safari timing.',
-            'Victoria Falls Month-by-Month Guide: Detailed month-by-month weather, water levels, and events.',
-            'Victoria Falls Weather & Packing Guide: Temperature charts, rainfall, and local packing checklists.',
-            'Where Should You Stay in Victoria Falls?: Boutique lodges, town hotels, and riverside retreats.',
-            'Experience Victoria Falls: Full activity catalog, helicopter flights, cruises, and culture.',
-            'Victoria Falls Itineraries: Day-by-day curated plans for 2, 3, 4, and 6-night stays.',
-            'Victoria Falls Budget Guide: Realistic daily spend benchmarks, activity prices, and dining costs.',
-            'Getting to Victoria Falls: Airport transfers, flight routes, and border advice.',
-            'Visa & Entry Requirements: KAZA Univisa details, online forms, and nationality rules.'
-          ]
-        }
-      ]
-    }
-  ]
-};
+export const FIRST_TIME_VISITOR_ARTICLE: GuideArticle = MASTER_FIRST_TIME_VISITOR_GUIDE;
 
 // 2. BEST TIME TO VISIT VICTORIA FALLS
 export const BEST_TIME_TO_VISIT_ARTICLE: GuideArticle = {

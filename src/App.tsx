@@ -4,7 +4,10 @@ import { Header } from './components/common/Header';
 import { TravelHero } from './components/travel/TravelHero';
 import { IntentCards } from './components/travel/IntentCards';
 import { MeetYourGuide } from './components/travel/MeetYourGuide';
-import { ExperienceExplorer } from './components/travel/ExperienceExplorer';
+import { FeaturedExperiences } from './components/travel/FeaturedExperiences';
+import { ExperiencesDirectoryPage } from './components/travel/ExperiencesDirectoryPage';
+import { ExperienceDetailPage } from './components/travel/ExperienceDetailPage';
+import { Experience, getExperienceById, ALL_EXPERIENCES } from './data/experiencesData';
 import { BudgetSelector } from './components/travel/BudgetSelector';
 import { FeaturedPackages } from './components/travel/FeaturedPackages';
 import { TravellerStories } from './components/travel/TravellerStories';
@@ -13,6 +16,8 @@ import { FaqSection } from './components/travel/FaqSection';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
 import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
+import { BomaExperiencePage } from './components/travel/BomaExperiencePage';
+import { BungeeExperiencePage } from './components/travel/BungeeExperiencePage';
 import { AboutUsView } from './components/travel/AboutUsView';
 import { ContactUsView } from './components/travel/ContactUsView';
 import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
@@ -23,7 +28,8 @@ import { Check } from 'lucide-react';
 
 export default function App() {
   // Application View & Navigation State
-  const [activeView, setActiveView] = useState<'home' | 'guide'>('home');
+  const [activeView, setActiveView] = useState<'home' | 'experiences' | 'experience-detail' | 'guide' | 'boma' | 'bungee'>('home');
+  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
   const [currency, setCurrency] = useState<Currency>('USD');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -48,8 +54,34 @@ export default function App() {
     setPlanHolidayOpen(true);
   };
 
+  const handleSelectExperience = (exp: Experience) => {
+    if (exp.id === 'boma-dinner-show') {
+      setActiveView('boma');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (exp.id === 'bungee-jump' || exp.slug === 'bungee-jump') {
+      setActiveView('bungee');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setSelectedExperience(exp);
+      setActiveView('experience-detail');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   // Smooth Section & Page Navigation
   const handleNavigateSection = (sectionId: string) => {
+    if (sectionId === 'travel-experiences' || sectionId === 'experiences') {
+      setActiveView('experiences');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (sectionId === 'boma' || sectionId === 'boma-dinner') {
+      setActiveView('boma');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (sectionId === 'travel-guide' || sectionId === 'guide') {
       setActiveView('guide');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -103,11 +135,72 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         onNavigateSection={handleNavigateSection}
         isGuideActive={activeView === 'guide'}
+        isExperiencesActive={activeView === 'experiences'}
       />
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}
       <main className="flex-1">
-        {activeView === 'guide' ? (
+        {activeView === 'experiences' ? (
+          <ExperiencesDirectoryPage
+            onSelectExperience={handleSelectExperience}
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null);
+              setPlanHolidayOpen(true);
+            }}
+          />
+        ) : activeView === 'experience-detail' && selectedExperience ? (
+          <ExperienceDetailPage
+            experience={selectedExperience}
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null);
+              setPlanHolidayOpen(true);
+            }}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onBackToDirectory={() => {
+              setActiveView('experiences');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onSelectRelatedExperience={(rel) => handleSelectExperience(rel)}
+          />
+        ) : activeView === 'boma' ? (
+          <BomaExperiencePage
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null);
+              setPlanHolidayOpen(true);
+            }}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onSelectRelatedExperience={(expTitle) => {
+              const matched = ALL_EXPERIENCES.find(e => e.title.toLowerCase().includes(expTitle.toLowerCase()));
+              if (matched) {
+                handleSelectExperience(matched);
+              } else {
+                setPlanHolidayOpen(true);
+              }
+            }}
+          />
+        ) : activeView === 'bungee' ? (
+          <BungeeExperiencePage
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null);
+              setPlanHolidayOpen(true);
+            }}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onBackToDirectory={() => {
+              setActiveView('experiences');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onSelectRelatedExperience={(exp) => handleSelectExperience(exp)}
+          />
+        ) : activeView === 'guide' ? (
           <VicFallsGuidePage
             onOpenPlanHoliday={() => {
               setPreselectedPackage(null);
@@ -143,14 +236,14 @@ export default function App() {
               }}
             />
 
-            {/* 4. Explore Experiences */}
-            <div id="travel-experiences">
-              <ExperienceExplorer
-                onExploreExperiences={() => {
-                  setPlanHolidayOpen(true);
-                }}
-              />
-            </div>
+            {/* 4. Featured Experiences Section (Only 4 Featured Cards) */}
+            <FeaturedExperiences
+              onSelectExperience={handleSelectExperience}
+              onExploreAll={() => {
+                setActiveView('experiences');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
 
             {/* 5. Choose a Budget Style */}
             <BudgetSelector

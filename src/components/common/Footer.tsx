@@ -53,7 +53,14 @@ export const Footer: React.FC<FooterProps> = ({
               </div>
               <div className="flex items-center gap-2.5">
                 <PhoneCall className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                <span>+263 77 123 4567 / +263 13 44000</span>
+                <a 
+                  href="https://wa.me/263714701721?text=Hello%20Outbound%20Holidays%2C%20I'd%20like%20to%20enquire%20about%20Victoria%20Falls%20travel." 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-[#C9A66B] transition-colors"
+                >
+                  WhatsApp: +263 714 701 721
+                </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#C9A66B] shrink-0" />

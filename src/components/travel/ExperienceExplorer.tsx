@@ -9,6 +9,7 @@ import rhinoTrackingImg from '../../assets/images/rhino_tracking_drive_178549781
 
 interface ExperienceExplorerProps {
   onExploreExperiences: () => void;
+  onSelectBoma?: () => void;
 }
 
 interface ActivityItem {
@@ -31,7 +32,7 @@ interface CategoryData {
   items: ActivityItem[];
 }
 
-export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExploreExperiences }) => {
+export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExploreExperiences, onSelectBoma }) => {
   const categories: CategoryData[] = [
     {
       id: 'first-visit',
@@ -382,6 +383,19 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
                             💡 Local Advisor Insight
                           </span>
                           <span>{item.whyWeRecommend}</span>
+                        </div>
+                      )}
+
+                      {/* Direct Boma Editorial Page Link */}
+                      {item.title.includes('Boma') && onSelectBoma && (
+                        <div className="pt-2">
+                          <button
+                            onClick={onSelectBoma}
+                            className="bg-[#0D5C75] hover:bg-[#0A485C] text-white font-bold text-xs px-3.5 py-1.5 rounded-lg shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <span>Read Boma Experience Guide</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
                         </div>
                       )}
                     </div>

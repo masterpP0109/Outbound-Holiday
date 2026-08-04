@@ -40,7 +40,10 @@ import {
   Users,
   Grid,
   Layers,
-  BookOpen
+  BookOpen,
+  Search,
+  X,
+  MessageCircle
 } from 'lucide-react';
 
 interface GuideArticleTemplateProps {
@@ -50,19 +53,32 @@ interface GuideArticleTemplateProps {
   onNavigateHome?: () => void;
 }
 
+const FAQ_FILTER_TABS = [
+  { id: 'All', label: 'All' },
+  { id: 'Planning', label: 'Planning', category: 'Planning Your Trip' },
+  { id: 'Money', label: 'Money', category: 'Money & Payments' },
+  { id: 'Activities', label: 'Activities', category: 'Activities' },
+  { id: 'Safety', label: 'Safety', category: 'Health & Safety' },
+  { id: 'Weather', label: 'Weather', category: 'Weather' },
+  { id: 'Wildlife', label: 'Wildlife', category: 'Wildlife' },
+  { id: 'Accommodation', label: 'Accommodation', category: 'Accommodation' },
+  { id: 'Booking', label: 'Booking', category: 'Booking with Outbound Holidays' },
+];
+
 export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
   article,
   onOpenPlanHoliday,
-  onSelectRelatedArticle,
   onNavigateHome,
 }) => {
-  // Chapter / Section State (Index of active chapter in article.sections)
+  // Chapter / Section State
   const [activeSectionIndex, setActiveSectionIndex] = useState<number>(0);
   const [viewMode, setViewMode] = useState<'single' | 'all'>('single');
   const [activeMainTab, setActiveMainTab] = useState<'chapters' | 'travellers' | 'faqs'>('chapters');
 
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  const [faqCategoryFilter, setFaqCategoryFilter] = useState<string>('All');
+  // FAQ State
+  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
+  const [faqSearchQuery, setFaqSearchQuery] = useState('');
+  const [activeFaqFilter, setActiveFaqFilter] = useState('All');
   const [copiedLink, setCopiedLink] = useState(false);
 
   const mainContainerRef = useRef<HTMLDivElement>(null);
@@ -189,6 +205,12 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
     }
   };
 
+  const toggleFaqIndex = (idx: number) => {
+    setOpenFaqIndices((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
+  };
+
   // Icon Resolver Helper
   const renderIconByName = (name?: string, className = 'w-5 h-5') => {
     switch (name) {
@@ -209,13 +231,29 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
   };
 
   const activeSection = article.sections[activeSectionIndex] || article.sections[0];
-
   const articleFaqs = article.faqs || [];
-  const filteredFaqs = faqCategoryFilter === 'All' 
-    ? articleFaqs 
-    : articleFaqs.filter(f => f.category === faqCategoryFilter);
 
-  const faqCategories = ['All', ...Array.from(new Set(articleFaqs.map(f => f.category).filter(Boolean)))];
+  const filteredFaqs = articleFaqs.filter((faq) => {
+    let categoryMatch = true;
+    if (activeFaqFilter !== 'All') {
+      const tabObj = FAQ_FILTER_TABS.find((t) => t.id === activeFaqFilter);
+      if (tabObj && tabObj.category) {
+        categoryMatch = faq.category === tabObj.category || faq.category === tabObj.id;
+      } else {
+        categoryMatch = faq.category === activeFaqFilter;
+      }
+    }
+
+    let searchMatch = true;
+    if (faqSearchQuery.trim()) {
+      const q = faqSearchQuery.toLowerCase();
+      searchMatch =
+        faq.question.toLowerCase().includes(q) ||
+        faq.answer.toLowerCase().includes(q);
+    }
+
+    return categoryMatch && searchMatch;
+  });
 
   return (
     <div className="bg-[#FAF9F6] text-[#1A2E35] min-h-screen selection:bg-[#C9A66B]/30 selection:text-[#0B5E8E]">
@@ -248,86 +286,70 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-wider border border-[#C9A66B]/30 mb-5 backdrop-blur-md">
-            <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>{article.category}</span>
-          </div>
-
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15] mb-4">
-            {article.title}
-          </h1>
-
-          <p className="text-base sm:text-lg text-gray-200 font-normal leading-relaxed max-w-3xl mb-6">
-            {article.subtitle}
-          </p>
-
-          {/* Hero CTAs */}
-          <div className="flex flex-wrap items-center gap-3 mb-8">
-            <button
-              onClick={() => {
-                trackGuideEvent('cta_clicked', { articleSlug: article.slug, ctaName: 'hero_plan_trip' });
-                onOpenPlanHoliday();
-              }}
-              className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
-            >
-              <CalendarCheck className="w-4 h-4" />
-              <span>Plan My Victoria Falls Trip</span>
-            </button>
-
-            <button
-              onClick={() => {
-                if (mainContainerRef.current) {
-                  mainContainerRef.current.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm px-5 py-3 rounded-xl border border-white/20 transition-all flex items-center gap-2 cursor-pointer backdrop-blur-md"
-            >
-              <BookOpen className="w-4 h-4 text-[#C9A66B]" />
-              <span>Explore Guide Chapters</span>
-            </button>
-          </div>
-
-          {/* Article Metadata Bar */}
-          <div className="pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4 text-xs text-gray-300">
-            <div className="flex items-center gap-3">
-              <img 
-                src={article.author.avatarUrl} 
-                alt={article.author.name}
-                className="w-10 h-10 rounded-full object-cover border-2 border-[#C9A66B]"
-              />
-              <div>
-                <span className="font-bold text-white block text-sm">{article.author.name}</span>
-                <span className="text-gray-300 text-[11px] block">{article.author.role}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 text-gray-300 text-xs">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>Updated: {article.lastUpdatedDate}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
+          <div className="space-y-4">
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-wider border border-[#C9A66B]/40">
+                {article.category}
+              </span>
+              <span className="text-xs text-gray-300 flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>{article.readingTime}</span>
+                {article.readingTime}
+              </span>
+              <span className="text-xs text-gray-300 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-[#C9A66B]" />
+                {article.location}
+              </span>
+            </div>
+
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15]">
+              {article.title}
+            </h1>
+
+            <p className="text-base sm:text-lg text-gray-200 max-w-3xl leading-relaxed font-light">
+              {article.subtitle}
+            </p>
+
+            <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <img 
+                  src={article.author.avatarUrl} 
+                  alt={article.author.name}
+                  className="w-11 h-11 rounded-full object-cover border-2 border-[#C9A66B]"
+                />
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>{article.author.name}</span>
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#C9A66B]" />
+                  </div>
+                  <div className="text-[11px] text-gray-300">
+                    {article.author.role} • Updated {article.lastUpdatedDate}
+                  </div>
+                </div>
               </div>
 
-              <button
-                onClick={handleShareClick}
-                className="ml-auto sm:ml-0 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer border border-white/10"
-              >
-                {copiedLink ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-300 font-bold">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Share</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleShareClick}
+                  className="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-3.5 py-2 rounded-xl border border-white/20 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[#C9A66B]" />
+                  <span>{copiedLink ? 'Link Copied!' : 'Share Guide'}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    trackGuideEvent('cta_clicked', { articleSlug: article.slug, ctaName: 'hero_plan_trip' });
+                    onOpenPlanHoliday();
+                  }}
+                  className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <CalendarCheck className="w-3.5 h-3.5" />
+                  <span>Plan My Holiday</span>
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -340,11 +362,11 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               key={index} 
               className="flex items-start gap-3 p-3 rounded-xl bg-[#FAF9F6] border border-gray-100 hover:border-[#C9A66B]/40 transition-all"
             >
-              <div className="w-9 h-9 rounded-lg bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0">
                 {renderIconByName(fact.iconName, 'w-4 h-4 text-[#0B5E8E]')}
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
                   {fact.label}
                 </span>
                 <span className="font-bold text-xs sm:text-sm text-[#0B5E8E] block mt-0.5">
@@ -361,7 +383,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
         </div>
       </section>
 
-      {/* 4. Interactive Page Layout (Tabbed / Non-Scroll Setup) */}
+      {/* 4. Interactive Page Layout */}
       <div ref={mainContainerRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         
         {/* Main Section Navigation Bar */}
@@ -395,7 +417,11 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               </button>
 
               <button
-                onClick={() => setActiveMainTab('faqs')}
+                onClick={() => {
+                  setActiveMainTab('faqs');
+                  const elem = document.getElementById('faq-section');
+                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                   activeMainTab === 'faqs'
                     ? 'bg-[#0B5E8E] text-white shadow-xs'
@@ -419,7 +445,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
             )}
           </div>
 
-          {/* Chapter Quick Selector Row (Horizontal Pills for Chapters) */}
+          {/* Chapter Quick Selector Row */}
           {activeMainTab === 'chapters' && (
             <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
               <span className="text-[11px] font-bold text-gray-400 shrink-0 uppercase tracking-wider">Chapters:</span>
@@ -600,244 +626,81 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                           </div>
                         )}
 
-                        {block.type === 'pullquote' && block.pullQuote && (
-                          <blockquote className="my-6 p-6 rounded-2xl bg-gradient-to-r from-[#0D2833] to-[#0B5E8E] text-white shadow-md relative overflow-hidden">
-                            <Quote className="w-16 h-16 text-[#C9A66B]/20 absolute -right-2 -bottom-2 pointer-events-none" />
-                            <p className="font-serif italic text-lg sm:text-xl text-white/95 leading-relaxed mb-3 relative z-10">
-                              "{block.pullQuote.quote}"
-                            </p>
-                            <footer className="text-xs font-semibold text-[#C9A66B]">
-                              — {block.pullQuote.author} {block.pullQuote.title && `(${block.pullQuote.title})`}
-                            </footer>
-                          </blockquote>
-                        )}
-
-                        {block.type === 'practical_info' && block.practicalPanel && (
-                          <div className="my-6 rounded-2xl bg-white border border-gray-200/90 shadow-xs p-6 space-y-4">
-                            <div className="pb-3 border-b border-gray-100">
-                              <h4 className="font-serif font-bold text-lg text-[#0B5E8E]">
-                                {block.practicalPanel.title}
-                              </h4>
-                              {block.practicalPanel.subtitle && (
-                                <p className="text-xs text-gray-500 mt-0.5">
-                                  {block.practicalPanel.subtitle}
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-3.5">
-                              {block.practicalPanel.items.map((item, idx) => (
-                                <div key={idx} className="p-4 rounded-xl bg-[#FAF9F6] border border-gray-100 flex items-start gap-3">
-                                  <div className="w-8 h-8 rounded-lg bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0 mt-0.5">
-                                    {renderIconByName(item.iconName, 'w-4 h-4 text-[#0B5E8E]')}
-                                  </div>
-                                  <div>
-                                    <h5 className="font-bold text-sm text-[#0B5E8E] mb-1">
-                                      {item.heading}
-                                    </h5>
-                                    <p className="text-xs text-gray-600 leading-relaxed">
-                                      {item.detail}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {block.type === 'timeline' && block.timeline && (
-                          <div className="my-8 rounded-2xl bg-[#FAF9F6] border border-gray-200 p-6 sm:p-8 space-y-6 shadow-xs">
-                            <div className="pb-4 border-b border-gray-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                              <div>
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A66B] block mb-1">
-                                  {block.timeline.duration || 'Curated Itinerary'}
-                                </span>
-                                <h4 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                                  {block.timeline.title}
-                                </h4>
-                                {block.timeline.idealFor && (
-                                  <p className="text-xs text-gray-500 mt-1 font-medium">Ideal For: {block.timeline.idealFor}</p>
-                                )}
-                              </div>
-                              {block.timeline.investment && (
-                                <div className="bg-[#0D2833] text-white px-4 py-2 rounded-xl text-right shrink-0">
-                                  <span className="text-[10px] font-medium text-gray-300 block">Est. Investment</span>
-                                  <span className="text-sm font-bold text-[#E5C989]">{block.timeline.investment}</span>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="relative pl-6 sm:pl-8 border-l-2 border-[#0B5E8E]/30 space-y-6">
-                              {block.timeline.items.map((item, iIdx) => (
-                                <div key={iIdx} className="relative group">
-                                  <div className="absolute -left-[31px] sm:-left-[39px] top-0.5 w-6 h-6 rounded-full bg-[#0B5E8E] text-white text-[10px] font-bold flex items-center justify-center ring-4 ring-[#FAF9F6] shadow-xs">
-                                    {iIdx + 1}
-                                  </div>
-                                  <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-2xs space-y-2">
-                                    <div className="flex items-center justify-between gap-2">
-                                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#C9A66B] bg-[#C9A66B]/10 px-2 py-0.5 rounded-md">
-                                        {item.day}
-                                      </span>
-                                      <h5 className="font-bold text-sm text-[#0B5E8E] flex-1 font-serif ml-1">{item.title}</h5>
-                                    </div>
-                                    <ul className="space-y-1.5 pt-1">
-                                      {item.activities.map((act, aIdx) => (
-                                        <li key={aIdx} className="flex items-start gap-2 text-xs text-gray-700">
-                                          <CheckCircle2 className="w-3.5 h-3.5 text-[#0B5E8E] shrink-0 mt-0.5" />
-                                          <span>{act}</span>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-
-                            {block.timeline.whyRecommend && (
-                              <div className="p-4 rounded-xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 text-xs text-[#0B5E8E] flex items-start gap-2.5">
-                                <Sparkles className="w-4 h-4 text-[#C9A66B] shrink-0 mt-0.5" />
-                                <div>
-                                  <strong className="font-bold block mb-0.5">Why We Recommend It:</strong>
-                                  <p className="text-gray-700 leading-relaxed">{block.timeline.whyRecommend}</p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
                         {block.type === 'table' && block.table && (
-                          <div className="my-8 rounded-2xl bg-white border border-gray-200/90 shadow-xs overflow-hidden">
+                          <div className="overflow-x-auto my-6 rounded-2xl border border-gray-200 bg-white shadow-xs">
                             {block.table.title && (
-                              <div className="bg-[#0D2833] text-white px-6 py-4">
-                                <h4 className="font-serif font-bold text-base text-[#E5C989]">{block.table.title}</h4>
+                              <div className="p-4 bg-[#0D2833] text-white font-bold text-sm font-serif">
+                                {block.table.title}
                               </div>
                             )}
-                            <div className="overflow-x-auto">
-                              <table className="w-full text-left text-xs text-gray-700">
-                                <thead className="bg-gray-100/80 border-b border-gray-200 font-bold text-[#0B5E8E] uppercase tracking-wider text-[11px]">
-                                  <tr>
-                                    {block.table.headers.map((h, hIdx) => (
-                                      <th key={hIdx} className="p-4 whitespace-nowrap">{h}</th>
+                            <table className="w-full text-left text-xs sm:text-sm">
+                              <thead className="bg-[#FAF9F6] text-[#0B5E8E] font-bold border-b border-gray-200">
+                                <tr>
+                                  {block.table.headers.map((h, hI) => (
+                                    <th key={hI} className="p-3.5">{h}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-100">
+                                {block.table.rows.map((row, rI) => (
+                                  <tr key={rI} className="hover:bg-gray-50/80 transition-colors">
+                                    {row.map((cell, cI) => (
+                                      <td key={cI} className="p-3.5 text-gray-700">{cell}</td>
                                     ))}
                                   </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                  {block.table.rows.map((row, rIdx) => (
-                                    <tr key={rIdx} className={rIdx % 2 === 0 ? 'bg-white' : 'bg-[#FAF9F6]'}>
-                                      {row.map((cell, cIdx) => (
-                                        <td key={cIdx} className={`p-4 leading-relaxed ${cIdx === 0 ? 'font-bold text-[#0B5E8E]' : ''}`}>
-                                          {cell}
-                                        </td>
-                                      ))}
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        )}
-
-                        {block.type === 'pricing_cards' && block.pricingCards && (
-                          <div className="my-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            {block.pricingCards.map((card, cIdx) => (
-                              <div key={cIdx} className={`rounded-2xl p-6 border transition-all flex flex-col justify-between space-y-4 ${
-                                card.highlight 
-                                  ? 'bg-gradient-to-b from-[#0D2833] to-[#0B5E8E] text-white border-[#C9A66B] shadow-md ring-2 ring-[#C9A66B]/50'
-                                  : 'bg-white border-gray-200 shadow-2xs text-gray-800'
-                              }`}>
-                                <div className="space-y-2">
-                                  {card.idealFor && (
-                                    <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-block ${
-                                      card.highlight ? 'bg-[#C9A66B] text-[#0D2833]' : 'bg-[#0B5E8E]/10 text-[#0B5E8E]'
-                                    }`}>
-                                      {card.idealFor}
-                                    </span>
-                                  )}
-                                  <h4 className={`font-serif text-lg font-bold ${card.highlight ? 'text-white' : 'text-[#0B5E8E]'}`}>
-                                    {card.title}
-                                  </h4>
-                                  <div className="flex items-baseline gap-1">
-                                    <span className={`text-2xl font-bold font-serif ${card.highlight ? 'text-[#E5C989]' : 'text-[#0B5E8E]'}`}>
-                                      {card.price}
-                                    </span>
-                                    {card.period && (
-                                      <span className={`text-xs ${card.highlight ? 'text-gray-300' : 'text-gray-500'}`}>
-                                        / {card.period}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {card.description && (
-                                    <p className={`text-xs leading-relaxed ${card.highlight ? 'text-gray-200' : 'text-gray-600'}`}>
-                                      {card.description}
-                                    </p>
-                                  )}
-                                </div>
-
-                                <ul className="space-y-2 pt-3 border-t border-gray-200/20 text-xs">
-                                  {card.features.map((feat, fIdx) => (
-                                    <li key={fIdx} className="flex items-start gap-2">
-                                      <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${card.highlight ? 'text-[#E5C989]' : 'text-[#0B5E8E]'}`} />
-                                      <span className={card.highlight ? 'text-gray-100' : 'text-gray-700'}>{feat}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
+                                ))}
+                              </tbody>
+                            </table>
                           </div>
                         )}
                       </React.Fragment>
                     ))}
                   </div>
 
-                  {/* Chapter Pagination Navigation Bar */}
+                  {/* Chapter Pagination Next/Previous Buttons */}
                   <div className="pt-6 border-t border-gray-100 flex items-center justify-between gap-4">
                     <button
                       onClick={() => handleSelectSection(Math.max(0, activeSectionIndex - 1))}
                       disabled={activeSectionIndex === 0}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                      className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
                         activeSectionIndex === 0
                           ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400'
-                          : 'bg-white border border-gray-200 text-[#0B5E8E] hover:bg-gray-50'
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                       }`}
                     >
-                      <ChevronLeft className="w-4 h-4 text-[#C9A66B]" />
+                      <ChevronLeft className="w-4 h-4" />
                       <span>Previous Chapter</span>
                     </button>
-
-                    <div className="text-xs font-bold text-gray-400">
-                      {activeSectionIndex + 1} of {article.sections.length}
-                    </div>
 
                     <button
                       onClick={() => handleSelectSection(Math.min(article.sections.length - 1, activeSectionIndex + 1))}
                       disabled={activeSectionIndex === article.sections.length - 1}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                      className={`px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
                         activeSectionIndex === article.sections.length - 1
                           ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400'
-                          : 'bg-[#0B5E8E] text-white hover:bg-[#08486e] shadow-xs'
+                          : 'bg-[#0B5E8E] hover:bg-[#08486e] text-white shadow-xs'
                       }`}
                     >
                       <span>Next Chapter</span>
-                      <ChevronRight className="w-4 h-4 text-[#C9A66B]" />
+                      <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
+
                 </div>
               ) : (
-                /* All Chapters Stacked View Mode */
-                <div className="space-y-8">
+                /* All Chapters Continuous Document View */
+                <div className="space-y-12">
                   {article.sections.map((section, sIdx) => (
-                    <section 
-                      key={section.id} 
-                      id={section.id} 
-                      className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-6"
-                    >
-                      <div className="pb-4 border-b border-gray-100">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                          Chapter {sIdx + 1}
-                        </span>
-                        <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E] leading-tight">
-                          {section.heading}
-                        </h2>
+                    <section key={section.id} id={section.id} className="bg-white rounded-2xl border border-gray-200/90 p-6 sm:p-8 shadow-xs space-y-6">
+                      <div className="pb-4 border-b border-gray-100 flex items-center justify-between gap-4">
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
+                            Chapter {sIdx + 1} of {article.sections.length}
+                          </span>
+                          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E] leading-tight">
+                            {section.heading}
+                          </h2>
+                        </div>
                       </div>
 
                       <div className="space-y-6">
@@ -909,189 +772,31 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                               </div>
                             )}
 
-                            {block.type === 'pullquote' && block.pullQuote && (
-                              <blockquote className="my-6 p-6 rounded-2xl bg-gradient-to-r from-[#0D2833] to-[#0B5E8E] text-white shadow-md relative overflow-hidden">
-                                <Quote className="w-16 h-16 text-[#C9A66B]/20 absolute -right-2 -bottom-2 pointer-events-none" />
-                                <p className="font-serif italic text-lg sm:text-xl text-white/95 leading-relaxed mb-3 relative z-10">
-                                  "{block.pullQuote.quote}"
-                                </p>
-                                <footer className="text-xs font-semibold text-[#C9A66B]">
-                                  — {block.pullQuote.author} {block.pullQuote.title && `(${block.pullQuote.title})`}
-                                </footer>
-                              </blockquote>
-                            )}
-
-                            {block.type === 'practical_info' && block.practicalPanel && (
-                              <div className="my-6 rounded-2xl bg-white border border-gray-200/90 shadow-xs p-6 space-y-4">
-                                <div className="pb-3 border-b border-gray-100">
-                                  <h4 className="font-serif font-bold text-lg text-[#0B5E8E]">
-                                    {block.practicalPanel.title}
-                                  </h4>
-                                  {block.practicalPanel.subtitle && (
-                                    <p className="text-xs text-gray-500 mt-0.5">
-                                      {block.practicalPanel.subtitle}
-                                    </p>
-                                  )}
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-3.5">
-                                  {block.practicalPanel.items.map((item, idx) => (
-                                    <div key={idx} className="p-4 rounded-xl bg-[#FAF9F6] border border-gray-100 flex items-start gap-3">
-                                      <div className="w-8 h-8 rounded-lg bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0 mt-0.5">
-                                        {renderIconByName(item.iconName, 'w-4 h-4 text-[#0B5E8E]')}
-                                      </div>
-                                      <div>
-                                        <h5 className="font-bold text-sm text-[#0B5E8E] mb-1">
-                                          {item.heading}
-                                        </h5>
-                                        <p className="text-xs text-gray-600 leading-relaxed">
-                                          {item.detail}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {block.type === 'timeline' && block.timeline && (
-                              <div className="my-8 rounded-2xl bg-[#FAF9F6] border border-gray-200 p-6 sm:p-8 space-y-6 shadow-xs">
-                                <div className="pb-4 border-b border-gray-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                  <div>
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A66B] block mb-1">
-                                      {block.timeline.duration || 'Curated Itinerary'}
-                                    </span>
-                                    <h4 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                                      {block.timeline.title}
-                                    </h4>
-                                    {block.timeline.idealFor && (
-                                      <p className="text-xs text-gray-500 mt-1 font-medium">Ideal For: {block.timeline.idealFor}</p>
-                                    )}
-                                  </div>
-                                  {block.timeline.investment && (
-                                    <div className="bg-[#0D2833] text-white px-4 py-2 rounded-xl text-right shrink-0">
-                                      <span className="text-[10px] font-medium text-gray-300 block">Est. Investment</span>
-                                      <span className="text-sm font-bold text-[#E5C989]">{block.timeline.investment}</span>
-                                    </div>
-                                  )}
-                                </div>
-
-                                <div className="relative pl-6 sm:pl-8 border-l-2 border-[#0B5E8E]/30 space-y-6">
-                                  {block.timeline.items.map((item, iIdx) => (
-                                    <div key={iIdx} className="relative group">
-                                      <div className="absolute -left-[31px] sm:-left-[39px] top-0.5 w-6 h-6 rounded-full bg-[#0B5E8E] text-white text-[10px] font-bold flex items-center justify-center ring-4 ring-[#FAF9F6] shadow-xs">
-                                        {iIdx + 1}
-                                      </div>
-                                      <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-2xs space-y-2">
-                                        <div className="flex items-center justify-between gap-2">
-                                          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#C9A66B] bg-[#C9A66B]/10 px-2 py-0.5 rounded-md">
-                                            {item.day}
-                                          </span>
-                                          <h5 className="font-bold text-sm text-[#0B5E8E] flex-1 font-serif ml-1">{item.title}</h5>
-                                        </div>
-                                        <ul className="space-y-1.5 pt-1">
-                                          {item.activities.map((act, aIdx) => (
-                                            <li key={aIdx} className="flex items-start gap-2 text-xs text-gray-700">
-                                              <CheckCircle2 className="w-3.5 h-3.5 text-[#0B5E8E] shrink-0 mt-0.5" />
-                                              <span>{act}</span>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-
-                                {block.timeline.whyRecommend && (
-                                  <div className="p-4 rounded-xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 text-xs text-[#0B5E8E] flex items-start gap-2.5">
-                                    <Sparkles className="w-4 h-4 text-[#C9A66B] shrink-0 mt-0.5" />
-                                    <div>
-                                      <strong className="font-bold block mb-0.5">Why We Recommend It:</strong>
-                                      <p className="text-gray-700 leading-relaxed">{block.timeline.whyRecommend}</p>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
                             {block.type === 'table' && block.table && (
-                              <div className="my-8 rounded-2xl bg-white border border-gray-200/90 shadow-xs overflow-hidden">
+                              <div className="overflow-x-auto my-6 rounded-2xl border border-gray-200 bg-white shadow-xs">
                                 {block.table.title && (
-                                  <div className="bg-[#0D2833] text-white px-6 py-4">
-                                    <h4 className="font-serif font-bold text-base text-[#E5C989]">{block.table.title}</h4>
+                                  <div className="p-4 bg-[#0D2833] text-white font-bold text-sm font-serif">
+                                    {block.table.title}
                                   </div>
                                 )}
-                                <div className="overflow-x-auto">
-                                  <table className="w-full text-left text-xs text-gray-700">
-                                    <thead className="bg-gray-100/80 border-b border-gray-200 font-bold text-[#0B5E8E] uppercase tracking-wider text-[11px]">
-                                      <tr>
-                                        {block.table.headers.map((h, hIdx) => (
-                                          <th key={hIdx} className="p-4 whitespace-nowrap">{h}</th>
+                                <table className="w-full text-left text-xs sm:text-sm">
+                                  <thead className="bg-[#FAF9F6] text-[#0B5E8E] font-bold border-b border-gray-200">
+                                    <tr>
+                                      {block.table.headers.map((h, hI) => (
+                                        <th key={hI} className="p-3.5">{h}</th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-gray-100">
+                                    {block.table.rows.map((row, rI) => (
+                                      <tr key={rI} className="hover:bg-gray-50/80 transition-colors">
+                                        {row.map((cell, cI) => (
+                                          <td key={cI} className="p-3.5 text-gray-700">{cell}</td>
                                         ))}
                                       </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100">
-                                      {block.table.rows.map((row, rIdx) => (
-                                        <tr key={rIdx} className={rIdx % 2 === 0 ? 'bg-white' : 'bg-[#FAF9F6]'}>
-                                          {row.map((cell, cIdx) => (
-                                            <td key={cIdx} className={`p-4 leading-relaxed ${cIdx === 0 ? 'font-bold text-[#0B5E8E]' : ''}`}>
-                                              {cell}
-                                            </td>
-                                          ))}
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            )}
-
-                            {block.type === 'pricing_cards' && block.pricingCards && (
-                              <div className="my-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                {block.pricingCards.map((card, cIdx) => (
-                                  <div key={cIdx} className={`rounded-2xl p-6 border transition-all flex flex-col justify-between space-y-4 ${
-                                    card.highlight 
-                                      ? 'bg-gradient-to-b from-[#0D2833] to-[#0B5E8E] text-white border-[#C9A66B] shadow-md ring-2 ring-[#C9A66B]/50'
-                                      : 'bg-white border-gray-200 shadow-2xs text-gray-800'
-                                  }`}>
-                                    <div className="space-y-2">
-                                      {card.idealFor && (
-                                        <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-block ${
-                                          card.highlight ? 'bg-[#C9A66B] text-[#0D2833]' : 'bg-[#0B5E8E]/10 text-[#0B5E8E]'
-                                        }`}>
-                                          {card.idealFor}
-                                        </span>
-                                      )}
-                                      <h4 className={`font-serif text-lg font-bold ${card.highlight ? 'text-white' : 'text-[#0B5E8E]'}`}>
-                                        {card.title}
-                                      </h4>
-                                      <div className="flex items-baseline gap-1">
-                                        <span className={`text-2xl font-bold font-serif ${card.highlight ? 'text-[#E5C989]' : 'text-[#0B5E8E]'}`}>
-                                          {card.price}
-                                        </span>
-                                        {card.period && (
-                                          <span className={`text-xs ${card.highlight ? 'text-gray-300' : 'text-gray-500'}`}>
-                                            / {card.period}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {card.description && (
-                                        <p className={`text-xs leading-relaxed ${card.highlight ? 'text-gray-200' : 'text-gray-600'}`}>
-                                          {card.description}
-                                        </p>
-                                      )}
-                                    </div>
-
-                                    <ul className="space-y-2 pt-3 border-t border-gray-200/20 text-xs">
-                                      {card.features.map((feat, fIdx) => (
-                                        <li key={fIdx} className="flex items-start gap-2">
-                                          <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${card.highlight ? 'text-[#E5C989]' : 'text-[#0B5E8E]'}`} />
-                                          <span className={card.highlight ? 'text-gray-100' : 'text-gray-700'}>{feat}</span>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                ))}
+                                    ))}
+                                  </tbody>
+                                </table>
                               </div>
                             )}
                           </React.Fragment>
@@ -1171,9 +876,9 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
           </div>
         )}
 
-        {/* Tab 2: Traveller Types Section */}
+        {/* Traveller Types Tab Section */}
         {activeMainTab === 'travellers' && (
-          <section className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-6">
+          <section className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-6 mb-12">
             <div className="pb-4 border-b border-gray-100">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
                 Tailored Advice
@@ -1219,62 +924,101 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
           </section>
         )}
 
-        {/* Tab 3: Practical FAQs Section */}
-        {activeMainTab === 'faqs' && (
-          <section className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                  First-Time Answers
-                </span>
-                <h3 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-                  Frequently Asked Questions
-                </h3>
-              </div>
+        {/* 6. Restored FAQ Section with Search, Filter Tabs, and Accordions */}
+        <section id="faq-section" className="mt-12 bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-10 shadow-xs space-y-8">
+          
+          {/* FAQ Header */}
+          <div className="space-y-3 border-b border-gray-100 pb-6 text-center sm:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A66B]/15 text-[#8E713E] text-xs font-bold uppercase tracking-wider">
+              <HelpCircle className="w-3.5 h-3.5 text-[#C9A66B]" />
+              <span>Victoria Falls Knowledge Base</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#0B5E8E] leading-tight">
+              Your Victoria Falls Questions, Answered
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600 font-medium leading-relaxed max-w-3xl">
+              Clear answers to the questions travellers ask us most often before visiting Victoria Falls.
+            </p>
+          </div>
 
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                {faqCategories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setFaqCategoryFilter(cat)}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
-                      faqCategoryFilter === cat
-                        ? 'bg-[#0B5E8E] text-white font-bold'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+          {/* Search Bar & Category Filter Tabs */}
+          <div className="space-y-4">
+            
+            {/* Search Input Field */}
+            <div className="relative max-w-2xl">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <Search className="w-4 h-4" />
               </div>
+              <input
+                type="text"
+                value={faqSearchQuery}
+                onChange={(e) => setFaqSearchQuery(e.target.value)}
+                placeholder="Search your Victoria Falls question…"
+                className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-[#FAF9F6] text-sm text-[#1A2E35] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]/30 focus:border-[#0B5E8E] transition-all"
+              />
+              {faqSearchQuery && (
+                <button
+                  onClick={() => setFaqSearchQuery('')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
-            <div className="space-y-3">
-              {filteredFaqs.map((faq, idx) => {
-                const isOpen = openFaqIndex === idx;
+            {/* Category Filter Buttons */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none">
+              {FAQ_FILTER_TABS.map((tab) => {
+                const isActive = activeFaqFilter === tab.id;
                 return (
-                  <div 
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveFaqFilter(tab.id)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[#0B5E8E] text-white shadow-xs'
+                        : 'bg-[#FAF9F6] text-gray-600 hover:bg-gray-200/80 border border-gray-200/60'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* FAQ Accordions List */}
+          <div className="space-y-3">
+            {filteredFaqs.length > 0 ? (
+              filteredFaqs.map((faq, idx) => {
+                const isOpen = openFaqIndices.includes(idx);
+                return (
+                  <div
                     key={idx}
-                    className="border border-gray-200 rounded-xl overflow-hidden bg-[#FAF9F6] transition-all"
+                    className={`border rounded-2xl overflow-hidden transition-all duration-200 ${
+                      isOpen
+                        ? 'border-[#0B5E8E]/40 bg-white shadow-xs'
+                        : 'border-gray-200/80 bg-[#FAF9F6] hover:border-gray-300'
+                    }`}
                   >
                     <button
-                      onClick={() => {
-                        const nextState = isOpen ? null : idx;
-                        setOpenFaqIndex(nextState);
-                        trackGuideEvent('faq_toggled', {
-                          articleSlug: article.slug,
-                          faqQuestion: faq.question,
-                        });
-                      }}
+                      onClick={() => toggleFaqIndex(idx)}
                       aria-expanded={isOpen}
-                      className="w-full text-left px-5 py-4 flex items-center justify-between font-bold text-sm text-[#0B5E8E] hover:text-[#08486e] focus:outline-none cursor-pointer"
+                      className="w-full text-left px-5 sm:px-6 py-4 flex items-center justify-between gap-4 focus:outline-none cursor-pointer"
                     >
-                      <span className="pr-4">{faq.question}</span>
-                      {isOpen ? (
-                        <ChevronUp className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
-                      )}
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#C9A66B] bg-[#C9A66B]/10 px-2 py-0.5 rounded-md shrink-0">
+                          {faq.category || 'FAQ'}
+                        </span>
+                        <span className="font-serif font-bold text-sm sm:text-base text-[#0B5E8E] leading-snug">
+                          {faq.question}
+                        </span>
+                      </div>
+                      <div className={`p-1.5 rounded-full transition-transform duration-200 shrink-0 ${
+                        isOpen ? 'bg-[#0B5E8E] text-white rotate-180' : 'bg-gray-200/60 text-gray-500'
+                      }`}>
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
                     </button>
 
                     <AnimatePresence>
@@ -1283,10 +1027,10 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
+                          transition={{ duration: 0.25 }}
                           className="overflow-hidden"
                         >
-                          <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-200/60 bg-white">
+                          <div className="px-5 sm:px-6 pb-5 pt-2 text-xs sm:text-sm text-gray-700 leading-relaxed border-t border-gray-100 bg-white">
                             {faq.answer}
                           </div>
                         </motion.div>
@@ -1294,68 +1038,62 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                     </AnimatePresence>
                   </div>
                 );
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* Related Standalone Guides Section */}
-        {article.relatedGuides && article.relatedGuides.length > 0 && (
-          <section className="mt-12 bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-8 shadow-xs space-y-6">
-            <div className="pb-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                  Continue Reading
-                </span>
-                <h3 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-                  Related Standalone Victoria Falls Guides
-                </h3>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {article.relatedGuides.map((relCard, rIdx) => (
-                <div
-                  key={rIdx}
-                  onClick={() => onSelectRelatedArticle && onSelectRelatedArticle(relCard.slug)}
-                  className="group rounded-2xl border border-gray-200/90 overflow-hidden bg-[#FAF9F6] hover:bg-white hover:border-[#C9A66B] hover:shadow-lg transition-all flex flex-col justify-between cursor-pointer"
+              })
+            ) : (
+              <div className="text-center py-10 px-4 bg-[#FAF9F6] rounded-2xl border border-gray-200/80 space-y-2">
+                <HelpCircle className="w-8 h-8 text-[#C9A66B] mx-auto opacity-60" />
+                <h4 className="font-serif font-bold text-base text-[#0B5E8E]">No questions found</h4>
+                <p className="text-xs text-gray-600 max-w-md mx-auto">
+                  We couldn’t find any questions matching "{faqSearchQuery}". Try another keyword or ask our local specialists directly below.
+                </p>
+                <button
+                  onClick={() => { setFaqSearchQuery(''); setActiveFaqFilter('All'); }}
+                  className="text-xs font-bold text-[#0B5E8E] underline hover:text-[#E67E22] pt-2 inline-block cursor-pointer"
                 >
-                  <div>
-                    <div className="h-40 overflow-hidden relative bg-gray-100">
-                      <img
-                        src={relCard.imageUrl}
-                        alt={relCard.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute top-2 left-2 bg-[#0D2833]/90 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md backdrop-blur-xs">
-                        {relCard.category}
-                      </div>
-                      <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-md backdrop-blur-xs">
-                        {relCard.readTime}
-                      </div>
-                    </div>
-                    <div className="p-4 space-y-2">
-                      <h4 className="font-serif font-bold text-base text-[#0B5E8E] group-hover:text-[#E67E22] transition-colors leading-snug">
-                        {relCard.title}
-                      </h4>
-                      <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
-                        {relCard.summary}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="p-4 pt-0">
-                    <div className="pt-3 border-t border-gray-200/60 flex items-center justify-between text-xs font-bold text-[#0B5E8E] group-hover:text-[#E67E22] transition-colors">
-                      <span>Read Full Guide</span>
-                      <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                  Reset FAQ Search Filters
+                </button>
+              </div>
+            )}
+          </div>
 
-        {/* 6. Final Planning Call To Action */}
+          {/* 7. Still Have a Question? CTA */}
+          <div className="mt-8 rounded-2xl bg-[#0D2833] text-white p-6 sm:p-8 border border-[#C9A66B]/30 shadow-md space-y-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-wider">
+                <MessageCircle className="w-3.5 h-3.5 text-[#C9A66B]" />
+                <span>Direct Local Concierge</span>
+              </div>
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-white">
+                Still Have a Question?
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                Planning a holiday is personal, and every traveller is different. If you have not found the answer you are looking for, our local Victoria Falls specialists are ready to help.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
+              <a
+                href="tel:+263771234567"
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-3 px-5 rounded-xl border border-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+              >
+                <PhoneCall className="w-3.5 h-3.5 text-[#C9A66B]" />
+                <span>Ask a Local Specialist</span>
+              </a>
+              <button
+                onClick={() => {
+                  trackGuideEvent('cta_clicked', { articleSlug: article.slug, ctaName: 'faq_still_have_question_build' });
+                  onOpenPlanHoliday();
+                }}
+                className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs py-3 px-5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+              >
+                <CalendarCheck className="w-3.5 h-3.5" />
+                <span>Build My Holiday</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* 8. Final Planning Call To Action */}
         <section className="mt-12 rounded-3xl bg-gradient-to-r from-[#0D2833] via-[#0B5E8E] to-[#0D2833] text-white p-8 sm:p-10 shadow-xl relative overflow-hidden text-center space-y-5">
           <div className="max-w-2xl mx-auto space-y-2 relative z-10">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-wider border border-[#C9A66B]/30">

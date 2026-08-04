@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, MessageSquare, Clock, Send, Check } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, Check } from 'lucide-react';
+import { WhatsAppIcon } from '../common/WhatsAppButton';
+import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 export const ContactUsView: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -16,8 +18,7 @@ export const ContactUsView: React.FC = () => {
   };
 
   const openWhatsApp = () => {
-    const text = encodeURIComponent('Hi Outbound Holidays! I am interested in planning a Victoria Falls trip and would like advice.');
-    window.open(`https://wa.me/263771234567?text=${text}`, '_blank');
+    window.open(getWhatsAppSpecialistUrl(), '_blank');
   };
 
   return (
@@ -57,8 +58,8 @@ export const ContactUsView: React.FC = () => {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Phone Line:</strong>
-                  <span>+263 77 123 4567 / +263 13 44000</span>
+                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Phone & WhatsApp:</strong>
+                  <span>+263 714 701 721</span>
                 </div>
               </div>
 
@@ -88,8 +89,8 @@ export const ContactUsView: React.FC = () => {
                 onClick={openWhatsApp}
                 className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
-                <MessageSquare className="w-4 h-4" />
-                <span>Chat Instantly on WhatsApp</span>
+                <WhatsAppIcon className="w-5 h-5 shrink-0" />
+                <span>Chat Instantly on WhatsApp (+263 714 701 721)</span>
               </button>
             </div>
           </div>

@@ -19,6 +19,7 @@ interface HeaderProps {
   setSearchQuery: (q: string) => void;
   onNavigateSection: (sectionId: string) => void;
   isGuideActive?: boolean;
+  isExperiencesActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -29,6 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
   setSearchQuery,
   onNavigateSection,
   isGuideActive = false,
+  isExperiencesActive = false,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
@@ -48,9 +50,14 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Quick Info & Currency Switcher */}
           <div className="flex items-center gap-4 text-white/90 text-[11px]">
-            <a href="tel:+263771234567" className="hidden lg:inline-flex items-center gap-1.5 hover:text-[#C9A66B] transition-colors">
+            <a 
+              href="https://wa.me/263714701721?text=Hello%20Outbound%20Holidays%2C%20I'd%20like%20to%20enquire%20about%20Victoria%20Falls%20travel." 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:inline-flex items-center gap-1.5 hover:text-[#C9A66B] transition-colors"
+            >
               <PhoneCall className="w-3 h-3 text-[#C9A66B]" />
-              <span>Concierge: +263 77 123 4567</span>
+              <span>Concierge WhatsApp: +263 714 701 721</span>
             </a>
 
             {/* Currency Selector Dropdown */}
@@ -128,9 +135,17 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button 
             onClick={() => onNavigateSection('travel-experiences')} 
-            className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
+            aria-current={isExperiencesActive ? 'page' : undefined}
+            className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
+              isExperiencesActive
+                ? 'border-[#C9A66B] text-[#0B5E8E]'
+                : 'border-transparent text-[#2F3A44] hover:text-[#0B5E8E] hover:border-[#C9A66B]/50'
+            }`}
           >
-            Experiences
+            <span className={`w-2 h-2 rounded-full transition-all ${
+              isExperiencesActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
+            }`} />
+            <span>Experiences</span>
           </button>
           <button 
             onClick={() => onNavigateSection('travel-packages')} 
