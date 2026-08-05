@@ -1,47 +1,57 @@
 import React from 'react';
-import { MapPin, SlidersHorizontal, Headset, ShieldCheck, Sparkles } from 'lucide-react';
+import { ShieldCheck, MapPin, Sparkles, Headset, CalendarCheck, ArrowRight } from 'lucide-react';
 
-export const WhyChooseOutbound: React.FC = () => {
+interface WhyChooseOutboundProps {
+  onOpenPlanHoliday?: () => void;
+}
+
+export const WhyChooseOutbound: React.FC<WhyChooseOutboundProps> = ({
+  onOpenPlanHoliday,
+}) => {
   const cards = [
     {
-      icon: MapPin,
-      title: 'Local Victoria Falls Specialists',
-      description: 'Based directly on the ground in Victoria Falls, our local Zimbabwean concierges provide authentic insights and up-to-the-minute destination guidance.',
+      icon: ShieldCheck,
+      title: 'Trusted Advice',
+      description: 'Honest recommendations tailored to your travel dreams, expectations and budget—without pressure to book things you do not need.',
+      label: 'Clear and honest guidance',
     },
     {
-      icon: SlidersHorizontal,
-      title: 'Tailor-made Holidays',
-      description: 'Every traveler is unique. We craft personalized itineraries aligned strictly with your pace, style, party size, and preferred budget.',
+      icon: MapPin,
+      title: 'Local Expertise',
+      description: 'First-hand knowledge of Victoria Falls, the Zambezi River, Hwange and the surrounding region.',
+      label: 'Based in Victoria Falls',
+    },
+    {
+      icon: Sparkles,
+      title: 'Carefully Selected',
+      description: 'We recommend lodges, guides and experiences based on local knowledge, reliability and the quality of experience they provide.',
+      label: 'Locally informed choices',
     },
     {
       icon: Headset,
-      title: 'Concierge Travel Support',
-      description: 'Enjoy dedicated 24/7 WhatsApp concierge assistance throughout your journey for instant help, schedule changes, and local recommendations.',
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Trusted Local Partners',
-      description: 'We partner exclusively with fully licensed safari operators, vetted transfer drivers, and top-tier lodges to guarantee safety and quality.',
+      title: 'Personal Service',
+      description: 'Receive personal support from your first enquiry through planning, booking, arrival and your time in Victoria Falls.',
+      label: 'Support throughout your journey',
     },
   ];
 
   return (
     <section className="py-16 sm:py-20 bg-white border-b border-gray-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-3">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>The Outbound Advantage</span>
+            <span>THE OUTBOUND DIFFERENCE</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E] tracking-tight">
-            Why Choose Outbound Holidays
+            Why Plan With Outbound Holidays?
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed">
-            We make planning your Victoria Falls safari effortless with expert local guidance, transparent advice, and full on-the-ground support.
+            We replace uncertainty with clear, honest local guidance—helping you plan a Victoria Falls holiday that feels right for your interests, expectations and budget.
           </p>
         </div>
 
@@ -69,12 +79,33 @@ export const WhyChooseOutbound: React.FC = () => {
                 </div>
 
                 <div className="pt-4 mt-4 border-t border-gray-200/60 flex items-center gap-2 text-xs font-semibold text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
-                  <span>100% Vetted Quality</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A66B]" />
+                  <span>{card.label}</span>
                 </div>
               </div>
             );
           })}
+        </div>
+
+        {/* Compact Budget Reassurance Callout */}
+        <div className="bg-[#FAF9F6] border border-[#0B5E8E]/20 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs">
+          <div className="space-y-2 text-center md:text-left max-w-2xl">
+            <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#0B5E8E]">
+              Planning With a Particular Budget?
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+              You do not need to book everything to have a memorable Victoria Falls holiday. We’ll help you understand the expected costs, prioritise what matters most and choose experiences that offer the right value for you.
+            </p>
+          </div>
+
+          <button
+            onClick={onOpenPlanHoliday}
+            className="shrink-0 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+          >
+            <CalendarCheck className="w-4 h-4" />
+            <span>Plan Around My Budget</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
 
       </div>

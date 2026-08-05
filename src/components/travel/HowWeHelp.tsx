@@ -6,32 +6,32 @@ export const HowWeHelp: React.FC = () => {
     {
       icon: Hotel,
       title: 'Accommodation',
-      description: 'Handpicked luxury lodges, boutique hotels, and family resorts matched to your taste and budget.',
+      description: 'Carefully selected hotels, lodges, apartments and family stays matched to your travel style and budget.',
     },
     {
       icon: Bus,
       title: 'Airport Transfers',
-      description: 'Reliable private and shared transfers from Victoria Falls, Livingstone, or Kasane airports directly to your lodge.',
+      description: 'Reliable transfer options from Victoria Falls, Livingstone and Kasane airports to your accommodation.',
     },
     {
       icon: Compass,
       title: 'Experiences',
-      description: 'Seamless booking for helicopter flights, sunset river cruises, bungee jumping, and guided rainforest walks.',
+      description: 'Honest guidance on which cruises, tours, safaris and adventure activities are right for you.',
     },
     {
       icon: Trees,
       title: 'Safari Extensions',
-      description: 'Multi-day game drives and wildlife safaris in Hwange National Park and Chobe National Park.',
+      description: 'Combine Victoria Falls with Hwange, Chobe or another regional safari without creating a rushed itinerary.',
     },
     {
       icon: CalendarRange,
       title: 'Travel Planning',
-      description: 'Complete itinerary design tailored to family holidays, romantic honeymoons, or group travel.',
+      description: 'Receive a personalised itinerary with clear estimated costs, timings and practical local advice.',
     },
     {
       icon: Globe2,
       title: 'Cross-Border Holidays',
-      description: 'Smooth coordination for multi-country trips connecting Zimbabwe, Zambia, and Botswana effortlessly.',
+      description: 'Practical coordination for holidays connecting Zimbabwe, Zambia and Botswana.',
     },
   ];
 
@@ -43,7 +43,7 @@ export const HowWeHelp: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>Full-Service Travel Concierge</span>
+            <span>COMPLETE HOLIDAY PLANNING</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E] tracking-tight">
@@ -51,7 +51,7 @@ export const HowWeHelp: React.FC = () => {
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed">
-            Outbound Holidays handles every dimension of your Victoria Falls trip so you can focus on making unforgettable memories.
+            From where you stay to what you do and how you get around, we bring every part of your Victoria Falls holiday together.
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export const HowWeHelp: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-lg hover:border-[#0B5E8E]/40 transition-all duration-300 flex items-start gap-4 group cursor-pointer"
+                className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-xs hover:shadow-lg hover:border-[#0B5E8E]/40 transition-all duration-300 flex items-start gap-4 group"
               >
                 <div className="w-12 h-12 rounded-xl bg-[#0B5E8E]/10 text-[#0B5E8E] flex items-center justify-center shrink-0 group-hover:bg-[#0B5E8E] group-hover:text-white transition-colors duration-300">
                   <Icon className="w-6 h-6" />

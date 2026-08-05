@@ -25,7 +25,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
           {/* Content Area */}
           <div className="relative z-10 max-w-3xl mx-auto space-y-6">
             <span className="text-xs font-bold text-[#C9A66B] bg-white/10 border border-[#C9A66B]/40 px-4 py-1.5 rounded-full uppercase tracking-widest inline-block">
-              Start Your Journey
+              START YOUR JOURNEY
             </span>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif text-white leading-tight">
@@ -33,7 +33,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
             </h2>
 
             <p className="text-sm sm:text-lg text-white/90 leading-relaxed max-w-xl mx-auto">
-              Tell us what you are considering, and a Victoria Falls specialist will help you understand your best options.
+              Tell us what you are considering, who you are travelling with and the budget you are working around. A Victoria Falls specialist will help you understand your best options.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4 max-w-md mx-auto">
@@ -59,7 +59,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
 
             <div className="pt-4 flex items-center justify-center gap-2 text-xs text-white/80 font-medium">
               <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-              <span>Free initial consultation • No obligation to book</span>
+              <span>Free initial consultation • Honest guidance • No obligation to book</span>
             </div>
           </div>
 

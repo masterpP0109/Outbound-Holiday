@@ -20,6 +20,8 @@ interface HeaderProps {
   onNavigateSection: (sectionId: string) => void;
   isGuideActive?: boolean;
   isExperiencesActive?: boolean;
+  isAccommodationActive?: boolean;
+  isPackagesActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -31,6 +33,8 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigateSection,
   isGuideActive = false,
   isExperiencesActive = false,
+  isAccommodationActive = false,
+  isPackagesActive = false,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
@@ -45,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline bg-[#E67E22] text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               Victoria Falls Specialist
             </span>
-            <span className="truncate">Zimbabwe’s Premier Travel & Safari Concierge</span>
+            <span className="truncate">Honest local guidance for holidays planned with confidence</span>
           </div>
 
           {/* Quick Info & Currency Switcher */}
@@ -148,10 +152,32 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Experiences</span>
           </button>
           <button 
-            onClick={() => onNavigateSection('travel-packages')} 
-            className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
+            onClick={() => onNavigateSection('accommodation')} 
+            aria-current={isAccommodationActive ? 'page' : undefined}
+            className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
+              isAccommodationActive
+                ? 'border-[#C9A66B] text-[#0B5E8E]'
+                : 'border-transparent text-[#2F3A44] hover:text-[#0B5E8E] hover:border-[#C9A66B]/50'
+            }`}
           >
-            Packages
+            <span className={`w-2 h-2 rounded-full transition-all ${
+              isAccommodationActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
+            }`} />
+            <span>Where to Stay</span>
+          </button>
+          <button 
+            onClick={() => onNavigateSection('travel-packages')} 
+            aria-current={isPackagesActive ? 'page' : undefined}
+            className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
+              isPackagesActive
+                ? 'border-[#C9A66B] text-[#0B5E8E]'
+                : 'border-transparent text-[#2F3A44] hover:text-[#0B5E8E] hover:border-[#C9A66B]/50'
+            }`}
+          >
+            <span className={`w-2 h-2 rounded-full transition-all ${
+              isPackagesActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
+            }`} />
+            <span>Packages</span>
           </button>
           <button 
             onClick={() => onNavigateSection('contact-us')} 
@@ -230,6 +256,12 @@ export const Header: React.FC<HeaderProps> = ({
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
               <span>Experiences & Activities</span>
+            </button>
+            <button 
+              onClick={() => { onNavigateSection('accommodation'); setMobileMenuOpen(false); }}
+              className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
+            >
+              <span>Where to Stay</span>
             </button>
             <button 
               onClick={() => { onNavigateSection('travel-packages'); setMobileMenuOpen(false); }}

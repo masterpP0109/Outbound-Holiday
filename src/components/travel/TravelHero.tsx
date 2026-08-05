@@ -34,7 +34,7 @@ const HERO_SLIDES: HeroSlide[] = [
         to Victoria Falls?
       </>
     ),
-    description: 'We’ll help you choose the right accommodation, activities, and itinerary for every member of the family—so you can explore Mosi-oa-Tunya with complete confidence.',
+    description: 'We’ll help you choose the right accommodation, activities and itinerary for every member of the family—planned around your interests, pace and budget.',
     primaryCtaText: 'Plan Your Family Holiday',
     badgeIcon: <Users className="w-3.5 h-3.5 text-[#C9A66B]" />,
     altText: 'Zimbabwean family exploring Mosi-oa-Tunya Victoria Falls with mist and waterfall vistas',
@@ -50,7 +50,7 @@ const HERO_SLIDES: HeroSlide[] = [
         You’ll Never Forget?
       </>
     ),
-    description: 'We’ll create a romantic Victoria Falls escape designed around your story, combining golden hour Zambezi river cruises with luxury intimate lodge stays.',
+    description: 'Let us create a romantic Victoria Falls escape around your story, combining carefully selected stays with memorable Zambezi sunsets and experiences worth celebrating.',
     primaryCtaText: 'Plan Your Honeymoon Escape',
     badgeIcon: <Heart className="w-3.5 h-3.5 text-[#E67E22]" />,
     altText: 'Zimbabwean couple enjoying a romantic sunset Zambezi River cruise',
@@ -59,14 +59,14 @@ const HERO_SLIDES: HeroSlide[] = [
     id: 'family-safari',
     imageUrl: familySafariImg,
     fallbackUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=2400',
-    titleTag: 'EXPERT LOCAL TRAVEL ADVISORS',
+    titleTag: 'LOCAL SAFARI KNOWLEDGE',
     headline: (
       <>
         Dreaming of Seeing <br className="hidden sm:inline" />
         Africa’s Wildlife Up Close?
       </>
     ),
-    description: 'Let our local specialists build a safari experience combining Victoria Falls with unforgettable Big Five game drives across Hwange alongside expert rangers.',
+    description: 'We’ll help you combine Victoria Falls with the right safari experience in Hwange or Chobe—without making your holiday feel rushed or unnecessarily expensive.',
     primaryCtaText: 'Plan Your Safari Experience',
     badgeIcon: <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />,
     altText: 'Family guided African wildlife safari discovery tour in Victoria Falls and Hwange',
@@ -176,9 +176,9 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
               Travel with Confidence
             </span>
             <span className="hidden sm:inline text-white/40">•</span>
-            <span>No-obligation custom itineraries</span>
+            <span>Honest, no-obligation guidance</span>
             <span className="hidden sm:inline text-white/40">•</span>
-            <span>Local Victoria Falls specialists</span>
+            <span>Victoria Falls-based specialists</span>
           </div>
 
           {/* Carousel Slide Indicators / Dots - Left Aligned */}
@@ -223,10 +223,10 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
           </div>
           <div className="text-left">
             <span className="font-bold font-serif text-xs sm:text-sm block text-[#0B5E8E] leading-snug">
-              Victoria Falls Based
+              Based in Victoria Falls
             </span>
             <span className="text-[11px] text-[#2F3A44]/80 leading-normal block mt-0.5">
-              First-hand local advice and on-ground support
+              First-hand local knowledge and personal support before and during your holiday.
             </span>
           </div>
         </div>

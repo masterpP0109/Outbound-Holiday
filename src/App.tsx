@@ -8,7 +8,14 @@ import { FeaturedExperiences } from './components/travel/FeaturedExperiences';
 import { ExperiencesDirectoryPage } from './components/travel/ExperiencesDirectoryPage';
 import { ExperienceDetailPage } from './components/travel/ExperienceDetailPage';
 import { Experience, getExperienceById, ALL_EXPERIENCES } from './data/experiencesData';
+import { WhereToStaySection } from './components/travel/WhereToStaySection';
+import { AccommodationDirectoryPage } from './components/travel/AccommodationDirectoryPage';
+import { AccommodationDetailPage } from './components/travel/AccommodationDetailPage';
+import { DetailedAccommodation } from './data/accommodationsData';
 import { FeaturedPackages } from './components/travel/FeaturedPackages';
+import { PackagesDirectoryPage } from './components/travel/PackagesDirectoryPage';
+import { PackageDetailPage } from './components/travel/PackageDetailPage';
+import { DetailedPackage } from './data/packagesData';
 import { TravellerStories } from './components/travel/TravellerStories';
 import { HowWeHelp } from './components/travel/HowWeHelp';
 import { FaqSection } from './components/travel/FaqSection';
@@ -25,8 +32,12 @@ import { Check } from 'lucide-react';
 
 export default function App() {
   // Application View & Navigation State
-  const [activeView, setActiveView] = useState<'home' | 'experiences' | 'experience-detail' | 'guide' | 'boma' | 'bungee'>('home');
+  const [activeView, setActiveView] = useState<
+    'home' | 'experiences' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee'
+  >('home');
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<DetailedPackage | null>(null);
+  const [selectedAccommodation, setSelectedAccommodation] = useState<DetailedAccommodation | null>(null);
   const [currency, setCurrency] = useState<Currency>('USD');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -40,15 +51,28 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Travel Package Handlers
-  const handleSelectPackageDetail = (pkg: TravelPackage) => {
-    setPreselectedPackage(pkg);
-    setPlanHolidayOpen(true);
+  // Accommodation Handlers
+  const handleSelectAccommodationDetail = (prop: DetailedAccommodation) => {
+    setSelectedAccommodation(prop);
+    setActiveView('accommodation-detail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handlePlanHolidayWithPackage = (pkg: TravelPackage) => {
-    setPreselectedPackage(pkg);
-    setPlanHolidayOpen(true);
+  const handleExploreAllAccommodations = () => {
+    setActiveView('accommodation');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Travel Package Handlers
+  const handleSelectPackageDetail = (pkg: DetailedPackage) => {
+    setSelectedPackage(pkg);
+    setActiveView('package-detail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleExploreAllPackages = () => {
+    setActiveView('packages');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectExperience = (exp: Experience) => {
@@ -67,6 +91,18 @@ export default function App() {
 
   // Smooth Section & Page Navigation
   const handleNavigateSection = (sectionId: string) => {
+    if (sectionId === 'where-to-stay' || sectionId === 'accommodation' || sectionId === 'accommodations') {
+      setActiveView('accommodation');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (sectionId === 'travel-packages' || sectionId === 'packages') {
+      setActiveView('packages');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (sectionId === 'travel-experiences' || sectionId === 'experiences') {
       setActiveView('experiences');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -133,11 +169,76 @@ export default function App() {
         onNavigateSection={handleNavigateSection}
         isGuideActive={activeView === 'guide'}
         isExperiencesActive={activeView === 'experiences'}
+        isAccommodationActive={activeView === 'accommodation' || activeView === 'accommodation-detail'}
+        isPackagesActive={activeView === 'packages' || activeView === 'package-detail'}
       />
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}
       <main className="flex-1">
-        {activeView === 'experiences' ? (
+        {activeView === 'accommodation' ? (
+          <AccommodationDirectoryPage
+            currency={currency}
+            onSelectProperty={handleSelectAccommodationDetail}
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null);
+              setPlanHolidayOpen(true);
+            }}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : activeView === 'accommodation-detail' && selectedAccommodation ? (
+          <AccommodationDetailPage
+            property={selectedAccommodation}
+            currency={currency}
+            onOpenPlanHolidayWithProperty={(prop) => {
+              setPreselectedPackage(null);
+              setPlanHolidayOpen(true);
+            }}
+            onSelectExperience={handleSelectExperience}
+            onSelectRelatedProperty={handleSelectAccommodationDetail}
+            onNavigateBackToDirectory={() => {
+              setActiveView('accommodation');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : activeView === 'packages' ? (
+          <PackagesDirectoryPage
+            currency={currency}
+            onSelectPackage={handleSelectPackageDetail}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : activeView === 'package-detail' && selectedPackage ? (
+          <PackageDetailPage
+            packageData={selectedPackage}
+            currency={currency}
+            onPlanHoliday={(pkg) => {
+              setPreselectedPackage(pkg);
+              setPlanHolidayOpen(true);
+            }}
+            onSelectExperience={handleSelectExperience}
+            onSelectRelatedPackage={(pkg) => {
+              setSelectedPackage(pkg);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateBackToPackages={() => {
+              setActiveView('packages');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : activeView === 'experiences' ? (
           <ExperiencesDirectoryPage
             onSelectExperience={handleSelectExperience}
             onOpenPlanHoliday={() => {
@@ -173,7 +274,9 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onSelectRelatedExperience={(expTitle) => {
-              const matched = ALL_EXPERIENCES.find(e => e.title.toLowerCase().includes(expTitle.toLowerCase()));
+              const matched = ALL_EXPERIENCES.find((e) =>
+                e.title.toLowerCase().includes(expTitle.toLowerCase())
+              );
               if (matched) {
                 handleSelectExperience(matched);
               } else {
@@ -231,8 +334,13 @@ export default function App() {
               }}
             />
 
-            {/* 3. Why Choose Outbound Holidays */}
-            <WhyChooseOutbound />
+            {/* 3. Why Plan With Outbound Holidays */}
+            <WhyChooseOutbound
+              onOpenPlanHoliday={() => {
+                setPreselectedPackage(null);
+                setPlanHolidayOpen(true);
+              }}
+            />
 
             {/* 4. Featured Experiences */}
             <FeaturedExperiences
@@ -243,7 +351,14 @@ export default function App() {
               }}
             />
 
-            {/* 5. Victoria Falls Travel Guide */}
+            {/* 5. Where to Stay in Victoria Falls */}
+            <WhereToStaySection
+              currency={currency}
+              onSelectProperty={handleSelectAccommodationDetail}
+              onExploreAllProperties={handleExploreAllAccommodations}
+            />
+
+            {/* 6. Victoria Falls Guide Preview */}
             <VicFallsGuide
               onOpenFullGuide={() => {
                 setActiveView('guide');
@@ -251,20 +366,20 @@ export default function App() {
               }}
             />
 
-            {/* 6. Featured Holiday Packages */}
+            {/* 7. Recommended Victoria Falls Holidays */}
             <FeaturedPackages
               currency={currency}
               onSelectPackage={handleSelectPackageDetail}
-              onPlanHolidayWithPackage={handlePlanHolidayWithPackage}
+              onExploreAllPackages={handleExploreAllPackages}
             />
 
-            {/* 7. Traveller Reviews */}
+            {/* 8. Genuine Testimonials */}
             <TravellerStories />
 
-            {/* 8. How We Help */}
+            {/* 9. How We Help */}
             <HowWeHelp />
 
-            {/* 9. Final Call To Action */}
+            {/* 10. Final Call To Action */}
             <FinalCtaBanner
               onOpenPlanHoliday={() => {
                 setPreselectedPackage(null);

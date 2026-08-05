@@ -21,7 +21,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>Local Specialist Selection</span>
+            <span>CAREFULLY SELECTED EXPERIENCES</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
@@ -29,7 +29,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
           </h2>
 
           <p className="text-base sm:text-lg text-gray-600 leading-relaxed font-light">
-            Discover a few of our most popular experiences, handpicked by our local Victoria Falls specialists.
+            Explore a small selection of memorable experiences our local team confidently recommends for first-time visitors, families, couples and safari travellers.
           </p>
         </div>
 

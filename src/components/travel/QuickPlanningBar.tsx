@@ -50,7 +50,7 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
             Start Planning Your Victoria Falls Holiday
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 mt-1">
-            Quick shortcut navigation to destination essentials and top activities
+            Find practical answers on when to visit, entry requirements, getting here and what to experience.
           </p>
         </div>
 
