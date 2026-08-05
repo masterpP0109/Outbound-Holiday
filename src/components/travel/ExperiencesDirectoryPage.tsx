@@ -16,6 +16,8 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
+
 interface ExperiencesDirectoryPageProps {
   onSelectExperience: (experience: Experience) => void;
   onOpenPlanHoliday: () => void;
@@ -54,37 +56,69 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
   return (
     <div className="bg-[#FAF9F6] min-h-screen text-[#1A2E35]">
       
-      {/* Directory Hero Banner */}
-      <section className="bg-[#0D2833] text-white py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#C9A66B_1px,transparent_1px)] [background-size:16px_16px]" />
+      {/* Directory Hero Banner with Centered Single-Column Layout */}
+      <section className="relative bg-[#0D2833] text-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#C9A66B]/30">
+        {/* Atmospheric Background Image Layer with Gradient Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={intentVicFallsIconicImg} 
+            alt="Victoria Falls Mosi-oa-Tunya backdrop" 
+            className="w-full h-full object-cover object-center scale-105 filter brightness-90 saturate-110"
+          />
+          {/* Subtle dark overlay gradient for high legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/90 via-[#0D2833]/80 to-[#0D2833]/90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-transparent to-[#0D2833]/70" />
+          <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#C9A66B_1px,transparent_1px)] [background-size:16px_16px]" />
+        </div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/20 border border-[#C9A66B]/40 text-[#E5C989] text-xs font-bold uppercase tracking-widest">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
+          
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0D2833]/80 backdrop-blur-md border border-[#C9A66B]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest shadow-lg">
             <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
             <span>Complete Victoria Falls Directory</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-4xl mx-auto leading-tight">
+          {/* Heading */}
+          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight drop-shadow-md max-w-3xl mx-auto">
             Victoria Falls Experience Library
           </h1>
 
-          <p className="text-base sm:text-lg text-gray-200 font-light max-w-2xl mx-auto leading-relaxed">
+          {/* Paragraph */}
+          <p className="text-base sm:text-lg text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-xs">
             Curated by local Victoria Falls specialists. Browse by interest, duration, and safari style to build your ideal Zimbabwe itinerary.
           </p>
 
           {/* Search Filter Bar */}
-          <div className="max-w-xl mx-auto relative pt-4">
+          <div className="max-w-2xl mx-auto relative pt-2">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search experiences (e.g. Helicopter, Safari, Sunset Cruise)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white text-gray-900 placeholder-gray-400 rounded-2xl py-3.5 pl-11 pr-4 text-sm shadow-xl focus:outline-none focus:ring-2 focus:ring-[#C9A66B]"
+                className="w-full bg-white/95 backdrop-blur-md text-gray-900 placeholder-gray-500 rounded-2xl py-4 pl-12 pr-4 text-sm shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#C9A66B] border border-white/20"
               />
-              <Search className="w-5 h-5 text-gray-400 absolute left-4 top-3.5" />
+              <Search className="w-5 h-5 text-gray-500 absolute left-4 top-4" />
             </div>
           </div>
+
+          {/* Trust Highlights */}
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-gray-200 font-medium">
+            <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-[#C9A66B]" />
+              <span>25+ Handpicked Activities</span>
+            </div>
+            <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-[#C9A66B]" />
+              <span>100% Local Guide Vetted</span>
+            </div>
+            <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-[#25D366]" />
+              <span>Instant WhatsApp Enquiry</span>
+            </div>
+          </div>
+
         </div>
       </section>
 

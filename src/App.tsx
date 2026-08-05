@@ -2,24 +2,21 @@ import React, { useState } from 'react';
 import { Currency, TravelPackage } from './types';
 import { Header } from './components/common/Header';
 import { TravelHero } from './components/travel/TravelHero';
-import { IntentCards } from './components/travel/IntentCards';
-import { MeetYourGuide } from './components/travel/MeetYourGuide';
+import { QuickPlanningBar } from './components/travel/QuickPlanningBar';
+import { WhyChooseOutbound } from './components/travel/WhyChooseOutbound';
 import { FeaturedExperiences } from './components/travel/FeaturedExperiences';
 import { ExperiencesDirectoryPage } from './components/travel/ExperiencesDirectoryPage';
 import { ExperienceDetailPage } from './components/travel/ExperienceDetailPage';
 import { Experience, getExperienceById, ALL_EXPERIENCES } from './data/experiencesData';
-import { BudgetSelector } from './components/travel/BudgetSelector';
 import { FeaturedPackages } from './components/travel/FeaturedPackages';
 import { TravellerStories } from './components/travel/TravellerStories';
-import { HowItWorks } from './components/travel/HowItWorks';
+import { HowWeHelp } from './components/travel/HowWeHelp';
 import { FaqSection } from './components/travel/FaqSection';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
 import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
 import { BomaExperiencePage } from './components/travel/BomaExperiencePage';
 import { BungeeExperiencePage } from './components/travel/BungeeExperiencePage';
-import { AboutUsView } from './components/travel/AboutUsView';
-import { ContactUsView } from './components/travel/ContactUsView';
 import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
 import { MobileStickyCta } from './components/common/MobileStickyCta';
 import { Newsletter } from './components/common/Newsletter';
@@ -213,7 +210,7 @@ export default function App() {
           />
         ) : (
           <div className="space-y-0">
-            {/* 1. Emotional Hero */}
+            {/* 1. Hero */}
             <TravelHero
               onOpenPlanHoliday={() => {
                 setPreselectedPackage(null);
@@ -222,21 +219,22 @@ export default function App() {
               onBrowsePackages={() => handleNavigateSection('travel-packages')}
             />
 
-            {/* 2. Choose Your Travel Intention */}
-            <IntentCards
-              onSelectIntent={() => {
-                setPlanHolidayOpen(true);
+            {/* 2. Quick Planning Bar */}
+            <QuickPlanningBar
+              onOpenGuide={() => {
+                setActiveView('guide');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onOpenExperiences={() => {
+                setActiveView('experiences');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
 
-            {/* 3. Meet Your Local Guide */}
-            <MeetYourGuide
-              onOpenConsultation={() => {
-                setPlanHolidayOpen(true);
-              }}
-            />
+            {/* 3. Why Choose Outbound Holidays */}
+            <WhyChooseOutbound />
 
-            {/* 4. Featured Experiences Section (Only 4 Featured Cards) */}
+            {/* 4. Featured Experiences */}
             <FeaturedExperiences
               onSelectExperience={handleSelectExperience}
               onExploreAll={() => {
@@ -245,45 +243,7 @@ export default function App() {
               }}
             />
 
-            {/* 5. Choose a Budget Style */}
-            <BudgetSelector
-              currency={currency}
-              onSelectBudgetStyle={() => {
-                setPlanHolidayOpen(true);
-              }}
-            />
-
-            {/* 6. Recommended Packages */}
-            <FeaturedPackages
-              currency={currency}
-              onSelectPackage={handleSelectPackageDetail}
-              onPlanHolidayWithPackage={handlePlanHolidayWithPackage}
-            />
-
-            {/* 7. Traveller Stories */}
-            <TravellerStories />
-
-            {/* 8. Simple 3-Step Planning Process */}
-            <HowItWorks
-              onStartPlanning={() => setPlanHolidayOpen(true)}
-            />
-
-            {/* 9. Questions & Answers (FAQ) */}
-            <div id="faqs">
-              <FaqSection
-                onOpenGuide={() => handleNavigateSection('travel-guide')}
-              />
-            </div>
-
-            {/* 10. Warm Final Conversion Banner */}
-            <FinalCtaBanner
-              onOpenPlanHoliday={() => {
-                setPreselectedPackage(null);
-                setPlanHolidayOpen(true);
-              }}
-            />
-
-            {/* Victoria Falls Comprehensive Insider Guide & Accommodations */}
+            {/* 5. Victoria Falls Travel Guide */}
             <VicFallsGuide
               onOpenFullGuide={() => {
                 setActiveView('guide');
@@ -291,13 +251,26 @@ export default function App() {
               }}
             />
 
-            {/* About Us & Promises (Linked from Footer) */}
-            <AboutUsView
-              onOpenPlanHoliday={() => setPlanHolidayOpen(true)}
+            {/* 6. Featured Holiday Packages */}
+            <FeaturedPackages
+              currency={currency}
+              onSelectPackage={handleSelectPackageDetail}
+              onPlanHolidayWithPackage={handlePlanHolidayWithPackage}
             />
 
-            {/* Contact Section */}
-            <ContactUsView />
+            {/* 7. Traveller Reviews */}
+            <TravellerStories />
+
+            {/* 8. How We Help */}
+            <HowWeHelp />
+
+            {/* 9. Final Call To Action */}
+            <FinalCtaBanner
+              onOpenPlanHoliday={() => {
+                setPreselectedPackage(null);
+                setPlanHolidayOpen(true);
+              }}
+            />
           </div>
         )}
 

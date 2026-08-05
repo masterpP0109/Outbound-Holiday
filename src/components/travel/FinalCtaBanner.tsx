@@ -1,5 +1,7 @@
 import React from 'react';
-import { MessageSquare, CalendarCheck, ShieldCheck, ArrowRight } from 'lucide-react';
+import { CalendarCheck, ShieldCheck, ArrowRight } from 'lucide-react';
+import { WhatsAppIcon } from '../common/WhatsAppButton';
+import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 interface FinalCtaBannerProps {
   onOpenPlanHoliday: () => void;
@@ -27,7 +29,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
             </span>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif text-white leading-tight">
-              You don’t need to have everything figured out.
+              Ready to Plan Your Victoria Falls Holiday?
             </h2>
 
             <p className="text-sm sm:text-lg text-white/90 leading-relaxed max-w-xl mx-auto">
@@ -45,12 +47,12 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
               </button>
 
               <a
-                href="https://wa.me/263771234567?text=Hi%20Outbound%20Holidays%2C%20I%20would%20like%20to%20plan%20a%20Victoria%20Falls%20trip."
+                href={getWhatsAppSpecialistUrl("Planning Victoria Falls Trip")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm px-7 py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <MessageSquare className="w-4 h-4" />
+                <WhatsAppIcon className="w-5 h-5 shrink-0" />
                 <span>Chat on WhatsApp</span>
               </a>
             </div>
@@ -66,3 +68,4 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
     </section>
   );
 };
+
