@@ -41,7 +41,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'Perfect for first-time visitors wanting to experience the absolute best of the Falls without the stress. Includes guided rainforest walks, a serene sunset cruise on the upper Zambezi, and seamless transfers.',
     priceUSD: 650,
     duration: '3 Days / 2 Nights',
-    imageUrl: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: '../assets/images/intent_vic_falls_iconic_1785490034846.jpg',
     highlights: [
       'Guided Rainforest Walk at Mosi-oa-Tunya National Park',
       'Luxury Zambezi Sunset Cruise with complimentary drinks & tapas',
@@ -84,7 +84,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'A carefully crafted luxury weekend designed to celebrate life’s most memorable and significant moments. Private riverfront villa accommodations, helicopter flight over the mist, and private candlelit dining.',
     priceUSD: 1850,
     duration: '4 Days / 3 Nights',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: '../assets/images/intent_romantic_dinner_zim_1785489715667.jpg',
     highlights: [
       '13-minute "Flight of Angels" helicopter experience over Victoria Falls',
       'Private riverfront suite with plunge pool at a luxury river lodge',
@@ -132,7 +132,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'Kid-friendly activities, spacious family accommodation, and unforgettable Zambezi wildlife encounters. Includes lion sanctuary interactions, crocodile park, game drives, and gentle canopy tours.',
     priceUSD: 1200,
     duration: '4 Days / 3 Nights',
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: '../assets/images/family_wildlife_safari_1785488525464.jpg',
     highlights: [
       'Family Safari Game Drive in Zambezi National Park',
       'Interactive Wildlife Conservation & Elephant Experience',
@@ -180,7 +180,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'The ultimate Zimbabwean double-bill. Experience 2 nights at Victoria Falls followed by 2 nights inside Hwange National Park, home to over 40,000 free-roaming elephants.',
     priceUSD: 2150,
     duration: '5 Days / 4 Nights',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: '../assets/images/family_wildlife_safari_1785488525464.jpg',
     highlights: [
       'Full Victoria Falls tour & Zambezi sunset cruise',
       '2 Nights at Hwange Safari Lodge with waterhole viewing deck',

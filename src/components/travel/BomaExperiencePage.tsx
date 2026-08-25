@@ -131,12 +131,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
       desc: "Cross the Botswana border for a full-day river safari and 4x4 game drive amongst elephant herds.",
       price: "From US$185 pp",
       duration: "Full Day",
-      image: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&q=80&w=800"
-    }
-  ];
-
-  return (
-    <div className="bg-[#FAF9F6] text-[#1A2E35] min-h-screen selection:bg-[#C9A66B]/30 selection:text-[#0B5E8E]">
+      image: chobeImg
       
       {/* 1. Sub-Header Navigation Bar */}
       <div className="sticky top-[73px] z-40 bg-[#0D2833] text-white border-b border-[#C9A66B]/30 py-2.5 px-4 sm:px-6 lg:px-8 shadow-md">

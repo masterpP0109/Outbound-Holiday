@@ -40,6 +40,22 @@ import intentGorgeHelicopterImg from '../assets/images/intent_gorge_helicopter_z
 import rhinoTrackingImg from '../assets/images/rhino_tracking_drive_1785497819922.jpg';
 import familySafariImg from '../assets/images/family_wildlife_safari_1785488525464.jpg';
 import craftMarketImg from '../assets/images/intent_craft_market_zim_1785489731195.jpg';
+import gameDriveImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+import bungeeImg from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import chobeImg from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+import elephantImg from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+import jetBoatImg from '../assets/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
+import simunyeImg from '../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
+import spaImg from '../assets/Experiences/Spa Treatments/IMG_0375.PNG';
+import standardCruiseImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import gorgeSwingImg from '../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+import zipLineImg from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+import raftingImg from '../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
+import bomaDinnerImg from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+import heli1Img from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import standardCruiseImg2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
 
 export const ALL_EXPERIENCES: Experience[] = [
   {
@@ -53,12 +69,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2.5 Hours',
     fromPrice: 'From US$55',
     priceAmount: 55,
-    featuredImage: intentVicFallsIconicImg,
-    galleryImages: [
-      intentVicFallsIconicImg,
-      'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
-    ],
+    featuredImage: guidedTourImg,
+    galleryImages: [guidedTourImg, guidedTourImg2],
     highlights: [
       'Visit all 16 rainforest viewpoints opposite the Falls',
       'Expert local guide with deep geological & historical knowledge',
@@ -100,11 +112,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$85',
     priceAmount: 85,
     featuredImage: footerZambeziDuskImg,
-    galleryImages: [
-      footerZambeziDuskImg,
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&q=80&w=800'
-    ],
+    galleryImages: [standardCruiseImg, standardCruiseImg2, jetBoatImg],
     highlights: [
       'Complimentary top-shelf drinks, wines, local beers & gin bar',
       'Freshly prepared chef’s gourmet snack platters',
@@ -140,12 +148,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: 'Full Day (approx 9.5 Hours)',
     fromPrice: 'From US$185',
     priceAmount: 185,
-    featuredImage: familySafariImg,
-    galleryImages: [
-      familySafariImg,
-      'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
-    ],
+    featuredImage: chobeImg,
+    galleryImages: [chobeImg, familySafariImg],
     highlights: [
       'Morning boat cruise along the Chobe Riverfront',
       'Substantial lodge lunch buffet included',
@@ -184,7 +188,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     featuredImage: intentGorgeHelicopterImg,
     galleryImages: [
       intentGorgeHelicopterImg,
-      'https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&q=80&w=800'
+      heli1Img
     ],
     highlights: [
       '360-degree aerial views of Victoria Falls & spray column',
@@ -244,8 +248,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '1.5 - 2 Hours',
     fromPrice: 'From US$25',
     priceAmount: 25,
-    featuredImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: gorgeSwingImg,
+    galleryImages: [gorgeSwingImg],
     highlights: ['Breathtaking 110m gorge overlook', 'A la carte lunch and dinner menu', 'Direct view of the Vic Falls Bridge'],
     whatsIncluded: ['Table reservation', 'Panoramic views'],
     goodToKnow: ['Advance reservations strongly advised during peak lunch hours.'],
@@ -282,8 +286,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '3 Hours',
     fromPrice: 'From US$75',
     priceAmount: 75,
-    featuredImage: familySafariImg,
-    galleryImages: [familySafariImg],
+    featuredImage: gameDriveImg,
+    galleryImages: [gameDriveImg, familySafariImg],
     highlights: ['Open-sided 4x4 safari vehicle', 'Search for Big Four wildlife', 'Morning coffee or afternoon sundowner in the bush'],
     whatsIncluded: ['Professional safari guide', 'Hotel transfers', 'Snacks & drinks'],
     goodToKnow: ['National park entry fee ($20) is extra.'],
@@ -301,8 +305,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2.5 Hours',
     fromPrice: 'From US$120',
     priceAmount: 120,
-    featuredImage: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: elephantImg,
+    galleryImages: [elephantImg],
     highlights: ['Hands-on feeding session', 'Educational talk by senior wildlife caretakers', 'Photography opportunity with elephants'],
     whatsIncluded: ['Sanctuary entry', 'Guided interaction', 'Refreshments'],
     goodToKnow: ['Strict ethical sanctuary guidelines strictly enforced.'],
@@ -320,8 +324,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: 'Full Day (8 Hours)',
     fromPrice: 'From US$130',
     priceAmount: 130,
-    featuredImage: 'https://images.unsplash.com/photo-1530866495561-507c9faab2ed?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1530866495561-507c9faab2ed?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: raftingImg,
+    galleryImages: [raftingImg],
     highlights: ['Grade 3 to Grade 5 rapid navigation', 'Hike out of Batoka Gorge', 'Cold beers and riverside lunch included'],
     whatsIncluded: ['Full equipment hire & lifejackets', 'Professional river guides', 'Lunch & beverages', 'Hike out assistance'],
     goodToKnow: ['Requires reasonable fitness for the steep gorge hike out.'],
@@ -339,8 +343,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2 Hours',
     fromPrice: 'From US$95',
     priceAmount: 95,
-    featuredImage: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: gorgeSwingImg,
+    galleryImages: [gorgeSwingImg],
     highlights: ['70m sheer vertical freefall', 'Speeds up to 120 km/h', 'Tandem jumps available for couples'],
     whatsIncluded: ['Safety harness & equipment', 'Certified riggers', 'Hotel transfers'],
     goodToKnow: ['Video and photo packages available for purchase on site.'],
@@ -361,12 +365,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     location: "Victoria Falls Bridge (No-Man's Land)",
     fromPrice: 'From US$160',
     priceAmount: 160,
-    featuredImage: 'https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=1200',
-    galleryImages: [
-      'https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800'
-    ],
+    featuredImage: bungeeImg,
+    galleryImages: [bungeeImg, gorgeSwingImg, gameDriveImg],
     highlights: [
       '111m sheer vertical plunge over the Zambezi River rapids',
       'Positioned in the historic "No-Man\'s Land" on the 1905 Victoria Falls Bridge',
@@ -400,7 +400,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "The Historic Bridge Approach",
         description: "Walk out onto the famous 1905 steel Victoria Falls Railway Bridge spanning the Batoka Gorge. Positioned in the neutral 'No-Man's Land' between Zimbabwe and Zambia, you'll feel the rush of wind and catch your first glimpse of the roaring river 111 meters below.",
         highlight: "Free bridge pass provided at border control—no visa needed!",
-        image: "https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=800"
+        image: bungeeImg
       },
       {
         stepNumber: 2,
@@ -408,7 +408,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "Safety Briefing & Precision Harnessing",
         description: "Meet your team of certified master riggers at the bridge jump station. You will be weighed, fitted with specialized padded ankle harnesses, and backed up with a heavy-duty climbing body harness for dual-redundant safety.",
         highlight: "Operated with a 100% safety record over 500,000+ jumps.",
-        image: "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800"
+        image: bungeeImg
       },
       {
         stepNumber: 3,
@@ -416,7 +416,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "The Edge Walk & Gantry Launchpad",
         description: "Step onto the wooden jump gantry suspended directly over the abyss. With the spray of Mosi-oa-Tunya drifting past and the Zambezi rapids surging under your feet, the jump master guides you to the threshold.",
         highlight: "Breathtaking 360° panoramic view of Batoka Canyon.",
-        image: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800"
+        image: gorgeSwingImg
       },
       {
         stepNumber: 4,
@@ -424,7 +424,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "5... 4... 3... 2... 1... BUNGEE!",
         description: "Leap forward into pure weightlessness! Experience 4 seconds of exhilarating freefall reaching terminal speeds over 120 km/h before the custom rubber bungee cord smoothly catches you in a series of gentle, soaring bounces.",
         highlight: "4 seconds of sheer vertical zero-gravity freefall.",
-        image: "https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=800"
+        image: bungeeImg
       },
       {
         stepNumber: 5,
@@ -432,7 +432,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "Winch Recovery & Certificate of Bravery",
         description: "After the rebounds settle, a winch operator gently lowers a recovery line to hoist you smoothly back up to the bridge deck. Celebrate with fellow jumpers, receive your official Certificate of Bravery, and view your HD video footage.",
         highlight: "Official Certificate of Bravery & HD video memories.",
-        image: "https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&q=80&w=800"
+        image: bungeeImg
       }
     ],
     faqs: [
@@ -462,8 +462,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '1.5 Hours',
     fromPrice: 'From US$75',
     priceAmount: 75,
-    featuredImage: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: zipLineImg,
+    galleryImages: [zipLineImg],
     highlights: ['425m cable length', 'Speeds over 100 km/h', 'Panoramic canyon views'],
     whatsIncluded: ['Full safety harness', 'Instruction', 'Hotel transfer'],
     goodToKnow: ['Suitable for ages 6 and up.'],
@@ -481,8 +481,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '1.5 Hours',
     fromPrice: 'From US$55',
     priceAmount: 55,
-    featuredImage: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: zipLineImg,
+    galleryImages: [zipLineImg],
     highlights: ['Horizontal flight position', 'Breathtaking gorge drop views', 'Gentle landing'],
     whatsIncluded: ['Harness & safety brief', 'Hotel transfers'],
     goodToKnow: ['Great warm-up activity before the Gorge Swing.'],
@@ -500,8 +500,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2.5 Hours',
     fromPrice: 'From US$120',
     priceAmount: 120,
-    featuredImage: 'https://images.unsplash.com/photo-1530866495561-507c9faab2ed?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1530866495561-507c9faab2ed?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: jetBoatImg,
+    galleryImages: [jetBoatImg],
     highlights: ['Twin V8 jet propulsion', '360 degree water spins', 'Navigate rapids at 80 km/h'],
     whatsIncluded: ['Jet boat ride', 'Lifejacket & helmet', 'Lift transfer into gorge'],
     goodToKnow: ['You WILL get completely soaked—wear swimwear.'],
@@ -519,8 +519,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2.5 Hours',
     fromPrice: 'From US$65',
     priceAmount: 65,
-    featuredImage: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: zipLineImg,
+    galleryImages: [zipLineImg],
     highlights: ['9 zipline rope slides', 'Skywalk rope bridges', 'Ecological nature commentary'],
     whatsIncluded: ['Safety gear & helmet', '2 guide escorts', 'Hotel transfers'],
     goodToKnow: ['Suitable for all fitness levels from age 6 upwards.'],
@@ -538,8 +538,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2 Hours',
     fromPrice: 'From US$110',
     priceAmount: 110,
-    featuredImage: footerZambeziDuskImg,
-    galleryImages: [footerZambeziDuskImg],
+    featuredImage: standardCruiseImg,
+    galleryImages: [standardCruiseImg, footerZambeziDuskImg],
     highlights: ['Maximum 28 guests for intimate luxury', 'Chef tapas menu', 'Premium international cellar bar'],
     whatsIncluded: ['Tapas & drinks', 'Luxury pontoon cruise', 'Transfers'],
     goodToKnow: ['Departs daily at 4:00 PM.'],
@@ -576,8 +576,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: 'Half Day (3.5 Hours)',
     fromPrice: 'From US$140',
     priceAmount: 140,
-    featuredImage: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: chobeImg,
+    galleryImages: [chobeImg],
     highlights: ['Tackle tigerfish up to 10kg', 'Pro river captain & fast boat', 'Catch & release practice'],
     whatsIncluded: ['Fishing tackle & bait', 'Cold drinks & beers', 'Boat captain'],
     goodToKnow: ['Best season is Sept through March during warmer water temperatures.'],
@@ -595,8 +595,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: 'Half Day / Full Day',
     fromPrice: 'From US$115',
     priceAmount: 115,
-    featuredImage: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800',
-    galleryImages: ['https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800'],
+    featuredImage: chobeImg,
+    galleryImages: [chobeImg],
     highlights: ['Silent paddling in stable two-person canoes', 'Riverside picnic lunch', 'Unobstructed wildlife photos'],
     whatsIncluded: ['Canoe equipment', 'River guide', 'Picnic lunch & drinks'],
     goodToKnow: ['No previous canoeing experience required.'],
@@ -678,6 +678,64 @@ export const ALL_EXPERIENCES: Experience[] = [
     goodToKnow: ['Check Zambia visa requirements before departure.'],
     faqs: [{ q: 'Is the KAZA Univisa accepted?', a: 'Yes, covers both Zimbabwe and Zambia.' }],
     relatedIds: ['guided-tour-falls', 'chobe-day-safari']
+  },
+  {
+    id: 'simunye-theatre-show',
+    slug: 'simunye-theatre-show',
+    title: 'Simunye – Spirit of Africa Theatre Show',
+    categories: ['featured', 'first-visit', 'culture'],
+    shortDescription: 'High-energy 1-hour theatrical celebration of African culture featuring traditional performers, drummers, and dancers.',
+    fullOverview: 'Experience the vibrant Spirit of Africa at Simunye Theatre located at Elephant Walk shopping center. A mesmerizing 60-minute show featuring accomplished traditional performers, live djembe drumming, energetic dance performances, and powerful storytelling that showcases the rich cultural heritage of Africa.',
+    whyWeRecommend: 'Spectacular professional theatrical production perfect for all ages. Immersive, entertaining, and a genuine celebration of African artistry and tradition.',
+    duration: '1 Hour (Check-in 19:30, Show 20:00-21:00)',
+    location: 'Simunye Theatre @ Elephant Walk Shopping Centre',
+    fromPrice: 'From US$50',
+    priceAmount: 50,
+    featuredImage: simunyeImg,
+    galleryImages: [simunyeImg],
+    highlights: [
+      'Professional theatrical production with live performers',
+      'Traditional African dancers in authentic cultural costumes',
+      'Live djembe drumming & rhythmic performances',
+      'Intimate 195-seat theatre in round setting for 360° viewing',
+      'Engaging storytelling celebrating African heritage'
+    ],
+    whatsIncluded: [
+      'Theatre admission & reserved seating',
+      'Professional theatrical performance',
+      'Evening cultural entertainment'
+    ],
+    whatsExcluded: [
+      'Hotel transfers (can be arranged for additional fee)',
+      'Beverages & refreshments (available for purchase at venue)'
+    ],
+    goodToKnow: [
+      'All ages welcome; children 16 and under receive 50% discount on admission',
+      'Arrive 15-20 minutes early for check-in and venue orientation',
+      'Comfortable shoes recommended as seating may vary',
+      'Photography allowed with performer permission',
+      'Evening performance in air-conditioned theatre'
+    ],
+    localExpertTip: "Book your tickets in advance during peak season (June-August). The theatre fills quickly as it's a favorite with families and tour groups seeking authentic cultural entertainment.",
+    faqs: [
+      {
+        q: 'How long is the show?',
+        a: 'The theatrical performance runs approximately 60 minutes without intermission, with check-in beginning at 19:30 and the show starting at 20:00.'
+      },
+      {
+        q: 'Is the show suitable for children?',
+        a: 'Yes! Simunye is family-friendly and all ages are welcome. Children find the vibrant performances, music, and dancing particularly engaging.'
+      },
+      {
+        q: 'Can I get dinner before the show?',
+        a: 'The Elephant Walk shopping centre has several dining options available. We recommend arriving early to enjoy a meal before the 20:00 performance start time.'
+      },
+      {
+        q: 'Do I need to book in advance?',
+        a: 'We strongly recommend advance booking, especially during peak tourist seasons. Walk-up tickets are subject to availability.'
+      }
+    ],
+    relatedIds: ['boma-dinner-show', 'local-village-tour', 'art-galleries-markets']
   }
 ];
 

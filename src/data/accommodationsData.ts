@@ -72,14 +72,12 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '4.5 km (10-minute shuttle)',
     airportDistance: '20 km (20-minute transfer)',
     priceFromUSD: 280,
-    heroImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1600',
+    heroImage: '../assets/images/zimbabwean_family_safari_tour_1785488788507.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&q=80&w=1200'
+      '../assets/images/family_wildlife_safari_1785488525464.jpg',
+      '../assets/images/zimbabwean_family_safari_tour_1785488788507.jpg',
+      '../assets/images/intent_family_resort_zim_1785489699263.jpg',
+      '../assets/images/intent_vic_falls_iconic_1785490034846.jpg'
     ],
     tagline: 'Perched high on a natural plateau overlooking an active wildlife waterhole.',
     shortDescription: 'Unrivalled sunset views over the African bushveld, where elephants, kudu and marabou storks gather below your balcony at the on-site waterhole.',
@@ -162,13 +160,11 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '800 metres (8-minute walk)',
     airportDistance: '21 km (20-minute transfer)',
     priceFromUSD: 295,
-    heroImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1600',
+    heroImage: '../assets/images/intent_vic_falls_iconic_1785490034846.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1200'
+      '../assets/images/intent_vic_falls_iconic_1785490034846.jpg',
+      '../assets/images/footer_zambezi_dusk_1785494130616.jpg',
+      '../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg'
     ],
     tagline: 'The closest hotel to Victoria Falls, where mist rises over lush manicured lawns.',
     shortDescription: 'A refined boutique hotel located right on the edge of Victoria Falls National Park. Walk to the rainforest in minutes while warthogs graze peacefully outside your room.',
