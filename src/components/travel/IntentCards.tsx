@@ -6,7 +6,7 @@ import intentFamilyResortImg from '../../assets/images/intent_family_resort_zim_
 import intentRomanticDinnerImg from '../../assets/images/intent_romantic_dinner_zim_1785489715667.jpg';
 import intentCraftMarketImg from '../../assets/images/intent_craft_market_zim_1785489731195.jpg';
 import intentBomaCelebrationImg from '../../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
-import intentGorgeHelicopterImg from '../../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
+import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 
 interface IntentCardsProps {
   onSelectIntent: (intentKey: string) => void;
@@ -65,7 +65,7 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Your Holiday, Expertly Planned',
       description: 'Looking for something unique? We\'ll create a personalised itinerary tailored to your interests, pace and budget, with expert advice every step of the way.',
       ctaText: 'Start Planning',
-      imageUrl: intentGorgeHelicopterImg,
+      imageUrl: heli1Img,
       fallbackUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800',
     },
   ];

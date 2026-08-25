@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Experience, getExperienceById } from '../../data/experiencesData';
 import { BungeeExperiencePage } from './BungeeExperiencePage';
+import { GalleryLightbox } from './GalleryLightbox';
 import { WhatsAppEnquiryButton, WhatsAppSpecialistCTA, WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 import { 

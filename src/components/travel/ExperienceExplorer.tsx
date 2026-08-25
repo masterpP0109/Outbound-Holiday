@@ -4,7 +4,7 @@ import { Compass, Shield, Trees, Heart, Utensils, ArrowRight } from 'lucide-reac
 import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
 import footerZambeziDuskImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
 import intentBomaImg from '../../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
-import intentGorgeHelicopterImg from '../../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
+import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 import rhinoTrackingImg from '../../assets/images/rhino_tracking_drive_1785497819922.jpg';
 
 interface ExperienceExplorerProps {
@@ -150,7 +150,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '15 Mins',
           advisorTip: '🚁 The ultimate panoramic view of the full 1,700m water curtain.',
           whyWeRecommend: 'The only way to comprehend the sheer scale of Mosi-oa-Tunya. Unmatched aerial photography opportunities.',
-          imageUrl: intentGorgeHelicopterImg
+          imageUrl: heli1Img
         },
         { 
           title: 'Gorge Swing & Zip Line', 

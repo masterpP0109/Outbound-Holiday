@@ -21,6 +21,14 @@ import {
   Compass,
   FileCheck
 } from 'lucide-react';
+import { GalleryLightbox } from './GalleryLightbox';
+import bungeeImg from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import bungeeImg2 from '../../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
+import bungeeImg3 from '../../assets/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
+import bungeeImg4 from '../../assets/Experiences/Bungee Jump_/1-1.jpg';
+import bungeeImg5 from '../../assets/Experiences/Bungee Jump_/2-8.jpg';
+import bungeeImg6 from '../../assets/Experiences/Bungee Jump_/3 (1).jpg';
+import bungeeImg7 from '../../assets/Experiences/Bungee Jump_/Bungee-Fact-Sheet-2024_page-0001.jpg';
 import { Experience, ALL_EXPERIENCES, getExperienceById } from '../../data/experiencesData';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 
@@ -43,6 +51,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
   const [includeTransfers, setIncludeTransfers] = useState(true);
   const [includeVideoPackage, setIncludeVideoPackage] = useState(false);
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1, 2]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     document.title = "Victoria Falls Bridge Bungee Jump | Premium Editorial Experience | Outbound Holidays";
@@ -75,7 +84,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
       title: "The Historic Bridge Approach",
       description: "Walk out onto the famous 1905 steel Victoria Falls Railway Bridge spanning the Batoka Gorge. Positioned in the neutral 'No-Man's Land' between Zimbabwe and Zambia, you'll feel the rush of wind and catch your first glimpse of the roaring river 111 meters below.",
       highlight: "Free bridge pass provided at border control—no visa needed!",
-      image: "https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=800"
+      image: bungeeImg2
     },
     {
       stepNumber: 2,
@@ -83,7 +92,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
       title: "Safety Briefing & Precision Harnessing",
       description: "Meet your team of certified master riggers at the bridge jump station. You will be weighed, fitted with specialized padded ankle harnesses, and backed up with a heavy-duty climbing body harness for dual-redundant safety.",
       highlight: "Operated with a 100% safety record over 500,000+ jumps.",
-      image: "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800"
+      image: bungeeImg3
     },
     {
       stepNumber: 3,
@@ -91,7 +100,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
       title: "The Edge Walk & Gantry Launchpad",
       description: "Step onto the wooden jump gantry suspended directly over the abyss. With the spray of Mosi-oa-Tunya drifting past and the Zambezi rapids surging under your feet, the jump master guides you to the threshold.",
       highlight: "Breathtaking 360° panoramic view of Batoka Canyon.",
-      image: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800"
+      image: bungeeImg4
     },
     {
       stepNumber: 4,
@@ -99,7 +108,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
       title: "5... 4... 3... 2... 1... BUNGEE!",
       description: "Leap forward into pure weightlessness! Experience 4 seconds of exhilarating freefall reaching terminal speeds over 120 km/h before the custom rubber bungee cord smoothly catches you in a series of gentle, soaring bounces.",
       highlight: "4 seconds of sheer vertical zero-gravity freefall.",
-      image: "https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=800"
+      image: bungeeImg5
     },
     {
       stepNumber: 5,
@@ -107,7 +116,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
       title: "Winch Recovery & Certificate of Bravery",
       description: "After the rebounds settle, a winch operator gently lowers a recovery line to hoist you smoothly back up to the bridge deck. Celebrate with fellow jumpers, receive your official Certificate of Bravery, and view your HD video footage.",
       highlight: "Official Certificate of Bravery & HD video memories.",
-      image: "https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&q=80&w=800"
+      image: bungeeImg6
     }
   ];
 
@@ -187,7 +196,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
         {/* Hero Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=1600" 
+            src={bungeeImg} 
             alt="Bungee jumper launching off the Victoria Falls Bridge above Batoka Gorge"
             className="w-full h-full object-cover object-center filter brightness-90 contrast-105 scale-105"
           />
@@ -402,11 +411,15 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  "https://images.unsplash.com/photo-1519074069444-1ba4e2402633?auto=format&fit=crop&q=80&w=800",
-                  "https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=800",
-                  "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800"
+                  bungeeImg2,
+                  bungeeImg3,
+                  bungeeImg4
                 ].map((imgUrl, idx) => (
-                  <div key={idx} className="h-52 rounded-2xl overflow-hidden border border-gray-200 shadow-xs">
+                  <div 
+                    key={idx} 
+                    className="h-52 rounded-2xl overflow-hidden border border-gray-200 shadow-xs cursor-pointer"
+                    onClick={() => setLightboxIndex(idx)}
+                  >
                     <img 
                       src={imgUrl} 
                       alt={`Victoria Falls bungee gallery ${idx + 1}`} 
@@ -414,6 +427,14 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                     />
                   </div>
                 ))}
+              </div>
+              {lightboxIndex !== null && (
+                <GalleryLightbox
+                  images={[bungeeImg2, bungeeImg3, bungeeImg4]}
+                  initialIndex={lightboxIndex}
+                  onClose={() => setLightboxIndex(null)}
+                />
+              )}
               </div>
             </section>
 

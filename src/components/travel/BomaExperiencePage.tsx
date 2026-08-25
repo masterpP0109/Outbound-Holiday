@@ -31,13 +31,14 @@ import {
 import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
 import bomaDinnerImg2 from '../../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
 import bomaDinnerImg3 from '../../assets/Experiences/Boma Dinner_/IMG_0366.PNG';
-import bomaDinnerImg4 from '../../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
-import bomaDinnerImg5 from '../../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
-import bomaDinnerImg6 from '../../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
-import bomaDinnerImg7 from '../../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
+import bomaDinnerImg4 from '../../assets/Experiences/Boma Dinner_/Boma prepping on the fire.webp';
+import bomaDinnerImg5 from '../../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
+import bomaDinnerImg6 from '../../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
+import bomaDinnerImg7 from '../../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
+import bomaDinnerImg8 from '../../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
 import footerZambeziDuskImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
 import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
-import intentGorgeHelicopterImg from '../../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
+import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 
 interface BomaExperiencePageProps {
@@ -131,7 +132,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
       desc: "Soar above the 1,700m wide sheet of falling water for an aerial view of Batoka Gorge.",
       price: "From US$150 pp",
       duration: "15 Mins",
-      image: intentGorgeHelicopterImg
+      image: heli1Img
     },
     {
       title: "Chobe National Park Day Trip",

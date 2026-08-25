@@ -35,12 +35,17 @@ export interface Experience {
 
 import intentVicFallsIconicImg from '../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
 import footerZambeziDuskImg from '../assets/images/footer_zambezi_dusk_1785494130616.jpg';
-import intentGorgeHelicopterImg from '../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
 import rhinoTrackingImg from '../assets/images/rhino_tracking_drive_1785497819922.jpg';
 import familySafariImg from '../assets/images/family_wildlife_safari_1785488525464.jpg';
 import craftMarketImg from '../assets/images/intent_craft_market_zim_1785489731195.jpg';
 import gameDriveImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 import bungeeImg from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import bungeeImg2 from '../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
+import bungeeImg3 from '../assets/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
+import bungeeImg4 from '../assets/Experiences/Bungee Jump_/1-1.jpg';
+import bungeeImg5 from '../assets/Experiences/Bungee Jump_/2-8.jpg';
+import bungeeImg6 from '../assets/Experiences/Bungee Jump_/3 (1).jpg';
+import bungeeImg7 from '../assets/Experiences/Bungee Jump_/Bungee-Fact-Sheet-2024_page-0001.jpg';
 import chobeImg from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 import elephantImg from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
 import jetBoatImg from '../assets/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
@@ -53,13 +58,25 @@ import raftingImg from '../assets/Experiences/White Water Rafting_/whitewater-ra
 import bomaDinnerImg from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
 import bomaDinnerImg2 from '../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
 import bomaDinnerImg3 from '../assets/Experiences/Boma Dinner_/IMG_0366.PNG';
-import bomaDinnerImg4 from '../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
+import bomaDinnerImg4 from '../assets/Experiences/Boma Dinner_/Boma prepping on the fire.webp';
 import bomaDinnerImg5 from '../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
 import bomaDinnerImg6 from '../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
 import bomaDinnerImg7 from '../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
 import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+import guidedTourImg3 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
+import guidedTourImg4 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
+import guidedTourImg5 from '../assets/Experiences/Guided Tour of the Falls_/5-4.jpg';
+import guidedTourImg6 from '../assets/Experiences/Guided Tour of the Falls_/7-3.jpg';
+import guidedTourImg7 from '../assets/Experiences/Guided Tour of the Falls_/8-2.jpg';
+
 import heli1Img from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import heli2Img from '../assets/Experiences/Flight of Angels/Heli-8-scaled.jpg';
+import heli3Img from '../assets/Experiences/Flight of Angels/Heli-Shoot-7102511.jpg';
+import heli4Img from '../assets/Experiences/Flight of Angels/Heli-Shoot-7102512.jpg';
+import heli5Img from '../assets/Experiences/Flight of Angels/3-8.jpg';
+import heli6Img from '../assets/Experiences/Flight of Angels/9-4.jpg';
+import heli7Img from '../assets/Experiences/Flight of Angels/Helicopter-Flights-Fact-Sheet-2024_page-0011.jpg';
 import standardCruiseImg2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
 
 export const ALL_EXPERIENCES: Experience[] = [
@@ -75,7 +92,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$55',
     priceAmount: 55,
     featuredImage: guidedTourImg,
-    galleryImages: [guidedTourImg, guidedTourImg2],
+    galleryImages: [guidedTourImg, guidedTourImg2, guidedTourImg3, guidedTourImg4, guidedTourImg5, guidedTourImg6, guidedTourImg7, guidedTourImg8],
     highlights: [
       'Visit all 16 rainforest viewpoints opposite the Falls',
       'Expert local guide with deep geological & historical knowledge',
@@ -190,11 +207,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '15 Mins / 22 Mins',
     fromPrice: 'From US$150',
     priceAmount: 150,
-    featuredImage: intentGorgeHelicopterImg,
-    galleryImages: [
-      intentGorgeHelicopterImg,
-      heli1Img
-    ],
+    featuredImage: heli1Img,
+    galleryImages: [heli1Img, heli2Img, heli3Img, heli4Img, heli5Img, heli6Img],
     highlights: [
       '360-degree aerial views of Victoria Falls & spray column',
       'Bank over the zigzagging basalt Batoka Gorge',
@@ -371,7 +385,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$160',
     priceAmount: 160,
     featuredImage: bungeeImg,
-    galleryImages: [bungeeImg, gorgeSwingImg, gameDriveImg],
+    galleryImages: [bungeeImg, bungeeImg2, bungeeImg3, bungeeImg4, bungeeImg5, bungeeImg6],
     highlights: [
       '111m sheer vertical plunge over the Zambezi River rapids',
       'Positioned in the historic "No-Man\'s Land" on the 1905 Victoria Falls Bridge',
@@ -413,7 +427,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "Safety Briefing & Precision Harnessing",
         description: "Meet your team of certified master riggers at the bridge jump station. You will be weighed, fitted with specialized padded ankle harnesses, and backed up with a heavy-duty climbing body harness for dual-redundant safety.",
         highlight: "Operated with a 100% safety record over 500,000+ jumps.",
-        image: bungeeImg
+        image: bungeeImg2
       },
       {
         stepNumber: 3,
@@ -421,7 +435,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "The Edge Walk & Gantry Launchpad",
         description: "Step onto the wooden jump gantry suspended directly over the abyss. With the spray of Mosi-oa-Tunya drifting past and the Zambezi rapids surging under your feet, the jump master guides you to the threshold.",
         highlight: "Breathtaking 360° panoramic view of Batoka Canyon.",
-        image: gorgeSwingImg
+        image: bungeeImg3
       },
       {
         stepNumber: 4,
@@ -429,7 +443,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "5... 4... 3... 2... 1... BUNGEE!",
         description: "Leap forward into pure weightlessness! Experience 4 seconds of exhilarating freefall reaching terminal speeds over 120 km/h before the custom rubber bungee cord smoothly catches you in a series of gentle, soaring bounces.",
         highlight: "4 seconds of sheer vertical zero-gravity freefall.",
-        image: bungeeImg
+        image: bungeeImg4
       },
       {
         stepNumber: 5,
@@ -437,7 +451,7 @@ export const ALL_EXPERIENCES: Experience[] = [
         title: "Winch Recovery & Certificate of Bravery",
         description: "After the rebounds settle, a winch operator gently lowers a recovery line to hoist you smoothly back up to the bridge deck. Celebrate with fellow jumpers, receive your official Certificate of Bravery, and view your HD video footage.",
         highlight: "Official Certificate of Bravery & HD video memories.",
-        image: bungeeImg
+        image: bungeeImg5
       }
     ],
     faqs: [
