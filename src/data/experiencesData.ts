@@ -35,7 +35,6 @@ export interface Experience {
 
 import intentVicFallsIconicImg from '../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
 import footerZambeziDuskImg from '../assets/images/footer_zambezi_dusk_1785494130616.jpg';
-import intentBomaImg from '../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
 import intentGorgeHelicopterImg from '../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
 import rhinoTrackingImg from '../assets/images/rhino_tracking_drive_1785497819922.jpg';
 import familySafariImg from '../assets/images/family_wildlife_safari_1785488525464.jpg';
@@ -52,6 +51,12 @@ import gorgeSwingImg from '../assets/Experiences/Gorge Swing_/Bridge-Swing-3-sca
 import zipLineImg from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
 import raftingImg from '../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
 import bomaDinnerImg from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import bomaDinnerImg2 from '../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
+import bomaDinnerImg3 from '../assets/Experiences/Boma Dinner_/IMG_0366.PNG';
+import bomaDinnerImg4 from '../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
+import bomaDinnerImg5 from '../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
+import bomaDinnerImg6 from '../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
+import bomaDinnerImg7 from '../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
 import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
 import heli1Img from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
@@ -224,8 +229,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '3 Hours',
     fromPrice: 'From US$55',
     priceAmount: 55,
-    featuredImage: intentBomaImg,
-    galleryImages: [intentBomaImg],
+    featuredImage: bomaDinnerImg,
+    galleryImages: [bomaDinnerImg, bomaDinnerImg2, bomaDinnerImg3, bomaDinnerImg4, bomaDinnerImg5, bomaDinnerImg6, bomaDinnerImg7],
     highlights: [
       'Traditional chitenge wrap & village beer welcome',
       '4-course buffet with open-fire braai and game meats',

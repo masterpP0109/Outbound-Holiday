@@ -28,10 +28,17 @@ import {
   Coffee,
   Wine
 } from 'lucide-react';
-import intentBomaImg from '../../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
+import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import bomaDinnerImg2 from '../../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
+import bomaDinnerImg3 from '../../assets/Experiences/Boma Dinner_/IMG_0366.PNG';
+import bomaDinnerImg4 from '../../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
+import bomaDinnerImg5 from '../../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
+import bomaDinnerImg6 from '../../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
+import bomaDinnerImg7 from '../../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
 import footerZambeziDuskImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
 import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
 import intentGorgeHelicopterImg from '../../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
+import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 
 interface BomaExperiencePageProps {
   onOpenPlanHoliday: () => void;
@@ -132,8 +139,11 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
       price: "From US$185 pp",
       duration: "Full Day",
       image: chobeImg
-      
-      {/* 1. Sub-Header Navigation Bar */}
+    },
+  ];
+
+  return (
+    <div>
       <div className="sticky top-[73px] z-40 bg-[#0D2833] text-white border-b border-[#C9A66B]/30 py-2.5 px-4 sm:px-6 lg:px-8 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 text-xs">
           <button 
@@ -167,7 +177,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
         {/* Background Photo */}
         <div className="absolute inset-0 z-0">
           <img 
-            src={intentBomaImg} 
+            src={bomaDinnerImg} 
             alt="The Boma Dinner & Drum Show entrance with traditional dancers welcoming guests"
             className="w-full h-full object-cover object-center filter brightness-90 contrast-105 scale-105"
           />
@@ -337,7 +347,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
               <div className="bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xs grid grid-cols-1 md:grid-cols-12 gap-0">
                 <div className="md:col-span-6 h-64 md:h-auto relative">
                   <img 
-                    src={intentBomaImg}
+                    src={bomaDinnerImg}
                     alt="Warm traditional welcome at the entrance of The Boma"
                     className="w-full h-full object-cover"
                   />
@@ -375,7 +385,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                 </div>
                 <div className="md:col-span-6 h-64 md:h-auto relative order-1 md:order-2">
                   <img 
-                    src="https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?auto=format&fit=crop&q=80&w=800" 
+                    src={bomaDinnerImg2} 
                     alt="Energetic traditional dancers leaping during dinner"
                     className="w-full h-full object-cover"
                   />
@@ -389,7 +399,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
               <div className="bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xs grid grid-cols-1 md:grid-cols-12 gap-0">
                 <div className="md:col-span-6 h-64 md:h-auto relative">
                   <img 
-                    src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800" 
+                    src={bomaDinnerImg3} 
                     alt="Master chefs grilling game meats over open fire pits at The Boma"
                     className="w-full h-full object-cover"
                   />
@@ -427,7 +437,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                 </div>
                 <div className="md:col-span-6 h-64 md:h-auto relative order-1 md:order-2">
                   <img 
-                    src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800" 
+                    src={bomaDinnerImg4} 
                     alt="Fresh salad buffet and potjies stews at The Boma"
                     className="w-full h-full object-cover"
                   />
@@ -441,7 +451,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
               <div className="bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xs grid grid-cols-1 md:grid-cols-12 gap-0">
                 <div className="md:col-span-6 h-64 md:h-auto relative">
                   <img 
-                    src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&q=80&w=800" 
+                    src={bomaDinnerImg5} 
                     alt="Interactive drumming show with master drummers"
                     className="w-full h-full object-cover"
                   />
@@ -479,7 +489,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                 </div>
                 <div className="md:col-span-6 h-64 md:h-auto relative order-1 md:order-2">
                   <img 
-                    src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&q=80&w=800" 
+                    src={bomaDinnerImg6} 
                     alt="Dessert table with red velvet cake and pastries"
                     className="w-full h-full object-cover"
                   />
