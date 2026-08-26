@@ -55,6 +55,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   const [guestCount, setGuestCount] = useState(2);
   const [includeTransfers, setIncludeTransfers] = useState(true);
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     document.title = `${experience.title} | Victoria Falls Experience Guide | Outbound Holidays`;
@@ -132,7 +133,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
           <img 
             src={experience.featuredImage} 
             alt={experience.title}
-            className="w-full h-full object-cover object-center filter brightness-90 contrast-105 scale-105"
+            className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/70 to-[#0D2833]/40" />
         </div>
@@ -310,7 +311,11 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {experience.galleryImages.map((imgUrl, idx) => (
-                    <div key={idx} className="h-48 rounded-2xl overflow-hidden border border-gray-200 shadow-xs">
+                    <div 
+                      key={idx} 
+                      className="h-48 rounded-2xl overflow-hidden border border-gray-200 shadow-xs cursor-pointer"
+                      onClick={() => setLightboxIndex(idx)}
+                    >
                       <img 
                         src={imgUrl} 
                         alt={`${experience.title} gallery photo ${idx + 1}`}
@@ -319,6 +324,13 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                     </div>
                   ))}
                 </div>
+                {lightboxIndex !== null && (
+                  <GalleryLightbox
+                    images={experience.galleryImages}
+                    initialIndex={lightboxIndex}
+                    onClose={() => setLightboxIndex(null)}
+                  />
+                )}
               </section>
             )}
 

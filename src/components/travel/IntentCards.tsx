@@ -1,11 +1,11 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
-import intentFamilyResortImg from '../../assets/images/intent_family_resort_zim_1785489699263.jpg';
-import intentRomanticDinnerImg from '../../assets/images/intent_romantic_dinner_zim_1785489715667.jpg';
-import intentCraftMarketImg from '../../assets/images/intent_craft_market_zim_1785489731195.jpg';
-import intentBomaCelebrationImg from '../../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
+import guidedTourImg from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import familySafariImg from '../../assets/images/family_wildlife_safari_1785488525464.jpg';
+import standardCruiseImg from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import craftMarketImg from '../../assets/images/intent_craft_market_zim_1785489731195.jpg';
+import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
 import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 
 interface IntentCardsProps {
@@ -20,8 +20,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Your First Victoria Falls Adventure',
       description: 'Experience the highlights that make Victoria Falls unforgettable. Perfect for first-time visitors who want to see the Falls, cruise the Zambezi and enjoy the destination\'s must-do experiences—all without the stress of planning.',
       ctaText: 'Explore this Holiday',
-      imageUrl: intentVicFallsIconicImg,
-      fallbackUrl: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800',
+      imageUrl: guidedTourImg,
+      fallbackUrl: guidedTourImg,
     },
     {
       id: 'family',
@@ -29,8 +29,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Create Family Memories That Last',
       description: 'Relax while we take care of the details. From family-friendly accommodation to exciting experiences for all ages, this holiday is designed to bring everyone together.',
       ctaText: 'Explore this Holiday',
-      imageUrl: intentFamilyResortImg,
-      fallbackUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800',
+      imageUrl: familySafariImg,
+      fallbackUrl: familySafariImg,
     },
     {
       id: 'romantic',
@@ -38,8 +38,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Celebrate Something Special',
       description: 'Whether it\'s your honeymoon, anniversary or simply time away together, enjoy romantic sunsets, luxury accommodation and unforgettable moments in one of Africa\'s most spectacular destinations.',
       ctaText: 'Explore this Holiday',
-      imageUrl: intentRomanticDinnerImg,
-      fallbackUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
+      imageUrl: standardCruiseImg,
+      fallbackUrl: standardCruiseImg,
     },
     {
       id: 'best-value',
@@ -47,8 +47,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Experience More for Less',
       description: 'A carefully planned Victoria Falls holiday that delivers incredible experiences while making the most of your budget. Great value without compromising on what matters most.',
       ctaText: 'Explore this Holiday',
-      imageUrl: intentCraftMarketImg,
-      fallbackUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800',
+      imageUrl: craftMarketImg,
+      fallbackUrl: craftMarketImg,
     },
     {
       id: 'celebration',
@@ -56,8 +56,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Celebrate Life\'s Biggest Moments',
       description: 'Birthdays, anniversaries, graduations or family celebrations—let us create a personalised Victoria Falls experience worthy of the occasion.',
       ctaText: 'Explore this Holiday',
-      imageUrl: intentBomaCelebrationImg,
-      fallbackUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800',
+      imageUrl: bomaDinnerImg,
+      fallbackUrl: bomaDinnerImg,
     },
     {
       id: 'planning-assistance',
@@ -66,7 +66,7 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       description: 'Looking for something unique? We\'ll create a personalised itinerary tailored to your interests, pace and budget, with expert advice every step of the way.',
       ctaText: 'Start Planning',
       imageUrl: heli1Img,
-      fallbackUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800',
+      fallbackUrl: heli1Img,
     },
   ];
 

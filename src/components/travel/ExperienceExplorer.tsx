@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
 import { Compass, Shield, Trees, Heart, Utensils, ArrowRight } from 'lucide-react';
 
-import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
-import footerZambeziDuskImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
-import intentBomaImg from '../../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
-import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import guidedTourImg from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import standardCruiseImg from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+import gameDriveImg from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 import rhinoTrackingImg from '../../assets/images/rhino_tracking_drive_1785497819922.jpg';
+import raftingImg from '../../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
+import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import gorgeSwingImg from '../../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+import spaImg from '../../assets/Experiences/Spa Treatments/IMG_0375.PNG';
+import familySafariImg from '../../assets/images/family_wildlife_safari_1785488525464.jpg';
+import elephantImg from '../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+import simunyeImg from '../../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
+import bungeeImg from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import zipLineImg from '../../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+import jetBoatImg from '../../assets/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
 
 interface ExperienceExplorerProps {
   onExploreExperiences: () => void;
@@ -38,7 +49,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
       id: 'first-visit',
       label: 'First Visit',
       icon: <Compass className="w-3.5 h-3.5" />,
-      imageUrl: intentVicFallsIconicImg,
+      imageUrl: guidedTourImg,
       title: 'Victoria Falls Essentials',
       subtitle: 'The iconic highlights recommended for anyone visiting for the first time.',
       items: [
@@ -49,7 +60,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2.5 Hours',
           advisorTip: '⭐ Best first experience if you’ve never visited Victoria Falls.',
           whyWeRecommend: 'If it’s your first visit to Victoria Falls, this is where we suggest you start. It gives you the best introduction to the Falls, the rainforest, and the history behind one of the Seven Natural Wonders of the World.',
-          imageUrl: intentVicFallsIconicImg
+          imageUrl: guidedTourImg
         },
         { 
           title: 'Upper Zambezi Sunset River Cruise', 
@@ -58,7 +69,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2 Hours',
           advisorTip: '❤️ Perfect for couples and photographers.',
           whyWeRecommend: 'One of our favourite ways to end the day. Relax on the Zambezi River, enjoy incredible sunsets, and often spot hippos, crocodiles, and elephants along the riverbanks.',
-          imageUrl: footerZambeziDuskImg
+          imageUrl: standardCruiseImg
         },
         { 
           title: 'The Boma - Dinner & Drum Show', 
@@ -67,7 +78,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '3 Hours',
           advisorTip: '🥁 Festive cultural celebration & traditional feast for all ages.',
           whyWeRecommend: 'A festive, warm cultural celebration that brings everyone together for traditional dishes and interactive drumming.',
-          imageUrl: intentBomaImg
+          imageUrl: bomaDinnerImg
         },
         { 
           title: 'Chobe Day Safari Trip (Botswana)', 
@@ -76,7 +87,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: 'Full Day',
           advisorTip: '🐘 Highest chance of seeing elephants in one day.',
           whyWeRecommend: 'Ideal if you want to add a world-class elephant safari into a single day without moving hotels.',
-          imageUrl: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&q=80&w=600'
+          imageUrl: chobeImg
         },
       ],
     },
@@ -84,7 +95,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
       id: 'wildlife',
       label: 'Wildlife & Safari',
       icon: <Trees className="w-3.5 h-3.5" />,
-      imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+      imageUrl: gameDriveImg,
       title: 'Big Game & River Safaris',
       subtitle: 'Discover Africa’s wildlife with local expert rangers and guided game tracks.',
       items: [
@@ -95,7 +106,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '3.5 Hours',
           advisorTip: '🌅 Peaceful riverbank wildlife tracking just 10 mins from hotels.',
           whyWeRecommend: 'Just minutes from town, this park offers peaceful game drives along the riverbanks without long transfer times.',
-          imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=600'
+          imageUrl: gameDriveImg
         },
         { 
           title: 'Rhino Tracking Drive in Victoria Falls', 
@@ -113,7 +124,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: 'Full Day',
           advisorTip: '🐊 Water-level wildlife encounters along the Chobe River.',
           whyWeRecommend: 'During the dry season, river safaris offer some of the most dramatic wildlife viewing in southern Africa.',
-          imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=600'
+          imageUrl: chobeImg
         },
         { 
           title: 'Hwange National Park Day Safari', 
@@ -122,7 +133,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: 'Full Day',
           advisorTip: '🦁 Zimbabwe’s premier game reserve with legendary elephant herds.',
           whyWeRecommend: 'Hwange is legendary for its massive elephant herds. We match you with top-tier local guides for the best sightings.',
-          imageUrl: 'https://images.unsplash.com/photo-1551009175-15bdf9dcb580?auto=format&fit=crop&q=80&w=600'
+          imageUrl: familySafariImg
         },
       ],
     },
@@ -130,7 +141,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
       id: 'adventure',
       label: 'Adventure',
       icon: <Shield className="w-3.5 h-3.5" />,
-      imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1200',
+      imageUrl: bungeeImg,
       title: 'Adrenaline & High Thrills',
       subtitle: 'Feel the roar of the Batoka Gorge with carefully selected, high-safety thrill experiences.',
       items: [
@@ -141,7 +152,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: 'Full Day',
           advisorTip: '🌊 World-class Grade 5 rapids with master river captains.',
           whyWeRecommend: 'Renowned worldwide for thrilling Grade 5 rapids. We only partner with licensed river captains with perfect safety records.',
-          imageUrl: 'https://images.unsplash.com/photo-1530866495561-507c9faab2ed?auto=format&fit=crop&q=80&w=600'
+          imageUrl: raftingImg
         },
         { 
           title: '13-min "Flight of Angels" Helicopter', 
@@ -159,7 +170,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2 Hours',
           advisorTip: '💥 Unforgettable canyon freefall for brave adrenaline lovers.',
           whyWeRecommend: 'An unforgettable leap over the canyon with high safety standards and stunning gorge views.',
-          imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=600'
+          imageUrl: gorgeSwingImg
         },
         { 
           title: 'Devil’s Pool / Livingstone Island', 
@@ -168,7 +179,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: 'Half Day',
           advisorTip: '🏊 Exclusive low-water seasonal swim right on the edge of the lip.',
           whyWeRecommend: 'A bucket-list experience available strictly during low-water months under strict expert supervision.',
-          imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=600'
+          imageUrl: gorgeSwingImg
         },
       ],
     },
@@ -176,7 +187,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
       id: 'relaxation',
       label: 'Relaxation',
       icon: <Heart className="w-3.5 h-3.5" />,
-      imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200',
+      imageUrl: standardCruiseImg,
       title: 'Serenity & Sunset Luxury',
       subtitle: 'Unwind along the tranquil banks of the Zambezi River with fine dining and gentle breezes.',
       items: [
@@ -187,7 +198,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2.5 Hours',
           advisorTip: '🥂 Boutique river lounge with gourmet tapas & quiet seating.',
           whyWeRecommend: 'A boutique, quieter alternative to larger riverboats, featuring plush seating and refined dining.',
-          imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=600'
+          imageUrl: standardCruiseImg
         },
         { 
           title: 'Lookout Cafe High Tea & Lunch', 
@@ -196,7 +207,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2 Hours',
           advisorTip: '☕ Unmatched cliffside lunch views 120m above the rapids.',
           whyWeRecommend: 'Offers the best lunch view in Victoria Falls, overlooking the gorge and historic railway bridge.',
-          imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=600'
+          imageUrl: gorgeSwingImg
         },
         { 
           title: 'Riverside Spa & Wellness Treatment', 
@@ -205,7 +216,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '1.5 Hours',
           advisorTip: '🌿 Open-air soothing therapies accompanied by natural river sounds.',
           whyWeRecommend: 'Soothing open-air treatments accompanied by the natural sounds of river wildlife.',
-          imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=600'
+          imageUrl: spaImg
         },
         { 
           title: 'Sunset Island High Tea', 
@@ -214,7 +225,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '3 Hours',
           advisorTip: '🏝️ Exclusive private island afternoon tea surrounded by wild river.',
           whyWeRecommend: 'An exclusive riverside afternoon experience surrounded by pristine river channel views.',
-          imageUrl: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=600'
+          imageUrl: standardCruiseImg
         },
       ],
     },
@@ -222,7 +233,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
       id: 'family',
       label: 'Family Friendly',
       icon: <Utensils className="w-3.5 h-3.5" />,
-      imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=1200',
+      imageUrl: elephantImg,
       title: 'Safe Family Discoveries',
       subtitle: 'Memorable, educational and kid-safe experiences designed for parents and children.',
       items: [
@@ -233,7 +244,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2 Hours',
           advisorTip: '🌿 Kid-safe forest rope walks & gentle slides for ages 6+.',
           whyWeRecommend: 'Travelling with kids? We recommend this morning forest canopy walk for safe, active family fun.',
-          imageUrl: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&q=80&w=600'
+          imageUrl: guidedTourImg
         },
         { 
           title: 'Victoria Falls Bridge History Tour', 
@@ -242,7 +253,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2 Hours',
           advisorTip: '🌉 Educational & theatrical history brought to life under the bridge.',
           whyWeRecommend: 'Fascinating engineering history brought to life by local guides in a safe, scenic environment.',
-          imageUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&q=80&w=600'
+          imageUrl: bungeeImg
         },
         { 
           title: 'Elephant Sanctuary & Conservation', 
@@ -251,7 +262,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2 Hours',
           advisorTip: '🐘 Heartwarming rescue sanctuary encounter that children adore.',
           whyWeRecommend: 'An engaging, gentle educational encounter teaching children about wildlife rescue.',
-          imageUrl: 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44?auto=format&fit=crop&q=80&w=600'
+          imageUrl: elephantImg
         },
         { 
           title: 'Traditional Village Culture Visit', 
@@ -260,7 +271,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '2.5 Hours',
           advisorTip: '🤝 Authentic rural village cultural sharing & warm community welcome.',
           whyWeRecommend: 'A warm, authentic community interaction that broadens horizons for travellers of all ages.',
-          imageUrl: 'https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?auto=format&fit=crop&q=80&w=600'
+          imageUrl: simunyeImg
         },
       ],
     },

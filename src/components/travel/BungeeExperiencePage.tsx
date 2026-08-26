@@ -198,7 +198,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
           <img 
             src={bungeeImg} 
             alt="Bungee jumper launching off the Victoria Falls Bridge above Batoka Gorge"
-            className="w-full h-full object-cover object-center filter brightness-90 contrast-105 scale-105"
+            className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/70 to-[#0D2833]/40" />
         </div>
@@ -435,7 +435,6 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                   onClose={() => setLightboxIndex(null)}
                 />
               )}
-              </div>
             </section>
 
             {/* 7. Inclusions & Exclusions */}

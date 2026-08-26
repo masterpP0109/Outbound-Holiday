@@ -36,6 +36,7 @@ import bomaDinnerImg5 from '../../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
 import bomaDinnerImg6 from '../../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
 import bomaDinnerImg7 from '../../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
 import bomaDinnerImg8 from '../../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
+import { GalleryLightbox } from './GalleryLightbox';
 import footerZambeziDuskImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
 import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
 import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
@@ -57,6 +58,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
   const [guestCount, setGuestCount] = useState(2);
   const [includeTransfers, setIncludeTransfers] = useState(true);
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     document.title = "The Boma - Dinner & Drum Show | Victoria Falls Experience Guide | Outbound Holidays";
@@ -180,7 +182,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
           <img 
             src={bomaDinnerImg} 
             alt="The Boma Dinner & Drum Show entrance with traditional dancers welcoming guests"
-            className="w-full h-full object-cover object-center filter brightness-90 contrast-105 scale-105"
+             className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/70 to-[#0D2833]/40" />
         </div>
@@ -500,6 +502,62 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                 </div>
               </div>
 
+            </section>
+
+            {/* Boma Experience Gallery */}
+            <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
+              <div className="space-y-2">
+                <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
+                  Visual Gallery
+                </span>
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
+                  The Boma Photo Gallery
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Click any image to view full-size with prev/next navigation.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  bomaDinnerImg,
+                  bomaDinnerImg2,
+                  bomaDinnerImg3,
+                  bomaDinnerImg4,
+                  bomaDinnerImg5,
+                  bomaDinnerImg6,
+                  bomaDinnerImg7,
+                  bomaDinnerImg8,
+                ].map((imgUrl, idx) => (
+                  <div 
+                    key={idx} 
+                    className="h-48 rounded-2xl overflow-hidden border border-gray-200 shadow-xs cursor-pointer"
+                    onClick={() => setLightboxIndex(idx)}
+                  >
+                    <img 
+                      src={imgUrl} 
+                      alt={`The Boma gallery photo ${idx + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                    />
+                  </div>
+                ))}
+              </div>
+              {lightboxIndex !== null && (
+                <GalleryLightbox
+                  images={[
+                    bomaDinnerImg,
+                    bomaDinnerImg2,
+                    bomaDinnerImg3,
+                    bomaDinnerImg4,
+                    bomaDinnerImg5,
+                    bomaDinnerImg6,
+                    bomaDinnerImg7,
+                    bomaDinnerImg8,
+                  ]}
+                  initialIndex={lightboxIndex}
+                  onClose={() => setLightboxIndex(null)}
+                />
+              )}
             </section>
 
             {/* 5. Evening Timeline Section */}

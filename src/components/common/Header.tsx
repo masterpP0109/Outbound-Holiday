@@ -149,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`w-2 h-2 rounded-full transition-all ${
               isExperiencesActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
-            <span>Experiences</span>
+            <span>Things to do</span>
           </button>
           <button 
             onClick={() => onNavigateSection('accommodation')} 
@@ -255,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => { onNavigateSection('travel-experiences'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
-              <span>Experiences & Activities</span>
+              <span>Things to do</span>
             </button>
             <button 
               onClick={() => { onNavigateSection('accommodation'); setMobileMenuOpen(false); }}
