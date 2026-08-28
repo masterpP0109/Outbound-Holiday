@@ -2,6 +2,7 @@ import React from 'react';
 import { FIRST_TIME_VISITOR_ARTICLE } from '../../data/guideArticles';
 import { GuideArticleTemplate } from './guide/GuideArticleTemplate';
 import { Compass, ArrowLeft } from 'lucide-react';
+import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
 
 interface VicFallsGuidePageProps {
   onOpenPlanHoliday: () => void;
@@ -30,7 +31,7 @@ export const VicFallsGuidePage: React.FC<VicFallsGuidePageProps> = ({
 
           {/* Center/Right Brand Title */}
           <div className="flex items-center gap-2 text-[#C9A66B] font-bold text-[11px] uppercase tracking-wider">
-            <Compass className="w-4 h-4 text-[#C9A66B]" />
+            <img src={outboundLogo} alt="Outbound Holidays" className="w-6 h-6 object-contain" />
             <span>Victoria Falls Local Travel Specialist Guide</span>
           </div>
         </div>

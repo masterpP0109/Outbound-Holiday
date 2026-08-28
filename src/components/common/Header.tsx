@@ -10,6 +10,7 @@ import {
   PhoneCall,
   CalendarCheck
 } from 'lucide-react';
+import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
 
 interface HeaderProps {
   currency: Currency;
@@ -103,19 +104,9 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Brand Logo */}
         <div 
           onClick={() => onNavigateSection('hero')}
-          className="cursor-pointer flex items-center gap-3 group shrink-0 pr-4"
+          className="cursor-pointer flex items-center shrink-0 pr-4"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#0B5E8E] flex items-center justify-center text-white shadow-xs group-hover:bg-[#08486e] transition-colors">
-            <Compass className="w-5 h-5 text-[#C9A66B]" />
-          </div>
-          <div>
-            <span className="font-bold text-lg sm:text-xl tracking-tight text-[#0B5E8E] block leading-none font-serif">
-              Outbound Holidays
-            </span>
-            <span className="text-[10px] font-semibold text-[#C9A66B] tracking-widest uppercase block mt-1">
-              Victoria Falls Zimbabwe
-            </span>
-          </div>
+          <img src={outboundLogo} alt="Outbound Holidays" className="h-24 sm:h-32 w-auto object-contain" />
         </div>
 
         {/* Main Navigation Links */}

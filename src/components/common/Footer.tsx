@@ -2,6 +2,7 @@ import React from 'react';
 import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
 
 import footerZambeziImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
+import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
 
 interface FooterProps {
   onNavigateSection: (sectionId: string) => void;
@@ -28,18 +29,8 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/15">
           {/* Col 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#0B5E8E] shadow-sm">
-                <Compass className="w-6 h-6 text-[#C9A66B]" />
-              </div>
-              <div>
-                <span className="font-bold text-xl text-white block leading-none font-serif">
-                  Outbound Holidays
-                </span>
-                <span className="text-[10px] font-bold text-[#C9A66B] uppercase tracking-widest mt-1 block">
-                  Victoria Falls Travel Specialists
-                </span>
-              </div>
+            <div className="flex items-center">
+              <img src={outboundLogo} alt="Outbound Holidays" className="h-14 sm:h-16 w-auto object-contain" />
             </div>
 
             <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-sm">

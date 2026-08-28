@@ -14,6 +14,7 @@ import {
   Award
 } from 'lucide-react';
 import founderGuideImg from '../../../assets/images/furqal_founder_guide_1785494119753.jpg';
+import outboundLogo from '../../../assets/logos/outbound-holidays-logo.webp';
 
 interface GuideHubViewProps {
   onSelectArticle: (slug: string) => void;
@@ -33,7 +34,7 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
         <div className="max-w-6xl mx-auto relative z-10 space-y-6 text-center">
           
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-widest border border-[#C9A66B]/40 shadow-xs">
-            <Compass className="w-4 h-4 text-[#C9A66B]" />
+            <img src={outboundLogo} alt="Outbound Holidays" className="w-6 h-6 object-contain" />
             <span>Outbound Holidays Knowledge Hub</span>
           </div>
 

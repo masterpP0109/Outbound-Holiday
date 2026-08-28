@@ -27,6 +27,7 @@ import {
   CheckCircle2,
   RefreshCw,
 } from 'lucide-react';
+import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
 
 interface HolidayBuilderModalProps {
   isOpen: boolean;
@@ -386,19 +387,9 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     <div className="fixed inset-0 z-50 bg-[#FDFBF7] flex flex-col overflow-hidden animate-fade-in text-[#1A2E35]">
       {/* 1. IMMERSIVE TOP NAVIGATION BAR */}
       <header className="bg-[#0D5C75] text-white px-4 sm:px-8 py-3.5 flex items-center justify-between border-b border-white/10 shrink-0 shadow-md">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#D97706] flex items-center justify-center text-white shadow-xs">
-            <Compass className="w-5 h-5" />
+          <div className="flex items-center">
+            <img src={outboundLogo} alt="Outbound Holidays" className="h-12 sm:h-14 w-auto object-contain" />
           </div>
-          <div>
-            <span className="font-serif font-bold text-base sm:text-lg leading-none block text-white">
-              Outbound Holidays
-            </span>
-            <span className="text-[10px] text-white/80 uppercase tracking-widest font-semibold block mt-0.5">
-              Personal Victoria Falls Concierge
-            </span>
-          </div>
-        </div>
 
         {/* Step Indicator */}
         {step > 0 && !submitted && (

@@ -63,11 +63,11 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
           <img 
             src={intentVicFallsIconicImg} 
             alt="Victoria Falls Mosi-oa-Tunya backdrop" 
-            className="w-full h-full object-cover object-center scale-105 filter brightness-90 saturate-110"
+            className="w-full h-full object-cover object-center scale-105 filter brightness-95 saturate-110"
           />
-          {/* Subtle dark overlay gradient for high legibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/90 via-[#0D2833]/80 to-[#0D2833]/90" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-transparent to-[#0D2833]/70" />
+          {/* Premium subtle overlay for legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/70 via-[#0D2833]/60 to-[#0D2833]/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833]/80 via-transparent to-[#0D2833]/50" />
           <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#C9A66B_1px,transparent_1px)] [background-size:16px_16px]" />
         </div>
         
@@ -76,7 +76,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0D2833]/80 backdrop-blur-md border border-[#C9A66B]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest shadow-lg">
             <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>Complete Victoria Falls Directory</span>
+            <span>Curated by Local Specialists</span>
           </div>
 
           {/* Heading */}
@@ -86,7 +86,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
 
           {/* Paragraph */}
           <p className="text-base sm:text-lg text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-xs">
-            Curated by local Victoria Falls specialists. Browse by interest, duration, and safari style to build your ideal Zimbabwe itinerary.
+            Explore our complete collection of Victoria Falls experiences, carefully selected by local specialists to help you find what suits your interests, time and travel style.
           </p>
 
           {/* Search Filter Bar */}
@@ -94,7 +94,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search experiences (e.g. Helicopter, Safari, Sunset Cruise)..."
+                placeholder="Search experiences — e.g. Chobe Safari, Sunset Cruise, Helicopter Flight..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white/95 backdrop-blur-md text-gray-900 placeholder-gray-500 rounded-2xl py-4 pl-12 pr-4 text-sm shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#C9A66B] border border-white/20"
