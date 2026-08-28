@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   Award
 } from 'lucide-react';
-import founderGuideImg from '../../../assets/images/furqal_founder_guide_1785494119753.jpg';
+import founderGuideImg from '../../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
 import outboundLogo from '../../../assets/logos/outbound-holidays-logo.webp';
 
 interface GuideHubViewProps {

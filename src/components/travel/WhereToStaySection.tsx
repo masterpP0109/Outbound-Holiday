@@ -50,7 +50,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed">
-            Choosing the right place to stay can shape your entire holiday. From boutique guesthouses and family-friendly hotels to luxury safari lodges, we've carefully selected accommodation we confidently recommend based on location, service and overall guest experience.
+            From peaceful boutique lodges and family-friendly hotels to luxury riverfront retreats, our local specialists have carefully selected places we confidently recommend based on location, service, comfort and overall guest experience.
           </p>
         </div>
 
@@ -155,7 +155,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
             onClick={onExploreAllProperties}
             className="inline-flex items-center justify-center gap-2 bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Explore All Places to Stay</span>
+            <span>Explore Where to Stay</span>
             <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
           </button>
         </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { CalendarCheck, ShieldCheck, ArrowRight } from 'lucide-react';
 import { WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 
 interface FinalCtaBannerProps {
   onOpenPlanHoliday: () => void;
@@ -17,7 +18,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-30"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1614527961817-21789c629fb4?auto=format&fit=crop&q=80&w=2000')`,
+              backgroundImage: `url('${fallsTour1}')`,
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0B5E8E]/95 via-[#0B5E8E]/90 to-[#0B5E8E]/80" />

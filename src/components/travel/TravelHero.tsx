@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ShieldCheck, MapPin, ChevronLeft, ChevronRight, Heart, Users, Compass } from 'lucide-react';
 
-import familyTourImg from '../../assets/images/zimbabwean_family_tour_1785488498015.jpg';
-import coupleHoneymoonImg from '../../assets/images/zimbabwean_couple_honeymoon_1785488512769.jpg';
-import familySafariImg from '../../assets/images/zimbabwean_family_safari_tour_1785488788507.jpg';
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import gameDrive10 from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 
 interface TravelHeroProps {
   onOpenPlanHoliday: () => void;
@@ -25,8 +25,8 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 'family-tour',
-    imageUrl: familyTourImg,
-    fallbackUrl: 'https://images.unsplash.com/photo-1614527961817-21789c629fb4?auto=format&fit=crop&q=80&w=2400',
+    imageUrl: fallsTour1,
+    fallbackUrl: fallsTour1,
     titleTag: 'PLANNED BY LOCAL VICTORIA FALLS SPECIALISTS',
     headline: (
       <>
@@ -41,8 +41,8 @@ const HERO_SLIDES: HeroSlide[] = [
   },
   {
     id: 'couple-honeymoon',
-    imageUrl: coupleHoneymoonImg,
-    fallbackUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=2400',
+    imageUrl: cruise1,
+    fallbackUrl: cruise1,
     titleTag: 'TRAVEL WITH CONFIDENCE',
     headline: (
       <>
@@ -57,8 +57,8 @@ const HERO_SLIDES: HeroSlide[] = [
   },
   {
     id: 'family-safari',
-    imageUrl: familySafariImg,
-    fallbackUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=2400',
+    imageUrl: gameDrive10,
+    fallbackUrl: gameDrive10,
     titleTag: 'LOCAL SAFARI KNOWLEDGE',
     headline: (
       <>

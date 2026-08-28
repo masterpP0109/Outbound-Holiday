@@ -37,8 +37,8 @@ import bomaDinnerImg6 from '../../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
 import bomaDinnerImg7 from '../../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
 import bomaDinnerImg8 from '../../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
 import { GalleryLightbox } from './GalleryLightbox';
-import footerZambeziDuskImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
-import intentVicFallsIconicImg from '../../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
+import cruiseImg from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import guidedTourImg from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 
@@ -120,14 +120,14 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
       desc: "Glide past hippo pods and elephant herds with complimentary sundowners as the sun sets.",
       price: "From US$85 pp",
       duration: "2 Hours",
-      image: footerZambeziDuskImg
+      image: cruiseImg
     },
     {
       title: "Guided Tour of Victoria Falls",
       desc: "Explore all 16 spectacular viewpoints along the rainforest opposite Mosi-oa-Tunya.",
       price: "From US$55 pp",
       duration: "2.5 Hours",
-      image: intentVicFallsIconicImg
+      image: guidedTourImg
     },
     {
       title: "Flight of Angels Helicopter Flight",

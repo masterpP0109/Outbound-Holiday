@@ -6,12 +6,12 @@ import standardCruiseImg from '../../assets/Experiences/Standard Cruise_/Standar
 import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
 import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 import gameDriveImg from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import rhinoTrackingImg from '../../assets/images/rhino_tracking_drive_1785497819922.jpg';
+import gameDriveImg2 from '../../assets/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
+import gameDriveImg4 from '../../assets/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
 import raftingImg from '../../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
 import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 import gorgeSwingImg from '../../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
 import spaImg from '../../assets/Experiences/Spa Treatments/IMG_0375.PNG';
-import familySafariImg from '../../assets/images/family_wildlife_safari_1785488525464.jpg';
 import elephantImg from '../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
 import simunyeImg from '../../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
 import bungeeImg from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
@@ -115,7 +115,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: '3 Hours',
           advisorTip: '🦏 Rare chance to track white rhinos safely on foot with armed rangers.',
           whyWeRecommend: 'A rare opportunity to support local conservation while tracking white rhinos safely on foot with expert park rangers.',
-          imageUrl: rhinoTrackingImg
+          imageUrl: gameDriveImg2
         },
         { 
           title: 'Chobe River Safari Cruise', 
@@ -133,7 +133,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           duration: 'Full Day',
           advisorTip: '🦁 Zimbabwe’s premier game reserve with legendary elephant herds.',
           whyWeRecommend: 'Hwange is legendary for its massive elephant herds. We match you with top-tier local guides for the best sightings.',
-          imageUrl: familySafariImg
+          imageUrl: gameDriveImg4
         },
       ],
     },

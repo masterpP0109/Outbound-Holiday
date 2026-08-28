@@ -28,12 +28,25 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
+import { DetailedAccommodation } from '../../data/accommodationsData';
+
+// Local Experience Assets
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import bomaImg1 from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import heli1 from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import chobe1 from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+import gorgeSwing3 from '../../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+import bungee1 from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import gameDrive10 from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+import cruise2 from '../../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
 
 interface HolidayBuilderModalProps {
   isOpen: boolean;
   onClose: () => void;
   preselectedPackage?: TravelPackage | null;
   preselectedActivity?: string | null;
+  preselectedAccommodation?: DetailedAccommodation | null;
 }
 
 interface ActivityItem {
@@ -54,7 +67,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: 'Guided Rainforest Walk of Victoria Falls',
     duration: '2.5 Hours',
     priceUSD: 40,
-    imageUrl: 'https://images.unsplash.com/photo-1614527961817-21789c629fb4?auto=format&fit=crop&q=80&w=800',
+    imageUrl: fallsTour1,
     badge: 'First-Time Essential',
     shortDesc: 'Walk along the precipice of Mosi-oa-Tunya across 16 spectacular viewpoints with an expert guide.',
     whyRecommend: 'Essential for first-time visitors — local guides reveal secret rainbow spots and geological history.',
@@ -65,7 +78,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: 'Zambezi Sunset River Cruise',
     duration: '2.5 Hours',
     priceUSD: 75,
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800',
+    imageUrl: cruise1,
     badge: 'Most Popular',
     shortDesc: 'Cruise the upper Zambezi while watching hippos, elephants, and golden sunset reflections with drinks & snacks.',
     whyRecommend: 'The quintessential Victoria Falls evening ritual — serene, photogenic, and incredibly relaxing.',
@@ -76,7 +89,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: 'The BOMA - Dinner & Drum Show',
     duration: '3.0 Hours',
     priceUSD: 55,
-    imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800',
+    imageUrl: bomaImg1,
     badge: 'Cultural Feast',
     shortDesc: 'Traditional Zimbabwean feast, face painting, local game meats, and energetic interactive drumming.',
     whyRecommend: 'High energy night for families and groups — every guest gets their own djembe drum!',
@@ -87,7 +100,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: '13-Min "Flight of Angels" Helicopter',
     duration: '15 Mins',
     priceUSD: 150,
-    imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=800',
+    imageUrl: heli1,
     badge: 'Bucket-List View',
     shortDesc: 'Soar directly over the roaring curtain of mist, Batoka Gorge, and Zambezi National Park from above.',
     whyRecommend: 'Offers the only vantage point to comprehend the full width and immense scale of Victoria Falls.',
@@ -98,7 +111,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: 'Full-Day Chobe National Park Safari (Botswana)',
     duration: 'Full Day',
     priceUSD: 170,
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=800',
+    imageUrl: chobe1,
     badge: 'Wildlife Spectacular',
     shortDesc: 'Cross into Botswana for a morning Chobe River safari cruise and an afternoon 4x4 big game drive.',
     whyRecommend: 'Home to over 50,000 elephants — virtually guarantees up-close wild elephant and lion encounters.',
@@ -109,7 +122,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: 'Batoka Gorge Swing & Zipline',
     duration: '2.0 Hours',
     priceUSD: 95,
-    imageUrl: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800',
+    imageUrl: gorgeSwing3,
     badge: 'Thrill Seekers',
     shortDesc: 'Freefall 70 meters into the Batoka Gorge or slide across the canopy above the Zambezi rapids.',
     whyRecommend: 'Top rated adrenaline activity in Africa — tandem leaps available for brave couples & teenagers!',
@@ -120,7 +133,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: 'Devil’s Pool & Livingstone Island (Seasonal)',
     duration: '3.5 Hours',
     priceUSD: 160,
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
+    imageUrl: bungee1,
     badge: 'Extreme Bucket-List',
     shortDesc: 'Swim in a natural rock pool right on the precipice of Victoria Falls during dry low-water season.',
     whyRecommend: 'Available August to January. Safe guided experience offering the ultimate edge-of-the-world photo.',
@@ -131,7 +144,7 @@ export const ACTIVITIES_DATA: ActivityItem[] = [
     title: 'Hwange National Park 2-Night Safari Extension',
     duration: '2 Days / 2 Nights',
     priceUSD: 480,
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800',
+    imageUrl: gameDrive10,
     badge: 'Safari Kingdom',
     shortDesc: 'Extend your stay into Zimbabwe’s premier game reserve with open 4x4 night drives and walking safaris.',
     whyRecommend: 'Combine Victoria Falls with classic African wilderness — famous for massive elephant waterhole herds.',
@@ -145,7 +158,7 @@ export const STAY_TIERS = [
     name: 'Smart Value',
     tagline: 'Clean, comfortable & well-reviewed lodges',
     pricePerNightUSD: 220,
-    imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800',
+    imageUrl: gameDrive10,
     desc: 'Clean, charming boutique lodges that leave more of your budget available for bucket-list experiences.',
     highlights: ['Includes hot breakfast', 'Swimming pool & gardens', '10-min shuttle to Falls'],
   },
@@ -154,7 +167,7 @@ export const STAY_TIERS = [
     name: 'Comfort Plus',
     tagline: 'Upgraded resort facilities & prime location',
     pricePerNightUSD: 380,
-    imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    imageUrl: fallsTour1,
     desc: 'Spacious resort rooms or riverfront chalets with lush gardens, wildlife on property, and dining options.',
     highlights: ['River view or garden rooms', 'Spacious family suites', 'On-site spa & pool bar'],
   },
@@ -163,7 +176,7 @@ export const STAY_TIERS = [
     name: 'Premium Escape',
     tagline: '5-Star luxury riverfront suites',
     pricePerNightUSD: 750,
-    imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+    imageUrl: cruise1,
     desc: 'Luxury river lodges with private plunge pools, gourmet fine dining, and direct Zambezi River frontage.',
     highlights: ['All-inclusive dining & drinks', 'Private plunge pool', 'Personal lodge concierge'],
   },
@@ -172,7 +185,7 @@ export const STAY_TIERS = [
     name: 'Private & Exclusive',
     tagline: 'VIP river villas & private guides',
     pricePerNightUSD: 1250,
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
+    imageUrl: heli1,
     desc: 'Private luxury villa, dedicated butler service, private 4x4 safari vehicle, and bespoke pontoon dining.',
     highlights: ['Private villa & pool', 'Private guide & safari 4x4', 'VIP airport helicopter transfers'],
   },
@@ -183,6 +196,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   onClose,
   preselectedPackage,
   preselectedActivity,
+  preselectedAccommodation,
 }) => {
   // Navigation & Step state
   const [step, setStep] = useState<number>(0); // 0 = Entry mode selection, 1 = Intent, 2 = Party, 3 = Timing, 4 = Stay, 5 = Activities, 6 = Logistics, 7 = Itinerary Review, 8 = Contact
@@ -232,6 +246,16 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         } else {
           setNightsCount(2);
         }
+      } else if (preselectedAccommodation) {
+        setStep(4);
+        if (preselectedAccommodation.priceFromUSD > 400) {
+          setStayTierId('premium-escape');
+        } else if (preselectedAccommodation.priceFromUSD > 250) {
+          setStayTierId('comfort-plus');
+        } else {
+          setStayTierId('smart-value');
+        }
+        setStayPreferences(prev => Array.from(new Set([...prev, `Preselected Property: ${preselectedAccommodation.name}`])));
       } else if (preselectedActivity) {
         setStep(5);
         const match = ACTIVITIES_DATA.find(
@@ -242,7 +266,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         }
       }
     }
-  }, [isOpen, preselectedPackage, preselectedActivity]);
+  }, [isOpen, preselectedPackage, preselectedActivity, preselectedAccommodation]);
 
   if (!isOpen) return null;
 
@@ -375,12 +399,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   // Dynamic Theme Background photo based on trip intent
   const getIntentHeroPhoto = () => {
     if (tripIntent === 'romantic')
-      return 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800';
+      return cruise1;
     if (tripIntent === 'family')
-      return 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800';
+      return gameDrive10;
     if (tripIntent === 'adventure')
-      return 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=800';
-    return 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800';
+      return bungee1;
+    return fallsTour1;
   };
 
   return (

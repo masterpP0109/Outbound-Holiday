@@ -1,5 +1,7 @@
 import React from 'react';
 import { Sparkles, ArrowRight, ShieldCheck, Award, Globe2 } from 'lucide-react';
+import simunyeSpotlightImg from '../../assets/Experiences/Simunye_/Theatre10.jpg';
+import simunyeShowImg from '../../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
 
 interface ArtHeroProps {
   onExploreCollections: () => void;
@@ -16,7 +18,7 @@ export const ArtHero: React.FC<ArtHeroProps> = ({
       <div 
         className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-25"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=1600')`,
+          backgroundImage: `url(${simunyeShowImg})`,
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-[#2F3A44] via-[#2F3A44]/90 to-transparent" />
@@ -75,7 +77,7 @@ export const ArtHero: React.FC<ArtHeroProps> = ({
         <div className="lg:col-span-5 relative">
           <div className="relative mx-auto max-w-md rounded-2xl overflow-hidden shadow-2xl border-2 border-[#C9A66B]/40 group">
             <img
-              src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=800"
+              src={simunyeSpotlightImg}
               alt="Shona Stone Sculpture Spotlight"
               className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-700"
             />

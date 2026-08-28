@@ -1,5 +1,19 @@
 import { TravelPackage, TravelSpot, Accommodation, Review } from '../types';
 
+// Local Experience Assets
+import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import cruise1 from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import cruise2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
+import bomaImg1 from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import heli1 from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import chobe1 from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+import gorgeSwing3 from '../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+import bungee1 from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import gameDrive10 from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+import gameDrive4 from '../assets/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
+import zipLine1 from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+import elecrew5 from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+
 export const CURRENCY_RATES: Record<string, { symbol: string; rate: number }> = {
   USD: { symbol: '$', rate: 1.0 },
   ZWL: { symbol: 'ZWL$', rate: 25.0 },
@@ -41,7 +55,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'Perfect for first-time visitors wanting to experience the absolute best of the Falls without the stress. Includes guided rainforest walks, a serene sunset cruise on the upper Zambezi, and seamless transfers.',
     priceUSD: 650,
     duration: '3 Days / 2 Nights',
-    imageUrl: '../assets/images/intent_vic_falls_iconic_1785490034846.jpg',
+    imageUrl: fallsTour1,
     highlights: [
       'Guided Rainforest Walk at Mosi-oa-Tunya National Park',
       'Luxury Zambezi Sunset Cruise with complimentary drinks & tapas',
@@ -84,7 +98,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'A carefully crafted luxury weekend designed to celebrate life’s most memorable and significant moments. Private riverfront villa accommodations, helicopter flight over the mist, and private candlelit dining.',
     priceUSD: 1850,
     duration: '4 Days / 3 Nights',
-    imageUrl: '../assets/images/intent_romantic_dinner_zim_1785489715667.jpg',
+    imageUrl: heli1,
     highlights: [
       '13-minute "Flight of Angels" helicopter experience over Victoria Falls',
       'Private riverfront suite with plunge pool at a luxury river lodge',
@@ -132,7 +146,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'Kid-friendly activities, spacious family accommodation, and unforgettable Zambezi wildlife encounters. Includes lion sanctuary interactions, crocodile park, game drives, and gentle canopy tours.',
     priceUSD: 1200,
     duration: '4 Days / 3 Nights',
-    imageUrl: '../assets/images/family_wildlife_safari_1785488525464.jpg',
+    imageUrl: elecrew5,
     highlights: [
       'Family Safari Game Drive in Zambezi National Park',
       'Interactive Wildlife Conservation & Elephant Experience',
@@ -180,7 +194,7 @@ export const FEATURED_PACKAGES: TravelPackage[] = [
     description: 'The ultimate Zimbabwean double-bill. Experience 2 nights at Victoria Falls followed by 2 nights inside Hwange National Park, home to over 40,000 free-roaming elephants.',
     priceUSD: 2150,
     duration: '5 Days / 4 Nights',
-    imageUrl: '../assets/images/family_wildlife_safari_1785488525464.jpg',
+    imageUrl: gameDrive10,
     highlights: [
       'Full Victoria Falls tour & Zambezi sunset cruise',
       '2 Nights at Hwange Safari Lodge with waterhole viewing deck',
@@ -222,7 +236,7 @@ export const VIC_FALLS_SPOTS: TravelSpot[] = [
     category: 'Rainforest & Falls',
     shortDesc: 'Walk along the precipice of Mosi-oa-Tunya with 16 panoramic viewpoints.',
     fullDesc: 'A lush micro-rainforest nourished perpetually by the spray of the Falls. Walk along paved paths to legendary viewpoints including Danger Point, Cataract Island, and the Main Falls.',
-    imageUrl: 'https://images.unsplash.com/photo-1614527961817-21789c629fb4?auto=format&fit=crop&q=80&w=800',
+    imageUrl: fallsTour1,
     location: 'Victoria Falls Town, Zimbabwe',
     idealFor: 'Everyone / Nature Lovers',
     insiderTip: 'Visit between 8:00 AM and 10:00 AM to see brilliant double rainbows arches across the gorge!',
@@ -233,7 +247,7 @@ export const VIC_FALLS_SPOTS: TravelSpot[] = [
     category: 'River & Wildlife',
     shortDesc: 'Glide along calm river waters while elephants cross and hippos wallow.',
     fullDesc: 'Cruising the upper Zambezi River above the Falls is an iconic Zimbabwean ritual. Watch hippos emerge, fish eagles soar, and elephants swim between islands as the sunset paints the sky in deep amber.',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800',
+    imageUrl: cruise1,
     location: 'Upper Zambezi River',
     idealFor: 'Couples, Photographers, Families',
     insiderTip: 'Ask for a seat on the top deck for unobstructed 360-degree photography views.',
@@ -244,7 +258,7 @@ export const VIC_FALLS_SPOTS: TravelSpot[] = [
     category: 'Dining & Culture',
     shortDesc: 'Cliffside dining perched 120m directly above the Batoka Gorge rapids.',
     fullDesc: 'Enjoy artisan cocktails, grilled impala, and craft coffee while sitting right over the edge of Batoka Gorge, watching thrill-seekers gorge swing and zipline in front of your eyes.',
-    imageUrl: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800',
+    imageUrl: zipLine1,
     location: 'Batoka Gorge Rim',
     idealFor: 'Foodies, Sunset Views',
     insiderTip: 'Book a table for 4:30 PM to secure prime cliffside sunset seating.',
@@ -255,12 +269,15 @@ export const VIC_FALLS_SPOTS: TravelSpot[] = [
     category: 'Adrenaline',
     shortDesc: 'A heart-pounding 70m freefall into the spectacular gorge.',
     fullDesc: 'For adrenaline seekers, leap off the edge into a breathtaking freefall before swinging high across the river gorge with views of the historic Victoria Falls Bridge.',
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=800',
+    imageUrl: gorgeSwing3,
     location: 'Lookout Point, Batoka Gorge',
     idealFor: 'Thrill Seekers',
     insiderTip: 'Tandem swings are available for couples or parents jumping with teens!',
   },
 ];
+
+const advisorImg = fallsTour1;
+const guideImg = elecrew5;
 
 export const ACCOMMODATIONS: Accommodation[] = [
   {
@@ -269,7 +286,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     type: 'Boutique Hotel',
     priceRangeUSD: '$420 - $850 / night',
     rating: 4.9,
-    imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    imageUrl: fallsTour1,
     features: ['Views of Vic Falls Bridge', 'Historic Grand Tea Terrace', 'Private Path to Falls', 'Luxury Pool'],
     description: 'The historic "Grand Dame" of Victoria Falls established in 1904. Colonial elegance paired with modern luxury and private walkway access to the rainforest.',
   },
@@ -279,7 +296,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     type: 'Luxury River Lodge',
     priceRangeUSD: '$550 - $1100 / night',
     rating: 5.0,
-    imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+    imageUrl: cruise1,
     features: ['Direct Zambezi River Frontage', 'Private Infinity Pools', 'Queensland Architecture', 'Private Jetty'],
     description: 'Nestled under indigenous trees on the banks of the Zambezi River. Peaceful, elegant suites with frequent elephant visitors along the riverbank.',
   },
@@ -289,7 +306,7 @@ export const ACCOMMODATIONS: Accommodation[] = [
     type: 'Resort',
     priceRangeUSD: '$220 - $480 / night',
     rating: 4.7,
-    imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800',
+    imageUrl: bomaImg1,
     features: ['Self-catering or B&B', 'Kid Friendly Pools', 'Wildlife on Property', 'BOMA Restaurant On-Site'],
     description: 'Thatch-roofed lodges surrounded by indigenous bush where warthogs and bushbuck roam freely across the manicured gardens.',
   },
@@ -300,7 +317,7 @@ export const TRAVEL_REVIEWS: Review[] = [
     id: 'rev-1',
     author: 'Tinashe & Ruvarashe M.',
     roleOrCity: 'Harare, Zimbabwe',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    avatar: guideImg,
     rating: 5,
     date: 'July 2026',
     title: 'Flawless romantic getaway!',
@@ -312,7 +329,7 @@ export const TRAVEL_REVIEWS: Review[] = [
     id: 'rev-2',
     author: 'David & Sarah K.',
     roleOrCity: 'London, UK',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    avatar: advisorImg,
     rating: 5,
     date: 'June 2026',
     title: 'True local Zimbabwean expertise',

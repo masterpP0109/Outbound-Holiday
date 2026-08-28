@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShieldCheck, HeartHandshake, MapPin, Award, Sparkles } from 'lucide-react';
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 
 interface AboutUsViewProps {
   onOpenPlanHoliday?: () => void;
@@ -49,7 +50,7 @@ export const AboutUsView: React.FC<AboutUsViewProps> = ({ onOpenPlanHoliday }) =
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-[28px] overflow-hidden shadow-[0_20px_50px_rgba(11,94,142,0.12)] border border-gray-100 group">
               <img
-                src="https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200"
+                src={fallsTour1}
                 alt="Victoria Falls Mosi-oa-Tunya"
                 className="w-full h-80 sm:h-[420px] object-cover group-hover:scale-[1.02] transition-transform duration-700"
               />

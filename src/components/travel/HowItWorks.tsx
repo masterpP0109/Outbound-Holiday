@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { ClipboardList, Sparkles, UserCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 
-import step1FamilyImg from '../../assets/images/planning_step1_family_1785494085250.jpg';
-import step2AdvisorImg from '../../assets/images/planning_step2_advisor_1785494096633.jpg';
-import step3WelcomeImg from '../../assets/images/planning_step3_welcome_1785494109119.jpg';
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import simunyeShow from '../../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
 
 interface HowItWorksProps {
   onStartPlanning: () => void;
@@ -18,7 +18,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
       title: 'Tell us about your trip',
       desc: 'Dates, party size, travel interests, and your approximate budget.',
       detail: 'Specify whether you want a weekend getaway or a 5-day safari combo. Our builder adapts to couples, families, or solo explorers.',
-      imageUrl: step1FamilyImg,
+      imageUrl: fallsTour1,
       icon: <ClipboardList className="w-5 h-5" />,
     },
     {
@@ -26,15 +26,15 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
       title: 'Receive personalised recommendations',
       desc: 'We create options that genuinely suit your travel style and expectations.',
       detail: 'Our intelligent concierge matches your stay tier with essential Victoria Falls activities, sunset river cruises, and safari extensions.',
-      imageUrl: step2AdvisorImg,
+      imageUrl: cruise1,
       icon: <Sparkles className="w-5 h-5" />,
     },
     {
       num: '03',
       title: 'Book with confidence',
       desc: 'We confirm availability, handle logistics, and support you on the ground.',
-      detail: 'Connect directly with Furqal or our local concierges in Victoria Falls via WhatsApp or email to lock in your booking effortlessly.',
-      imageUrl: step3WelcomeImg,
+      detail: 'Connect directly with our local concierges in Victoria Falls via WhatsApp or email to lock in your booking effortlessly.',
+      imageUrl: simunyeShow,
       icon: <UserCheck className="w-5 h-5" />,
     },
   ];
