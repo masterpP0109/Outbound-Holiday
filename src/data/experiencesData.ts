@@ -243,7 +243,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: 'Full Day (approx 9.5 Hours)',
     fromPrice: 'From US$185',
     priceAmount: 185,
-    featuredImage: chobeImg,
+    featuredImage: chobeImg6,
     galleryImages: [chobeImg, chobeImg2, chobeImg3, chobeImg4, chobeImg5, chobeImg6, chobeImg7],
     highlights: [
       'Morning boat cruise along the Chobe Riverfront',
