@@ -1,5 +1,41 @@
 import { Experience, ALL_EXPERIENCES } from './experiencesData';
 
+// Local Experience Assets
+import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import fallsTour7 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+import fallsTour11 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
+import cruise1 from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import cruise2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
+import cruise5 from '../assets/Experiences/Standard Cruise_/Standard-5-scaled.jpg';
+import cruise7 from '../assets/Experiences/Standard Cruise_/Standard-7.jpg';
+import heli1 from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import heli8 from '../assets/Experiences/Flight of Angels/Heli-8-scaled.jpg';
+import heliShoot1 from '../assets/Experiences/Flight of Angels/Heli-Shoot-7102511.jpg';
+import elecrew5 from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+import elecrew02 from '../assets/Experiences/Elephant Interaction_/Elecrew-02.jpg';
+import gameDrive10 from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+import gameDrive2 from '../assets/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
+import gameDrive4 from '../assets/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
+import chobe1 from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+import chobe2 from '../assets/Experiences/Chobe Day Trip_/Chobe-2.jpg';
+import chobe4 from '../assets/Experiences/Chobe Day Trip_/Chobe-4-scaled.jpg';
+import chobe8 from '../assets/Experiences/Chobe Day Trip_/Chobe-8-scaled.jpg';
+import bungee1 from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import bungee8 from '../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
+import gorgeSwing3 from '../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+import gorgeSwing5 from '../assets/Experiences/Gorge Swing_/Bridge-Swing-5-scaled.jpg';
+import bomaImg1 from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import bomaImg2 from '../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
+import rafting2 from '../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
+import rafting8 from '../assets/Experiences/White Water Rafting_/whitewater-rafting-images-8.jpg';
+import zipLine1 from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+import zipLine8 from '../assets/Experiences/Zip Line_/Bridge-slide-8.jpg';
+import simunye1 from '../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
+import simunye2 from '../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+import spa1 from '../assets/Experiences/Spa Treatments/IMG_0375.PNG';
+import spa2 from '../assets/Experiences/Spa Treatments/IMG_0376.PNG';
+import jetBoat1 from '../assets/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
+
 export interface DetailedItineraryDay {
   day: string;
   title: string;
@@ -114,11 +150,11 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 650,
     duration: '3 Days / 2 Nights',
     travellerType: 'First-Time Visitors, Couples & Value Seekers',
-    imageUrl: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: fallsTour1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=1200',
+      fallsTour1,
+      cruise1,
+      bomaImg1,
     ],
     storyIntroduction: 'Imagine arriving in Victoria Falls in the late afternoon, checking into your hotel and ending your first day on the Zambezi River as the sun sets over the water. The following morning, step into the rainforest to experience Mosi-oa-Tunya before enjoying a relaxed afternoon or adding a helicopter flight over the Falls.',
     whyWeRecommend: 'Victoria Falls can feel overwhelming for first-time visitors because there are so many hotels, activities and day-trip options. We designed this itinerary to include the destination’s most important experiences while preserving enough free time to relax or personalise the holiday.',
@@ -200,7 +236,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Private VFA Airport Transfer', 'Zambezi Sunset Cruise', 'Complimentary Beverages & Snacks'],
         optionalUpgrade: 'Luxury Pontoon Cruise or Private Captained River Launch',
         travelNotes: 'Keep your camera handy on the riverbank as wild elephants frequently cross the river at dusk.',
-        image: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800'
+        image: cruise1
       },
       {
         day: 'Day 2',
@@ -211,7 +247,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Guided Rainforest Walk', 'National Park Entrance Fees', 'Full BOMA Feast & Drum Show'],
         optionalUpgrade: '13-Minute "Flight of Angels" Helicopter Scenic Flight',
         travelNotes: 'Raincoats are provided during high-water months (Feb–June), but light waterproof phone bags are recommended.',
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: fallsTour1
       },
       {
         day: 'Day 3',
@@ -222,7 +258,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Breakfast', 'Private Departure Transfer'],
         optionalUpgrade: 'Late Departure Airport Lounge Pass',
         travelNotes: 'Allow 2 hours before international flight departures at VFA Airport.',
-        image: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800'
+        image: bomaImg1
       }
     ],
     recommendedHotels: [
@@ -232,7 +268,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: 'Boutique Safari Stay',
         rating: 4.8,
         description: 'Tranquil boutique stay nestled in natural woodland, offering spacious garden rooms, pool and warm Zimbabwean hospitality.',
-        imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+        imageUrl: fallsTour7,
         location: 'Victoria Falls Suburbs (5 mins from Falls)',
         facilities: ['Swimming Pool', 'Bush Restaurant', 'Free Wi-Fi', 'Garden Lounge'],
         upgradeOptions: 'Upgrade to Victoria Falls Safari Lodge or Shearwater Explorers Village'
@@ -243,7 +279,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: 'Modern Central Village Lodge',
         rating: 4.7,
         description: 'Vibrant modern village setup located right in the heart of town, walking distance to curio markets and cafes.',
-        imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800',
+        imageUrl: cruise5,
         location: 'Victoria Falls Central',
         facilities: ['Plunge Pool', 'Open-Air Bar & Grill', 'Tour Desk', 'Air-Conditioned Rooms']
       }
@@ -307,11 +343,11 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 890,
     duration: '4 Days / 3 Nights',
     travellerType: 'First-time visitors, couples & leisure travellers',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: gameDrive10,
     galleryImages: [
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200',
+      gameDrive10,
+      fallsTour7,
+      cruise2,
     ],
     storyIntroduction: 'Step into the realm of Mosi-oa-Tunya where thunder meets tranquil river waters. Four unhurried days allow you to experience Victoria Falls at a relaxed pace—soaking in morning rainforest rainbows, afternoon safari game drives, and evenings spent under starlit African skies.',
     whyWeRecommend: 'The Classic 4-Day itinerary provides the ideal duration for most travellers. It eliminates any feeling of rushing between activities while allowing ample time for optional high-adrenaline add-ons like helicopter flights or gorge swings.',
@@ -395,7 +431,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Private Airport Transfer', 'Sunset Cruise & Drinks'],
         optionalUpgrade: 'Luxury Pontoon Deck Upgrade',
         travelNotes: 'Sunset on the Zambezi is around 17:30 - 18:00 depending on the season.',
-        image: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800'
+        image: cruise1
       },
       {
         day: 'Day 2',
@@ -406,7 +442,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Guided Rainforest Walk', 'BOMA Dinner & Drum Show'],
         optionalUpgrade: 'Flight of Angels Helicopter Flight',
         travelNotes: 'Bring comfortable walking shoes.',
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: fallsTour7
       },
       {
         day: 'Day 3',
@@ -417,7 +453,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Zambezi 4x4 Game Drive', 'National Park Fees'],
         optionalUpgrade: 'Private Night Game Drive Extension',
         travelNotes: 'Mornings in the open 4x4 can be crisp in winter (June–Aug), warm jackets provided.',
-        image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800'
+        image: gameDrive10
       },
       {
         day: 'Day 4',
@@ -426,7 +462,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Private airport transfer for your outbound flight home.',
         evening: 'Onward departure.',
         included: ['Breakfast', 'Departure Transfer'],
-        image: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800'
+        image: bomaImg2
       }
     ],
     recommendedHotels: [
@@ -436,7 +472,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: '4★ Waterhole Safari Lodge',
         rating: 4.9,
         description: 'Iconic timber lodge built on a high plateau overlooking a busy wildlife waterhole in the African bush.',
-        imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800',
+        imageUrl: gameDrive2,
         location: 'Zambezi National Park border',
         facilities: ['Waterhole Viewing Deck', 'Two-Tier Pool', 'MaKuwa-Kuwa Restaurant', 'Free Shuttle']
       }
@@ -490,11 +526,11 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 1200,
     duration: '4 Days / 3 Nights',
     travellerType: 'Families with Children & Multi-Generational Groups',
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: elecrew5,
     galleryImages: [
-      'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1200',
+      elecrew5,
+      fallsTour1,
+      bomaImg1,
     ],
     storyIntroduction: 'Watch your children’s eyes light up as they feel the spray of Victoria Falls on their faces and spot wild elephants drinking along the Zambezi River. Designed around safety, child-friendly pacing, and fun family memories that will last a lifetime.',
     whyWeRecommend: 'Travelling with family requires the right balance of exciting activities, reliable logistics, child-safe transport, and resorts with swimming pools and spacious family suites. We took care of every detail so parents can relax completely.',
@@ -578,7 +614,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Private Van Transfer', 'Family Sunset Cruise'],
         optionalUpgrade: 'Private Boat Charter for the Family',
         travelNotes: 'Life jackets suitable for children are provided on board.',
-        image: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=800'
+        image: cruise1
       },
       {
         day: 'Day 2',
@@ -589,7 +625,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Guided Rainforest Tour', 'Canopy Zipline Tour'],
         optionalUpgrade: 'Family Helicopter Flight',
         travelNotes: 'Closed shoes are required for the zipline.',
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: fallsTour1
       },
       {
         day: 'Day 3',
@@ -599,7 +635,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         evening: 'The BOMA Dinner & Drumming experience with traditional face painting and interactive djembe drums for every child.',
         included: ['4x4 Game Drive', 'BOMA Feast & Drum Show'],
         travelNotes: 'An unforgettable cultural highlight for children.',
-        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800'
+        image: elecrew5
       },
       {
         day: 'Day 4',
@@ -608,7 +644,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Private transfer to Victoria Falls Airport.',
         evening: 'Onward departure.',
         included: ['Breakfast', 'Sanctuary Entry', 'Airport Transfer'],
-        image: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=800'
+        image: gameDrive4
       }
     ],
     recommendedHotels: [
@@ -618,7 +654,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: 'Family Riverfront Resort',
         rating: 4.8,
         description: 'The only hotel situated directly on the banks of the Zambezi River within Victoria Falls, featuring expansive lawns, pool and family rooms.',
-        imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+        imageUrl: elecrew02,
         location: 'Direct Zambezi Riverfront',
         facilities: ['Large Swimming Pool', 'Riverfront Lawn', 'Family Interconnecting Rooms', 'Kids Menu']
       }
@@ -672,11 +708,11 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 1850,
     duration: '4 Days / 3 Nights',
     travellerType: 'Honeymooners, Couples & Anniversary Celebrations',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: cruise1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200',
+      cruise1,
+      heli1,
+      spa1,
     ],
     storyIntroduction: 'Picture waking up to the gentle sounds of the Zambezi River flowing past your private riverfront villa. Soar hand in hand over the mighty Victoria Falls on a scenic helicopter flight, then celebrate the evening with a private candlelit 5-course dinner under the starry African sky.',
     whyWeRecommend: 'Victoria Falls is one of the most romantic destinations on earth. We created this package specifically to elevate romance—including luxury 5-star river suites, private transfers, champagne sunset cruises, and couples wellness treatments.',
@@ -761,7 +797,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['VIP Chauffeur Transfer', 'Private River Suite', 'Sunset Champagne Cruise'],
         optionalUpgrade: 'Private Helicopter Airport Arrival Transfer',
         travelNotes: 'Honeymoon amenities and flower turn-down service prepared upon arrival.',
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: cruise2
       },
       {
         day: 'Day 2',
@@ -771,7 +807,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         evening: 'Gourmet dinner served under romantic lighting at the lodge main deck.',
         included: ['Helicopter Scenic Flight', 'Private Guided Falls Tour', 'Couples Spa Treatment'],
         travelNotes: 'Helicopter departure time optimized for morning golden light.',
-        image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800'
+        image: heli1
       },
       {
         day: 'Day 3',
@@ -780,7 +816,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'High tea served on your private villa deck.',
         evening: 'Exclusive 5-course candlelit dinner setup on a private river pontoon floating beneath the African stars.',
         included: ['Private Game Drive', '5-Course Pontoon Dinner', 'All Premium Drinks'],
-        image: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800'
+        image: spa1
       },
       {
         day: 'Day 4',
@@ -789,7 +825,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Private executive transfer to Victoria Falls Airport.',
         evening: 'Outbound departure.',
         included: ['Champagne Breakfast', 'VIP Transfer'],
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: fallsTour11
       }
     ],
     recommendedHotels: [
@@ -799,7 +835,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: '5-Star Luxury River Lodge',
         rating: 5.0,
         description: 'Nestled on the banks of the Zambezi River within Zambezi National Park, offering opulent canvas suites with outdoor plunge pools and free-roaming wildlife.',
-        imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800',
+        imageUrl: spa2,
         location: 'Zambezi National Park (Riverfront)',
         facilities: ['Private Plunge Pools', 'Outdoor Bath Tubs', 'All-Inclusive Fine Dining', 'Private Butler']
       }
@@ -853,11 +889,11 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 1450,
     duration: '4 Days / 3 Nights',
     travellerType: 'Wildlife Lovers, Safari Enthusiasts & Photographers',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: chobe1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=1200',
+      chobe1,
+      chobe4,
+      fallsTour1,
     ],
     storyIntroduction: 'Cross the border from Zimbabwe into Botswana and witness hundreds of wild elephants drinking, swimming, and playing along the banks of the Chobe River. Combine world-class big game viewing with the thunder of Victoria Falls in one seamless 4-day itinerary.',
     whyWeRecommend: 'Chobe National Park is located just 70 km from Victoria Falls, making it one of Africa’s greatest value multi-country safari combinations. Our seamless cross-border transfers make visiting Botswana effortless.',
@@ -940,7 +976,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         evening: 'Sunset cruise along the Zambezi River with open bar drinks and tapas snacks.',
         included: ['Airport Pick-up', 'Sunset River Cruise'],
         travelNotes: 'Keep passports handy for check-in documentation.',
-        image: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800'
+        image: cruise1
       },
       {
         day: 'Day 2',
@@ -951,7 +987,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         included: ['Cross-border Transfers', 'Chobe River Boat Safari', 'Riverside Buffet Lunch', '4x4 Chobe Game Drive'],
         optionalUpgrade: 'Overnight Stay in Chobe Lodge',
         travelNotes: 'Passport required with at least 6 months validity.',
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: chobe1
       },
       {
         day: 'Day 3',
@@ -961,7 +997,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         evening: 'BOMA dinner option or dining at your leisure.',
         included: ['Guided Rainforest Walk', 'Park Entrance Fees'],
         optionalUpgrade: '13-Minute Helicopter Flight',
-        image: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=800'
+        image: fallsTour1
       },
       {
         day: 'Day 4',
@@ -970,7 +1006,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Private transfer to Victoria Falls Airport.',
         evening: 'Outbound departure.',
         included: ['Breakfast', 'Airport Transfer'],
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: chobe8
       }
     ],
     recommendedHotels: [
@@ -980,13 +1016,13 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: '4★ Luxury Safari Hotel',
         rating: 4.9,
         description: 'Exclusive club atmosphere with butler service, private lounge and deck overlooking a waterhole.',
-        imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800',
+        imageUrl: chobe2,
         location: 'Victoria Falls Plateau',
         facilities: ['Private Lounge', 'Butler Service', 'Waterhole Deck', 'Complimentary Cocktails']
       }
     ],
     whyWeChoseStay: 'Victoria Falls Safari Club provides private butler service, exclusive lounge access with complimentary afternoon teas and sundowner cocktails, and sweeping views over the game-rich bushveld.',
-    includedExperienceIds: ['chobe-day-trip', 'guided-tour-falls', 'upper-zambezi-sunset-cruise'],
+    includedExperienceIds: ['chobe-day-safari', 'guided-tour-falls', 'upper-zambezi-sunset-cruise'],
     routeMap: [
       { step: 1, title: 'Arrival at VFA', location: 'Victoria Falls', description: 'Transfer to lodge & sunset cruise.' },
       { step: 2, title: 'Chobe Day Trip', location: 'Chobe, Botswana', description: 'River cruise + 4x4 game drive in Botswana.' },
@@ -1034,10 +1070,11 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 1150,
     duration: '4 Days / 3 Nights',
     travellerType: 'Thrill-seekers, Active Travellers & Solo Adventurers',
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: rafting2,
     galleryImages: [
-      'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+      rafting2,
+      rafting8,
+      gorgeSwing3,
     ],
     storyIntroduction: 'Feel your heart leap into your throat as you leap off the historic Victoria Falls Bridge or navigate the violent white crests of Rapid #9 on the Zambezi River. Four action-packed days engineered for pure adrenaline and unforgettable stories.',
     whyWeRecommend: 'Victoria Falls is the adventure capital of Africa. We bundled the region’s premier extreme sports into one seamless itinerary with top-rated safety teams and professional video footage inclusions.',
@@ -1119,7 +1156,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Relax and enjoy lunch at Lookout Café overlooking the Batoka Gorge 120m below.',
         evening: 'Sunset drinks at the lodge pool bar.',
         included: ['Airport Transfer', 'Lodge Accommodation'],
-        image: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800'
+        image: gorgeSwing5
       },
       {
         day: 'Day 2',
@@ -1129,7 +1166,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         evening: 'Relaxing evening after a thrilling physical day on the water.',
         included: ['Full Day Rafting', 'Gear & Safety Helmets', 'Riverside Lunch'],
         travelNotes: 'Moderate physical fitness required to climb in/out of the canyon.',
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: rafting2
       },
       {
         day: 'Day 3',
@@ -1139,7 +1176,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         evening: 'BOMA dinner option or casual evening in town.',
         included: ['Bridge Bungee Jump', '13-min Helicopter Flight'],
         optionalUpgrade: 'Video & Photo Package',
-        image: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&q=80&w=800'
+        image: heli1
       },
       {
         day: 'Day 4',
@@ -1148,7 +1185,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Private transfer to Victoria Falls Airport.',
         evening: 'Departure.',
         included: ['Rainforest Tour', 'Departure Transfer'],
-        image: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800'
+        image: fallsTour1
       }
     ],
     recommendedHotels: [
@@ -1158,7 +1195,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: 'Vibrant Adventure Village',
         rating: 4.8,
         description: 'Vibrant lodge located centrally in Victoria Falls town with swimming pool, bar, and activity booking center.',
-        imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800',
+        imageUrl: bungee1,
         location: 'Victoria Falls Central',
         facilities: ['Pool', 'Bar & Grill', 'Activity Desk', 'Air Conditioning']
       }
@@ -1210,10 +1247,10 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 2150,
     duration: '5 Days / 4 Nights',
     travellerType: 'Wildlife Enthusiasts & Safari Connoisseurs',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: gameDrive2,
     galleryImages: [
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=1200',
+      gameDrive2,
+      chobe4,
     ],
     storyIntroduction: 'Journey from the roaring thunder of Victoria Falls into the ancient wilderness of Hwange National Park. Here, giant herds of 100+ elephants gather around natural waterholes at sunset while lions roar in the distance.',
     whyWeRecommend: 'Hwange is Zimbabwe’s largest and most famous wildlife reserve. Combining 2 nights at Victoria Falls with 2 nights in Hwange creates the classic African safari combination.',
@@ -1300,7 +1337,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Leisure time at the lodge.',
         evening: 'Zambezi River sunset cruise with drinks and snacks.',
         included: ['Airport Pick-up', 'Sunset River Cruise'],
-        image: 'https://images.unsplash.com/photo-1549472346-607ef3a33904?auto=format&fit=crop&q=80&w=800'
+        image: cruise2
       },
       {
         day: 'Day 2',
@@ -1309,7 +1346,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Craft market visit in Victoria Falls.',
         evening: 'BOMA Dinner & Drum Show.',
         included: ['Rainforest Tour', 'BOMA Dinner'],
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: bomaImg1
       },
       {
         day: 'Day 3',
@@ -1318,7 +1355,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Check into safari lodge and embark on an afternoon 4x4 game drive.',
         evening: 'Dinner at safari lodge overlooking illuminated waterhole.',
         included: ['Hwange Transfer', 'All Safari Meals', '4x4 Game Drive'],
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: gameDrive10
       },
       {
         day: 'Day 4',
@@ -1327,7 +1364,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Relax on the waterhole viewing deck watching elephant herds.',
         evening: 'Night game drive searching for nocturnal predators.',
         included: ['All Safari Meals', 'Morning & Night Safaris'],
-        image: 'https://images.unsplash.com/photo-1547471080-77a8b3014d23?auto=format&fit=crop&q=80&w=800'
+        image: gameDrive4
       },
       {
         day: 'Day 5',
@@ -1336,7 +1373,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Return road transfer directly to Victoria Falls Airport for outbound flight.',
         evening: 'Departure.',
         included: ['Breakfast', 'Return Airport Transfer'],
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: chobe8
       }
     ],
     recommendedHotels: [
@@ -1346,7 +1383,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: 'Safari Lodge with Waterhole Deck',
         rating: 4.8,
         description: 'Overlooking a natural waterhole frequented day and night by large herds of elephants, buffalo, and predators.',
-        imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800',
+        imageUrl: gameDrive2,
         location: 'Hwange National Park Border',
         facilities: ['Waterhole Deck', 'Pool', 'Restaurant', 'Safari Lounge']
       }
@@ -1395,10 +1432,10 @@ export const ALL_PACKAGES: DetailedPackage[] = [
     priceUSD: 3400,
     duration: '6 Days / 5 Nights',
     travellerType: 'VIPs, Luxury Connoisseurs & Milestone Celebrations',
-    imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: heli1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1200',
+      heli1,
+      spa1,
     ],
     storyIntroduction: 'Indulge in 6 days of pure African opulence. From private helicopter transfers directly to your riverfront villa to gourmet fine dining prepared by private chefs and exclusive river cruises, experience Victoria Falls at the highest standard.',
     whyWeRecommend: 'Designed for discerning travelers who expect uncompromising luxury, private butler service, exclusive safari vehicles, and top-tier fine dining.',
@@ -1471,7 +1508,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Settle into your river villa with private plunge pool and dedicated butler.',
         evening: 'Private sunset champagne cruise on the Zambezi River.',
         included: ['Helicopter Transfer', 'All-Inclusive Villa Stay', 'Sunset Cruise'],
-        image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800'
+        image: cruise2
       },
       {
         day: 'Day 2',
@@ -1480,7 +1517,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'High tea on the terrace.',
         evening: 'Gourmet 6-course wine-pairing dinner.',
         included: ['Private Falls Tour', 'Wine Pairing Dinner'],
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: fallsTour1
       },
       {
         day: 'Day 3',
@@ -1489,7 +1526,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Private open 4x4 game drive in Chobe.',
         evening: 'Return to villa for candlelit dinner.',
         included: ['Private Chobe Safari', 'Gourmet Lunch'],
-        image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=800'
+        image: chobe1
       },
       {
         day: 'Day 4',
@@ -1498,7 +1535,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Full spa treatment day overlooking the Zambezi.',
         evening: 'Private pontoon deck dinner.',
         included: ['Helicopter Flight', 'Full Spa Treatments'],
-        image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800'
+        image: spa1
       },
       {
         day: 'Day 5',
@@ -1507,7 +1544,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Leisurely afternoon at the pool.',
         evening: 'Sundowner cocktails on the riverbank.',
         included: ['Private Safari Drive', 'Sundowners'],
-        image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800'
+        image: gameDrive10
       },
       {
         day: 'Day 6',
@@ -1516,7 +1553,7 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         afternoon: 'Private helicopter transfer to Victoria Falls Airport.',
         evening: 'Departure.',
         included: ['Gourmet Breakfast', 'VIP Helicopter Departure'],
-        image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800'
+        image: heli1
       }
     ],
     recommendedHotels: [
@@ -1526,13 +1563,13 @@ export const ALL_PACKAGES: DetailedPackage[] = [
         type: '5-Star Grand Heritage Hotel',
         rating: 5.0,
         description: 'The iconic "Grand Dame of Victoria Falls" built in 1904, offering views of the Victoria Falls bridge and historic gorge.',
-        imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800',
+        imageUrl: fallsTour7,
         location: 'Victoria Falls Historic Precinct',
         facilities: ['Private Butler', 'Gourmet Dining', 'High Tea Terrace', 'Private Pool']
       }
     ],
     whyWeChoseStay: 'The Presidential Suite at Victoria Falls Hotel offers unmatched historic prestige, private butler service, and private gardens overlooking the historic Victoria Falls Bridge.',
-    includedExperienceIds: ['flight-of-angels', 'chobe-day-trip', 'upper-zambezi-sunset-cruise', 'guided-tour-falls'],
+    includedExperienceIds: ['flight-of-angels', 'chobe-day-safari', 'upper-zambezi-sunset-cruise', 'guided-tour-falls'],
     routeMap: [
       { step: 1, title: 'Helicopter VFA Arrival', location: 'Victoria Falls', description: 'Private flight to river lodge.' },
       { step: 2, title: 'Falls & Chobe Safari', location: 'Zim & Botswana', description: 'Private river safari & helicopter tours.' },

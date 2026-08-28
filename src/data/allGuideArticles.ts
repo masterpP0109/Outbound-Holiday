@@ -1,15 +1,15 @@
 import { GuideArticle } from '../types/guide';
 import { MASTER_FIRST_TIME_VISITOR_GUIDE } from './masterGuideData';
 
-import vicFallsIconicImg from '../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
-import gorgeHelicopterImg from '../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg';
-import familyResortImg from '../assets/images/intent_family_resort_zim_1785489699263.jpg';
-import founderGuideImg from '../assets/images/furqal_founder_guide_1785494119753.jpg';
-import bomaDinnerImg from '../assets/images/intent_boma_celebration_zim_1785489746202.jpg';
-import romanticDinnerImg from '../assets/images/intent_romantic_dinner_zim_1785489715667.jpg';
-import familySafariImg from '../assets/images/family_wildlife_safari_1785488525464.jpg';
-import coupleHoneymoonImg from '../assets/images/zimbabwean_couple_honeymoon_1785488512769.jpg';
-import bestValueImg from '../assets/images/intent_best_value_zim_1785489229297.jpg';
+import vicFallsIconicImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import gorgeHelicopterImg from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+import familyResortImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+import founderGuideImg from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+import bomaDinnerImg from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import romanticDinnerImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import familySafariImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+import coupleHoneymoonImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import bestValueImg from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 
 // Standard Author Object
 const LOCAL_SPECIALISTS_AUTHOR = {

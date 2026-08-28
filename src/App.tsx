@@ -22,6 +22,7 @@ import { FaqSection } from './components/travel/FaqSection';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
 import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
+import { ExperienceCategoryPage } from './components/travel/ExperienceCategoryPage';
 import { BomaExperiencePage } from './components/travel/BomaExperiencePage';
 import { BungeeExperiencePage } from './components/travel/BungeeExperiencePage';
 import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
@@ -33,9 +34,10 @@ import { Check } from 'lucide-react';
 export default function App() {
   // Application View & Navigation State
   const [activeView, setActiveView] = useState<
-    'home' | 'experiences' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee'
+    'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee'
   >('home');
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('first-visit');
   const [selectedPackage, setSelectedPackage] = useState<DetailedPackage | null>(null);
   const [selectedAccommodation, setSelectedAccommodation] = useState<DetailedAccommodation | null>(null);
   const [currency, setCurrency] = useState<Currency>('USD');
@@ -44,11 +46,18 @@ export default function App() {
   // Modals & Drawers
   const [planHolidayOpen, setPlanHolidayOpen] = useState(false);
   const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | null>(null);
+  const [preselectedAccommodation, setPreselectedAccommodation] = useState<DetailedAccommodation | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleOpenPlanHoliday = () => {
+    setPreselectedPackage(null);
+    setPreselectedAccommodation(null);
+    setPlanHolidayOpen(true);
   };
 
   // Accommodation Handlers
@@ -87,6 +96,12 @@ export default function App() {
       setActiveView('experience-detail');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleSelectCategory = (catId: string) => {
+    setSelectedCategory(catId);
+    setActiveView('experience-category');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Smooth Section & Page Navigation
@@ -168,7 +183,7 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         onNavigateSection={handleNavigateSection}
         isGuideActive={activeView === 'guide'}
-        isExperiencesActive={activeView === 'experiences'}
+        isExperiencesActive={activeView === 'experiences' || activeView === 'experience-category' || activeView === 'experience-detail' || activeView === 'boma' || activeView === 'bungee'}
         isAccommodationActive={activeView === 'accommodation' || activeView === 'accommodation-detail'}
         isPackagesActive={activeView === 'packages' || activeView === 'package-detail'}
       />
@@ -179,8 +194,9 @@ export default function App() {
           <AccommodationDirectoryPage
             currency={currency}
             onSelectProperty={handleSelectAccommodationDetail}
-            onOpenPlanHoliday={() => {
+            onIncludeInHoliday={(prop) => {
               setPreselectedPackage(null);
+              setPreselectedAccommodation(prop);
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
@@ -194,6 +210,7 @@ export default function App() {
             currency={currency}
             onOpenPlanHolidayWithProperty={(prop) => {
               setPreselectedPackage(null);
+              setPreselectedAccommodation(prop);
               setPlanHolidayOpen(true);
             }}
             onSelectExperience={handleSelectExperience}
@@ -241,9 +258,28 @@ export default function App() {
         ) : activeView === 'experiences' ? (
           <ExperiencesDirectoryPage
             onSelectExperience={handleSelectExperience}
+            onSelectCategory={handleSelectCategory}
             onOpenPlanHoliday={() => {
               setPreselectedPackage(null);
               setPlanHolidayOpen(true);
+            }}
+          />
+        ) : activeView === 'experience-category' ? (
+          <ExperienceCategoryPage
+            categoryId={selectedCategory}
+            onSelectExperience={handleSelectExperience}
+            onSelectCategory={handleSelectCategory}
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null);
+              setPlanHolidayOpen(true);
+            }}
+            onNavigateHome={() => {
+              setActiveView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onBackToLanding={() => {
+              setActiveView('experiences');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         ) : activeView === 'experience-detail' && selectedExperience ? (
@@ -258,7 +294,11 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onBackToDirectory={() => {
-              setActiveView('experiences');
+              if (selectedCategory) {
+                setActiveView('experience-category');
+              } else {
+                setActiveView('experiences');
+              }
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onSelectRelatedExperience={(rel) => handleSelectExperience(rel)}
@@ -415,6 +455,7 @@ export default function App() {
         isOpen={planHolidayOpen}
         onClose={() => setPlanHolidayOpen(false)}
         preselectedPackage={preselectedPackage}
+        preselectedAccommodation={preselectedAccommodation}
       />
     </div>
   );

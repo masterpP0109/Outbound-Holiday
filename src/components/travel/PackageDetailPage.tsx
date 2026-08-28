@@ -399,6 +399,28 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
           </section>
         )}
 
+        {/* Why We Designed This Holiday (Trusted Advisor Advice) */}
+        <section className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200/80 shadow-xs space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
+            <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
+            <span>LOCAL SPECIALIST INSIGHT</span>
+          </div>
+
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
+            Why We Designed This Holiday
+          </h2>
+
+          <div className="space-y-3 text-sm text-gray-700 leading-relaxed font-light">
+            <p>
+              {packageData.whyWeRecommend || "Many travellers struggle to balance timing, activity pace, and lodge transfers when planning a trip to Victoria Falls. We designed this itinerary as a trusted framework to eliminate guesswork and ensure every day flows naturally."}
+            </p>
+            <div className="text-xs text-[#0B5E8E] font-medium bg-[#FAF9F6] p-4 rounded-xl border border-gray-200/80 flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-[#C9A66B] shrink-0 mt-0.5" />
+              <span><strong>Advisor Note:</strong> This itinerary is completely customizable. Whether you wish to upgrade accommodations, add extra nights in Hwange or Chobe, or adjust activity times to match your flight schedule, our local Victoria Falls travel team will tailor every detail for you.</span>
+            </div>
+          </div>
+        </section>
+
         {/* Day-by-Day Itinerary Section */}
         <section className="space-y-6">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
@@ -939,7 +961,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                       }}
                       className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold py-2 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <span>View Package</span>
+                      <span>View Holiday Details</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                     </button>
                   </div>
@@ -1009,7 +1031,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
               className="flex-1 sm:flex-initial bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm py-3 px-6 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <CalendarCheck className="w-4 h-4" />
-              <span>Personalise This Package</span>
+              <span>Personalise This Holiday</span>
             </button>
           </div>
         </div>

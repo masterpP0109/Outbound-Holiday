@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckCircle2, MessageSquare, PhoneCall } from 'lucide-react';
 
-import furqalFounderImg from '../../assets/images/furqal_founder_guide_1785494119753.jpg';
+import furqalFounderImg from '../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
 
 interface MeetYourGuideProps {
   onOpenConsultation: () => void;

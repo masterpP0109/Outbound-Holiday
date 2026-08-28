@@ -2,9 +2,9 @@ import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
 import guidedTourImg from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import familySafariImg from '../../assets/images/family_wildlife_safari_1785488525464.jpg';
+import elephantImg from '../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
 import standardCruiseImg from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import craftMarketImg from '../../assets/images/intent_craft_market_zim_1785489731195.jpg';
+import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
 import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 
@@ -29,8 +29,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Create Family Memories That Last',
       description: 'Relax while we take care of the details. From family-friendly accommodation to exciting experiences for all ages, this holiday is designed to bring everyone together.',
       ctaText: 'Explore this Holiday',
-      imageUrl: familySafariImg,
-      fallbackUrl: familySafariImg,
+      imageUrl: elephantImg,
+      fallbackUrl: elephantImg,
     },
     {
       id: 'romantic',
@@ -47,8 +47,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
       title: 'Experience More for Less',
       description: 'A carefully planned Victoria Falls holiday that delivers incredible experiences while making the most of your budget. Great value without compromising on what matters most.',
       ctaText: 'Explore this Holiday',
-      imageUrl: craftMarketImg,
-      fallbackUrl: craftMarketImg,
+      imageUrl: chobeImg,
+      fallbackUrl: chobeImg,
     },
     {
       id: 'celebration',

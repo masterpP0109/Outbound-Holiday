@@ -11,8 +11,11 @@ import {
   SlidersHorizontal,
   Home,
   Check,
-  Star
+  CheckCircle2,
+  ShieldCheck
 } from 'lucide-react';
+
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 
 interface PackagesDirectoryPageProps {
   currency: Currency;
@@ -31,9 +34,9 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const filterCategories: { id: FilterCategory; label: string }[] = [
-    { id: 'all', label: 'All Packages' },
+    { id: 'all', label: 'All Holidays' },
     { id: 'first-visit', label: 'First-Time Visitors' },
-    { id: 'couples', label: 'Couples' },
+    { id: 'couples', label: 'Couples & Honeymoons' },
     { id: 'families', label: 'Families' },
     { id: 'luxury', label: 'Luxury' },
     { id: 'adventure', label: 'Adventure' },
@@ -66,12 +69,24 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] pb-20">
-      {/* Top Banner / Breadcrumb Header */}
-      <div className="bg-[#0B5E8E] text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-[#08486e]">
-        <div className="max-w-7xl mx-auto space-y-4">
+      {/* Cinematic Hero Section with Background Image */}
+      <section className="relative bg-[#0D2833] text-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#C9A66B]/30">
+        {/* Atmospheric Background Image Layer */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={fallsTour1} 
+            alt="Victoria Falls mist and landscape" 
+            className="w-full h-full object-cover object-center filter brightness-90 saturate-110 scale-105"
+          />
+          {/* Multi-stage dark gradient overlays for maximum contrast */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/90 via-[#0D2833]/80 to-[#0D2833]/90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-transparent to-[#0D2833]/70" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
           
           {/* Breadcrumb Navigation */}
-          <nav className="flex items-center gap-2 text-xs text-white/70 font-medium">
+          <nav className="flex items-center gap-2 text-xs text-white/80 font-medium">
             <button
               onClick={onNavigateHome}
               className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
@@ -83,23 +98,40 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
             <span className="text-[#C9A66B] font-semibold">Holiday Packages</span>
           </nav>
 
-          {/* Hero Titles */}
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest border border-white/15">
-              <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
+          {/* Hero Titles & Intro */}
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D2833]/80 backdrop-blur-md border border-[#C9A66B]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest shadow-lg">
+              <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
               <span>OUTBOUND HOLIDAY ITINERARIES</span>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-              Recommended Victoria Falls Holidays
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight drop-shadow-md">
+              Find the Holiday That's Right for You
             </h1>
 
-            <p className="text-sm sm:text-base text-white/90 font-light leading-relaxed">
-              Use these thoughtfully designed itineraries as inspiration. Every package can be personalised to suit your interests, accommodation preferences, travel dates and budget.
+            <p className="text-base sm:text-lg text-gray-100 font-light leading-relaxed drop-shadow-xs">
+              Every traveller experiences Victoria Falls differently. Whether you're visiting for the first time, celebrating a honeymoon, travelling with family or looking for adventure, our carefully designed itineraries provide the perfect starting point for your holiday.
             </p>
           </div>
+
+          {/* Trust Highlights */}
+          <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-gray-200 font-medium">
+            <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
+              <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
+              <span>100% Tailored by Local Specialists</span>
+            </div>
+            <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-[#C9A66B]" />
+              <span>Flexible Accommodation & Activity Options</span>
+            </div>
+            <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-[#25D366]" />
+              <span>Direct WhatsApp Advisor Support</span>
+            </div>
+          </div>
+
         </div>
-      </div>
+      </section>
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -114,7 +146,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search packages by keyword, accommodation or experience..."
+                placeholder="Search holidays by keyword, accommodation or experience..."
                 className="w-full bg-[#FAF9F6] border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 text-xs sm:text-sm text-[#2F3A44] focus:outline-none focus:ring-2 focus:ring-[#0B5E8E] focus:bg-white"
               />
               <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
@@ -182,9 +214,9 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                     {/* Price Starting From */}
                     <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white flex items-end justify-between">
                       <div>
-                        <span className="text-[10px] uppercase font-semibold text-gray-200 block">Estimated Investment</span>
+                        <span className="text-[10px] uppercase font-semibold text-gray-200 block">Estimated Holiday Investment</span>
                         <span className="text-xl font-bold font-serif text-white leading-none">
-                          {formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">/ person</span>
+                          From {formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">/ person</span>
                         </span>
                       </div>
                     </div>
@@ -223,7 +255,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                   </div>
                 </div>
 
-                {/* View Package Button */}
+                {/* View Holiday Button */}
                 <div className="p-6 pt-0">
                   <button
                     onClick={(e) => {
@@ -232,7 +264,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                     }}
                     className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                   >
-                    <span>View Package Details</span>
+                    <span>View Holiday Details</span>
                     <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
                   </button>
                 </div>
@@ -242,7 +274,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
         ) : (
           <div className="bg-white rounded-2xl p-12 text-center border border-gray-200/80 space-y-4">
             <Compass className="w-12 h-12 text-gray-300 mx-auto" />
-            <h3 className="font-serif font-bold text-xl text-[#0B5E8E]">No packages match your search</h3>
+            <h3 className="font-serif font-bold text-xl text-[#0B5E8E]">No holiday itineraries match your search</h3>
             <p className="text-sm text-gray-500 max-w-md mx-auto">
               Try adjusting your category filter or search keywords. Alternatively, our local specialists can craft a custom itinerary for you.
             </p>

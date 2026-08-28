@@ -1,5 +1,6 @@
 import React from 'react';
 import { TravelPackage } from '../../types';
+import { DetailedAccommodation } from '../../data/accommodationsData';
 import { HolidayBuilderModal } from './HolidayBuilderModal';
 
 interface PlanHolidayModalProps {
@@ -7,6 +8,7 @@ interface PlanHolidayModalProps {
   onClose: () => void;
   preselectedPackage?: TravelPackage | null;
   preselectedActivity?: string | null;
+  preselectedAccommodation?: DetailedAccommodation | null;
 }
 
 export const PlanHolidayModal: React.FC<PlanHolidayModalProps> = ({
@@ -14,6 +16,7 @@ export const PlanHolidayModal: React.FC<PlanHolidayModalProps> = ({
   onClose,
   preselectedPackage,
   preselectedActivity,
+  preselectedAccommodation,
 }) => {
   return (
     <HolidayBuilderModal
@@ -21,6 +24,7 @@ export const PlanHolidayModal: React.FC<PlanHolidayModalProps> = ({
       onClose={onClose}
       preselectedPackage={preselectedPackage}
       preselectedActivity={preselectedActivity}
+      preselectedAccommodation={preselectedAccommodation}
     />
   );
 };

@@ -33,11 +33,15 @@ export interface Experience {
   relatedIds: string[];
 }
 
-import intentVicFallsIconicImg from '../assets/images/intent_vic_falls_iconic_1785490034846.jpg';
-import footerZambeziDuskImg from '../assets/images/footer_zambezi_dusk_1785494130616.jpg';
-import rhinoTrackingImg from '../assets/images/rhino_tracking_drive_1785497819922.jpg';
-import familySafariImg from '../assets/images/family_wildlife_safari_1785488525464.jpg';
-import craftMarketImg from '../assets/images/intent_craft_market_zim_1785489731195.jpg';
+// Image Assets imported from their specific folders in src/assets/Experiences/<Folder>
+import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+import guidedTourImg3 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
+import guidedTourImg4 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
+import guidedTourImg5 from '../assets/Experiences/Guided Tour of the Falls_/5-4.jpg';
+import guidedTourImg6 from '../assets/Experiences/Guided Tour of the Falls_/7-3.jpg';
+import guidedTourImg7 from '../assets/Experiences/Guided Tour of the Falls_/8-2.jpg';
+import guidedTourImg8 from '../assets/Experiences/Guided Tour of the Falls_/Guided-Tour-Of-The-Falls-Fact-Sheet-2024_page-0005.jpg';
 import gameDriveImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 import bungeeImg from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
 import bungeeImg2 from '../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
@@ -135,14 +139,6 @@ import bomaDinnerImg4 from '../assets/Experiences/Boma Dinner_/Boma prepping on 
 import bomaDinnerImg5 from '../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
 import bomaDinnerImg6 from '../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
 import bomaDinnerImg7 from '../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
-import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
-import guidedTourImg3 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
-import guidedTourImg4 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
-import guidedTourImg5 from '../assets/Experiences/Guided Tour of the Falls_/5-4.jpg';
-import guidedTourImg6 from '../assets/Experiences/Guided Tour of the Falls_/7-3.jpg';
-import guidedTourImg7 from '../assets/Experiences/Guided Tour of the Falls_/8-2.jpg';
-import guidedTourImg8 from '../assets/Experiences/Guided Tour of the Falls_/Guided-Tour-Of-The-Falls-Fact-Sheet-2024_page-0005.jpg';
 
 import heli1Img from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 import heli2Img from '../assets/Experiences/Flight of Angels/Heli-8-scaled.jpg';
@@ -359,8 +355,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '3.5 Hours',
     fromPrice: 'From US$110',
     priceAmount: 110,
-    featuredImage: rhinoTrackingImg,
-    galleryImages: [rhinoTrackingImg, rhinoTrackingImg, rhinoTrackingImg],
+    featuredImage: gameDriveImg,
+    galleryImages: [gameDriveImg, gameDriveImg2, gameDriveImg3],
     highlights: ['Track rhinos on foot with armed rangers', 'Open 4x4 game drive through Zambezi park', 'Learn animal tracking and medicinal plants'],
     whatsIncluded: ['Professional ranger guide', '4x4 game drive', 'Bush refreshments'],
     goodToKnow: ['Minimum age 12 years for walking safari segment.'],
@@ -649,8 +645,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2 Hours',
     fromPrice: 'From US$75',
     priceAmount: 75,
-    featuredImage: footerZambeziDuskImg,
-    galleryImages: [footerZambeziDuskImg, standardCruiseImg, standardCruiseImg2],
+    featuredImage: standardCruiseImg4,
+    galleryImages: [standardCruiseImg4, standardCruiseImg, standardCruiseImg2],
     highlights: ['Early morning river tranquility', 'Cooked plated breakfast', 'Freshly brewed Tanganda coffee & juices'],
     whatsIncluded: ['Full breakfast', 'Bar & hot drinks', 'Transfers'],
     goodToKnow: ['Departs jetty at 6:30 AM.'],
@@ -706,8 +702,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2.5 Hours',
     fromPrice: 'From US$45',
     priceAmount: 45,
-    featuredImage: craftMarketImg,
-    galleryImages: [craftMarketImg, craftMarketImg, craftMarketImg],
+    featuredImage: simunyeImg3,
+    galleryImages: [simunyeImg3, simunyeImg4, simunyeImg],
     highlights: ['Meet village elders and families', 'Learn traditional cooking and homesteading', 'Community contribution included'],
     whatsIncluded: ['Cultural guide', 'Village donation', 'Hotel transfers'],
     goodToKnow: ['Photography welcomed with respectful permission.'],
@@ -725,8 +721,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '2 Hours',
     fromPrice: 'From US$35',
     priceAmount: 35,
-    featuredImage: craftMarketImg,
-    galleryImages: [craftMarketImg, craftMarketImg, craftMarketImg],
+    featuredImage: simunyeImg4,
+    galleryImages: [simunyeImg4, simunyeImg3, simunyeImg2],
     highlights: ['Shona stone sculpture demonstrations', 'Local woodcraft markets', 'Packaging assistance for international flights'],
     whatsIncluded: ['Guided market walk', 'Transfers'],
     goodToKnow: ['Market vendors accept USD cash.'],
@@ -744,8 +740,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: 'Full Day (11 Hours)',
     fromPrice: 'From US$210',
     priceAmount: 210,
-    featuredImage: familySafariImg,
-    galleryImages: [familySafariImg, familySafariImg, familySafariImg],
+    featuredImage: gameDriveImg4,
+    galleryImages: [gameDriveImg4, gameDriveImg5, gameDriveImg6],
     highlights: ['Explore Hwange Main Camp & waterholes', 'Buffet lunch at safari lodge', 'Sightings of wild dogs, lions, cheetahs & elephants'],
     whatsIncluded: ['Return road transfers', 'Full day 4x4 safari', 'Lodge lunch & park fees'],
     goodToKnow: ['Departs at 6:00 AM from Victoria Falls hotels.'],
@@ -763,8 +759,8 @@ export const ALL_EXPERIENCES: Experience[] = [
     duration: '5 Hours',
     fromPrice: 'From US$95',
     priceAmount: 95,
-    featuredImage: intentVicFallsIconicImg,
-    galleryImages: [intentVicFallsIconicImg, intentVicFallsIconicImg],
+    featuredImage: guidedTourImg3,
+    galleryImages: [guidedTourImg3, guidedTourImg4],
     highlights: ['View Eastern Cataract & Knife-Edge Bridge', 'Livingstone Museum tour', 'Cross historic 1905 Victoria Falls Bridge'],
     whatsIncluded: ['Cross-border transport', 'Guide', 'Town tour'],
     goodToKnow: ['Check Zambia visa requirements before departure.'],

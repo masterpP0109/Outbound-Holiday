@@ -5,12 +5,12 @@ declare module '*.jpg' {
   export default value;
 }
 
-declare module '*.jpeg' {
+declare module '*.JPG' {
   const value: string;
   export default value;
 }
 
-declare module '*.JPG' {
+declare module '*.jpeg' {
   const value: string;
   export default value;
 }
@@ -35,7 +35,13 @@ declare module '*.webp' {
   export default value;
 }
 
+declare module '*.WEBP' {
+  const value: string;
+  export default value;
+}
+
 declare module '*.svg' {
   const value: string;
   export default value;
 }
+

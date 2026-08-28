@@ -1,3 +1,37 @@
+// Local Experience Assets for Accommodations
+import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import fallsTour7 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+import fallsTour11 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
+import fallsTour6 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
+
+import cruise1 from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import cruise2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
+import cruise5 from '../assets/Experiences/Standard Cruise_/Standard-5-scaled.jpg';
+import cruise6 from '../assets/Experiences/Standard Cruise_/Standard-6-scaled.jpg';
+import cruise7 from '../assets/Experiences/Standard Cruise_/Standard-7.jpg';
+
+import gameDrive10 from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+import gameDrive2 from '../assets/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
+import gameDrive4 from '../assets/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
+import gameDrive5 from '../assets/Experiences/Game Drive/Game-Drive-5-scaled.jpg';
+
+import elecrew5 from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+import elecrew2 from '../assets/Experiences/Elephant Interaction_/Elecrew-02.jpg';
+
+import bomaImg1 from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import bomaImg2 from '../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
+
+import heli1 from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+
+import spa1 from '../assets/Experiences/Spa Treatments/IMG_0375.PNG';
+import spa2 from '../assets/Experiences/Spa Treatments/IMG_0376.PNG';
+import spa3 from '../assets/Experiences/Spa Treatments/IMG_0377.PNG';
+import spa4 from '../assets/Experiences/Spa Treatments/IMG_0378.PNG';
+
+import bungee1 from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+import rafting2 from '../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
+import zipLine1 from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+
 export interface RoomType {
   name: string;
   occupancy: string;
@@ -72,12 +106,14 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '4.5 km (10-minute shuttle)',
     airportDistance: '20 km (20-minute transfer)',
     priceFromUSD: 280,
-    heroImage: '../assets/images/zimbabwean_family_safari_tour_1785488788507.jpg',
+    heroImage: gameDrive10,
     galleryImages: [
-      '../assets/images/family_wildlife_safari_1785488525464.jpg',
-      '../assets/images/zimbabwean_family_safari_tour_1785488788507.jpg',
-      '../assets/images/intent_family_resort_zim_1785489699263.jpg',
-      '../assets/images/intent_vic_falls_iconic_1785490034846.jpg'
+      gameDrive10,
+      gameDrive2,
+      gameDrive4,
+      gameDrive5,
+      elecrew5,
+      elecrew2
     ],
     tagline: 'Perched high on a natural plateau overlooking an active wildlife waterhole.',
     shortDescription: 'Unrivalled sunset views over the African bushveld, where elephants, kudu and marabou storks gather below your balcony at the on-site waterhole.',
@@ -103,14 +139,14 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: 'Waterhole View Room',
         occupancy: '2 Adults (King or Twin)',
         description: 'Spacious air-conditioned room featuring a private glass-fronted balcony facing directly over the wildlife waterhole and Zambezi National Park bush.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: gameDrive2,
         features: ['Waterhole View Balcony', 'Air Conditioning', 'En-suite Bathroom with Rain Shower', 'Mosquito Netting', 'Mini Bar & Safe']
       },
       {
         name: 'Waterhole View Suite',
         occupancy: '2 Adults + 2 Children',
         description: 'Duplex suite offering a lower lounge area, guest cloakroom, upper bedroom and expansive balcony with panoramic views over the waterhole and sunset Horizon.',
-        imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+        imageUrl: gameDrive4,
         features: ['Two-Level Duplex Layout', 'Private Lounge Area', 'Nespresso Coffee Machine', 'Complimentary Mini Bar', 'Sunset View Deck']
       }
     ],
@@ -145,7 +181,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'Direct lobby pick-up for all guided tours & helicopter flights.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'zambezi-sunset-cruise', 'boma-dinner-show', 'flight-of-angels'],
+    nearbyExperienceIds: ['guided-tour-falls', 'upper-zambezi-sunset-cruise', 'boma-dinner-show', 'flight-of-angels'],
     relatedPropertyIds: ['ilala-lodge-hotel', 'pioneers-victoria-falls', 'palm-river-hotel']
   },
   {
@@ -160,11 +196,13 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '800 metres (8-minute walk)',
     airportDistance: '21 km (20-minute transfer)',
     priceFromUSD: 295,
-    heroImage: '../assets/images/intent_vic_falls_iconic_1785490034846.jpg',
+    heroImage: fallsTour1,
     galleryImages: [
-      '../assets/images/intent_vic_falls_iconic_1785490034846.jpg',
-      '../assets/images/footer_zambezi_dusk_1785494130616.jpg',
-      '../assets/images/intent_gorge_helicopter_zim_1785489759987.jpg'
+      fallsTour1,
+      fallsTour7,
+      fallsTour11,
+      fallsTour6,
+      cruise2
     ],
     tagline: 'The closest hotel to Victoria Falls, where mist rises over lush manicured lawns.',
     shortDescription: 'A refined boutique hotel located right on the edge of Victoria Falls National Park. Walk to the rainforest in minutes while warthogs graze peacefully outside your room.',
@@ -190,14 +228,14 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: 'Deluxe Garden Room',
         occupancy: '2 Adults',
         description: 'Elegantly appointed ground-floor or first-floor room with private patio or balcony overlooking manicured lawns bordering the national park.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: fallsTour7,
         features: ['Private Patio/Balcony', 'Teak Furniture', 'Air Conditioning', 'Satellite TV', 'Espresso Machine']
       },
       {
         name: 'Executive Suite',
         occupancy: '2 Adults',
         description: 'Luxurious suite with separate lounge, king bed, spa bathtub, and private veranda offering glimpses of the spray rising over Victoria Falls.',
-        imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+        imageUrl: fallsTour11,
         features: ['Separate Living Lounge', 'Spa Bathtub & Shower', 'Private Veranda', 'Nespresso Coffee Bar', 'Park Views']
       }
     ],
@@ -230,7 +268,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'Walk to Falls entrance or lobby pick-up for excursions.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'zambezi-sunset-cruise', 'bungee-jump', 'flight-of-angels'],
+    nearbyExperienceIds: ['guided-tour-falls', 'upper-zambezi-sunset-cruise', 'bungee-jump', 'flight-of-angels'],
     relatedPropertyIds: ['victoria-falls-safari-lodge', 'batonka-guest-lodge', 'pioneers-victoria-falls']
   },
   {
@@ -245,12 +283,12 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '3.0 km (5-minute drive)',
     airportDistance: '19 km (18-minute transfer)',
     priceFromUSD: 190,
-    heroImage: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1600',
+    heroImage: spa1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1200'
+      spa1,
+      spa2,
+      spa3,
+      gameDrive5
     ],
     tagline: 'A stylish, eco-conscious sanctuary nestled in tranquil landscaped gardens.',
     shortDescription: 'Modern safari elegance meets classic hospitality. 50 spacious rooms surrounded by native flora, two sparkling swimming pools, and a serene day spa.',
@@ -276,14 +314,14 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: 'Deluxe Garden Room',
         occupancy: '2 Adults',
         description: 'Air-conditioned room styled with tasteful vintage safari aesthetic, private veranda opening directly onto flower gardens and bird-watching paths.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: spa2,
         features: ['Private Garden Veranda', 'Air Conditioning & Ceiling Fan', 'En-suite Walk-in Shower', 'Tea & Coffee Bar', 'Solar Heated Water']
       },
       {
         name: 'Family Interconnecting Suite',
         occupancy: '2 Adults + 2 Children',
         description: 'Two spacious bedrooms joined by an inner door, allowing privacy for parents and safety for kids with two en-suite bathrooms.',
-        imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+        imageUrl: spa3,
         features: ['Interconnecting Bedrooms', 'Two En-suite Bathrooms', 'Spacious Patio', 'Solar Powered', 'Garden Views']
       }
     ],
@@ -316,7 +354,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'Complimentary lobby transfers organized for activities.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'zambezi-sunset-cruise', 'boma-dinner-show'],
+    nearbyExperienceIds: ['guided-tour-falls', 'upper-zambezi-sunset-cruise', 'boma-dinner-show'],
     relatedPropertyIds: ['batonka-guest-lodge', 'victoria-falls-safari-lodge', 'ilala-lodge-hotel']
   },
   {
@@ -331,12 +369,12 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '2.5 km (5-minute drive)',
     airportDistance: '20 km (20-minute transfer)',
     priceFromUSD: 210,
-    heroImage: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1600',
+    heroImage: spa4,
     galleryImages: [
-      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1200'
+      spa4,
+      cruise5,
+      cruise7,
+      spa1
     ],
     tagline: 'A tranquil haven of contemporary African elegance and personalized service.',
     shortDescription: 'Set in quiet, leafy surroundings just minutes from town. Features 27 air-conditioned rooms with private verandas overlooking a serene swimming pool and gardens.',
@@ -362,7 +400,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: 'Deluxe Garden Room',
         occupancy: '2 Adults',
         description: 'Quiet room opening onto a covered veranda with table and chairs facing peaceful tropical gardens and native bird feeders.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: cruise5,
         features: ['Covered Private Veranda', 'Air Conditioning & Ceiling Fan', 'Walk-in Shower', 'Safe & Tea/Coffee Station', 'Garden View']
       }
     ],
@@ -394,7 +432,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'Doorstep pickup for all river cruises and safari activities.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'zambezi-sunset-cruise', 'boma-dinner-show'],
+    nearbyExperienceIds: ['guided-tour-falls', 'upper-zambezi-sunset-cruise', 'boma-dinner-show'],
     relatedPropertyIds: ['pioneers-victoria-falls', 'ilala-lodge-hotel', 'victoria-falls-safari-lodge']
   },
   {
@@ -409,11 +447,11 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '500 metres (Private path to Falls)',
     airportDistance: '21 km (20-minute transfer)',
     priceFromUSD: 450,
-    heroImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1600',
+    heroImage: fallsTour7,
     galleryImages: [
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200'
+      fallsTour7,
+      fallsTour1,
+      heli1
     ],
     tagline: 'The iconic 5-star "Grand Dame" established in 1904 with private access to the Falls.',
     shortDescription: 'Colonial grandeur overlooking the Victoria Falls Bridge and Batoka Gorge. Enjoy high tea on the Stanley Terrace and walk directly to the rainforest entry.',
@@ -439,7 +477,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: 'Deluxe Bridge View Room',
         occupancy: '2 Adults',
         description: 'Elegantly furnished room featuring Edwardian furniture and views across lily ponds toward the Victoria Falls Bridge.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: fallsTour1,
         features: ['Bridge & Gorge View', 'Edwardian Decor', 'Air Conditioning', 'Marble Bathroom', 'High Tea Service']
       }
     ],
@@ -462,7 +500,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'Concierge desk arranges all local excursions.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'zambezi-sunset-cruise', 'bungee-jump', 'flight-of-angels'],
+    nearbyExperienceIds: ['guided-tour-falls', 'upper-zambezi-sunset-cruise', 'bungee-jump', 'flight-of-angels'],
     relatedPropertyIds: ['ilala-lodge-hotel', 'palm-river-hotel', 'victoria-falls-safari-lodge']
   },
   {
@@ -477,11 +515,11 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '5.0 km (7-minute drive)',
     airportDistance: '22 km (22-minute transfer)',
     priceFromUSD: 520,
-    heroImage: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1600',
+    heroImage: cruise1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200'
+      cruise1,
+      cruise2,
+      cruise6
     ],
     tagline: '5-star riverside luxury along the tranquil banks of the Upper Zambezi River.',
     shortDescription: 'Queensland-inspired architecture set under giant indigenous trees. Experience private river cruises from the hotel jetty and elephant sightings from your suite.',
@@ -507,7 +545,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: 'Deluxe River Room',
         occupancy: '2 Adults',
         description: 'Light-filled room with private balcony overlooking the Zambezi River, featuring luxurious crisp linens and freestanding bath.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: cruise2,
         features: ['Riverfront Balcony', 'Freestanding Soaking Tub', 'Air Conditioning', 'Nespresso Machine', 'Private Jetty Access']
       }
     ],
@@ -529,7 +567,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'Private river jetty for cruises and lobby pickup for land tours.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'zambezi-sunset-cruise', 'flight-of-angels'],
+    nearbyExperienceIds: ['guided-tour-falls', 'upper-zambezi-sunset-cruise', 'flight-of-angels'],
     relatedPropertyIds: ['victoria-falls-hotel', 'victoria-falls-safari-lodge', 'ilala-lodge-hotel']
   },
   {
@@ -544,10 +582,10 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '4.5 km (10-minute shuttle)',
     airportDistance: '20 km (20-minute transfer)',
     priceFromUSD: 180,
-    heroImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1600',
+    heroImage: bomaImg1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1200'
+      bomaImg1,
+      bomaImg2
     ],
     tagline: 'Self-catering rustic thatched lodges set amidst indigenous bush where wildlife roams.',
     shortDescription: 'Ideal for families and groups. Fully equipped 2 and 3-bedroom thatched lodges with access to resort pools, Boma restaurant, and shuttle services.',
@@ -573,7 +611,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: '2-Bedroom Thatched Lodge',
         occupancy: '4-6 Guests',
         description: 'Spacious self-catering lodge with master en-suite, twin room, loft area, fully equipped kitchen and outdoor private braai patio.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: bomaImg2,
         features: ['Full Kitchen', 'Private Braai/BBQ Area', 'Air Conditioned Bedrooms', 'Lounge & Dining Area', 'Daily Housekeeping']
       }
     ],
@@ -594,7 +632,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'Lobby pickup for all tours.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'boma-dinner-show', 'zambezi-sunset-cruise'],
+    nearbyExperienceIds: ['guided-tour-falls', 'boma-dinner-show', 'upper-zambezi-sunset-cruise'],
     relatedPropertyIds: ['victoria-falls-safari-lodge', 'pioneers-victoria-falls', 'batonka-guest-lodge']
   },
   {
@@ -609,10 +647,10 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
     distanceFromFalls: '800 metres (8-minute walk)',
     airportDistance: '20 km (20-minute transfer)',
     priceFromUSD: 110,
-    heroImage: 'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&q=80&w=1600',
+    heroImage: bungee1,
     galleryImages: [
-      'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1200'
+      bungee1,
+      rafting2
     ],
     tagline: 'Vibrant, centrally located lodge offering modern chalet accommodation steps from the Falls.',
     shortDescription: 'Ideal for budget-conscious travellers and adventure seekers. Clean air-conditioned chalets, lively central restaurant & bar, swimming pool, and unbeatable central location.',
@@ -638,7 +676,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
         name: 'Standard Air-Con Chalet',
         occupancy: '2 Adults',
         description: 'Modern air-conditioned chalet with en-suite shower bathroom, comfortable beds, and garden patio.',
-        imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
+        imageUrl: zipLine1,
         features: ['Air Conditioning', 'En-suite Shower', 'Garden View Patio', 'Free Wi-Fi', 'Central Location']
       }
     ],
@@ -659,7 +697,7 @@ export const ALL_ACCOMMODATIONS: DetailedAccommodation[] = [
       departurePoints: 'On-site adventure desk for instant departure.'
     },
 
-    nearbyExperienceIds: ['guided-vic-falls-tour', 'bungee-jump', 'zambezi-sunset-cruise'],
+    nearbyExperienceIds: ['guided-tour-falls', 'bungee-jump', 'upper-zambezi-sunset-cruise'],
     relatedPropertyIds: ['ilala-lodge-hotel', 'pioneers-victoria-falls', 'batonka-guest-lodge']
   }
 ];

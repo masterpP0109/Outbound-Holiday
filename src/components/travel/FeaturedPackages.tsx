@@ -116,7 +116,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                 </div>
               </div>
 
-              {/* View Package Action Button */}
+              {/* View Holiday Action Button */}
               <div className="p-5 pt-0">
                 <button
                   onClick={(e) => {
@@ -125,7 +125,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                   }}
                   className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
-                  <span>View Package</span>
+                  <span>View Holiday Details</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                 </button>
               </div>
@@ -133,13 +133,13 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
           ))}
         </div>
 
-        {/* Centered CTA: Explore All Packages → */}
+        {/* Centered CTA: Find Your Holiday → */}
         <div className="mt-12 sm:mt-16 text-center">
           <button
             onClick={onExploreAllPackages}
             className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Explore All Packages →</span>
+            <span>Find Your Holiday →</span>
           </button>
         </div>
 

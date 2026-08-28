@@ -1,7 +1,7 @@
 import React from 'react';
 import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
 
-import footerZambeziImg from '../../assets/images/footer_zambezi_dusk_1785494130616.jpg';
+import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 
 interface FooterProps {
   onNavigateSection: (sectionId: string) => void;
@@ -17,7 +17,7 @@ export const Footer: React.FC<FooterProps> = ({
       {/* Subtle Panoramic Backdrop Image */}
       <div className="absolute inset-0 pointer-events-none opacity-15">
         <img
-          src={footerZambeziImg}
+          src={cruise1}
           alt="Zambezi River dusk panorama backdrop"
           className="w-full h-full object-cover object-center"
         />

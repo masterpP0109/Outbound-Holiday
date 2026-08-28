@@ -27,8 +27,6 @@ import bungeeImg2 from '../../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
 import bungeeImg3 from '../../assets/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
 import bungeeImg4 from '../../assets/Experiences/Bungee Jump_/1-1.jpg';
 import bungeeImg5 from '../../assets/Experiences/Bungee Jump_/2-8.jpg';
-import bungeeImg6 from '../../assets/Experiences/Bungee Jump_/3 (1).jpg';
-import bungeeImg7 from '../../assets/Experiences/Bungee Jump_/Bungee-Fact-Sheet-2024_page-0001.jpg';
 import { Experience, ALL_EXPERIENCES, getExperienceById } from '../../data/experiencesData';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 
@@ -116,7 +114,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
       title: "Winch Recovery & Certificate of Bravery",
       description: "After the rebounds settle, a winch operator gently lowers a recovery line to hoist you smoothly back up to the bridge deck. Celebrate with fellow jumpers, receive your official Certificate of Bravery, and view your HD video footage.",
       highlight: "Official Certificate of Bravery & HD video memories.",
-      image: bungeeImg6
+      image: bungeeImg
     }
   ];
 
