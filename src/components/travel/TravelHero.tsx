@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, ShieldCheck, MapPin, ChevronLeft, ChevronRight, Heart, Users, Compass } from 'lucide-react';
-
 import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 import gameDrive10 from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+import { ArrowRight, ShieldCheck, MapPin, ChevronLeft, ChevronRight, Heart, Users, Compass } from 'lucide-react';
 
 interface TravelHeroProps {
   onOpenPlanHoliday: () => void;

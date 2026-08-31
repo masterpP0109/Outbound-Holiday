@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { ClipboardList, Sparkles, UserCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
-
 import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 import simunyeShow from '../../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+import { ClipboardList, Sparkles, UserCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface HowItWorksProps {
   onStartPlanning: () => void;

@@ -1,0 +1,1497 @@
+{
+	"knownSymbols": {
+		"defineConfig": [
+			{
+				"name": "defineConfig",
+				"module": "vite",
+				"isDefault": false
+			},
+			{
+				"name": "defineConfig",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\vite.config.ts",
+				"isDefault": true
+			}
+		],
+		"tailwindcss": [
+			{
+				"name": "tailwindcss",
+				"module": "@tailwindcss/vite",
+				"isDefault": true
+			}
+		],
+		"react": [
+			{
+				"name": "react",
+				"module": "@vitejs/plugin-react",
+				"isDefault": true
+			}
+		],
+		"path": [
+			{
+				"name": "path",
+				"module": "path",
+				"isDefault": true
+			}
+		],
+		"value": [
+			{
+				"name": "value",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\vite-env.d.ts",
+				"isDefault": true
+			}
+		],
+		"CURRENCY_RATES": [
+			{
+				"name": "CURRENCY_RATES",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\travelData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"TRUST_BUILDERS": [
+			{
+				"name": "TRUST_BUILDERS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\travelData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"FEATURED_PACKAGES": [
+			{
+				"name": "FEATURED_PACKAGES",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\travelData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"VIC_FALLS_SPOTS": [
+			{
+				"name": "VIC_FALLS_SPOTS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\travelData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ACCOMMODATIONS": [
+			{
+				"name": "ACCOMMODATIONS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\travelData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"TRAVEL_REVIEWS": [
+			{
+				"name": "TRAVEL_REVIEWS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\travelData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"DetailedItineraryDay": [
+			{
+				"name": "DetailedItineraryDay",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\packagesData.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"DetailedPackage": [
+			{
+				"name": "DetailedPackage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\packagesData.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"ALL_PACKAGES": [
+			{
+				"name": "ALL_PACKAGES",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\packagesData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"getHomepageFeaturedPackages": [
+			{
+				"name": "getHomepageFeaturedPackages",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\packagesData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"getPackageById": [
+			{
+				"name": "getPackageById",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\packagesData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"MASTER_FIRST_TIME_VISITOR_GUIDE": [
+			{
+				"name": "MASTER_FIRST_TIME_VISITOR_GUIDE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\masterGuideData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ExperienceStep": [
+			{
+				"name": "ExperienceStep",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\experiencesData.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"Experience": [
+			{
+				"name": "Experience",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\experiencesData.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"ALL_EXPERIENCES": [
+			{
+				"name": "ALL_EXPERIENCES",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\experiencesData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"getExperienceById": [
+			{
+				"name": "getExperienceById",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\experiencesData.ts",
+				"type": "function",
+				"isDefault": false
+			}
+		],
+		"getFeaturedExperiences": [
+			{
+				"name": "getFeaturedExperiences",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\experiencesData.ts",
+				"type": "function",
+				"isDefault": false
+			}
+		],
+		"ART_CATEGORIES": [
+			{
+				"name": "ART_CATEGORIES",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\artData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ARTISTS": [
+			{
+				"name": "ARTISTS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\artData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ART_PRODUCTS": [
+			{
+				"name": "ART_PRODUCTS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\artData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ART_REVIEWS": [
+			{
+				"name": "ART_REVIEWS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\artData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"FIRST_TIME_VISITOR_ARTICLE": [
+			{
+				"name": "FIRST_TIME_VISITOR_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"BEST_TIME_TO_VISIT_ARTICLE": [
+			{
+				"name": "BEST_TIME_TO_VISIT_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"MONTH_BY_MONTH_ARTICLE": [
+			{
+				"name": "MONTH_BY_MONTH_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"WEATHER_GUIDE_ARTICLE": [
+			{
+				"name": "WEATHER_GUIDE_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"WHERE_TO_STAY_ARTICLE": [
+			{
+				"name": "WHERE_TO_STAY_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"EXPERIENCE_VICTORIA_FALLS_ARTICLE": [
+			{
+				"name": "EXPERIENCE_VICTORIA_FALLS_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ITINERARIES_ARTICLE": [
+			{
+				"name": "ITINERARIES_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"BUDGET_GUIDE_ARTICLE": [
+			{
+				"name": "BUDGET_GUIDE_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"GETTING_THERE_ARTICLE": [
+			{
+				"name": "GETTING_THERE_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"VISA_REQUIREMENTS_ARTICLE": [
+			{
+				"name": "VISA_REQUIREMENTS_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"FAQS_ARTICLE": [
+			{
+				"name": "FAQS_ARTICLE",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ALL_GUIDE_ARTICLES": [
+			{
+				"name": "ALL_GUIDE_ARTICLES",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"GuideHubCategory": [
+			{
+				"name": "GuideHubCategory",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"GUIDE_HUB_CATEGORIES": [
+			{
+				"name": "GUIDE_HUB_CATEGORIES",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\allGuideArticles.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"RoomType": [
+			{
+				"name": "RoomType",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\accommodationsData.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"DetailedAccommodation": [
+			{
+				"name": "DetailedAccommodation",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\accommodationsData.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"ALL_ACCOMMODATIONS": [
+			{
+				"name": "ALL_ACCOMMODATIONS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\accommodationsData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"FEATURED_HOMEPAGE_ACCOMMODATIONS": [
+			{
+				"name": "FEATURED_HOMEPAGE_ACCOMMODATIONS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\accommodationsData.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"getAccommodationBySlug": [
+			{
+				"name": "getAccommodationBySlug",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\data\\accommodationsData.ts",
+				"type": "function",
+				"isDefault": false
+			}
+		],
+		"ActivePortal": [
+			{
+				"name": "ActivePortal",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "type",
+				"isDefault": false
+			}
+		],
+		"Currency": [
+			{
+				"name": "Currency",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "type",
+				"isDefault": false
+			}
+		],
+		"CurrencyRate": [
+			{
+				"name": "CurrencyRate",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"TravelPackage": [
+			{
+				"name": "TravelPackage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"TravelSpot": [
+			{
+				"name": "TravelSpot",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"Accommodation": [
+			{
+				"name": "Accommodation",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"ArtCategory": [
+			{
+				"name": "ArtCategory",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"ArtProduct": [
+			{
+				"name": "ArtProduct",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"Artist": [
+			{
+				"name": "Artist",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"CartItem": [
+			{
+				"name": "CartItem",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"Review": [
+			{
+				"name": "Review",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"HolidayPlanForm": [
+			{
+				"name": "HolidayPlanForm",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"App": [
+			{
+				"name": "App",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\App.tsx",
+				"type": "function",
+				"isDefault": true
+			}
+		],
+		"React": [
+			{
+				"name": "React",
+				"module": "react",
+				"isDefault": true
+			}
+		],
+		"{ useState": [
+			{
+				"name": "{ useState",
+				"module": "react",
+				"isDefault": true
+			}
+		],
+		"Check": [
+			{
+				"name": "Check",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"QuickFact": [
+			{
+				"name": "QuickFact",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"Author": [
+			{
+				"name": "Author",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"CalloutType": [
+			{
+				"name": "CalloutType",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "type",
+				"isDefault": false
+			}
+		],
+		"CalloutBlock": [
+			{
+				"name": "CalloutBlock",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"PullQuote": [
+			{
+				"name": "PullQuote",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"PracticalInfoItem": [
+			{
+				"name": "PracticalInfoItem",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"PracticalInfoPanel": [
+			{
+				"name": "PracticalInfoPanel",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"TravellerTypeCard": [
+			{
+				"name": "TravellerTypeCard",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"RelatedGuideCard": [
+			{
+				"name": "RelatedGuideCard",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"FaqItem": [
+			{
+				"name": "FaqItem",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"TimelineItem": [
+			{
+				"name": "TimelineItem",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"TimelineBlockData": [
+			{
+				"name": "TimelineBlockData",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"TableData": [
+			{
+				"name": "TableData",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"PricingCard": [
+			{
+				"name": "PricingCard",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"BlockType": [
+			{
+				"name": "BlockType",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "type",
+				"isDefault": false
+			}
+		],
+		"ArticleBlock": [
+			{
+				"name": "ArticleBlock",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"GuideSection": [
+			{
+				"name": "GuideSection",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"SEOConfig": [
+			{
+				"name": "SEOConfig",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"GuideArticle": [
+			{
+				"name": "GuideArticle",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\types\\guide.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"StrictMode": [
+			{
+				"name": "StrictMode",
+				"module": "react",
+				"isDefault": false
+			}
+		],
+		"createRoot": [
+			{
+				"name": "createRoot",
+				"module": "react-dom/client",
+				"isDefault": false
+			}
+		],
+		"WhyShopWithUs": [
+			{
+				"name": "WhyShopWithUs",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\art\\WhyShopWithUs.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ProductGrid": [
+			{
+				"name": "ProductGrid",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\art\\ProductGrid.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ProductDetailModal": [
+			{
+				"name": "ProductDetailModal",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\art\\ProductDetailModal.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"X": [
+			{
+				"name": "X",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"ShoppingBag": [
+			{
+				"name": "ShoppingBag",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Heart": [
+			{
+				"name": "Heart",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"ShieldCheck": [
+			{
+				"name": "ShieldCheck",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Award": [
+			{
+				"name": "Award",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Star": [
+			{
+				"name": "Star",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Truck": [
+			{
+				"name": "Truck",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"MapPin": [
+			{
+				"name": "MapPin",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"FeaturedArtists": [
+			{
+				"name": "FeaturedArtists",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\art\\FeaturedArtists.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ExternalLink": [
+			{
+				"name": "ExternalLink",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Sparkles": [
+			{
+				"name": "Sparkles",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"CompareModal": [
+			{
+				"name": "CompareModal",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\art\\CompareModal.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Scale": [
+			{
+				"name": "Scale",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Trash2": [
+			{
+				"name": "Trash2",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"CategoryGrid": [
+			{
+				"name": "CategoryGrid",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\art\\CategoryGrid.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ArtHero": [
+			{
+				"name": "ArtHero",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\art\\ArtHero.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ArrowRight": [
+			{
+				"name": "ArrowRight",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Globe2": [
+			{
+				"name": "Globe2",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"WishlistDrawer": [
+			{
+				"name": "WishlistDrawer",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\WishlistDrawer.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"WhatsAppIcon": [
+			{
+				"name": "WhatsAppIcon",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\WhatsAppButton.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"WhatsAppEnquiryButton": [
+			{
+				"name": "WhatsAppEnquiryButton",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\WhatsAppButton.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"WhatsAppSpecialistCTA": [
+			{
+				"name": "WhatsAppSpecialistCTA",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\WhatsAppButton.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Newsletter": [
+			{
+				"name": "Newsletter",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\Newsletter.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Mail": [
+			{
+				"name": "Mail",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Compass": [
+			{
+				"name": "Compass",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"MobileStickyCta": [
+			{
+				"name": "MobileStickyCta",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\MobileStickyCta.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"CalendarCheck": [
+			{
+				"name": "CalendarCheck",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"PhoneCall": [
+			{
+				"name": "PhoneCall",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"CartDrawer": [
+			{
+				"name": "CartDrawer",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\CartDrawer.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Plus": [
+			{
+				"name": "Plus",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Minus": [
+			{
+				"name": "Minus",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"WhyChooseOutbound": [
+			{
+				"name": "WhyChooseOutbound",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\WhyChooseOutbound.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Headset": [
+			{
+				"name": "Headset",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"WhereToStaySection": [
+			{
+				"name": "WhereToStaySection",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\WhereToStaySection.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ArrowLeft": [
+			{
+				"name": "ArrowLeft",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"VicFallsGuide": [
+			{
+				"name": "VicFallsGuide",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\VicFallsGuide.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Calendar": [
+			{
+				"name": "Calendar",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"FileText": [
+			{
+				"name": "FileText",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Plane": [
+			{
+				"name": "Plane",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Hotel": [
+			{
+				"name": "Hotel",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"TrustBuilders": [
+			{
+				"name": "TrustBuilders",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\TrustBuilders.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"HeartHandshake": [
+			{
+				"name": "HeartHandshake",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"TravellerStories": [
+			{
+				"name": "TravellerStories",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\TravellerStories.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Quote": [
+			{
+				"name": "Quote",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"MessageCircle": [
+			{
+				"name": "MessageCircle",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"TravelHero": [
+			{
+				"name": "TravelHero",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\TravelHero.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"useEffect": [
+			{
+				"name": "useEffect",
+				"module": "react",
+				"isDefault": true
+			}
+		],
+		"ChevronLeft": [
+			{
+				"name": "ChevronLeft",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"ChevronRight": [
+			{
+				"name": "ChevronRight",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Users": [
+			{
+				"name": "Users",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"QuickPlanningBar": [
+			{
+				"name": "QuickPlanningBar",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\QuickPlanningBar.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"PlanHolidayModal": [
+			{
+				"name": "PlanHolidayModal",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\PlanHolidayModal.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"PackagesDirectoryPage": [
+			{
+				"name": "PackagesDirectoryPage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\PackagesDirectoryPage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"PackageDetailPage": [
+			{
+				"name": "PackageDetailPage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\PackageDetailPage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"MeetYourGuide": [
+			{
+				"name": "MeetYourGuide",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\MeetYourGuide.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"CheckCircle2": [
+			{
+				"name": "CheckCircle2",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"MessageSquare": [
+			{
+				"name": "MessageSquare",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"IntentCards": [
+			{
+				"name": "IntentCards",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\IntentCards.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"HowWeHelp": [
+			{
+				"name": "HowWeHelp",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\HowWeHelp.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Bus": [
+			{
+				"name": "Bus",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Trees": [
+			{
+				"name": "Trees",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"CalendarRange": [
+			{
+				"name": "CalendarRange",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"HowItWorks": [
+			{
+				"name": "HowItWorks",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\HowItWorks.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ClipboardList": [
+			{
+				"name": "ClipboardList",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"UserCheck": [
+			{
+				"name": "UserCheck",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"ExperienceDetailPage": [
+			{
+				"name": "ExperienceDetailPage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\ExperienceDetailPage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ContactUsView": [
+			{
+				"name": "ContactUsView",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\ContactUsView.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Phone": [
+			{
+				"name": "Phone",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Clock": [
+			{
+				"name": "Clock",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Send": [
+			{
+				"name": "Send",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"BungeeExperiencePage": [
+			{
+				"name": "BungeeExperiencePage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\BungeeExperiencePage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"BudgetSelector": [
+			{
+				"name": "BudgetSelector",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\BudgetSelector.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Crown": [
+			{
+				"name": "Crown",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"BomaExperiencePage": [
+			{
+				"name": "BomaExperiencePage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\BomaExperiencePage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"motion": [
+			{
+				"name": "motion",
+				"module": "motion/react",
+				"isDefault": false
+			}
+		],
+		"AccommodationDirectoryPage": [
+			{
+				"name": "AccommodationDirectoryPage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\AccommodationDirectoryPage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"useMemo": [
+			{
+				"name": "useMemo",
+				"module": "react",
+				"isDefault": true
+			}
+		],
+		"AccommodationDetailPage": [
+			{
+				"name": "AccommodationDetailPage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\AccommodationDetailPage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"AboutUsView": [
+			{
+				"name": "AboutUsView",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\AboutUsView.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"FeaturedExperiences": [
+			{
+				"name": "FeaturedExperiences",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\FeaturedExperiences.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"FaqSection": [
+			{
+				"name": "FaqSection",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\FaqSection.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ChevronDown": [
+			{
+				"name": "ChevronDown",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"HelpCircle": [
+			{
+				"name": "HelpCircle",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"ExperienceExplorer": [
+			{
+				"name": "ExperienceExplorer",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\ExperienceExplorer.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Shield": [
+			{
+				"name": "Shield",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"Utensils": [
+			{
+				"name": "Utensils",
+				"module": "lucide-react",
+				"isDefault": false
+			}
+		],
+		"FinalCtaBanner": [
+			{
+				"name": "FinalCtaBanner",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\FinalCtaBanner.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"FeaturedPackages": [
+			{
+				"name": "FeaturedPackages",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\FeaturedPackages.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"GalleryLightbox": [
+			{
+				"name": "GalleryLightbox",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\GalleryLightbox.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"{ useEffect": [
+			{
+				"name": "{ useEffect",
+				"module": "react",
+				"isDefault": true
+			}
+		],
+		"useCallback": [
+			{
+				"name": "useCallback",
+				"module": "react",
+				"isDefault": true
+			}
+		],
+		"GuideArticleTemplate": [
+			{
+				"name": "GuideArticleTemplate",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\guide\\GuideArticleTemplate.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"useRef": [
+			{
+				"name": "useRef",
+				"module": "react",
+				"isDefault": true
+			}
+		],
+		"AnimatePresence": [
+			{
+				"name": "AnimatePresence",
+				"module": "motion/react",
+				"isDefault": false
+			}
+		],
+		"WHATSAPP_NUMBER": [
+			{
+				"name": "WHATSAPP_NUMBER",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\utils\\whatsapp.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"WHATSAPP_DISPLAY_NUMBER": [
+			{
+				"name": "WHATSAPP_DISPLAY_NUMBER",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\utils\\whatsapp.ts",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"getWhatsAppEnquiryUrl": [
+			{
+				"name": "getWhatsAppEnquiryUrl",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\utils\\whatsapp.ts",
+				"type": "function",
+				"isDefault": false
+			}
+		],
+		"getWhatsAppSpecialistUrl": [
+			{
+				"name": "getWhatsAppSpecialistUrl",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\utils\\whatsapp.ts",
+				"type": "function",
+				"isDefault": false
+			}
+		],
+		"GuideEventPayload": [
+			{
+				"name": "GuideEventPayload",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\utils\\analytics.ts",
+				"type": "interface",
+				"isDefault": false
+			}
+		],
+		"GuideEventType": [
+			{
+				"name": "GuideEventType",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\utils\\analytics.ts",
+				"type": "type",
+				"isDefault": false
+			}
+		],
+		"trackGuideEvent": [
+			{
+				"name": "trackGuideEvent",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\utils\\analytics.ts",
+				"type": "function",
+				"isDefault": false
+			}
+		],
+		"Footer": [
+			{
+				"name": "Footer",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\Footer.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ACTIVITIES_DATA": [
+			{
+				"name": "ACTIVITIES_DATA",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\HolidayBuilderModal.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"STAY_TIERS": [
+			{
+				"name": "STAY_TIERS",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\HolidayBuilderModal.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"HolidayBuilderModal": [
+			{
+				"name": "HolidayBuilderModal",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\HolidayBuilderModal.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"VicFallsGuidePage": [
+			{
+				"name": "VicFallsGuidePage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\VicFallsGuidePage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"GuideHubView": [
+			{
+				"name": "GuideHubView",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\guide\\GuideHubView.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"Header": [
+			{
+				"name": "Header",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\common\\Header.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		],
+		"ExperiencesDirectoryPage": [
+			{
+				"name": "ExperiencesDirectoryPage",
+				"path": "c:\\Users\\user\\Desktop\\Outbound-Holiday\\src\\components\\travel\\ExperiencesDirectoryPage.tsx",
+				"type": "const",
+				"isDefault": false
+			}
+		]
+	}
+}

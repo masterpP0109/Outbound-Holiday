@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 
 // Image Assets from src/assets/Experiences/<Folder>
+import heroVictoriaFalls from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 import bomaImg1 from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
@@ -51,7 +52,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
   const [selectedDirectoryFilter, setSelectedDirectoryFilter] = useState<string>('all');
 
   useEffect(() => {
-    document.title = "Things to Do in Victoria Falls | Outbound Holidays";
+    document.title = "Victoria Falls Experience Library | Outbound Holidays";
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
 
@@ -174,31 +175,29 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
       {/* 1. PAGE HERO */}
       <section className="relative bg-[#0D2833] text-white py-16 sm:py-24 lg:py-28 overflow-hidden border-b border-[#C9A66B]/30">
         <div className="absolute inset-0 z-0">
-          <img 
-            src={fallsTour1} 
-            alt="Victoria Falls mist and landscape" 
+          <img
+            src={heroVictoriaFalls}
+            alt="Victoria Falls aerial view showing the Zambezi River, gorge and mist"
             className="w-full h-full object-cover object-center scale-105 filter brightness-90 saturate-110"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/95 via-[#0D2833]/85 to-[#0D2833]/95" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-transparent to-[#0D2833]/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/90 via-[#0D2833]/75 to-[#0D2833]/90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-transparent to-[#0D2833]/60" />
         </div>
-        
+
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6 sm:space-y-8">
-          
+
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0D2833]/80 backdrop-blur-md border border-[#C9A66B]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest shadow-lg">
             <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-<<<<<<< HEAD
             <span>Curated by Local Specialists</span>
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight drop-shadow-md max-w-3xl mx-auto">
-            Experience Victoria Falls Your Way
+            Victoria Falls Experience Library
           </h1>
 
           {/* Paragraph */}
           <p className="text-base sm:text-lg text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-xs">
             Explore our complete collection of Victoria Falls experiences, carefully selected by local specialists to help you find what suits your interests, time and travel style.
-          </p>
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">

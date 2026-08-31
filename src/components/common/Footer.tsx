@@ -1,8 +1,7 @@
 import React from 'react';
-import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
-
 import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
 import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
 
 interface FooterProps {
   onNavigateSection: (sectionId: string) => void;

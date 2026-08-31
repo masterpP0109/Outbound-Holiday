@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { DetailedPackage, ALL_PACKAGES } from '../../data/packagesData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import { 
   Compass, 
   Sparkles, 
@@ -14,8 +15,6 @@ import {
   CheckCircle2,
   ShieldCheck
 } from 'lucide-react';
-
-import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 
 interface PackagesDirectoryPageProps {
   currency: Currency;

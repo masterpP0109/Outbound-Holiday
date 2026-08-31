@@ -1,5 +1,7 @@
 import React from 'react';
 import { GUIDE_HUB_CATEGORIES } from '../../../data/guideArticles';
+import outboundLogo from '../../../assets/logos/outbound-holidays-logo.webp';
+import founderGuideImg from '../../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
 import { 
   Compass, 
   Clock, 
@@ -13,8 +15,6 @@ import {
   ShieldCheck,
   Award
 } from 'lucide-react';
-import founderGuideImg from '../../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
-import outboundLogo from '../../../assets/logos/outbound-holidays-logo.webp';
 
 interface GuideHubViewProps {
   onSelectArticle: (slug: string) => void;

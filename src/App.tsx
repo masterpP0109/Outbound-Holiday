@@ -179,8 +179,8 @@ export default function App() {
           setPreselectedPackage(null);
           setPlanHolidayOpen(true);
         }}
-        searchQuery={searchQuery}+7
-        
+        searchQuery={searchQuery}
+
         onNavigateSection={handleNavigateSection}
         isGuideActive={activeView === 'guide'}
         isExperiencesActive={activeView === 'experiences' || activeView === 'experience-category' || activeView === 'experience-detail' || activeView === 'boma' || activeView === 'bungee'}

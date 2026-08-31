@@ -1,8 +1,8 @@
 import React from 'react';
 import { FIRST_TIME_VISITOR_ARTICLE } from '../../data/guideArticles';
 import { GuideArticleTemplate } from './guide/GuideArticleTemplate';
-import { Compass, ArrowLeft } from 'lucide-react';
 import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
+import { Compass, ArrowLeft } from 'lucide-react';
 
 interface VicFallsGuidePageProps {
   onOpenPlanHoliday: () => void;

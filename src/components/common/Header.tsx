@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
+import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
 import { 
   Compass, 
   Search, 
@@ -10,7 +11,6 @@ import {
   PhoneCall,
   CalendarCheck
 } from 'lucide-react';
-import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
 
 interface HeaderProps {
   currency: Currency;
@@ -100,13 +100,13 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-6">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         {/* Brand Logo */}
         <div 
           onClick={() => onNavigateSection('hero')}
-          className="cursor-pointer flex items-center shrink-0 pr-4"
+          className="cursor-pointer flex items-center shrink-0 pr-2 sm:pr-4"
         >
-          <img src={outboundLogo} alt="Outbound Holidays" className="h-24 sm:h-32 w-auto object-contain" />
+          <img src={outboundLogo} alt="Outbound Holidays" className="h-28 sm:h-36 max-w-[160px] sm:max-w-[200px] w-auto object-contain" />
         </div>
 
         {/* Main Navigation Links */}
@@ -195,9 +195,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Primary Call To Action in Sunset Orange */}
           <button
             onClick={onOpenPlanHoliday}
-            className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-2 cursor-pointer"
+            className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-1.5 sm:gap-2 cursor-pointer"
           >
-            <CalendarCheck className="w-4 h-4" />
+            <CalendarCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>Plan My Holiday</span>
           </button>
 

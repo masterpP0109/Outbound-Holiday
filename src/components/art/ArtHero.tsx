@@ -1,7 +1,7 @@
 import React from 'react';
-import { Sparkles, ArrowRight, ShieldCheck, Award, Globe2 } from 'lucide-react';
 import simunyeSpotlightImg from '../../assets/Experiences/Simunye_/Theatre10.jpg';
 import simunyeShowImg from '../../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+import { Sparkles, ArrowRight, ShieldCheck, Award, Globe2 } from 'lucide-react';
 
 interface ArtHeroProps {
   onExploreCollections: () => void;

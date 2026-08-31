@@ -25,7 +25,7 @@ import {
   Heart
 } from 'lucide-react';
 
-// Experience Images from src/assets/Experiences/<Folder>
+// Image Assets from src/assets/Experiences/<Folder>
 import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 import bomaImg1 from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';

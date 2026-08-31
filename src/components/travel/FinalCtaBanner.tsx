@@ -1,8 +1,7 @@
 import React from 'react';
-import { CalendarCheck, ShieldCheck, ArrowRight } from 'lucide-react';
-import { WhatsAppIcon } from '../common/WhatsAppButton';
-import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import { CalendarCheck, ShieldCheck, ArrowRight, MessageCircle } from 'lucide-react';
+import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 interface FinalCtaBannerProps {
   onOpenPlanHoliday: () => void;
@@ -53,7 +52,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm px-7 py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <WhatsAppIcon className="w-5 h-5 shrink-0" />
+                <MessageCircle className="w-5 h-5 shrink-0" />
                 <span>Chat on WhatsApp</span>
               </a>
             </div>
