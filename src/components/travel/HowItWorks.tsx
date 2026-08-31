@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-const fallsTour1 = '/images/experiences/guided-tour-of-the-falls-tour-of-the-falls-1-scaled.jpg';
-const cruise1 = '/images/experiences/standard-cruise-standard-1-scaled.jpg';
-const simunyeShow = '/images/experiences/simunye-simunye-spirit-of-africa-31.jpg';
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import simunyeShow from '../../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
 import { ClipboardList, Sparkles, UserCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface HowItWorksProps {

@@ -1,5 +1,5 @@
 import React from 'react';
-const fallsTour1 = '/images/experiences/guided-tour-of-the-falls-tour-of-the-falls-1-scaled.jpg';
+import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import { CalendarCheck, ShieldCheck, ArrowRight, MessageCircle } from 'lucide-react';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-const guidedTourImg = '/images/experiences/guided-tour-of-the-falls-tour-of-the-falls-1-scaled.jpg';
-const elephantImg = '/images/experiences/elephant-interaction-elecrew-5.jpg';
-const standardCruiseImg = '/images/experiences/standard-cruise-standard-1-scaled.jpg';
-const chobeImg = '/images/experiences/chobe-day-trip-chobe-1-1-scaled.jpg';
-const bomaDinnerImg = '/images/experiences/boma-dinner-img_0364.jpg';
-const heli1Img = '/images/experiences/flight-of-angels-heli-1-1-scaled.jpg';
+import guidedTourImg from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import elephantImg from '../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+import standardCruiseImg from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
+import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 
 interface IntentCardsProps {
   onSelectIntent: (intentKey: string) => void;
