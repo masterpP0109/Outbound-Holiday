@@ -1,6 +1,6 @@
 import React from 'react';
-import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
-import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
+const cruise1 = '/images/experiences/standard-cruise-standard-1-scaled.jpg';
 import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
 
 interface FooterProps {

@@ -22,11 +22,11 @@ import {
   FileCheck
 } from 'lucide-react';
 import { GalleryLightbox } from './GalleryLightbox';
-import bungeeImg from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import bungeeImg2 from '../../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
-import bungeeImg3 from '../../assets/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
-import bungeeImg4 from '../../assets/Experiences/Bungee Jump_/1-1.jpg';
-import bungeeImg5 from '../../assets/Experiences/Bungee Jump_/2-8.jpg';
+const bungeeImg = '/images/experiences/bungee-jump-bungee-1-scaled.jpg';
+const bungeeImg2 = '/images/experiences/bungee-jump-bungee-8.jpg';
+const bungeeImg3 = '/images/experiences/bungee-jump-bungee-9-scaled.jpg';
+const bungeeImg4 = '/images/experiences/bungee-jump-1-1.jpg';
+const bungeeImg5 = '/images/experiences/bungee-jump-2-8.jpg';
 import { Experience, ALL_EXPERIENCES, getExperienceById } from '../../data/experiencesData';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 

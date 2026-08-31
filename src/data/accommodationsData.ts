@@ -1,4 +1,3 @@
-// Local Experience Assets for Accommodations
 import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import fallsTour7 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
 import fallsTour11 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';

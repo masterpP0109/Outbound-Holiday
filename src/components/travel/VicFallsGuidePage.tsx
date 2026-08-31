@@ -1,7 +1,7 @@
 import React from 'react';
 import { FIRST_TIME_VISITOR_ARTICLE } from '../../data/guideArticles';
 import { GuideArticleTemplate } from './guide/GuideArticleTemplate';
-import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
+const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
 import { Compass, ArrowLeft } from 'lucide-react';
 
 interface VicFallsGuidePageProps {

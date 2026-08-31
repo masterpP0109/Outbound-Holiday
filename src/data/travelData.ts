@@ -1,6 +1,5 @@
 import { TravelPackage, TravelSpot, Accommodation, Review } from '../types';
 
-// Local Experience Assets
 import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import cruise1 from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 import cruise2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';

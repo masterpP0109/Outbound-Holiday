@@ -1,6 +1,5 @@
 import { ArtCategory, ArtProduct, Artist, Review } from '../types';
 
-// Local Assets
 import simunye29 from '../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
 import simunye31 from '../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
 import simunye42 from '../assets/Experiences/Simunye_/Simunye-refresh-42.jpg';

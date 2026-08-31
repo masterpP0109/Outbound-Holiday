@@ -33,14 +33,6 @@ export interface Experience {
   relatedIds: string[];
 }
 
-// Image Assets imported from their specific folders in src/assets/Experiences/<Folder>
-import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
-import guidedTourImg3 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
-import guidedTourImg4 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
-import guidedTourImg5 from '../assets/Experiences/Guided Tour of the Falls_/5-4.jpg';
-import guidedTourImg6 from '../assets/Experiences/Guided Tour of the Falls_/7-3.jpg';
-import guidedTourImg7 from '../assets/Experiences/Guided Tour of the Falls_/8-2.jpg';
 import gameDriveImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 import bungeeImg from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
 import bungeeImg2 from '../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
@@ -74,7 +66,6 @@ import bomaDinnerImg5 from '../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
 import bomaDinnerImg6 from '../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
 import bomaDinnerImg7 from '../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
 import bomaDinnerImg8 from '../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
-
 import heli1Img from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 import heli2Img from '../assets/Experiences/Flight of Angels/Heli-8-scaled.jpg';
 import heli3Img from '../assets/Experiences/Flight of Angels/Heli-Shoot-7102511.jpg';
@@ -82,13 +73,22 @@ import heli4Img from '../assets/Experiences/Flight of Angels/Heli-Shoot-7102512.
 import heli5Img from '../assets/Experiences/Flight of Angels/3-8.jpg';
 import heli6Img from '../assets/Experiences/Flight of Angels/9-4.jpg';
 import heli7Img from '../assets/Experiences/Flight of Angels/Helicopter-Flights-Fact-Sheet-2024_page-0011.jpg';
-
-// Additional images for experiences
 import intentVicFallsIconicImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import footerZambeziDuskImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 import familySafariImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 import rhinoTrackingImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 import craftMarketImg from '../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+
+// Public image paths for experiences
+import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+import guidedTourImg3 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
+import guidedTourImg4 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
+import guidedTourImg5 from '../assets/Experiences/Guided Tour of the Falls_/5-4.jpg';
+import guidedTourImg6 from '../assets/Experiences/Guided Tour of the Falls_/7-3.jpg';
+import guidedTourImg7 from '../assets/Experiences/Guided Tour of the Falls_/8-2.jpg';
+
+
 
 export const ALL_EXPERIENCES: Experience[] = [
   {

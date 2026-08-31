@@ -1,7 +1,7 @@
 import React from 'react';
 import { GUIDE_HUB_CATEGORIES } from '../../../data/guideArticles';
-import outboundLogo from '../../../assets/logos/outbound-holidays-logo.webp';
-import founderGuideImg from '../../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
+const founderGuideImg = '/images/experiences/elephant-interaction-elecrew-5.jpg';
 import { 
   Compass, 
   Clock, 

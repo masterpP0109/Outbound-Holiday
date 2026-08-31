@@ -28,19 +28,19 @@ import {
   Coffee,
   Wine
 } from 'lucide-react';
-import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import bomaDinnerImg2 from '../../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
-import bomaDinnerImg3 from '../../assets/Experiences/Boma Dinner_/IMG_0366.PNG';
-import bomaDinnerImg4 from '../../assets/Experiences/Boma Dinner_/Boma prepping on the fire.webp';
-import bomaDinnerImg5 from '../../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
-import bomaDinnerImg6 from '../../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
-import bomaDinnerImg7 from '../../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
-import bomaDinnerImg8 from '../../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
+const bomaDinnerImg = '/images/experiences/boma-dinner-img_0364.jpg';
+const bomaDinnerImg2 = '/images/experiences/boma-dinner-img_0365.png';
+const bomaDinnerImg3 = '/images/experiences/boma-dinner-img_0366.png';
+const bomaDinnerImg4 = '/images/experiences/boma-dinner-boma-prepping-on-the-fire.webp';
+const bomaDinnerImg5 = '/images/experiences/boma-dinner-img_0367.png';
+const bomaDinnerImg6 = '/images/experiences/boma-dinner-img_0368.png';
+const bomaDinnerImg7 = '/images/experiences/boma-dinner-img_0369.png';
+const bomaDinnerImg8 = '/images/experiences/boma-dinner-img_0370.png';
 import { GalleryLightbox } from './GalleryLightbox';
-import cruiseImg from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import guidedTourImg from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+const cruiseImg = '/images/experiences/standard-cruise-standard-1-scaled.jpg';
+const guidedTourImg = '/images/experiences/guided-tour-of-the-falls-tour-of-the-falls-1-scaled.jpg';
+const heli1Img = '/images/experiences/flight-of-angels-heli-1-1-scaled.jpg';
+const chobeImg = '/images/experiences/chobe-day-trip-chobe-1-1-scaled.jpg';
 
 interface BomaExperiencePageProps {
   onOpenPlanHoliday: () => void;

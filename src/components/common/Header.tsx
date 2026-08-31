@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
+const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
 import { 
   Compass, 
   Search, 

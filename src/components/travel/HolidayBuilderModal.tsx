@@ -27,19 +27,19 @@ import {
   CheckCircle2,
   RefreshCw,
 } from 'lucide-react';
-import outboundLogo from '../../assets/logos/outbound-holidays-logo.webp';
+const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
 import { DetailedAccommodation } from '../../data/accommodationsData';
 
 // Local Experience Assets
-import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import bomaImg1 from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import heli1 from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-import chobe1 from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-import gorgeSwing3 from '../../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
-import bungee1 from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import gameDrive10 from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import cruise2 from '../../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
+const fallsTour1 = '/images/experiences/guided-tour-of-the-falls-tour-of-the-falls-1-scaled.jpg';
+const cruise1 = '/images/experiences/standard-cruise-standard-1-scaled.jpg';
+const bomaImg1 = '/images/experiences/boma-dinner-img_0364.jpg';
+const heli1 = '/images/experiences/flight-of-angels-heli-1-1-scaled.jpg';
+const chobe1 = '/images/experiences/chobe-day-trip-chobe-1-1-scaled.jpg';
+const gorgeSwing3 = '/images/experiences/gorge-swing-bridge-swing-3-scaled.jpg';
+const bungee1 = '/images/experiences/bungee-jump-bungee-1-scaled.jpg';
+const gameDrive10 = '/images/experiences/game-drive-game-drive-10-1-scaled.jpg';
+const cruise2 = '/images/experiences/standard-cruise-standard-2-scaled.jpg';
 
 interface HolidayBuilderModalProps {
   isOpen: boolean;
