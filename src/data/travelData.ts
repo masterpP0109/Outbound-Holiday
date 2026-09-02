@@ -1,17 +1,18 @@
 import { TravelPackage, TravelSpot, Accommodation, Review } from '../types';
 
-import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import cruise1 from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import cruise2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
-import bomaImg1 from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import heli1 from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-import chobe1 from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-import gorgeSwing3 from '../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
-import bungee1 from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import gameDrive10 from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import gameDrive4 from '../assets/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
-import zipLine1 from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
-import elecrew5 from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
+// Public image paths for experiences
+const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const cruise2 = '/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
+const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
+const heli1 = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+const chobe1 = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+const gorgeSwing3 = '/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+const gameDrive4 = '/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
+const zipLine1 = '/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+const elecrew5 = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
 
 export const CURRENCY_RATES: Record<string, { symbol: string; rate: number }> = {
   USD: { symbol: '$', rate: 1.0 },

@@ -26,14 +26,15 @@ import {
   Grid
 } from 'lucide-react';
 
-import heroVictoriaFalls from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import bomaImg1 from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import bungee1 from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import gameDrive10 from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import chobe1 from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-import spaImg1 from '../../assets/Experiences/Spa Treatments/IMG_0375.PNG';
+// Public image paths for experiences
+const heroVictoriaFalls = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
+const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+const chobe1 = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+const spaImg1 = '/Experiences/Spa Treatments/IMG_0375.PNG';
 
 interface ExperiencesDirectoryPageProps {
   onSelectExperience: (experience: Experience) => void;

@@ -1,6 +1,9 @@
 import React from 'react';
-import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
+
+const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
+// Public image paths for experiences
+const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 
 interface FooterProps {
   onNavigateSection: (sectionId: string) => void;
@@ -28,7 +31,17 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Col 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center">
-              <img src={outboundLogo} alt="Outbound Holidays" className="h-14 sm:h-16 w-auto object-contain" />
+              <img 
+                src={outboundLogo} 
+                alt="Outbound Holidays" 
+                className="h-14 sm:h-16 w-auto object-contain"
+                onError={(e) => {
+                  console.error('Logo failed to load from:', outboundLogo);
+                }}
+                onLoad={() => {
+                  console.log('Logo loaded successfully from:', outboundLogo);
+                }}
+              />
             </div>
 
             <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-sm">

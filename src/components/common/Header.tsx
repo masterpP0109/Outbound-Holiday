@@ -106,7 +106,17 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => onNavigateSection('hero')}
           className="cursor-pointer flex items-center shrink-0 pr-2 sm:pr-4"
         >
-          <img src={outboundLogo} alt="Outbound Holidays" className="h-28 sm:h-36 max-w-[160px] sm:max-w-[200px] w-auto object-contain" />
+          <img 
+            src={outboundLogo} 
+            alt="Outbound Holidays" 
+            className="h-28 sm:h-36 max-w-[160px] sm:max-w-[200px] w-auto object-contain"
+            onError={(e) => {
+              console.error('Header logo failed to load from:', outboundLogo);
+            }}
+            onLoad={() => {
+              console.log('Header logo loaded from:', outboundLogo);
+            }}
+          />
         </div>
 
         {/* Main Navigation Links */}

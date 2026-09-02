@@ -25,11 +25,12 @@ import { GalleryLightbox } from './GalleryLightbox';
 import { Experience, ALL_EXPERIENCES, getExperienceById } from '../../data/experiencesData';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 
-import bungeeImg from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import bungeeImg2 from '../../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
-import bungeeImg3 from '../../assets/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
-import bungeeImg4 from '../../assets/Experiences/Bungee Jump_/1-1.jpg';
-import bungeeImg5 from '../../assets/Experiences/Bungee Jump_/2-8.jpg';
+// Public image paths for experiences
+const bungeeImg = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+const bungeeImg2 = '/Experiences/Bungee Jump_/Bungee-8.jpg';
+const bungeeImg3 = '/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
+const bungeeImg4 = '/Experiences/Bungee Jump_/1-1.jpg';
+const bungeeImg5 = '/Experiences/Bungee Jump_/2-8.jpg';
 
 interface BungeeExperiencePageProps {
   onOpenPlanHoliday: () => void;

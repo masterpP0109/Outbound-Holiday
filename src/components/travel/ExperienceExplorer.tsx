@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { Compass, Shield, Trees, Heart, Utensils, ArrowRight } from 'lucide-react';
 
-import guidedTourImg from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import standardCruiseImg from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import bomaDinnerImg from '../../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import chobeImg from '../../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-import gameDriveImg from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import gameDriveImg2 from '../../assets/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
-import gameDriveImg4 from '../../assets/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
-import raftingImg from '../../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
-import heli1Img from '../../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-import gorgeSwingImg from '../../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
-import spaImg from '../../assets/Experiences/Spa Treatments/IMG_0375.PNG';
-import elephantImg from '../../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
-import simunyeImg from '../../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
-import bungeeImg from '../../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import zipLineImg from '../../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
-import jetBoatImg from '../../assets/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
+// Public image paths for experiences
+const guidedTourImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const standardCruiseImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const bomaDinnerImg = '/Experiences/Boma Dinner_/IMG_0364.JPG';
+const chobeImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+const gameDriveImg = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+const gameDriveImg2 = '/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
+const gameDriveImg4 = '/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
+const raftingImg = '/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
+const heli1Img = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+const gorgeSwingImg = '/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+const spaImg = '/Experiences/Spa Treatments/IMG_0375.PNG';
+const elephantImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+const simunyeImg = '/Experiences/Simunye_/Simunye-refresh-29.jpg';
+const bungeeImg = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+const zipLineImg = '/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+const jetBoatImg = '/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
 
 interface ExperienceExplorerProps {
   onExploreExperiences: () => void;

@@ -1,35 +1,36 @@
-import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import fallsTour7 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
-import fallsTour11 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
-import fallsTour6 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
+// Public image paths for experiences
+const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const fallsTour7 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+const fallsTour11 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
+const fallsTour6 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
 
-import cruise1 from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import cruise2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
-import cruise5 from '../assets/Experiences/Standard Cruise_/Standard-5-scaled.jpg';
-import cruise6 from '../assets/Experiences/Standard Cruise_/Standard-6-scaled.jpg';
-import cruise7 from '../assets/Experiences/Standard Cruise_/Standard-7.jpg';
+const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const cruise2 = '/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
+const cruise5 = '/Experiences/Standard Cruise_/Standard-5-scaled.jpg';
+const cruise6 = '/Experiences/Standard Cruise_/Standard-6-scaled.jpg';
+const cruise7 = '/Experiences/Standard Cruise_/Standard-7.jpg';
 
-import gameDrive10 from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import gameDrive2 from '../assets/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
-import gameDrive4 from '../assets/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
-import gameDrive5 from '../assets/Experiences/Game Drive/Game-Drive-5-scaled.jpg';
+const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+const gameDrive2 = '/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
+const gameDrive4 = '/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
+const gameDrive5 = '/Experiences/Game Drive/Game-Drive-5-scaled.jpg';
 
-import elecrew5 from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
-import elecrew2 from '../assets/Experiences/Elephant Interaction_/Elecrew-02.jpg';
+const elecrew5 = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+const elecrew2 = '/Experiences/Elephant Interaction_/Elecrew-02.jpg';
 
-import bomaImg1 from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import bomaImg2 from '../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
+const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
+const bomaImg2 = '/Experiences/Boma Dinner_/IMG_0365.PNG';
 
-import heli1 from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+const heli1 = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 
-import spa1 from '../assets/Experiences/Spa Treatments/IMG_0375.PNG';
-import spa2 from '../assets/Experiences/Spa Treatments/IMG_0376.PNG';
-import spa3 from '../assets/Experiences/Spa Treatments/IMG_0377.PNG';
-import spa4 from '../assets/Experiences/Spa Treatments/IMG_0378.PNG';
+const spa1 = '/Experiences/Spa Treatments/IMG_0375.PNG';
+const spa2 = '/Experiences/Spa Treatments/IMG_0376.PNG';
+const spa3 = '/Experiences/Spa Treatments/IMG_0377.PNG';
+const spa4 = '/Experiences/Spa Treatments/IMG_0378.PNG';
 
-import bungee1 from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import rafting2 from '../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
-import zipLine1 from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+const rafting2 = '/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
+const zipLine1 = '/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
 
 export interface RoomType {
   name: string;

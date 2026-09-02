@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import cruise1 from '../../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import gameDrive10 from '../../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 import { ArrowRight, ShieldCheck, MapPin, ChevronLeft, ChevronRight, Heart, Users, Compass } from 'lucide-react';
+
+// Public image paths for experiences
+const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
 
 interface TravelHeroProps {
   onOpenPlanHoliday: () => void;
@@ -118,10 +120,14 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
               <img
                 src={slide.imageUrl}
                 alt={slide.altText}
-                className="w-full h-full object-cover object-center"
                 loading={idx === 0 ? 'eager' : 'lazy'}
+                className="w-full h-full object-cover object-center block"
                 onError={(e) => {
+                  console.error('Hero image failed to load:', slide.imageUrl);
                   (e.target as HTMLImageElement).src = slide.fallbackUrl;
+                }}
+                onLoad={() => {
+                  console.log('Hero image loaded:', slide.imageUrl);
                 }}
               />
             </div>

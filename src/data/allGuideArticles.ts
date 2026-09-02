@@ -1,15 +1,16 @@
 import { GuideArticle } from '../types/guide';
 import { MASTER_FIRST_TIME_VISITOR_GUIDE } from './masterGuideData';
 
-import vicFallsIconicImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import gorgeHelicopterImg from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-import familyResortImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
-import founderGuideImg from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
-import bomaDinnerImg from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import romanticDinnerImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import familySafariImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import coupleHoneymoonImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import bestValueImg from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+// Public image paths for experiences
+const vicFallsIconicImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const gorgeHelicopterImg = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+const familyResortImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+const founderGuideImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+const bomaDinnerImg = '/Experiences/Boma Dinner_/IMG_0364.JPG';
+const romanticDinnerImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const familySafariImg = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+const coupleHoneymoonImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const bestValueImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 
 // Standard Author Object
 const LOCAL_SPECIALISTS_AUTHOR = {

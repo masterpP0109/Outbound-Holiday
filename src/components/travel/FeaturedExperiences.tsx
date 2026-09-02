@@ -43,10 +43,24 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
             >
               {/* Image Container */}
               <div className="relative h-56 w-full overflow-hidden bg-gray-100">
+                {/* DEBUG: Show image path */}
+                <div className="absolute inset-0 bg-gray-200 text-gray-600 text-xs p-2 overflow-auto hidden">
+                  {item.featuredImage}
+                </div>
                 <img
                   src={item.featuredImage}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  width="100%"
+                  height="224"
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 block"
+                  onError={(e) => {
+                    console.error('Image failed to load:', item.featuredImage);
+                    (e.target as HTMLImageElement).src = '';
+                  }}
+                  onLoad={() => {
+                    console.log('Image loaded:', item.featuredImage);
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
 

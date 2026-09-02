@@ -1,6 +1,8 @@
 import React from 'react';
-import fallsTour1 from '../../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 import { ShieldCheck, HeartHandshake, MapPin, Award, Sparkles } from 'lucide-react';
+
+// Public image paths for experiences
+const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 
 interface AboutUsViewProps {
   onOpenPlanHoliday?: () => void;

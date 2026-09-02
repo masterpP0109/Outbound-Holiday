@@ -33,60 +33,139 @@ export interface Experience {
   relatedIds: string[];
 }
 
-import gameDriveImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import bungeeImg from '../assets/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-import bungeeImg2 from '../assets/Experiences/Bungee Jump_/Bungee-8.jpg';
-import bungeeImg3 from '../assets/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
-import bungeeImg4 from '../assets/Experiences/Bungee Jump_/1-1.jpg';
-import bungeeImg5 from '../assets/Experiences/Bungee Jump_/2-8.jpg';
-import bungeeImg6 from '../assets/Experiences/Bungee Jump_/3 (1).jpg';
-import bungeeImg7 from '../assets/Experiences/Bungee Jump_/Bungee-Fact-Sheet-2024_page-0001.jpg';
-import chobeImg from '../assets/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-import elephantImg from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
-import jetBoatImg from '../assets/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
-import simunyeImg from '../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
-import simunyeImg2 from '../assets/Experiences/Simunye_/Simunye-refresh-42.jpg';
-import simunyeImg3 from '../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
-import simunyeImg4 from '../assets/Experiences/Simunye_/3-3.jpg';
-import simunyeImg5 from '../assets/Experiences/Simunye_/4-3.jpg';
-import simunyeImg6 from '../assets/Experiences/Simunye_/5-3.jpg';
-import simunyeImg7 from '../assets/Experiences/Simunye_/7-2.jpg';
-import simunyeImg8 from '../assets/Experiences/Simunye_/8-1.jpg';
-import spaImg from '../assets/Experiences/Spa Treatments/IMG_0375.PNG';
-import standardCruiseImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import standardCruiseImg2 from '../assets/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
-import gorgeSwingImg from '../assets/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
-import zipLineImg from '../assets/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
-import raftingImg from '../assets/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
-import bomaDinnerImg from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import bomaDinnerImg2 from '../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
-import bomaDinnerImg3 from '../assets/Experiences/Boma Dinner_/IMG_0366.PNG';
-import bomaDinnerImg4 from '../assets/Experiences/Boma Dinner_/Boma prepping on the fire.webp';
-import bomaDinnerImg5 from '../assets/Experiences/Boma Dinner_/IMG_0367.PNG';
-import bomaDinnerImg6 from '../assets/Experiences/Boma Dinner_/IMG_0368.PNG';
-import bomaDinnerImg7 from '../assets/Experiences/Boma Dinner_/IMG_0369.PNG';
-import bomaDinnerImg8 from '../assets/Experiences/Boma Dinner_/IMG_0370.PNG';
-import heli1Img from '../assets/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-import heli2Img from '../assets/Experiences/Flight of Angels/Heli-8-scaled.jpg';
-import heli3Img from '../assets/Experiences/Flight of Angels/Heli-Shoot-7102511.jpg';
-import heli4Img from '../assets/Experiences/Flight of Angels/Heli-Shoot-7102512.jpg';
-import heli5Img from '../assets/Experiences/Flight of Angels/3-8.jpg';
-import heli6Img from '../assets/Experiences/Flight of Angels/9-4.jpg';
-import heli7Img from '../assets/Experiences/Flight of Angels/Helicopter-Flights-Fact-Sheet-2024_page-0011.jpg';
-import intentVicFallsIconicImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import footerZambeziDuskImg from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-import familySafariImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import rhinoTrackingImg from '../assets/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-import craftMarketImg from '../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
-
 // Public image paths for experiences
-import guidedTourImg from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import guidedTourImg2 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
-import guidedTourImg3 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
-import guidedTourImg4 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
-import guidedTourImg5 from '../assets/Experiences/Guided Tour of the Falls_/5-4.jpg';
-import guidedTourImg6 from '../assets/Experiences/Guided Tour of the Falls_/7-3.jpg';
-import guidedTourImg7 from '../assets/Experiences/Guided Tour of the Falls_/8-2.jpg';
+// Guided Tour of the Falls
+const guidedTourImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const guidedTourImg2 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
+const guidedTourImg3 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11-scaled.jpg';
+const guidedTourImg4 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-6-scaled.jpg';
+const guidedTourImg5 = '/Experiences/Guided Tour of the Falls_/5-4.jpg';
+const guidedTourImg6 = '/Experiences/Guided Tour of the Falls_/7-3.jpg';
+const guidedTourImg7 = '/Experiences/Guided Tour of the Falls_/8-2.jpg';
+
+// Standard Cruise / Upper Zambezi
+const standardCruiseImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+const standardCruiseImg2 = '/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
+const standardCruiseImg3 = '/Experiences/Standard Cruise_/Standard-5-scaled.jpg';
+const standardCruiseImg4 = '/Experiences/Standard Cruise_/Standard-6-scaled.jpg';
+const standardCruiseImg5 = '/Experiences/Standard Cruise_/Standard-7.jpg';
+const standardCruiseImg6 = '/Experiences/Standard Cruise_/3.jpg';
+const footerZambeziDuskImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+
+// Flight of Angels
+const heli1Img = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+const heli2Img = '/Experiences/Flight of Angels/Heli-8-scaled.jpg';
+const heli3Img = '/Experiences/Flight of Angels/Heli-Shoot-7102511.jpg';
+const heli4Img = '/Experiences/Flight of Angels/Heli-Shoot-7102512.jpg';
+const heli5Img = '/Experiences/Flight of Angels/3-8.jpg';
+const heli6Img = '/Experiences/Flight of Angels/9-4.jpg';
+
+// Boma Dinner
+const bomaDinnerImg = '/Experiences/Boma Dinner_/IMG_0364.JPG';
+const bomaDinnerImg2 = '/Experiences/Boma Dinner_/IMG_0365.PNG';
+const bomaDinnerImg3 = '/Experiences/Boma Dinner_/IMG_0366.PNG';
+const bomaDinnerImg4 = '/Experiences/Boma Dinner_/IMG_0367.PNG';
+const bomaDinnerImg5 = '/Experiences/Boma Dinner_/IMG_0368.PNG';
+const bomaDinnerImg6 = '/Experiences/Boma Dinner_/IMG_0369.PNG';
+const bomaDinnerImg7 = '/Experiences/Boma Dinner_/IMG_0370.PNG';
+const bomaDinnerImg8 = '/Experiences/Boma Dinner_/Boma prepping on the fire.webp';
+
+// Chobe Day Trip
+const chobeImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
+const chobeImg2 = '/Experiences/Chobe Day Trip_/Chobe-2.jpg';
+const chobeImg3 = '/Experiences/Chobe Day Trip_/Chobe-4-scaled.jpg';
+const chobeImg4 = '/Experiences/Chobe Day Trip_/Chobe-8-scaled.jpg';
+const chobeImg5 = '/Experiences/Chobe Day Trip_/Chobe-9.jpg';
+const chobeImg6 = '/Experiences/Chobe Day Trip_/8-1.jpg';
+const chobeImg7 = '/Experiences/Chobe Day Trip_/Small-chobezi-boat-1.jpg';
+
+// Game Drive
+const gameDriveImg = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+const familySafariImg = '/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
+const rhinoTrackingImg = '/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
+const gameDriveImg3 = '/Experiences/Game Drive/Game-Drive-5-scaled.jpg';
+const gameDriveImg4 = '/Experiences/Game Drive/10.jpg';
+const gameDriveImg5 = '/Experiences/Game Drive/6-4.jpg';
+const gameDriveImg6 = '/Experiences/Game Drive/7.jpg';
+
+// Elephant Interaction
+const elephantImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+const elephantImg2 = '/Experiences/Elephant Interaction_/Elecrew-02.jpg';
+const elephantImg3 = '/Experiences/Elephant Interaction_/4-6.jpg';
+const elephantImg4 = '/Experiences/Elephant Interaction_/6-5.jpg';
+const elephantImg5 = '/Experiences/Elephant Interaction_/7-7.jpg';
+const elephantImg6 = '/Experiences/Elephant Interaction_/8-5.jpg';
+const elephantImg7 = '/Experiences/Elephant Interaction_/8-5 (1).jpg';
+const elephantImg8 = '/Experiences/Elephant Interaction_/Untitled-design.jpg';
+
+// White Water Rafting
+const raftingImg = '/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
+const raftingImg2 = '/Experiences/White Water Rafting_/whitewater-rafting-images-3.jpg';
+const raftingImg3 = '/Experiences/White Water Rafting_/whitewater-rafting-images-4.jpg';
+const raftingImg4 = '/Experiences/White Water Rafting_/whitewater-rafting-images-5.jpg';
+const raftingImg5 = '/Experiences/White Water Rafting_/whitewater-rafting-images-6.jpg';
+const raftingImg6 = '/Experiences/White Water Rafting_/whitewater-rafting-images-8.jpg';
+const raftingImg7 = '/Experiences/White Water Rafting_/whitewater-rafting-images-9.jpg';
+const raftingImg8 = '/Experiences/White Water Rafting_/whitewater-rafting-images-10.jpg';
+
+// Gorge Swing / Bridge Swing
+const gorgeSwingImg = '/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
+const gorgeSwingImg2 = '/Experiences/Gorge Swing_/2.jpg';
+const gorgeSwingImg3 = '/Experiences/Gorge Swing_/4.jpg';
+const gorgeSwingImg4 = '/Experiences/Gorge Swing_/6.jpg';
+const gorgeSwingImg5 = '/Experiences/Gorge Swing_/Bridge-Swing-2-1-scaled.jpg';
+const gorgeSwingImg6 = '/Experiences/Gorge Swing_/Bridge-Swing-5-scaled.jpg';
+const gorgeSwingImg7 = '/Experiences/Gorge Swing_/Bridge-Swing-9-scaled.jpg';
+const gorgeSwingImg8 = '/Experiences/Gorge Swing_/Bungee-11.jpg';
+
+// Bungee Jump
+const bungeeImg = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+const bungeeImg2 = '/Experiences/Bungee Jump_/Bungee-8.jpg';
+const bungeeImg3 = '/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
+const bungeeImg4 = '/Experiences/Bungee Jump_/1-1.jpg';
+const bungeeImg5 = '/Experiences/Bungee Jump_/2-8.jpg';
+const bungeeImg6 = '/Experiences/Bungee Jump_/3 (1).jpg';
+
+// Zip Line
+const zipLineImg = '/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
+const zipLineImg2 = '/Experiences/Zip Line_/3-2.jpg';
+const zipLineImg3 = '/Experiences/Zip Line_/5-1.jpg';
+const zipLineImg4 = '/Experiences/Zip Line_/5.jpg';
+const zipLineImg5 = '/Experiences/Zip Line_/8.jpg';
+const zipLineImg6 = '/Experiences/Zip Line_/Bridge-slide-8.jpg';
+const zipLineImg7 = '/Experiences/Zip Line_/Bridge-Slide-9-scaled.jpg';
+
+// Jet Boat
+const jetBoatImg = '/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
+const jetBoatImg2 = '/Experiences/Jet Boat Adventure_/DSC01087.jpg';
+const jetBoatImg3 = '/Experiences/Jet Boat Adventure_/DSC01147.jpg';
+const jetBoatImg4 = '/Experiences/Jet Boat Adventure_/DSC01202.jpg';
+const jetBoatImg5 = '/Experiences/Jet Boat Adventure_/DSC01211.jpg';
+const jetBoatImg6 = '/Experiences/Jet Boat Adventure_/IMG_0048.jpg';
+
+// Simunye
+const simunyeImg = '/Experiences/Simunye_/Simunye-refresh-29.jpg';
+const simunyeImg2 = '/Experiences/Simunye_/Simunye-refresh-42.jpg';
+const simunyeImg3 = '/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+const simunyeImg4 = '/Experiences/Simunye_/3-3.jpg';
+const simunyeImg5 = '/Experiences/Simunye_/4-3.jpg';
+const simunyeImg6 = '/Experiences/Simunye_/5-3.jpg';
+const simunyeImg7 = '/Experiences/Simunye_/7-2.jpg';
+const simunyeImg8 = '/Experiences/Simunye_/8-1.jpg';
+const simunyeImg9 = '/Experiences/Simunye_/Theatre10.jpg';
+const craftMarketImg = '/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+
+// Spa Treatments
+const spaImg = '/Experiences/Spa Treatments/IMG_0375.PNG';
+const spaImg2 = '/Experiences/Spa Treatments/IMG_0376.PNG';
+const spaImg3 = '/Experiences/Spa Treatments/IMG_0377.PNG';
+const spaImg4 = '/Experiences/Spa Treatments/IMG_0378.PNG';
+const spaImg5 = '/Experiences/Spa Treatments/IMG_0379.PNG';
+const spaImg6 = '/Experiences/Spa Treatments/IMG_0380.PNG';
+const spaImg7 = '/Experiences/Spa Treatments/IMG_0381.PNG';
+
+// Icon images
+const intentVicFallsIconicImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 
 
 
@@ -145,7 +224,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$85',
     priceAmount: 85,
     featuredImage: footerZambeziDuskImg,
-    galleryImages: [standardCruiseImg, standardCruiseImg2, jetBoatImg],
+    galleryImages: [standardCruiseImg, standardCruiseImg2, standardCruiseImg3, standardCruiseImg4, standardCruiseImg5, standardCruiseImg6],
     highlights: [
       'Complimentary top-shelf drinks, wines, local beers & gin bar',
       'Freshly prepared chef’s gourmet snack platters',
@@ -182,7 +261,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$185',
     priceAmount: 185,
     featuredImage: chobeImg,
-    galleryImages: [chobeImg, familySafariImg],
+    galleryImages: [chobeImg, chobeImg2, chobeImg3, chobeImg4, chobeImg5, chobeImg6, chobeImg7],
     highlights: [
       'Morning boat cruise along the Chobe Riverfront',
       'Substantial lodge lunch buffet included',
@@ -219,7 +298,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$150',
     priceAmount: 150,
     featuredImage: heli1Img,
-    galleryImages: [heli1Img, heli2Img, heli3Img, heli4Img, heli5Img, heli6Img, heli7Img],
+    galleryImages: [heli1Img, heli2Img, heli3Img, heli4Img, heli5Img, heli6Img],
     highlights: [
       '360-degree aerial views of Victoria Falls & spray column',
       'Bank over the zigzagging basalt Batoka Gorge',
@@ -255,7 +334,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$55',
     priceAmount: 55,
     featuredImage: bomaDinnerImg,
-    galleryImages: [bomaDinnerImg, bomaDinnerImg2, bomaDinnerImg3, bomaDinnerImg4, bomaDinnerImg5, bomaDinnerImg6, bomaDinnerImg7],
+    galleryImages: [bomaDinnerImg, bomaDinnerImg2, bomaDinnerImg3, bomaDinnerImg4, bomaDinnerImg5, bomaDinnerImg6, bomaDinnerImg7, bomaDinnerImg8],
     highlights: [
       'Traditional chitenge wrap & village beer welcome',
       '4-course buffet with open-fire braai and game meats',
@@ -279,7 +358,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$25',
     priceAmount: 25,
     featuredImage: gorgeSwingImg,
-    galleryImages: [gorgeSwingImg],
+    galleryImages: [gorgeSwingImg, gorgeSwingImg2, gorgeSwingImg3, gorgeSwingImg4, gorgeSwingImg5, gorgeSwingImg6, gorgeSwingImg7, gorgeSwingImg8],
     highlights: ['Breathtaking 110m gorge overlook', 'A la carte lunch and dinner menu', 'Direct view of the Vic Falls Bridge'],
     whatsIncluded: ['Table reservation', 'Panoramic views'],
     goodToKnow: ['Advance reservations strongly advised during peak lunch hours.'],
@@ -317,7 +396,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$75',
     priceAmount: 75,
     featuredImage: gameDriveImg,
-    galleryImages: [gameDriveImg, familySafariImg],
+    galleryImages: [gameDriveImg, familySafariImg, gameDriveImg3, gameDriveImg4, gameDriveImg5, gameDriveImg6],
     highlights: ['Open-sided 4x4 safari vehicle', 'Search for Big Four wildlife', 'Morning coffee or afternoon sundowner in the bush'],
     whatsIncluded: ['Professional safari guide', 'Hotel transfers', 'Snacks & drinks'],
     goodToKnow: ['National park entry fee ($20) is extra.'],
@@ -336,7 +415,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$120',
     priceAmount: 120,
     featuredImage: elephantImg,
-    galleryImages: [elephantImg],
+    galleryImages: [elephantImg, elephantImg2, elephantImg3, elephantImg4, elephantImg5, elephantImg6, elephantImg7, elephantImg8],
     highlights: ['Hands-on feeding session', 'Educational talk by senior wildlife caretakers', 'Photography opportunity with elephants'],
     whatsIncluded: ['Sanctuary entry', 'Guided interaction', 'Refreshments'],
     goodToKnow: ['Strict ethical sanctuary guidelines strictly enforced.'],
@@ -355,7 +434,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$130',
     priceAmount: 130,
     featuredImage: raftingImg,
-    galleryImages: [raftingImg],
+    galleryImages: [raftingImg, raftingImg2, raftingImg3, raftingImg4, raftingImg5, raftingImg6, raftingImg7, raftingImg8],
     highlights: ['Grade 3 to Grade 5 rapid navigation', 'Hike out of Batoka Gorge', 'Cold beers and riverside lunch included'],
     whatsIncluded: ['Full equipment hire & lifejackets', 'Professional river guides', 'Lunch & beverages', 'Hike out assistance'],
     goodToKnow: ['Requires reasonable fitness for the steep gorge hike out.'],
@@ -374,7 +453,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$95',
     priceAmount: 95,
     featuredImage: gorgeSwingImg,
-    galleryImages: [gorgeSwingImg],
+    galleryImages: [gorgeSwingImg, gorgeSwingImg2, gorgeSwingImg3, gorgeSwingImg4, gorgeSwingImg5, gorgeSwingImg6, gorgeSwingImg7, gorgeSwingImg8],
     highlights: ['70m sheer vertical freefall', 'Speeds up to 120 km/h', 'Tandem jumps available for couples'],
     whatsIncluded: ['Safety harness & equipment', 'Certified riggers', 'Hotel transfers'],
     goodToKnow: ['Video and photo packages available for purchase on site.'],
@@ -396,7 +475,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$160',
     priceAmount: 160,
     featuredImage: bungeeImg,
-    galleryImages: [bungeeImg, bungeeImg2, bungeeImg3, bungeeImg4, bungeeImg5, bungeeImg6, bungeeImg7],
+    galleryImages: [bungeeImg, bungeeImg2, bungeeImg3, bungeeImg4, bungeeImg5, bungeeImg6],
     highlights: [
       '111m sheer vertical plunge over the Zambezi River rapids',
       'Positioned in the historic "No-Man\'s Land" on the 1905 Victoria Falls Bridge',
@@ -493,7 +572,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$75',
     priceAmount: 75,
     featuredImage: zipLineImg,
-    galleryImages: [zipLineImg],
+    galleryImages: [zipLineImg, zipLineImg2, zipLineImg3, zipLineImg4, zipLineImg5, zipLineImg6, zipLineImg7],
     highlights: ['425m cable length', 'Speeds over 100 km/h', 'Panoramic canyon views'],
     whatsIncluded: ['Full safety harness', 'Instruction', 'Hotel transfer'],
     goodToKnow: ['Suitable for ages 6 and up.'],
@@ -531,7 +610,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$120',
     priceAmount: 120,
     featuredImage: jetBoatImg,
-    galleryImages: [jetBoatImg],
+    galleryImages: [jetBoatImg, jetBoatImg2, jetBoatImg3, jetBoatImg4, jetBoatImg5, jetBoatImg6],
     highlights: ['Twin V8 jet propulsion', '360 degree water spins', 'Navigate rapids at 80 km/h'],
     whatsIncluded: ['Jet boat ride', 'Lifejacket & helmet', 'Lift transfer into gorge'],
     goodToKnow: ['You WILL get completely soaked—wear swimwear.'],
@@ -722,7 +801,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$50',
     priceAmount: 50,
     featuredImage: simunyeImg,
-    galleryImages: [simunyeImg],
+    galleryImages: [simunyeImg, simunyeImg2, simunyeImg3, simunyeImg4, simunyeImg5, simunyeImg6, simunyeImg7, simunyeImg8, simunyeImg9],
     highlights: [
       'Professional theatrical production with live performers',
       'Traditional African dancers in authentic cultural costumes',

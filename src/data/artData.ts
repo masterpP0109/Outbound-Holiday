@@ -1,18 +1,19 @@
 import { ArtCategory, ArtProduct, Artist, Review } from '../types';
 
-import simunye29 from '../assets/Experiences/Simunye_/Simunye-refresh-29.jpg';
-import simunye31 from '../assets/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
-import simunye42 from '../assets/Experiences/Simunye_/Simunye-refresh-42.jpg';
-import simunyeTheatre10 from '../assets/Experiences/Simunye_/Theatre10.jpg';
-import bomaImg1 from '../assets/Experiences/Boma Dinner_/IMG_0364.JPG';
-import bomaImg2 from '../assets/Experiences/Boma Dinner_/IMG_0365.PNG';
-import elecrew5 from '../assets/Experiences/Elephant Interaction_/elecrew-5.jpg';
-import elephant46 from '../assets/Experiences/Elephant Interaction_/4-6.jpg';
-import elephant65 from '../assets/Experiences/Elephant Interaction_/6-5.jpg';
-import spa1 from '../assets/Experiences/Spa Treatments/IMG_0375.PNG';
-import spa2 from '../assets/Experiences/Spa Treatments/IMG_0376.PNG';
-import fallsTour1 from '../assets/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-import cruise1 from '../assets/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
+// Public image paths for experiences
+const simunye29 = '/Experiences/Simunye_/Simunye-refresh-29.jpg';
+const simunye31 = '/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+const simunye42 = '/Experiences/Simunye_/Simunye-refresh-42.jpg';
+const simunyeTheatre10 = '/Experiences/Simunye_/Theatre10.jpg';
+const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
+const bomaImg2 = '/Experiences/Boma Dinner_/IMG_0365.PNG';
+const elecrew5 = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+const elephant46 = '/Experiences/Elephant Interaction_/4-6.jpg';
+const elephant65 = '/Experiences/Elephant Interaction_/6-5.jpg';
+const spa1 = '/Experiences/Spa Treatments/IMG_0375.PNG';
+const spa2 = '/Experiences/Spa Treatments/IMG_0376.PNG';
+const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 
 const craftMarketImg = simunyeTheatre10;
 const founderGuideImg = elecrew5;
