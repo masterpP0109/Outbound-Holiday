@@ -1,49 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  GuideArticle, 
-  GuideSection, 
-  ArticleBlock, 
-  FaqItem,
-  QuickFact 
+import { PHONE_URL } from '../../../utils/whatsapp';
+import { PageLink } from '../../common/PageLink';
+import React,{ useState,useEffect,useRef } from 'react';
+import { motion,AnimatePresence } from 'motion/react';
+import {
+GuideArticle
 } from '../../../types/guide';
 import { trackGuideEvent } from '../../../utils/analytics';
-import { 
-  Compass, 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  User, 
-  Share2, 
-  Check, 
-  ChevronRight, 
-  ChevronLeft,
-  ChevronDown, 
-  ChevronUp,
-  Sparkles, 
-  ShieldCheck, 
-  DollarSign, 
-  FileText, 
-  Sun, 
-  Bed, 
-  CheckCircle2, 
-  Quote, 
-  Lightbulb, 
-  HelpCircle, 
-  PhoneCall, 
-  CalendarCheck, 
-  ArrowRight,
-  Menu,
-  Heart,
-  Plane,
-  Luggage,
-  Users,
-  Grid,
-  Layers,
-  BookOpen,
-  Search,
-  X,
-  MessageCircle
+import {
+Compass,Clock,
+MapPin,Share2,ChevronRight,
+ChevronLeft,
+ChevronDown,Sparkles,
+ShieldCheck,
+DollarSign,
+FileText,
+Sun,
+Bed,
+CheckCircle2,Lightbulb,
+HelpCircle,
+PhoneCall,
+CalendarCheck,Heart,
+Plane,Users,Layers,
+BookOpen,
+Search,
+X,
+MessageCircle
 } from 'lucide-react';
 
 interface GuideArticleTemplateProps {
@@ -90,7 +71,6 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
       articleTitle: article.title,
     });
 
-    document.title = article.seo.metaTitle;
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
 
     // Build JSON-LD Structured Data
@@ -261,12 +241,12 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
       {/* 1. Breadcrumbs Navigation */}
       <nav aria-label="Breadcrumb" className="bg-white border-b border-gray-200/80 py-3 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center text-xs font-medium text-gray-500 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <button 
+          <PageLink href={'/'}
             onClick={onNavigateHome}
             className="hover:text-[#0B5E8E] transition-colors cursor-pointer flex items-center gap-1"
           >
             <span>Home</span>
-          </button>
+          </PageLink>
           <ChevronRight className="w-3.5 h-3.5 mx-2 text-gray-400 shrink-0" />
           <span className="text-gray-700 font-semibold">Victoria Falls Guide</span>
           <ChevronRight className="w-3.5 h-3.5 mx-2 text-gray-400 shrink-0" />
@@ -1073,7 +1053,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
 
             <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
               <a
-                href="tel:+263771234567"
+                href={PHONE_URL}
                 className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-3 px-5 rounded-xl border border-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <PhoneCall className="w-3.5 h-3.5 text-[#C9A66B]" />

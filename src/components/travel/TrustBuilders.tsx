@@ -1,6 +1,6 @@
 import React from 'react';
 import { TRUST_BUILDERS } from '../../data/travelData';
-import { ShieldCheck, MapPin, Award, HeartHandshake } from 'lucide-react';
+import { ShieldCheck,MapPin,Award,HeartHandshake } from 'lucide-react';
 
 export const TrustBuilders: React.FC = () => {
   const getIcon = (iconName: string) => {

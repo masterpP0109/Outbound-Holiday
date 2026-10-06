@@ -1,3 +1,4 @@
+import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 import React from 'react';
 import { CalendarCheck } from 'lucide-react';
 import { WhatsAppIcon } from './WhatsAppButton';
@@ -10,7 +11,7 @@ interface MobileStickyCtaProps {
 
 export const MobileStickyCta: React.FC<MobileStickyCtaProps> = ({ onOpenPlanHoliday, experienceName }) => {
   const whatsappUrl = experienceName 
-    ? `https://wa.me/263714701721?text=${encodeURIComponent(`Hello Outbound Holidays,\n\nI'm interested in ${experienceName} and would like to know its availability, pricing and how to book.\n\nThank you.`)}`
+    ? getWhatsAppEnquiryUrl(experienceName)
     : getWhatsAppSpecialistUrl();
 
   return (

@@ -1,15 +1,15 @@
 import React from 'react';
 import { ART_CATEGORIES } from '../../data/artData';
-import { 
-  Palette, 
-  Shapes, 
-  Smile, 
-  Scissors, 
-  Coffee, 
-  Sparkles, 
-  Home, 
-  Package, 
-  ArrowRight 
+import {
+Palette,
+Shapes,
+Smile,
+Scissors,
+Coffee,
+Sparkles,
+Home,
+Package,
+ArrowRight
 } from 'lucide-react';
 
 interface CategoryGridProps {

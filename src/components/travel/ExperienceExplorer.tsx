@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Compass, Shield, Trees, Heart, Utensils, ArrowRight } from 'lucide-react';
+import React,{ useState } from 'react';
+import { Compass,Shield,Trees,Heart,Utensils,ArrowRight } from 'lucide-react';
 
 // Public image paths for experiences
 const guidedTourImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
@@ -16,8 +16,6 @@ const spaImg = '/Experiences/Spa Treatments/IMG_0375.PNG';
 const elephantImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
 const simunyeImg = '/Experiences/Simunye_/Simunye-refresh-29.jpg';
 const bungeeImg = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-const zipLineImg = '/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
-const jetBoatImg = '/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
 
 interface ExperienceExplorerProps {
   onExploreExperiences: () => void;

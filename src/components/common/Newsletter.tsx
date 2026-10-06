@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Mail, Check, Compass } from 'lucide-react';
+import React,{ useState } from 'react';
+import { Mail,Check,Compass } from 'lucide-react';
 
 export const Newsletter: React.FC = () => {
   const [email, setEmail] = useState('');

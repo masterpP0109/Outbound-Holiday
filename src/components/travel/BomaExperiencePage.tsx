@@ -1,38 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { WhatsAppEnquiryButton, WhatsAppSpecialistCTA, WhatsAppIcon } from '../common/WhatsAppButton';
+import { PageLink } from '../common/PageLink';
+import React,{ useState,useEffect } from 'react';
+import { WhatsAppEnquiryButton,WhatsAppSpecialistCTA,WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
-import { motion } from 'motion/react';
 import {
-  Clock,
-  Calendar,
-  MapPin,
-  Star,
-  CheckCircle2,
-  ShieldCheck,
-  Sparkles,
-  Utensils,
-  Music,
-  Bus,
-  PhoneCall,
-  CalendarCheck,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  HelpCircle,
-  ArrowLeft,
-  Share2,
-  Users,
-  Heart,
-  Check,
-  Info,
-  Coffee,
-  Wine
+Clock,Star,
+CheckCircle2,
+ShieldCheck,
+Sparkles,
+Utensils,
+Music,
+Bus,
+PhoneCall,
+CalendarCheck,
+ChevronRight,
+ChevronDown,
+ChevronUp,ArrowLeft,
+Share2,
+Users,Check,
+Info,
+Coffee
 } from 'lucide-react';
+import { GalleryLightbox } from './GalleryLightbox';
 // Public image paths for experiences
 const bomaDinnerImg = '/Experiences/Boma Dinner_/IMG_0364.JPG';
 const bomaDinnerImg2 = '/Experiences/Boma Dinner_/IMG_0365.PNG';
 const bomaDinnerImg3 = '/Experiences/Boma Dinner_/IMG_0366.PNG';
-const bomaDinnerImg4 = '/Experiences/Boma Dinner_/Boma prepping on the fire.webp';
 const bomaDinnerImg5 = '/Experiences/Boma Dinner_/IMG_0367.PNG';
 const bomaDinnerImg6 = '/Experiences/Boma Dinner_/IMG_0368.PNG';
 const bomaDinnerImg7 = '/Experiences/Boma Dinner_/IMG_0369.PNG';
@@ -41,7 +33,6 @@ const cruiseImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 const guidedTourImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
 const heli1Img = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 const chobeImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-import { GalleryLightbox } from './GalleryLightbox';
 
 interface BomaExperiencePageProps {
   onOpenPlanHoliday: () => void;
@@ -62,7 +53,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    document.title = "The Boma - Dinner & Drum Show | Victoria Falls Experience Guide | Outbound Holidays";
+
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
 
@@ -118,6 +109,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
   const relatedExperiences = [
     {
       title: "Upper Zambezi Sunset River Cruise",
+      slug: 'upper-zambezi-sunset-cruise',
       desc: "Glide past hippo pods and elephant herds with complimentary sundowners as the sun sets.",
       price: "From US$85 pp",
       duration: "2 Hours",
@@ -125,6 +117,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
     },
     {
       title: "Guided Tour of Victoria Falls",
+      slug: 'guided-tour-falls',
       desc: "Explore all 16 spectacular viewpoints along the rainforest opposite Mosi-oa-Tunya.",
       price: "From US$55 pp",
       duration: "2.5 Hours",
@@ -132,6 +125,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
     },
     {
       title: "Flight of Angels Helicopter Flight",
+      slug: 'flight-of-angels',
       desc: "Soar above the 1,700m wide sheet of falling water for an aerial view of Batoka Gorge.",
       price: "From US$150 pp",
       duration: "15 Mins",
@@ -139,6 +133,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
     },
     {
       title: "Chobe National Park Day Trip",
+      slug: 'chobe-day-safari',
       desc: "Cross the Botswana border for a full-day river safari and 4x4 game drive amongst elephant herds.",
       price: "From US$185 pp",
       duration: "Full Day",
@@ -150,13 +145,13 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
     <div>
       <div className="sticky top-[73px] z-40 bg-[#0D2833] text-white border-b border-[#C9A66B]/30 py-2.5 px-4 sm:px-6 lg:px-8 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 text-xs">
-          <button 
+          <PageLink href={'/'}
             onClick={onNavigateHome}
             className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5 font-semibold text-gray-300 cursor-pointer text-[11px]"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Home</span>
-          </button>
+          </PageLink>
 
           <div className="flex items-center gap-2 text-[#C9A66B] font-bold text-[11px] uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
@@ -441,7 +436,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                 </div>
                 <div className="md:col-span-6 h-64 md:h-auto relative order-1 md:order-2">
                   <img 
-                    src={bomaDinnerImg4} 
+                    src={bomaDinnerImg5}
                     alt="Fresh salad buffet and potjies stews at The Boma"
                     className="w-full h-full object-cover"
                   />
@@ -455,7 +450,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
               <div className="bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xs grid grid-cols-1 md:grid-cols-12 gap-0">
                 <div className="md:col-span-6 h-64 md:h-auto relative">
                   <img 
-                    src={bomaDinnerImg5} 
+                    src={bomaDinnerImg5}
                     alt="Interactive drumming show with master drummers"
                     className="w-full h-full object-cover"
                   />
@@ -524,7 +519,6 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                   bomaDinnerImg,
                   bomaDinnerImg2,
                   bomaDinnerImg3,
-                  bomaDinnerImg4,
                   bomaDinnerImg5,
                   bomaDinnerImg6,
                   bomaDinnerImg7,
@@ -549,7 +543,6 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     bomaDinnerImg,
                     bomaDinnerImg2,
                     bomaDinnerImg3,
-                    bomaDinnerImg4,
                     bomaDinnerImg5,
                     bomaDinnerImg6,
                     bomaDinnerImg7,
@@ -989,10 +982,10 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     </div>
 
                     <div className="p-5 pt-0">
-                      <button
+                      <PageLink href={`/things-to-do/${item.slug}`}
                         onClick={() => {
                           if (onSelectRelatedExperience) {
-                            onSelectRelatedExperience(item.title);
+                            onSelectRelatedExperience(item.slug);
                           } else {
                             onOpenPlanHoliday();
                           }
@@ -1001,7 +994,7 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                       >
                         <span>Explore Experience</span>
                         <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
+                      </PageLink>
                     </div>
                   </div>
                 ))}

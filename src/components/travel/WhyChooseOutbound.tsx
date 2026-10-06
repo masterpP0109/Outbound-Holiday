@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, MapPin, Sparkles, Headset, CalendarCheck, ArrowRight } from 'lucide-react';
+import { ShieldCheck,MapPin,Sparkles,Headset,CalendarCheck,ArrowRight } from 'lucide-react';
 
 interface WhyChooseOutboundProps {
   onOpenPlanHoliday?: () => void;

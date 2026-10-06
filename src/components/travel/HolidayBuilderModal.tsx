@@ -1,31 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
+import React,{ useState,useEffect } from 'react';
 import { TravelPackage } from '../../types';
 import {
-  X,
-  Check,
-  ArrowRight,
-  ArrowLeft,
-  Compass,
-  Users,
-  Calendar,
-  Sparkles,
-  ShieldCheck,
-  Send,
-  MessageSquare,
-  Clock,
-  MapPin,
-  Heart,
-  Award,
-  Plus,
-  Trash2,
-  Phone,
-  ChevronDown,
-  ChevronUp,
-  Info,
-  SlidersHorizontal,
-  Home,
-  CheckCircle2,
-  RefreshCw,
+X,
+Check,
+ArrowRight,
+ArrowLeft,Sparkles,
+ShieldCheck,
+Send,
+MessageSquare,Plus,ChevronDown,
+ChevronUp
 } from 'lucide-react';
 import { DetailedAccommodation } from '../../data/accommodationsData';
 
@@ -38,7 +22,6 @@ const chobe1 = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 const gorgeSwing3 = '/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
 const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
 const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-const cruise2 = '/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
 const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
 
 interface HolidayBuilderModalProps {
@@ -200,7 +183,6 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 }) => {
   // Navigation & Step state
   const [step, setStep] = useState<number>(0); // 0 = Entry mode selection, 1 = Intent, 2 = Party, 3 = Timing, 4 = Stay, 5 = Activities, 6 = Logistics, 7 = Itinerary Review, 8 = Contact
-  const [entryMode, setEntryMode] = useState<'guided' | 'knows-what-they-want'>('guided');
 
   // User Selections State
   const [tripIntent, setTripIntent] = useState<string>('first-time');
@@ -261,8 +243,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         const match = ACTIVITIES_DATA.find(
           (a) => a.title.toLowerCase().includes(preselectedActivity.toLowerCase()) || a.id === preselectedActivity
         );
-        if (match && !selectedActivityIds.includes(match.id)) {
-          setSelectedActivityIds([...selectedActivityIds, match.id]);
+        if (match) {
+          setSelectedActivityIds((ids) => ids.includes(match.id) ? ids : [...ids, match.id]);
         }
       }
     }
@@ -292,14 +274,14 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   const selectedStayTierObj = STAY_TIERS.find((s) => s.id === stayTierId) || STAY_TIERS[1];
   const selectedActivitiesList = ACTIVITIES_DATA.filter((a) => selectedActivityIds.includes(a.id));
 
-  // Correct calculation without counting bugs!
+  // Planning assumptions: two guests per room; room allocation must be confirmed.
   const totalGuests = adultsCount + kidsCount;
   const roomFactor = Math.ceil(totalGuests / 2);
   const accommodationCostMin = selectedStayTierObj.pricePerNightUSD * nightsCount * roomFactor;
 
   const activitiesCost = selectedActivitiesList.reduce((acc, act) => {
     const adultTotal = act.priceUSD * adultsCount;
-    const kidsTotal = act.priceUSD * 0.8 * kidsCount; // 20% child discount on activities
+    const kidsTotal = act.priceUSD * 0.8 * kidsCount; // Estimate only: assumed 20% child discount; supplier age/rate rules vary.
     return acc + adultTotal + kidsTotal;
   }, 0);
 
@@ -381,14 +363,14 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   // WhatsApp Link Builder
   const buildWhatsAppLink = () => {
     const actNames = selectedActivitiesList.map((a) => a.title).join(', ');
-    const message = `Hi Outbound Holidays! I built my custom Victoria Falls holiday on your website:%0A%0A` +
-      `*Trip Style:* ${selectedStayTierObj.name}%0A` +
-      `*Party:* ${adultsCount} Adults, ${kidsCount} Kids (${partyType})%0A` +
-      `*Duration:* ${nightsCount} Nights / ${nightsCount + 1} Days%0A` +
-      `*Experiences (${selectedActivitiesList.length}):* ${actNames || 'To be selected'}%0A` +
-      `*Estimated Range:* $${estimatedMinUSD} - $${estimatedMaxUSD} USD%0A%0A` +
+    const message = `Hi Outbound Holidays! I built my custom Victoria Falls holiday on your website:\n\n` +
+      `*Trip Style:* ${selectedStayTierObj.name}\n` +
+      `*Party:* ${adultsCount} Adults, ${kidsCount} Kids (${partyType})\n` +
+      `*Duration:* ${nightsCount} Nights / ${nightsCount + 1} Days\n` +
+      `*Experiences (${selectedActivitiesList.length}):* ${actNames || 'To be selected'}\n` +
+      `*Estimated Range:* $${estimatedMinUSD} - $${estimatedMaxUSD} USD\n\n` +
       `I'd like to check availability for my dates: ${travelSeason}. My name is ${fullName || 'Guest'}.`;
-    return `https://wa.me/263771234567?text=${message}`;
+    return getWhatsAppUrl(message);
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -482,7 +464,6 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 <button
                   onClick={() => {
-                    setEntryMode('knows-what-they-want');
                     setStep(4); // Jump directly to Stay & Activities
                   }}
                   className="p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-[#0D5C75] hover:shadow-lg transition-all text-left group flex flex-col justify-between"
@@ -506,7 +487,6 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                 <button
                   onClick={() => {
-                    setEntryMode('guided');
                     setStep(1); // Full guided lifestyle questions
                   }}
                   className="p-6 rounded-2xl border-2 border-[#D97706] bg-[#D97706]/5 hover:bg-[#D97706]/10 hover:shadow-lg transition-all text-left group flex flex-col justify-between relative"
@@ -543,11 +523,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           {step > 0 && !submitted && (
             <div className="bg-[#0D5C75]/10 border border-[#0D5C75]/20 p-4 rounded-xl flex items-start gap-3 animate-fade-in shadow-2xs">
               <div className="w-8 h-8 rounded-full bg-[#0D5C75] text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                FK
+                OH
               </div>
               <div className="text-xs">
                 <span className="font-bold text-[#0D5C75] block mb-0.5">
-                  Fungai (Victoria Falls Travel Specialist) says:
+                  Your Victoria Falls Travel Specialist says:
                 </span>
                 <p className="text-gray-700 font-medium leading-relaxed">
                   "{getIntelligentAdvice()}"
@@ -656,16 +636,16 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
+                {([
                   { id: 'couple', label: 'Couple / Romance', icon: '💑' },
                   { id: 'family', label: 'Family with Kids', icon: '👨‍👩‍👧‍👦' },
                   { id: 'friends', label: 'Group of Friends', icon: '👯' },
                   { id: 'solo', label: 'Solo Traveller', icon: '🧳' },
-                ].map((p) => (
+                ] as const).map((p) => (
                   <button
                     key={p.id}
                     onClick={() => {
-                      setPartyType(p.id as any);
+                      setPartyType(p.id);
                       if (p.id === 'family' && kidsCount === 0) setKidsCount(2);
                       if (p.id === 'solo') {
                         setAdultsCount(1);

@@ -1,26 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Experience, getExperienceById } from '../../data/experiencesData';
+import { PageLink } from '../common/PageLink';
+import { sectionPath } from '../../routes';
+import React,{ useState,useEffect } from 'react';
+import { Experience,getExperienceById } from '../../data/experiencesData';
 import { BungeeExperiencePage } from './BungeeExperiencePage';
 import { GalleryLightbox } from './GalleryLightbox';
-import { WhatsAppEnquiryButton, WhatsAppSpecialistCTA, WhatsAppIcon } from '../common/WhatsAppButton';
+import { WhatsAppEnquiryButton,WhatsAppSpecialistCTA,WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
-import { 
-  Clock, 
-  Star, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Sparkles, 
-  CalendarCheck, 
-  ChevronDown, 
-  ChevronUp, 
-  ArrowLeft, 
-  Share2, 
-  Check, 
-  Info,
-  MapPin,
-  XCircle,
-  Users,
-  Compass
+import {
+Clock,
+Star,
+CheckCircle2,
+ShieldCheck,
+Sparkles,ChevronDown,
+ChevronUp,
+ArrowLeft,
+Share2,
+Check,
+Info,
+MapPin,
+XCircle
 } from 'lucide-react';
 
 interface ExperienceDetailPageProps {
@@ -38,7 +36,19 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   onSelectRelatedExperience,
   onBackToDirectory
 }) => {
-  // If this is the Bungee Jump experience, route to dedicated flagship component
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [guestCount, setGuestCount] = useState(2);
+  const [includeTransfers, setIncludeTransfers] = useState(true);
+  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, [experience.id]);
+
+  // Keep hooks unconditional when switching between generic and flagship experiences.
   if (experience.id === 'bungee-jump' || experience.slug === 'bungee-jump') {
     return (
       <BungeeExperiencePage
@@ -49,18 +59,6 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
       />
     );
   }
-
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [guestCount, setGuestCount] = useState(2);
-  const [includeTransfers, setIncludeTransfers] = useState(true);
-  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    document.title = `${experience.title} | Victoria Falls Experience Guide | Outbound Holidays`;
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  }, [experience.id]);
 
   const handleShare = () => {
     if (navigator.clipboard) {
@@ -90,22 +88,22 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
       <div className="sticky top-[73px] z-40 bg-[#0D2833] text-white border-b border-[#C9A66B]/30 py-2.5 px-4 sm:px-6 lg:px-8 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-3">
-            <button 
+            <PageLink href={'/'}
               onClick={onNavigateHome}
               className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5 font-semibold text-gray-300 cursor-pointer text-[11px]"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Home</span>
-            </button>
+            </PageLink>
             {onBackToDirectory && (
               <>
                 <span className="text-gray-500">/</span>
-                <button 
+                <PageLink href={sectionPath('experiences')}
                   onClick={onBackToDirectory}
                   className="hover:text-[#C9A66B] transition-colors font-semibold text-gray-300 cursor-pointer text-[11px]"
                 >
                   All Experiences
-                </button>
+                </PageLink>
               </>
             )}
           </div>

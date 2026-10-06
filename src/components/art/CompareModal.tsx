@@ -1,8 +1,8 @@
 import React from 'react';
-import { ArtProduct, Currency } from '../../types';
+import { ArtProduct,Currency } from '../../types';
 import { ART_PRODUCTS } from '../../data/artData';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { X, Scale, ShoppingBag, Trash2 } from 'lucide-react';
+import { X,Scale,ShoppingBag,Trash2 } from 'lucide-react';
 
 interface CompareModalProps {
   compareIds: string[];

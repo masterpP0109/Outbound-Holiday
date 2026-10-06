@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
-import { ArtProduct, Currency } from '../../types';
+import React,{ useState } from 'react';
+import { ArtProduct,Currency } from '../../types';
 import { ART_PRODUCTS } from '../../data/artData';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { 
-  ShoppingBag, 
-  Heart, 
-  Star, 
-  Eye, 
-  Scale, 
-  Check, 
-  Sparkles, 
-  Filter, 
-  ArrowUpDown 
+import {
+ShoppingBag,
+Heart,
+Star,
+Eye,
+Scale,ArrowUpDown
 } from 'lucide-react';
 
 interface ProductGridProps {
@@ -41,7 +37,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   const [sortBy, setSortBy] = useState<'featured' | 'price-low' | 'price-high' | 'rating'>('featured');
 
   // Filter products
-  let filtered = ART_PRODUCTS.filter((prod) => {
+  const filtered = ART_PRODUCTS.filter((prod) => {
     // Category filter
     if (selectedCategorySlug && prod.categorySlug !== selectedCategorySlug) {
       return false;
@@ -124,7 +120,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               <ArrowUpDown className="w-3.5 h-3.5 text-gray-400" />
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === 'featured' || value === 'price-low' || value === 'price-high' || value === 'rating') setSortBy(value);
+                }}
                 className="bg-transparent focus:outline-hidden text-gray-700 cursor-pointer"
               >
                 <option value="featured">Featured Order</option>

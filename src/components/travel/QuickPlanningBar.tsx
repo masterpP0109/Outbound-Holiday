@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, FileText, Plane, Star, ArrowRight } from 'lucide-react';
+import { Calendar,FileText,Plane,Star,ArrowRight } from 'lucide-react';
 
 interface QuickPlanningBarProps {
   onOpenGuide: () => void;

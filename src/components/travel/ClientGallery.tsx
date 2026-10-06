@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { PageLink } from '../common/PageLink';
+import { sectionPath } from '../../routes';
+import React,{ useState } from 'react';
 import { Camera } from 'lucide-react';
 import { clientGalleryImages } from '../../data/clientGalleryImages';
 import { GalleryLightbox } from './GalleryLightbox';
@@ -21,6 +23,7 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ preview = false, o
     });
   });
   const images = preview ? previewImages : clientGalleryImages;
+  const Heading = preview ? 'h2' : 'h1';
   const renderPhoto = (index: number) => (
     <button
       key={images[index]}
@@ -37,16 +40,16 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ preview = false, o
     <section id="client-gallery" aria-labelledby="client-gallery-title" className="bg-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {!preview && (
-          <button type="button" onClick={onNavigateHome} className="mb-6 text-sm font-semibold text-[#0B5E8E] hover:underline cursor-pointer">
+          <PageLink href={'/'} onClick={onNavigateHome} className="mb-6 text-sm font-semibold text-[#0B5E8E] hover:underline cursor-pointer">
             &larr; Back to home
-          </button>
+          </PageLink>
         )}
         <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
           <span className="inline-flex items-center gap-2 rounded-full bg-[#C9A66B]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-[#0B5E8E]">
             <Camera className="w-4 h-4" aria-hidden="true" />
             Holiday memories
           </span>
-          <h2 id="client-gallery-title" className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">Client Gallery</h2>
+          <Heading id="client-gallery-title" className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">Client Gallery</Heading>
           <p className="text-sm sm:text-base text-gray-600">A glimpse of the holidays and experiences our clients have enjoyed with Outbound Holidays—from time together to unforgettable discoveries. Explore their travel memories and select a photo to take a closer look.</p>
         </div>
 
@@ -62,9 +65,9 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ preview = false, o
 
         {preview && (
           <div className="mt-8 text-center">
-            <button type="button" onClick={onSeeGallery} className="rounded-xl bg-[#0B5E8E] hover:bg-[#094c73] px-6 py-3 font-semibold text-sm text-white transition-colors cursor-pointer">
+            <PageLink href={sectionPath('client-gallery')} onClick={onSeeGallery} className="rounded-xl bg-[#0B5E8E] hover:bg-[#094c73] px-6 py-3 font-semibold text-sm text-white transition-colors cursor-pointer">
               See Gallery
-            </button>
+            </PageLink>
           </div>
         )}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getWhatsAppEnquiryUrl, getWhatsAppSpecialistUrl, WHATSAPP_DISPLAY_NUMBER } from '../../utils/whatsapp';
+import { getWhatsAppEnquiryUrl,getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 export const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">

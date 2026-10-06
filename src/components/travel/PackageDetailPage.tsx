@@ -1,35 +1,36 @@
-import React, { useState } from 'react';
-import { DetailedPackage, ALL_PACKAGES, getPackageById } from '../../data/packagesData';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from '../common/PageLink';
+import { experiencePath,packagePath,sectionPath } from '../../routes';
+import React,{ useState } from 'react';
+import { DetailedPackage,ALL_PACKAGES,getPackageById } from '../../data/packagesData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { Experience, ALL_EXPERIENCES, getExperienceById } from '../../data/experiencesData';
-import { 
-  Home, 
-  ArrowLeft, 
-  Clock, 
-  Sparkles, 
-  CheckCircle2, 
-  XCircle, 
-  MessageCircle, 
-  CalendarCheck, 
-  ChevronDown, 
-  ChevronUp, 
-  ShieldCheck, 
-  Star, 
-  MapPin, 
-  Hotel, 
-  Utensils, 
-  Compass, 
-  Car, 
-  Globe2, 
-  Users, 
-  Activity, 
-  Sun,
-  ArrowRight,
-  Info,
-  HelpCircle,
-  Heart,
-  Award
+import { Experience,ALL_EXPERIENCES,getExperienceById } from '../../data/experiencesData';
+import {
+Home,
+ArrowLeft,
+Clock,
+Sparkles,
+CheckCircle2,
+XCircle,
+MessageCircle,
+CalendarCheck,
+ChevronDown,
+ChevronUp,
+ShieldCheck,
+Star,
+MapPin,
+Hotel,
+Utensils,Car,
+Globe2,
+Users,
+Activity,
+Sun,
+ArrowRight,
+Info,
+HelpCircle,
+Heart,
+Award
 } from 'lucide-react';
 
 interface PackageDetailPageProps {
@@ -60,10 +61,8 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
     return `${rateObj.symbol}${converted.toLocaleString()}`;
   };
 
-  const whatsappMessage = encodeURIComponent(
-    `Hello Outbound Holidays,\n\nI’m interested in the "${packageData.title}" package (${packageData.duration}) and would like to know more about availability, pricing and personalisation options.\n\nThank you.`
-  );
-  const whatsappUrl = `https://wa.me/263714701721?text=${whatsappMessage}`;
+  const whatsappMessage = `Hello Outbound Holidays,\n\nI’m interested in the "${packageData.title}" package (${packageData.duration}) and would like to know more about availability, pricing and personalisation options.\n\nThank you.`;
+  const whatsappUrl = getWhatsAppUrl(whatsappMessage);
 
   // Find matching included experiences from ALL_EXPERIENCES
   const matchedExperiences = packageData.includedExperienceIds
@@ -88,33 +87,33 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
       <div className="bg-[#0B5E8E] text-white py-3.5 px-4 sm:px-6 lg:px-8 border-b border-[#08486e]">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs font-medium">
           <nav className="flex items-center gap-2 text-white/70">
-            <button
+            <PageLink href={'/'}
               onClick={onNavigateHome}
               className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               <span>Home</span>
-            </button>
+            </PageLink>
             <span>/</span>
-            <button
+            <PageLink href={sectionPath('packages')}
               onClick={onNavigateBackToPackages}
               className="hover:text-white transition-colors cursor-pointer"
             >
               Holiday Packages
-            </button>
+            </PageLink>
             <span>/</span>
             <span className="text-[#C9A66B] font-semibold truncate max-w-[160px] sm:max-w-none">
               {packageData.title}
             </span>
           </nav>
 
-          <button
+          <PageLink href={sectionPath('packages')}
             onClick={onNavigateBackToPackages}
             className="flex items-center gap-1.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Back to Packages</span>
-          </button>
+          </PageLink>
         </div>
       </div>
 
@@ -368,13 +367,13 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                 {alternativePackage && (
                   <div className="pt-4 mt-4 border-t border-gray-200/80 flex items-center justify-between">
                     <span className="text-xs font-semibold text-gray-600">Recommended Alternative:</span>
-                    <button
+                    <PageLink href={packagePath(alternativePackage)}
                       onClick={() => onSelectRelatedPackage(alternativePackage)}
                       className="text-xs font-bold text-[#0B5E8E] hover:text-[#C9A66B] flex items-center gap-1 cursor-pointer"
                     >
                       <span>{alternativePackage.title}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                    </PageLink>
                   </div>
                 )}
               </div>
@@ -440,7 +439,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
           <div className="space-y-4">
             {(packageData.detailedItinerary || packageData.itinerary).map((item, idx) => {
               const isOpen = openItineraryDay === idx;
-              const detailed = 'morning' in item ? (item as any) : null;
+              const detailed = 'morning' in item ? item : null;
 
               return (
                 <div
@@ -599,7 +598,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                   </div>
 
                   <div className="p-4 pt-0">
-                    <button
+                    <PageLink href={experiencePath(exp)}
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectExperience(exp);
@@ -608,7 +607,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                     >
                       <span>View Experience Details</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                    </PageLink>
                   </div>
                 </div>
               ))}
@@ -954,7 +953,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                   </div>
 
                   <div className="p-4 pt-0">
-                    <button
+                    <PageLink href={packagePath(rel)}
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectRelatedPackage(rel);
@@ -963,7 +962,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                     >
                       <span>View Holiday Details</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    </button>
+                    </PageLink>
                   </div>
                 </div>
               ))}

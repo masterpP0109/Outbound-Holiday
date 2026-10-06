@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, ArrowRight } from 'lucide-react';
+import { PageLink } from '../common/PageLink';
+import { sectionPath } from '../../routes';
+import React,{ useState } from 'react';
+import { ChevronDown,HelpCircle,ArrowRight } from 'lucide-react';
 
 interface FaqSectionProps {
   onOpenGuide?: () => void;
@@ -50,13 +52,13 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenGuide }) => {
 
             {onOpenGuide && (
               <div className="pt-4">
-                <button
+                <PageLink href={sectionPath('guide')}
                   onClick={onOpenGuide}
                   className="inline-flex items-center gap-2 text-xs font-bold text-[#0B5E8E] hover:text-[#E67E22] transition-colors cursor-pointer group"
                 >
                   <span>Read the Outbound Victoria Falls Travel Guide</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                </PageLink>
               </div>
             )}
           </div>

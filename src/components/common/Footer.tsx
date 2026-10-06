@@ -1,5 +1,8 @@
+import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER, getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from './PageLink';
+import { sectionPath } from '../../routes';
 import React from 'react';
-import { Compass, MapPin, PhoneCall, Mail } from 'lucide-react';
+import { MapPin,PhoneCall,Mail } from 'lucide-react';
 
 const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
 // Public image paths for experiences
@@ -35,11 +38,8 @@ export const Footer: React.FC<FooterProps> = ({
                 src={outboundLogo} 
                 alt="Outbound Holidays" 
                 className="h-14 sm:h-16 w-auto object-contain"
-                onError={(e) => {
+                onError={() => {
                   console.error('Logo failed to load from:', outboundLogo);
-                }}
-                onLoad={() => {
-                  console.log('Logo loaded successfully from:', outboundLogo);
                 }}
               />
             </div>
@@ -56,17 +56,17 @@ export const Footer: React.FC<FooterProps> = ({
               <div className="flex items-center gap-2.5">
                 <PhoneCall className="w-4 h-4 text-[#C9A66B] shrink-0" />
                 <a 
-                  href="https://wa.me/263714701721?text=Hello%20Outbound%20Holidays%2C%20I'd%20like%20to%20enquire%20about%20Victoria%20Falls%20travel." 
+                  href={getWhatsAppUrl("Hello Outbound Holidays, I'd like to enquire about Victoria Falls travel.")}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-[#C9A66B] transition-colors"
                 >
-                  WhatsApp: +263 714 701 721
+                  WhatsApp: {WHATSAPP_DISPLAY_NUMBER}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                <span>travel@outboundholidays.co.zw</span>
+                <span>{CONTACT_EMAIL}</span>
               </div>
             </div>
           </div>
@@ -78,24 +78,24 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
               <li>
-                <button onClick={() => onNavigateSection('travel-guide')} className="hover:text-white transition-colors cursor-pointer">
+                <PageLink href={sectionPath('travel-guide')} onClick={() => onNavigateSection('travel-guide')} className="hover:text-white transition-colors cursor-pointer">
                   Vic Falls Guide
-                </button>
+                </PageLink>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('travel-experiences')} className="hover:text-white transition-colors cursor-pointer">
+                <PageLink href={sectionPath('travel-experiences')} onClick={() => onNavigateSection('travel-experiences')} className="hover:text-white transition-colors cursor-pointer">
                   Experiences & Safaris
-                </button>
+                </PageLink>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('accommodation')} className="hover:text-white transition-colors cursor-pointer">
+                <PageLink href={sectionPath('accommodation')} onClick={() => onNavigateSection('accommodation')} className="hover:text-white transition-colors cursor-pointer">
                   Where to Stay
-                </button>
+                </PageLink>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('travel-packages')} className="hover:text-white transition-colors cursor-pointer">
+                <PageLink href={sectionPath('travel-packages')} onClick={() => onNavigateSection('travel-packages')} className="hover:text-white transition-colors cursor-pointer">
                   Holiday Packages
-                </button>
+                </PageLink>
               </li>
               <li>
                 <button onClick={onOpenPlanHoliday} className="hover:text-[#C9A66B] font-bold transition-colors cursor-pointer">
@@ -112,19 +112,19 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
               <li>
-                <button onClick={() => onNavigateSection('about-us')} className="hover:text-white transition-colors font-medium cursor-pointer">
+                <PageLink href={sectionPath('about-us')} onClick={() => onNavigateSection('about-us')} className="hover:text-white transition-colors font-medium cursor-pointer">
                   About Us & Promises
-                </button>
+                </PageLink>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('contact-us')} className="hover:text-white transition-colors font-medium cursor-pointer">
+                <PageLink href={sectionPath('contact-us')} onClick={() => onNavigateSection('contact-us')} className="hover:text-white transition-colors font-medium cursor-pointer">
                   Contact Specialist
-                </button>
+                </PageLink>
               </li>
               <li>
-                <button onClick={() => onNavigateSection('faqs')} className="hover:text-white transition-colors cursor-pointer">
+                <PageLink href={sectionPath('faqs')} onClick={() => onNavigateSection('faqs')} className="hover:text-white transition-colors cursor-pointer">
                   Frequently Asked Questions
-                </button>
+                </PageLink>
               </li>
               <li>
                 <span className="text-white/60">Licensed Zimbabwe Tourism Authority Partner</span>

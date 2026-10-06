@@ -1,6 +1,8 @@
+import { PageLink } from '../common/PageLink';
+import { experiencePath,sectionPath } from '../../routes';
 import React from 'react';
-import { getFeaturedExperiences, Experience } from '../../data/experiencesData';
-import { Clock, ArrowRight, Sparkles, Star } from 'lucide-react';
+import { getFeaturedExperiences,Experience } from '../../data/experiencesData';
+import { Clock,ArrowRight,Sparkles,Star } from 'lucide-react';
 
 interface FeaturedExperiencesProps {
   onSelectExperience: (experience: Experience) => void;
@@ -58,9 +60,6 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                     console.error('Image failed to load:', item.featuredImage);
                     (e.target as HTMLImageElement).src = '';
                   }}
-                  onLoad={() => {
-                    console.log('Image loaded:', item.featuredImage);
-                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
 
@@ -100,7 +99,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                 </div>
 
                 {/* Action Button */}
-                <button
+                <PageLink href={experiencePath(item)}
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelectExperience(item);
@@ -109,7 +108,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                 >
                   <span>View Experience</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                </button>
+                </PageLink>
               </div>
             </div>
           ))}
@@ -117,13 +116,13 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
 
         {/* Section Bottom CTA */}
         <div className="mt-12 sm:mt-16 text-center">
-          <button
+          <PageLink href={sectionPath('experiences')}
             onClick={onExploreAll}
             className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
             <span>Explore All Experiences</span>
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </PageLink>
         </div>
 
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarCheck, ShieldCheck, ArrowRight, MessageCircle } from 'lucide-react';
+import { CalendarCheck,ShieldCheck,ArrowRight,MessageCircle } from 'lucide-react';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 // Public image paths for experiences

@@ -1,29 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { ALL_EXPERIENCES, Experience } from '../../data/experiencesData';
-import { 
-  Sparkles, 
-  Clock, 
-  ArrowRight, 
-  Compass, 
-  Sun, 
-  Binoculars, 
-  Zap, 
-  Waves, 
-  Utensils, 
-  Map, 
-  CalendarCheck,
-  Search,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  MessageCircle,
-  ShieldCheck,
-  HelpCircle,
-  Award,
-  Users,
-  Star,
-  Heart,
-  Grid
+import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from '../common/PageLink';
+import { categoryPath,experiencePath } from '../../routes';
+import React,{ useState,useEffect } from 'react';
+import { ALL_EXPERIENCES,Experience } from '../../data/experiencesData';
+import {
+Sparkles,
+Clock,
+ArrowRight,
+Compass,
+Sun,
+Binoculars,
+Zap,
+Waves,
+Utensils,
+Map,
+CalendarCheck,
+Search,
+CheckCircle2,
+ChevronDown,
+ChevronUp,
+MessageCircle,
+ShieldCheck,
+HelpCircle,
+Award,
+Users,
+Star,
+Heart,
+Grid
 } from 'lucide-react';
 
 // Public image paths for experiences
@@ -52,7 +55,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
   const [selectedDirectoryFilter, setSelectedDirectoryFilter] = useState<string>('all');
 
   useEffect(() => {
-    document.title = "Victoria Falls Experience Library | Outbound Holidays";
+
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
 
@@ -121,7 +124,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
   // Directory filter logic for all 14 experiences
   const directoryExperiences = selectedDirectoryFilter === 'all' 
     ? ALL_EXPERIENCES 
-    : ALL_EXPERIENCES.filter(exp => exp.categories.includes(selectedDirectoryFilter as any));
+    : ALL_EXPERIENCES.filter(exp => exp.categories.some(category => category === selectedDirectoryFilter));
 
   // Featured / Signature Experiences (4-6 Signature Activities)
   const featuredExperiences = ALL_EXPERIENCES.filter(exp => exp.categories.includes('featured')).slice(0, 6);
@@ -272,10 +275,10 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
 
           {categoryDefinitions.map((cat) => {
             const Icon = cat.icon;
-            const count = ALL_EXPERIENCES.filter(e => e.categories.includes(cat.id as any)).length;
+            const count = ALL_EXPERIENCES.filter(e => e.categories.some(category => category === cat.id)).length;
 
             return (
-              <button
+              <PageLink href={categoryPath(cat.id)}
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
                 className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-[#0B5E8E] hover:text-white group"
@@ -285,7 +288,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-600 group-hover:bg-white/20 group-hover:text-white">
                   {count}
                 </span>
-              </button>
+              </PageLink>
             );
           })}
         </div>
@@ -373,7 +376,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categoryDefinitions.map((cat) => {
                 const CategoryIcon = cat.icon;
-                const count = ALL_EXPERIENCES.filter(e => e.categories.includes(cat.id as any)).length;
+                const count = ALL_EXPERIENCES.filter(e => e.categories.some(category => category === cat.id)).length;
 
                 return (
                   <div
@@ -407,7 +410,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                       </p>
 
                       <div className="pt-3">
-                        <button
+                        <PageLink href={categoryPath(cat.id)}
                           onClick={(e) => {
                             e.stopPropagation();
                             onSelectCategory(cat.id);
@@ -416,7 +419,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                         >
                           <span>Explore Category</span>
                           <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                        </button>
+                        </PageLink>
                       </div>
                     </div>
                   </div>
@@ -455,7 +458,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                     All ({ALL_EXPERIENCES.length})
                   </button>
                   {categoryDefinitions.map((cat) => {
-                    const count = ALL_EXPERIENCES.filter(e => e.categories.includes(cat.id as any)).length;
+                    const count = ALL_EXPERIENCES.filter(e => e.categories.some(category => category === cat.id)).length;
                     return (
                       <button
                         key={cat.id}
@@ -573,9 +576,9 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                 </button>
 
                 <a
-                  href={`https://wa.me/263714701721?text=${encodeURIComponent(
+                  href={getWhatsAppUrl(
                     "Hello Outbound Holidays,\n\nI’m planning a Victoria Falls holiday and would like help choosing the experiences that best suit my interests, dates and budget.\n\nThank you."
-                  )}`}
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
@@ -656,9 +659,9 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                 </button>
 
                 <a
-                  href={`https://wa.me/263714701721?text=${encodeURIComponent(
+                  href={getWhatsAppUrl(
                     "Hello Outbound Holidays,\n\nI’m planning a Victoria Falls holiday and would like help choosing the experiences that best suit my interests, dates and budget.\n\nThank you."
-                  )}`}
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
@@ -724,7 +727,7 @@ const ExperienceCard: React.FC<{ experience: Experience; onSelect: () => void }>
       </div>
 
       <div className="p-5 pt-0">
-        <button
+        <PageLink href={experiencePath(experience)}
           onClick={(e) => {
             e.stopPropagation();
             onSelect();
@@ -733,7 +736,7 @@ const ExperienceCard: React.FC<{ experience: Experience; onSelect: () => void }>
         >
           <span>View Experience</span>
           <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-        </button>
+        </PageLink>
       </div>
     </div>
   );

@@ -1,30 +1,21 @@
-import React, { useState, useMemo } from 'react';
-import { DetailedAccommodation, ALL_ACCOMMODATIONS } from '../../data/accommodationsData';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from '../common/PageLink';
+import { accommodationPath } from '../../routes';
+import React,{ useState,useMemo } from 'react';
+import { DetailedAccommodation,ALL_ACCOMMODATIONS } from '../../data/accommodationsData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
 import { AccommodationAdvisor } from './AccommodationAdvisor';
-import { 
-  Hotel, 
-  MapPin, 
-  Star, 
-  ArrowRight, 
-  ShieldCheck, 
-  Home, 
-  Filter, 
-  Sparkles, 
-  Search, 
-  CalendarCheck,
-  Compass,
-  MessageCircle,
-  ChevronDown,
-  ChevronUp,
-  HelpCircle,
-  CheckCircle2,
-  Info,
-  Heart,
-  Users,
-  Compass as LocationIcon,
-  Award
+import {
+Star,
+ArrowRight,
+ShieldCheck,
+Home,Sparkles,CalendarCheck,
+Compass,
+MessageCircle,
+ChevronDown,
+ChevronUp,
+HelpCircle,Award
 } from 'lucide-react';
 
 interface AccommodationDirectoryPageProps {
@@ -149,13 +140,13 @@ export const AccommodationDirectoryPage: React.FC<AccommodationDirectoryPageProp
       <div className="bg-[#0B5E8E] text-white py-3.5 px-4 sm:px-6 lg:px-8 border-b border-[#08486e]">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs font-medium">
           <nav className="flex items-center gap-2 text-white/70">
-            <button
+            <PageLink href={'/'}
               onClick={onNavigateHome}
               className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               <span>Home</span>
-            </button>
+            </PageLink>
             <span>/</span>
             <span className="text-[#C9A66B] font-semibold">Where to Stay</span>
           </nav>
@@ -544,7 +535,7 @@ export const AccommodationDirectoryPage: React.FC<AccommodationDirectoryPageProp
               </button>
 
               <a
-                href="https://wa.me/263714701721?text=Hello%20Outbound%20Holidays%2C%0A%0AI%E2%80%99m%20planning%20a%20Victoria%20Falls%20holiday%20and%20would%20like%20help%20choosing%20the%20right%20place%20to%20stay%20based%20on%20my%20dates%2C%20budget%20and%20travel%20style.%0A%0AThank%20you."
+                href={getWhatsAppUrl("Hello Outbound Holidays,\n\nI’m planning a Victoria Falls holiday and would like help choosing the right place to stay based on my dates, budget and travel style.\n\nThank you.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm py-3.5 px-8 rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
@@ -639,7 +630,7 @@ const PropertyDisplayCard: React.FC<PropertyDisplayCardProps> = ({
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <button
+          <PageLink href={accommodationPath(property)}
             onClick={(e) => {
               e.stopPropagation();
               onSelectProperty(property);
@@ -648,7 +639,7 @@ const PropertyDisplayCard: React.FC<PropertyDisplayCardProps> = ({
           >
             <span>Details</span>
             <ArrowRight className="w-3 h-3" />
-          </button>
+          </PageLink>
 
           <button
             onClick={(e) => {

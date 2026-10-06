@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, HeartHandshake, MapPin, Award, Sparkles } from 'lucide-react';
+import { ShieldCheck,HeartHandshake,MapPin,Award,Sparkles } from 'lucide-react';
 
 // Public image paths for experiences
 const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
@@ -8,7 +8,7 @@ interface AboutUsViewProps {
   onOpenPlanHoliday?: () => void;
 }
 
-export const AboutUsView: React.FC<AboutUsViewProps> = ({ onOpenPlanHoliday }) => {
+export const AboutUsView: React.FC<AboutUsViewProps> = () => {
   return (
     <section id="about-us" className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100">
       <div className="max-w-[1280px] mx-auto space-y-16">

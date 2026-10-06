@@ -7,9 +7,7 @@ const gorgeHelicopterImg = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
 const familyResortImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-7-scaled.jpg';
 const founderGuideImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
 const bomaDinnerImg = '/Experiences/Boma Dinner_/IMG_0364.JPG';
-const romanticDinnerImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 const familySafariImg = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-const coupleHoneymoonImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 const bestValueImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
 
 // Standard Author Object

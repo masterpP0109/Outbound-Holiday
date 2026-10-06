@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { DetailedPackage, ALL_PACKAGES } from '../../data/packagesData';
+import { PageLink } from '../common/PageLink';
+import { packagePath } from '../../routes';
+import React,{ useState } from 'react';
+import { DetailedPackage,ALL_PACKAGES } from '../../data/packagesData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { 
-  Compass, 
-  Sparkles, 
-  Clock, 
-  ArrowRight, 
-  Search, 
-  SlidersHorizontal,
-  Home,
-  Check,
-  CheckCircle2,
-  ShieldCheck
+import {
+Compass,Clock,
+ArrowRight,
+Search,
+SlidersHorizontal,
+Home,
+Check,
+CheckCircle2,
+ShieldCheck
 } from 'lucide-react';
 
 // Public image paths for experiences
@@ -22,6 +22,8 @@ interface PackagesDirectoryPageProps {
   currency: Currency;
   onSelectPackage: (pkg: DetailedPackage) => void;
   onNavigateHome: () => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 type FilterCategory = 'all' | 'first-visit' | 'couples' | 'families' | 'luxury' | 'adventure' | 'safari' | 'value';
@@ -30,9 +32,10 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
   currency,
   onSelectPackage,
   onNavigateHome,
+  searchQuery,
+  setSearchQuery,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('all');
-  const [searchQuery, setSearchQuery] = useState('');
 
   const filterCategories: { id: FilterCategory; label: string }[] = [
     { id: 'all', label: 'All Holidays' },
@@ -54,7 +57,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
   const filteredPackages = ALL_PACKAGES.filter((pkg) => {
     // Filter by Category
     const matchesCategory =
-      selectedCategory === 'all' || pkg.categories.includes(selectedCategory as any) || pkg.category === selectedCategory;
+      selectedCategory === 'all' || pkg.categories.some((category) => category === selectedCategory) || pkg.category === selectedCategory;
 
     // Filter by Search Query
     const query = searchQuery.toLowerCase().trim();
@@ -88,13 +91,13 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
           
           {/* Breadcrumb Navigation */}
           <nav className="flex items-center gap-2 text-xs text-white/80 font-medium">
-            <button
+            <PageLink href={'/'}
               onClick={onNavigateHome}
               className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               <span>Home</span>
-            </button>
+            </PageLink>
             <span>/</span>
             <span className="text-[#C9A66B] font-semibold">Holiday Packages</span>
           </nav>
@@ -258,7 +261,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
 
                 {/* View Holiday Button */}
                 <div className="p-6 pt-0">
-                  <button
+                  <PageLink href={packagePath(pkg)}
                     onClick={(e) => {
                       e.stopPropagation();
                       onSelectPackage(pkg);
@@ -267,7 +270,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                   >
                     <span>View Holiday Details</span>
                     <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
-                  </button>
+                  </PageLink>
                 </div>
               </div>
             ))}

@@ -1,30 +1,22 @@
-import React, { useState } from 'react';
-import { ALL_ACCOMMODATIONS, DetailedAccommodation } from '../../data/accommodationsData';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from '../common/PageLink';
+import { accommodationPath } from '../../routes';
+import React,{ useState } from 'react';
+import { ALL_ACCOMMODATIONS,DetailedAccommodation } from '../../data/accommodationsData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { 
-  Sparkles, 
-  ArrowRight, 
-  ArrowLeft, 
-  CheckCircle2, 
-  ShieldCheck, 
-  HelpCircle, 
-  Star, 
-  MapPin, 
-  Clock, 
-  CalendarCheck, 
-  MessageCircle, 
-  Info,
-  Check,
-  RotateCcw,
-  Sliders,
-  Compass,
-  Heart,
-  Users,
-  DollarSign,
-  Home,
-  CheckSquare,
-  Square
+import {
+Sparkles,
+ArrowRight,
+ArrowLeft,
+CheckCircle2,Star,
+MapPin,CalendarCheck,
+MessageCircle,
+Info,RotateCcw,Compass,
+Heart,
+Users,Home,
+CheckSquare,
+Square
 } from 'lucide-react';
 
 interface AccommodationAdvisorProps {
@@ -314,14 +306,14 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
+                {([
                   { id: 'first-time', label: 'Yes, this is my first visit', sub: 'We will prioritize well-located stays with easy excursion access.' },
                   { id: 'repeat', label: 'No, I’ve visited before', sub: 'Looking for a fresh perspective, quiet river setting, or boutique luxury.' },
                   { id: 'unsure', label: 'I’m not sure yet', sub: 'Recommend overall versatile properties suitable for all travellers.' },
-                ].map(item => (
+                ] as const).map(item => (
                   <button
                     key={item.id}
-                    onClick={() => setAnswers(prev => ({ ...prev, firstVisit: item.id as any }))}
+                    onClick={() => setAnswers(prev => ({ ...prev, firstVisit: item.id }))}
                     className={`p-5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
                       answers.firstVisit === item.id
                         ? 'bg-[#0B5E8E]/10 border-[#0B5E8E] ring-2 ring-[#0B5E8E]/20 text-[#0B5E8E]'
@@ -350,7 +342,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-                {[
+                {([
                   { id: 'solo', label: 'Solo Traveller', icon: Users },
                   { id: 'couple', label: 'Couple', icon: Heart },
                   { id: 'honeymoon', label: 'Honeymoon', icon: Sparkles },
@@ -358,13 +350,13 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                   { id: 'friends', label: 'Friends', icon: Users },
                   { id: 'multi-gen', label: 'Multi-generational group', icon: Users },
                   { id: 'business', label: 'Business / Corporate', icon: Compass },
-                ].map(item => {
+                ] as const).map(item => {
                   const Icon = item.icon;
                   const isSel = answers.travellerGroup === item.id;
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setAnswers(prev => ({ ...prev, travellerGroup: item.id as any }))}
+                      onClick={() => setAnswers(prev => ({ ...prev, travellerGroup: item.id }))}
                       className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
                         isSel
                           ? 'bg-[#0B5E8E]/10 border-[#0B5E8E] ring-2 ring-[#0B5E8E]/20 text-[#0B5E8E] font-bold'
@@ -397,18 +389,18 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="space-y-3">
-                {[
+                {([
                   { id: 'value', title: 'Best Value', range: '$100 – $200 / night', desc: 'Clean, comfortable & reliable stays offering great value without unnecessary extras.' },
                   { id: 'comfortable', title: 'Comfortable', range: '$200 – $300 / night', desc: 'Boutique lodges & 4-star hotels with pools, garden verandas & excellent service.' },
                   { id: 'premium', title: 'Premium', range: '$300 – $450 / night', desc: 'Prime location, superior dining, waterhole views & elevated comfort.' },
                   { id: 'luxury', title: 'Luxury', range: '$450 – $650 / night', desc: '5-Star riverfront luxury, private butler access & high-end safari experiences.' },
                   { id: 'ultra-luxury', title: 'Ultra-Luxury', range: '$650+ / night', desc: 'Exclusive private villas, private game reserves & bespoke 5-star service.' },
-                ].map(item => {
+                ] as const).map(item => {
                   const isSel = answers.budgetLevel === item.id;
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setAnswers(prev => ({ ...prev, budgetLevel: item.id as any }))}
+                      onClick={() => setAnswers(prev => ({ ...prev, budgetLevel: item.id }))}
                       className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-4 ${
                         isSel
                           ? 'bg-[#0B5E8E]/10 border-[#0B5E8E] ring-2 ring-[#0B5E8E]/20 text-[#0B5E8E]'
@@ -480,18 +472,18 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {[
+                {([
                   { id: 'boutique-lodge', title: 'Boutique Lodge / Guest Lodge', desc: 'Intimate, personalized service in lush garden surroundings.' },
                   { id: 'safari-lodge', title: 'Safari Lodge', desc: 'Authentic wilderness feel overlooking bush or waterhole.' },
                   { id: 'hotel', title: 'Full Service Hotel', desc: 'Central location, extensive resort facilities & 24hr service.' },
                   { id: 'self-catering', title: 'Self-Catering Lodge', desc: 'Independent 2/3 bedroom thatched units with kitchens.' },
                   { id: 'no-preference', title: 'No Preference', desc: 'Let our algorithm recommend the highest matching stay.' },
-                ].map(item => {
+                ] as const).map(item => {
                   const isSel = answers.style === item.id;
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setAnswers(prev => ({ ...prev, style: item.id as any }))}
+                      onClick={() => setAnswers(prev => ({ ...prev, style: item.id }))}
                       className={`p-4 rounded-xl border text-left transition-all cursor-pointer space-y-1 ${
                         isSel
                           ? 'bg-[#0B5E8E]/10 border-[#0B5E8E] ring-2 ring-[#0B5E8E]/20 text-[#0B5E8E]'
@@ -521,17 +513,17 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="space-y-3">
-                {[
+                {([
                   { id: 'sleeping', title: 'Mainly sleeping between activities', desc: 'We will be out on safaris, tours and cruises most of the day.' },
                   { id: 'balanced', title: 'A balanced mix of exploring and relaxing', desc: 'Mornings out on excursions, afternoons relaxing by the pool or garden.' },
                   { id: 'significant', title: 'A significant part of the holiday', desc: 'We want high dining quality, river views, or waterhole lounge decks.' },
                   { id: 'major-part', title: 'The property itself is a major part of the experience', desc: 'Seeking destination luxury where the resort setting defines the stay.' },
-                ].map(item => {
+                ] as const).map(item => {
                   const isSel = answers.timeSpent === item.id;
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setAnswers(prev => ({ ...prev, timeSpent: item.id as any }))}
+                      onClick={() => setAnswers(prev => ({ ...prev, timeSpent: item.id }))}
                       className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-4 ${
                         isSel
                           ? 'bg-[#0B5E8E]/10 border-[#0B5E8E] ring-2 ring-[#0B5E8E]/20 text-[#0B5E8E]'
@@ -601,7 +593,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
 
           {/* Recommended Property Cards List */}
           <div className="space-y-8">
-            {recommendations.map((rec, idx) => {
+            {recommendations.map((rec) => {
               const prop = rec.property;
 
               return (
@@ -688,13 +680,13 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
 
                       {/* Action CTAs */}
                       <div className="pt-2 flex flex-wrap items-center gap-3">
-                        <button
+                        <PageLink href={accommodationPath(prop)}
                           onClick={() => onSelectProperty(prop)}
                           className="bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                         >
                           <span>View Property Details</span>
                           <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                        </button>
+                        </PageLink>
 
                         <button
                           onClick={() => onIncludeInHoliday(prop)}
@@ -705,9 +697,9 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                         </button>
 
                         <a
-                          href={`https://wa.me/263714701721?text=${encodeURIComponent(
+                          href={getWhatsAppUrl(
                             `Hello Outbound Holidays,\n\nI’m interested in ${prop.name} and would like to know about availability, current pricing and whether you think it is a good fit for my Victoria Falls holiday.\n\nThank you.`
-                          )}`}
+                          )}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"

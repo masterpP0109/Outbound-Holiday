@@ -1,5 +1,5 @@
 import React from 'react';
-import { Hotel, Bus, Compass, Trees, CalendarRange, Globe2, Sparkles } from 'lucide-react';
+import { Hotel,Bus,Compass,Trees,CalendarRange,Globe2,Sparkles } from 'lucide-react';
 
 export const HowWeHelp: React.FC = () => {
   const services = [

@@ -1,5 +1,13 @@
 export const WHATSAPP_NUMBER = '263714701721';
 export const WHATSAPP_DISPLAY_NUMBER = '+263 714 701 721';
+export const PHONE_NUMBER = `+${WHATSAPP_NUMBER}`;
+export const PHONE_URL = `tel:${PHONE_NUMBER}`;
+export const CONTACT_EMAIL = 'travel@outboundholidays.co.zw';
+
+/** Encode the complete message once, including user-entered punctuation and newlines. */
+export function getWhatsAppUrl(message: string): string {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
 
 /**
  * Generates a pre-filled WhatsApp enquiry URL for a specific experience.
@@ -31,7 +39,7 @@ export function getWhatsAppEnquiryUrl(
 
   message += `\n\nThank you.`;
 
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return getWhatsAppUrl(message);
 }
 
 /**
@@ -42,5 +50,5 @@ export function getWhatsAppSpecialistUrl(topic?: string): string {
     ? `Hello Outbound Holidays,\n\nI need some help planning my Victoria Falls trip regarding ${topic}. Could I speak with a Victoria Falls travel specialist?\n\nThank you.`
     : `Hello Outbound Holidays,\n\nI need some help choosing the right experiences for my Victoria Falls trip. Could I speak with a Victoria Falls travel specialist?\n\nThank you.`;
 
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return getWhatsAppUrl(message);
 }

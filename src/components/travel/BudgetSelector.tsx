@@ -1,7 +1,7 @@
 import React from 'react';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { Check, ArrowRight, ShieldCheck, Sparkles, Crown } from 'lucide-react';
+import { Check,ArrowRight,ShieldCheck,Sparkles,Crown } from 'lucide-react';
 
 interface BudgetSelectorProps {
   currency: Currency;

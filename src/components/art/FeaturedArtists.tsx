@@ -1,6 +1,6 @@
 import React from 'react';
 import { ARTISTS } from '../../data/artData';
-import { MapPin, Award, ExternalLink, Sparkles } from 'lucide-react';
+import { MapPin,Award,ExternalLink } from 'lucide-react';
 
 interface FeaturedArtistsProps {
   onSelectArtistFilter: (artistName: string) => void;

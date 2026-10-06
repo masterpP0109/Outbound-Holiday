@@ -1,8 +1,10 @@
+import { PageLink } from '../common/PageLink';
+import { packagePath,sectionPath } from '../../routes';
 import React from 'react';
-import { DetailedPackage, getHomepageFeaturedPackages } from '../../data/packagesData';
+import { DetailedPackage,getHomepageFeaturedPackages } from '../../data/packagesData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { Clock, ArrowRight, Sparkles, Star } from 'lucide-react';
+import { Clock,ArrowRight,Sparkles,Star } from 'lucide-react';
 
 interface FeaturedPackagesProps {
   currency: Currency;
@@ -118,7 +120,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
 
               {/* View Holiday Action Button */}
               <div className="p-5 pt-0">
-                <button
+                <PageLink href={packagePath(pkg)}
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelectPackage(pkg);
@@ -127,7 +129,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                 >
                   <span>View Holiday Details</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                </button>
+                </PageLink>
               </div>
             </div>
           ))}
@@ -135,12 +137,12 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
 
         {/* Centered CTA: Find Your Holiday → */}
         <div className="mt-12 sm:mt-16 text-center">
-          <button
+          <PageLink href={sectionPath('packages')}
             onClick={onExploreAllPackages}
             className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
             <span>Find Your Holiday →</span>
-          </button>
+          </PageLink>
         </div>
 
       </div>

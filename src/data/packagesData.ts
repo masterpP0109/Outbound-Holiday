@@ -1,4 +1,3 @@
-import { Experience, ALL_EXPERIENCES } from './experiencesData';
 
 // Public image paths for experiences
 const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
@@ -7,10 +6,7 @@ const fallsTour11 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-falls-11
 const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 const cruise2 = '/Experiences/Standard Cruise_/Standard-2-scaled.jpg';
 const cruise5 = '/Experiences/Standard Cruise_/Standard-5-scaled.jpg';
-const cruise7 = '/Experiences/Standard Cruise_/Standard-7.jpg';
 const heli1 = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-const heli8 = '/Experiences/Flight of Angels/Heli-8-scaled.jpg';
-const heliShoot1 = '/Experiences/Flight of Angels/Heli-Shoot-7102511.jpg';
 const elecrew5 = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
 const elecrew02 = '/Experiences/Elephant Interaction_/Elecrew-02.jpg';
 const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
@@ -21,20 +17,14 @@ const chobe2 = '/Experiences/Chobe Day Trip_/Chobe-2.jpg';
 const chobe4 = '/Experiences/Chobe Day Trip_/Chobe-4-scaled.jpg';
 const chobe8 = '/Experiences/Chobe Day Trip_/Chobe-8-scaled.jpg';
 const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-const bungee8 = '/Experiences/Bungee Jump_/Bungee-8.jpg';
 const gorgeSwing3 = '/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
 const gorgeSwing5 = '/Experiences/Gorge Swing_/Bridge-Swing-5-scaled.jpg';
 const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
 const bomaImg2 = '/Experiences/Boma Dinner_/IMG_0365.PNG';
 const rafting2 = '/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
 const rafting8 = '/Experiences/White Water Rafting_/whitewater-rafting-images-8.jpg';
-const zipLine1 = '/Experiences/Zip Line_/Bridge-Slide-1-scaled.jpg';
-const zipLine8 = '/Experiences/Zip Line_/Bridge-slide-8.jpg';
-const simunye1 = '/Experiences/Simunye_/Simunye-refresh-29.jpg';
-const simunye2 = '/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
 const spa1 = '/Experiences/Spa Treatments/IMG_0375.PNG';
 const spa2 = '/Experiences/Spa Treatments/IMG_0376.PNG';
-const jetBoat1 = '/Experiences/Jet Boat Adventure_/IMG_0021-2.jpg';
 
 export interface DetailedItineraryDay {
   day: string;

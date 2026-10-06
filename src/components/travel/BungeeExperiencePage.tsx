@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { WhatsAppEnquiryButton, WhatsAppSpecialistCTA, WhatsAppIcon } from '../common/WhatsAppButton';
-import { 
-  Clock, 
-  MapPin, 
-  Star, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Sparkles, 
-  CalendarCheck, 
-  ChevronDown, 
-  ChevronUp, 
-  ArrowLeft, 
-  Share2, 
-  Users, 
-  Check, 
-  Info,
-  XCircle,
-  Zap,
-  Award,
-  Compass,
-  FileCheck
+import { PageLink } from '../common/PageLink';
+import { experiencePath,sectionPath } from '../../routes';
+import React,{ useState,useEffect } from 'react';
+import { WhatsAppEnquiryButton,WhatsAppSpecialistCTA,WhatsAppIcon } from '../common/WhatsAppButton';
+import {
+Clock,
+MapPin,
+Star,
+CheckCircle2,
+ShieldCheck,
+Sparkles,ChevronDown,
+ChevronUp,
+ArrowLeft,
+Share2,
+Users,
+Check,XCircle,
+Zap,
+Award,
+Compass,
+FileCheck
 } from 'lucide-react';
 import { GalleryLightbox } from './GalleryLightbox';
-import { Experience, ALL_EXPERIENCES, getExperienceById } from '../../data/experiencesData';
+import { Experience,getExperienceById } from '../../data/experiencesData';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 
 // Public image paths for experiences
@@ -54,7 +52,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    document.title = "Victoria Falls Bridge Bungee Jump | Premium Editorial Experience | Outbound Holidays";
+
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
 
@@ -154,22 +152,22 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
       <div className="sticky top-[73px] z-40 bg-[#0D2833] text-white border-b border-[#C9A66B]/30 py-2.5 px-4 sm:px-6 lg:px-8 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-3">
-            <button 
+            <PageLink href={'/'}
               onClick={onNavigateHome}
               className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5 font-semibold text-gray-300 cursor-pointer text-[11px]"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Home</span>
-            </button>
+            </PageLink>
             {onBackToDirectory && (
               <>
                 <span className="text-gray-500">/</span>
-                <button 
+                <PageLink href={sectionPath('experiences')}
                   onClick={onBackToDirectory}
                   className="hover:text-[#C9A66B] transition-colors font-semibold text-gray-300 cursor-pointer text-[11px]"
                 >
                   All Experiences
-                </button>
+                </PageLink>
               </>
             )}
           </div>
@@ -607,7 +605,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {relatedList.map((rel) => (
-                    <div 
+                    <PageLink href={experiencePath(rel)}
                       key={rel.id}
                       onClick={() => onSelectRelatedExperience && onSelectRelatedExperience(rel)}
                       className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer group"
@@ -630,7 +628,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                           {rel.shortDescription}
                         </p>
                       </div>
-                    </div>
+                    </PageLink>
                   ))}
                 </div>
               </section>

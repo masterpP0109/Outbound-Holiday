@@ -1,28 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { ALL_EXPERIENCES, Experience } from '../../data/experiencesData';
-import { 
-  Sparkles, 
-  Clock, 
-  ArrowRight, 
-  Compass, 
-  Sun, 
-  Binoculars, 
-  Zap, 
-  Waves, 
-  Utensils, 
-  Map, 
-  CalendarCheck,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  MessageCircle,
-  ShieldCheck,
-  HelpCircle,
-  ArrowLeft,
-  Info,
-  Star,
-  Award,
-  Heart
+import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from '../common/PageLink';
+import { experiencePath,sectionPath } from '../../routes';
+import React,{ useEffect,useState } from 'react';
+import { ALL_EXPERIENCES,Experience } from '../../data/experiencesData';
+import {
+Sparkles,
+Clock,
+ArrowRight,Sun,
+Binoculars,
+Zap,
+Waves,
+Utensils,
+Map,
+CalendarCheck,
+CheckCircle2,
+ChevronDown,
+ChevronUp,
+MessageCircle,HelpCircle,Heart
 } from 'lucide-react';
 
 // Public image paths for experiences
@@ -208,14 +202,14 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   // Filter central experience data source dynamically
-  const categoryExperiences = ALL_EXPERIENCES.filter(exp => exp.categories.includes(categoryId as any));
+  const categoryExperiences = ALL_EXPERIENCES.filter(exp => exp.categories.some(category => category === categoryId));
 
   // Determine 3 related categories for navigation
   const allCategoryKeys = Object.keys(CATEGORY_DETAILS);
   const relatedCategoryKeys = allCategoryKeys.filter(k => k !== categoryId).slice(0, 3);
 
   useEffect(() => {
-    document.title = detail.metaTitle;
+
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [categoryId]);
 
@@ -238,13 +232,13 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
           
           {/* Breadcrumb Navigation */}
           <nav className="inline-flex items-center gap-2 text-xs text-white/80 font-medium bg-[#0D2833]/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10">
-            <button onClick={onNavigateHome} className="hover:text-white transition-colors cursor-pointer">
+            <PageLink href={'/'} onClick={onNavigateHome} className="hover:text-white transition-colors cursor-pointer">
               Home
-            </button>
+            </PageLink>
             <span>/</span>
-            <button onClick={onBackToLanding} className="hover:text-white transition-colors cursor-pointer">
+            <PageLink href={sectionPath('experiences')} onClick={onBackToLanding} className="hover:text-white transition-colors cursor-pointer">
               Things to Do
-            </button>
+            </PageLink>
             <span>/</span>
             <span className="text-[#C9A66B] font-semibold">{detail.title}</span>
           </nav>
@@ -392,7 +386,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
                 </div>
 
                 <div className="p-5 pt-0">
-                  <button
+                  <PageLink href={experiencePath(exp)}
                     onClick={(e) => {
                       e.stopPropagation();
                       onSelectExperience(exp);
@@ -401,7 +395,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
                   >
                     <span>View Experience Details</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  </button>
+                  </PageLink>
                 </div>
               </div>
             ))}
@@ -424,7 +418,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
           {relatedCategoryKeys.map((relKey) => {
             const relCat = CATEGORY_DETAILS[relKey];
             const RelIcon = relCat.icon;
-            const count = ALL_EXPERIENCES.filter(e => e.categories.includes(relKey as any)).length;
+            const count = ALL_EXPERIENCES.filter(e => e.categories.some(category => category === relKey)).length;
 
             return (
               <div
@@ -521,9 +515,9 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
             </button>
 
             <a
-              href={`https://wa.me/263714701721?text=${encodeURIComponent(
+              href={getWhatsAppUrl(
                 `Hello Outbound Holidays,\n\nI’m planning a Victoria Falls trip and am interested in ${detail.title}. Could you help me select the best activities for my dates?\n\nThank you.`
-              )}`}
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"

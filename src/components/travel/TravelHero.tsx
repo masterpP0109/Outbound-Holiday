@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowRight, ShieldCheck, MapPin, ChevronLeft, ChevronRight, Heart, Users, Compass } from 'lucide-react';
+import { PageLink } from '../common/PageLink';
+import { sectionPath } from '../../routes';
+import React,{ useState,useEffect } from 'react';
+import { ArrowRight,ShieldCheck,MapPin,ChevronLeft,ChevronRight,Heart,Users,Compass } from 'lucide-react';
 
 // Dedicated public images for each hero carousel slide.
 const fallsTour1 = '/heroImg/familyTrip.png';
@@ -128,9 +130,6 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
                   console.error('Hero image failed to load:', slide.imageUrl);
                   (e.target as HTMLImageElement).src = slide.fallbackUrl;
                 }}
-                onLoad={() => {
-                  console.log('Hero image loaded:', slide.imageUrl);
-                }}
               />
             </div>
           );
@@ -168,12 +167,12 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
             
-            <button
+            <PageLink href={sectionPath('packages')}
               onClick={onBrowsePackages}
               className="w-full sm:w-auto bg-black/30 hover:bg-black/50 backdrop-blur-md border border-white/50 text-white font-semibold text-sm sm:text-base px-9 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
             >
               Browse Packages
-            </button>
+            </PageLink>
           </div>
 
           {/* Reassurance Line - Left Aligned */}

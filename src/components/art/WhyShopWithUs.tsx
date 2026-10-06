@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  ShieldCheck, 
-  Lock, 
-  Truck, 
-  Sparkles, 
-  UserCheck, 
-  Award 
+import {
+ShieldCheck,
+Lock,
+Truck,
+Sparkles,
+UserCheck,
+Award
 } from 'lucide-react';
 
 export const WhyShopWithUs: React.FC = () => {

@@ -1,35 +1,33 @@
-import React, { useState } from 'react';
-import { DetailedAccommodation, getAccommodationBySlug, ALL_ACCOMMODATIONS } from '../../data/accommodationsData';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from '../common/PageLink';
+import { accommodationPath,sectionPath } from '../../routes';
+import React,{ useState } from 'react';
+import { DetailedAccommodation,ALL_ACCOMMODATIONS } from '../../data/accommodationsData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { Experience, getExperienceById, ALL_EXPERIENCES } from '../../data/experiencesData';
-import { 
-  Home, 
-  ArrowLeft, 
-  MapPin, 
-  Star, 
-  MessageCircle, 
-  CalendarCheck, 
-  ShieldCheck, 
-  Hotel, 
-  Utensils, 
-  Wifi, 
-  Waves, 
-  Users, 
-  Plane, 
-  Bed, 
-  CheckCircle2, 
-  Sparkles, 
-  Info, 
-  Award, 
-  ChevronRight, 
-  ArrowRight,
-  Maximize2,
-  X,
-  Compass,
-  Check,
-  Building,
-  Coffee
+import { Experience,getExperienceById,ALL_EXPERIENCES } from '../../data/experiencesData';
+import {
+Home,
+ArrowLeft,
+MapPin,
+Star,
+MessageCircle,
+CalendarCheck,
+ShieldCheck,
+Hotel,
+Utensils,
+Wifi,
+Waves,
+Users,
+Plane,
+Bed,
+CheckCircle2,
+Sparkles,Award,ArrowRight,
+Maximize2,
+X,
+Compass,
+Check,
+Building
 } from 'lucide-react';
 
 interface AccommodationDetailPageProps {
@@ -59,10 +57,8 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
     return `${rateObj.symbol}${converted.toLocaleString()}`;
   };
 
-  const whatsappMessage = encodeURIComponent(
-    `Hello Outbound Holidays,\n\nI'm interested in staying at ${property.name} and would like to know about availability, pricing and your recommendation.\n\nThank you.`
-  );
-  const whatsappUrl = `https://wa.me/263714701721?text=${whatsappMessage}`;
+  const whatsappMessage = `Hello Outbound Holidays,\n\nI'm interested in staying at ${property.name} and would like to know about availability, pricing and your recommendation.\n\nThank you.`;
+  const whatsappUrl = getWhatsAppUrl(whatsappMessage);
 
   // Match nearby experiences
   const matchedExperiences = property.nearbyExperienceIds
@@ -83,33 +79,33 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
       <div className="bg-[#0B5E8E] text-white py-3.5 px-4 sm:px-6 lg:px-8 border-b border-[#08486e]">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs font-medium">
           <nav className="flex items-center gap-2 text-white/70">
-            <button
+            <PageLink href={'/'}
               onClick={onNavigateHome}
               className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               <span>Home</span>
-            </button>
+            </PageLink>
             <span>/</span>
-            <button
+            <PageLink href={sectionPath('accommodation')}
               onClick={onNavigateBackToDirectory}
               className="hover:text-white transition-colors cursor-pointer"
             >
               Where to Stay
-            </button>
+            </PageLink>
             <span>/</span>
             <span className="text-[#C9A66B] font-semibold truncate max-w-[160px] sm:max-w-none">
               {property.name}
             </span>
           </nav>
 
-          <button
+          <PageLink href={sectionPath('accommodation')}
             onClick={onNavigateBackToDirectory}
             className="flex items-center gap-1.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Back to Places to Stay</span>
-          </button>
+          </PageLink>
         </div>
       </div>
 
@@ -639,7 +635,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                   </div>
 
                   <div className="p-4 pt-0">
-                    <button
+                    <PageLink href={accommodationPath(rel)}
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectRelatedProperty(rel);
@@ -648,7 +644,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                     >
                       <span>View Property</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    </button>
+                    </PageLink>
                   </div>
                 </div>
               ))}

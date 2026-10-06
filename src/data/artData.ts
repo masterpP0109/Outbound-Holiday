@@ -1,4 +1,4 @@
-import { ArtCategory, ArtProduct, Artist, Review } from '../types';
+import { ArtCategory,ArtProduct,Artist,Review } from '../types';
 
 // Public image paths for experiences
 const simunye29 = '/Experiences/Simunye_/Simunye-refresh-29.jpg';
@@ -9,11 +9,8 @@ const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
 const bomaImg2 = '/Experiences/Boma Dinner_/IMG_0365.PNG';
 const elecrew5 = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
 const elephant46 = '/Experiences/Elephant Interaction_/4-6.jpg';
-const elephant65 = '/Experiences/Elephant Interaction_/6-5.jpg';
 const spa1 = '/Experiences/Spa Treatments/IMG_0375.PNG';
-const spa2 = '/Experiences/Spa Treatments/IMG_0376.PNG';
 const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
 
 const craftMarketImg = simunyeTheatre10;
 const founderGuideImg = elecrew5;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Quote, Sparkles, MessageCircle } from 'lucide-react';
+import { Quote,Sparkles,MessageCircle } from 'lucide-react';
 
 export const TravellerStories: React.FC = () => {
   const reviews = [

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { CartItem, Currency } from '../../types';
+import React,{ useState } from 'react';
+import { CartItem,Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Check } from 'lucide-react';
+import { X,ShoppingBag,Trash2,Plus,Minus,ArrowRight,Check } from 'lucide-react';
 
 interface CartDrawerProps {
   isOpen: boolean;

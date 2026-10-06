@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, Check } from 'lucide-react';
+import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER } from '../../utils/whatsapp';
+import React,{ useState } from 'react';
+import { Phone,Mail,MapPin,Clock,Send,Check } from 'lucide-react';
 import { WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
@@ -59,7 +60,7 @@ export const ContactUsView: React.FC = () => {
                 </div>
                 <div>
                   <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Phone & WhatsApp:</strong>
-                  <span>+263 714 701 721</span>
+                  <span>{WHATSAPP_DISPLAY_NUMBER}</span>
                 </div>
               </div>
 
@@ -69,7 +70,7 @@ export const ContactUsView: React.FC = () => {
                 </div>
                 <div>
                   <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Email:</strong>
-                  <span>travel@outboundholidays.co.zw</span>
+                  <span>{CONTACT_EMAIL}</span>
                 </div>
               </div>
 
@@ -90,7 +91,7 @@ export const ContactUsView: React.FC = () => {
                 className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <WhatsAppIcon className="w-5 h-5 shrink-0" />
-                <span>Chat Instantly on WhatsApp (+263 714 701 721)</span>
+                <span>Chat Instantly on WhatsApp ({WHATSAPP_DISPLAY_NUMBER})</span>
               </button>
             </div>
           </div>

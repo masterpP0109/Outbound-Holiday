@@ -1,16 +1,18 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import { WHATSAPP_DISPLAY_NUMBER,getWhatsAppUrl } from '../../utils/whatsapp';
+import { PageLink } from './PageLink';
+import { sectionPath } from '../../routes';
+import React,{ useLayoutEffect,useRef,useState } from 'react';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
-import { 
-  Compass, 
-  Search, 
-  Menu, 
-  X, 
-  ChevronDown, 
-  PhoneCall,
-  CalendarCheck
+import {
+Search,
+Menu,
+X,
+ChevronDown,
+PhoneCall,
+CalendarCheck
 } from 'lucide-react';
+const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
 
 interface HeaderProps {
   currency: Currency;
@@ -74,13 +76,13 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Quick Info & Currency Switcher */}
           <div className="flex items-center gap-4 text-white/90 text-[11px]">
             <a 
-              href="https://wa.me/263714701721?text=Hello%20Outbound%20Holidays%2C%20I'd%20like%20to%20enquire%20about%20Victoria%20Falls%20travel." 
+              href={getWhatsAppUrl("Hello Outbound Holidays, I'd like to enquire about Victoria Falls travel.")}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden lg:inline-flex items-center gap-1.5 hover:text-[#C9A66B] transition-colors"
             >
               <PhoneCall className="w-3 h-3 text-[#C9A66B]" />
-              <span>Concierge WhatsApp: +263 714 701 721</span>
+              <span>Concierge WhatsApp: {WHATSAPP_DISPLAY_NUMBER}</span>
             </a>
 
             {/* Currency Selector Dropdown */}
@@ -120,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Main Navigation Bar */}
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-2 lg:gap-4">
         {/* Brand Logo */}
-        <div 
+        <PageLink href="/"
           onClick={() => onNavigateSection('hero')}
           className="cursor-pointer flex items-center shrink-0 pr-2 sm:pr-4"
         >
@@ -128,19 +130,16 @@ export const Header: React.FC<HeaderProps> = ({
             src={outboundLogo} 
             alt="Outbound Holidays" 
             className="h-20 sm:h-24 max-w-[140px] sm:max-w-[180px] w-auto object-contain"
-            onError={(e) => {
+            onError={() => {
               console.error('Header logo failed to load from:', outboundLogo);
             }}
-            onLoad={() => {
-              console.log('Header logo loaded from:', outboundLogo);
-            }}
           />
-        </div>
+        </PageLink>
 
         {/* Main Navigation Links */}
         <nav className="hidden lg:flex items-center gap-2 xl:gap-4 font-semibold text-xs xl:text-sm text-[#2F3A44]">
           {/* Victoria Falls Guide Link with Active Highlight */}
-          <button 
+          <PageLink href={sectionPath('travel-guide')}
             onClick={() => onNavigateSection('travel-guide')} 
             aria-current={isGuideActive ? 'page' : undefined}
             className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
@@ -154,9 +153,9 @@ export const Header: React.FC<HeaderProps> = ({
               isGuideActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
             <span>Victoria Falls Guide</span>
-          </button>
+          </PageLink>
 
-          <button 
+          <PageLink href={sectionPath('travel-experiences')}
             onClick={() => onNavigateSection('travel-experiences')} 
             aria-current={isExperiencesActive ? 'page' : undefined}
             className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
@@ -169,8 +168,8 @@ export const Header: React.FC<HeaderProps> = ({
               isExperiencesActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
             <span>Things to do</span>
-          </button>
-          <button 
+          </PageLink>
+          <PageLink href={sectionPath('accommodation')}
             onClick={() => onNavigateSection('accommodation')} 
             aria-current={isAccommodationActive ? 'page' : undefined}
             className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
@@ -183,8 +182,8 @@ export const Header: React.FC<HeaderProps> = ({
               isAccommodationActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
             <span>Where to Stay</span>
-          </button>
-          <button 
+          </PageLink>
+          <PageLink href={sectionPath('travel-packages')}
             onClick={() => onNavigateSection('travel-packages')} 
             aria-current={isPackagesActive ? 'page' : undefined}
             className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
@@ -197,8 +196,8 @@ export const Header: React.FC<HeaderProps> = ({
               isPackagesActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
             <span>Packages</span>
-          </button>
-          <button
+          </PageLink>
+          <PageLink href={sectionPath('client-gallery')}
             onClick={() => onNavigateSection('client-gallery')}
             aria-current={isGalleryActive ? 'page' : undefined}
             className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
@@ -211,13 +210,13 @@ export const Header: React.FC<HeaderProps> = ({
               isGalleryActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
             <span>Client Gallery</span>
-          </button>
-          <button 
+          </PageLink>
+          <PageLink href={sectionPath('contact-us')}
             onClick={() => onNavigateSection('contact-us')} 
             className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
           >
             Contact
-          </button>
+          </PageLink>
         </nav>
 
         {/* Action Controls & Primary CTA */}
@@ -269,7 +268,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="grid grid-cols-1 gap-2 font-semibold text-sm text-[#2F3A44]">
-            <button 
+            <PageLink href={sectionPath('travel-guide')}
               onClick={() => { onNavigateSection('travel-guide'); setMobileMenuOpen(false); }}
               aria-current={isGuideActive ? 'page' : undefined}
               className={`text-left py-2.5 px-3.5 rounded-xl flex items-center justify-between transition-colors ${
@@ -283,26 +282,26 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Victoria Falls Guide</span>
               </div>
               {isGuideActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
-            </button>
-            <button 
+            </PageLink>
+            <PageLink href={sectionPath('travel-experiences')}
               onClick={() => { onNavigateSection('travel-experiences'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
               <span>Things to do</span>
-            </button>
-            <button 
+            </PageLink>
+            <PageLink href={sectionPath('accommodation')}
               onClick={() => { onNavigateSection('accommodation'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
               <span>Where to Stay</span>
-            </button>
-            <button 
+            </PageLink>
+            <PageLink href={sectionPath('travel-packages')}
               onClick={() => { onNavigateSection('travel-packages'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
               <span>Holiday Packages</span>
-            </button>
-            <button
+            </PageLink>
+            <PageLink href={sectionPath('client-gallery')}
               onClick={() => { onNavigateSection('client-gallery'); setMobileMenuOpen(false); }}
               aria-current={isGalleryActive ? 'page' : undefined}
               className={`text-left py-2.5 px-3.5 rounded-xl flex items-center justify-between transition-colors ${
@@ -316,13 +315,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Client Gallery</span>
               </div>
               {isGalleryActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
-            </button>
-            <button 
+            </PageLink>
+            <PageLink href={sectionPath('contact-us')}
               onClick={() => { onNavigateSection('contact-us'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
               <span>Contact Specialist</span>
-            </button>
+            </PageLink>
           </div>
         </div>
       )}

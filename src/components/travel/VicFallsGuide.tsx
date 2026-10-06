@@ -1,5 +1,7 @@
+import { PageLink } from '../common/PageLink';
+import { sectionPath } from '../../routes';
 import React from 'react';
-import { Calendar, FileText, Plane, Hotel, ArrowRight, Sparkles } from 'lucide-react';
+import { Calendar,FileText,Plane,Hotel,ArrowRight,Sparkles } from 'lucide-react';
 
 interface VicFallsGuideProps {
   onOpenFullGuide?: () => void;
@@ -89,13 +91,13 @@ export const VicFallsGuide: React.FC<VicFallsGuideProps> = ({ onOpenFullGuide })
         {/* Primary CTA */}
         {onOpenFullGuide && (
           <div className="text-center">
-            <button
+            <PageLink href={sectionPath('guide')}
               onClick={onOpenFullGuide}
               className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
               <span>Read the Complete Victoria Falls Travel Guide</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </PageLink>
           </div>
         )}
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ArtProduct, Currency } from '../../types';
+import { ArtProduct,Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { X, ShoppingBag, Heart, ShieldCheck, Award, Star, Truck, MapPin } from 'lucide-react';
+import { X,ShoppingBag,Heart,ShieldCheck,Star,Truck,MapPin } from 'lucide-react';
 
 interface ProductDetailModalProps {
   product: ArtProduct | null;

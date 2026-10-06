@@ -1,15 +1,14 @@
+import { PageLink } from '../common/PageLink';
+import { accommodationPath,sectionPath } from '../../routes';
 import React from 'react';
-import { DetailedAccommodation, FEATURED_HOMEPAGE_ACCOMMODATIONS } from '../../data/accommodationsData';
+import { DetailedAccommodation,FEATURED_HOMEPAGE_ACCOMMODATIONS } from '../../data/accommodationsData';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
-import { 
-  Hotel, 
-  MapPin, 
-  Star, 
-  ArrowRight, 
-  ShieldCheck, 
-  Sparkles,
-  Compass
+import {
+MapPin,
+Star,
+ArrowRight,
+ShieldCheck,Compass
 } from 'lucide-react';
 
 interface WhereToStaySectionProps {
@@ -133,7 +132,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
                   </span>
                 </div>
 
-                <button
+                <PageLink href={accommodationPath(property)}
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelectProperty(property);
@@ -142,7 +141,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
                 >
                   <span>View Property</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                </PageLink>
               </div>
 
             </div>
@@ -151,13 +150,13 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
 
         {/* Explore More Places to Stay Centred CTA */}
         <div className="text-center pt-4">
-          <button
+          <PageLink href={sectionPath('accommodation')}
             onClick={onExploreAllProperties}
             className="inline-flex items-center justify-center gap-2 bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
             <span>Explore Where to Stay</span>
             <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
-          </button>
+          </PageLink>
         </div>
 
       </div>

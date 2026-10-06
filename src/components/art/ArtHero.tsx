@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ArrowRight, ShieldCheck, Award, Globe2 } from 'lucide-react';
+import { Sparkles,ArrowRight,ShieldCheck,Award,Globe2 } from 'lucide-react';
 
 // Public image paths for experiences
 const simunyeSpotlightImg = '/Experiences/Simunye_/Theatre10.jpg';

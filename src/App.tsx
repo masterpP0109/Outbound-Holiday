@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Currency, TravelPackage } from './types';
+import { useEffect,useState } from 'react';
+import { resolveRoute,sectionPath,experiencePath,packagePath,accommodationPath,categoryPath } from './routes';
+import { PageMetadata } from './components/common/PageMetadata';
+import { PageLink } from './components/common/PageLink';
+import { Currency,TravelPackage } from './types';
 import { Header } from './components/common/Header';
 import { TravelHero } from './components/travel/TravelHero';
 import { QuickPlanningBar } from './components/travel/QuickPlanningBar';
@@ -7,7 +10,7 @@ import { WhyChooseOutbound } from './components/travel/WhyChooseOutbound';
 import { FeaturedExperiences } from './components/travel/FeaturedExperiences';
 import { ExperiencesDirectoryPage } from './components/travel/ExperiencesDirectoryPage';
 import { ExperienceDetailPage } from './components/travel/ExperienceDetailPage';
-import { Experience, getExperienceById, ALL_EXPERIENCES } from './data/experiencesData';
+import { Experience,ALL_EXPERIENCES } from './data/experiencesData';
 import { WhereToStaySection } from './components/travel/WhereToStaySection';
 import { AccommodationDirectoryPage } from './components/travel/AccommodationDirectoryPage';
 import { AccommodationDetailPage } from './components/travel/AccommodationDetailPage';
@@ -19,7 +22,6 @@ import { DetailedPackage } from './data/packagesData';
 import { TravellerStories } from './components/travel/TravellerStories';
 import { ClientGallery } from './components/travel/ClientGallery';
 import { HowWeHelp } from './components/travel/HowWeHelp';
-import { FaqSection } from './components/travel/FaqSection';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
 import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
@@ -30,153 +32,61 @@ import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
 import { MobileStickyCta } from './components/common/MobileStickyCta';
 import { Newsletter } from './components/common/Newsletter';
 import { Footer } from './components/common/Footer';
-import { Check } from 'lucide-react';
 
-export default function App() {
+export default function App({ initialPath }: { initialPath?: string } = {}) {
   // Application View & Navigation State
-  const [activeView, setActiveView] = useState<
-    'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee' | 'client-gallery'
-  >('home');
-  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('first-visit');
-  const [selectedPackage, setSelectedPackage] = useState<DetailedPackage | null>(null);
-  const [selectedAccommodation, setSelectedAccommodation] = useState<DetailedAccommodation | null>(null);
+  const [route, setRoute] = useState(() => resolveRoute(initialPath ?? (typeof window === 'undefined' ? '/' : window.location.pathname)));
+  const activeView = route.view;
+  const selectedExperience = route.experience;
+  const selectedCategory = route.category;
+  const selectedPackage = route.package;
+  const selectedAccommodation = route.accommodation;
   const [currency, setCurrency] = useState<Currency>('USD');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  useEffect(() => {
+    const onPopState = () => {
+      setRoute(resolveRoute(window.location.pathname));
+      window.scrollTo({ top: 0 });
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  useEffect(() => {
+    if (window.location.hash) {
+      const frame = requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }));
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [route]);
+
+  const navigate = (path: string) => {
+    if (window.location.pathname + window.location.hash !== path) window.history.pushState({}, '', path);
+    setRoute(resolveRoute(window.location.pathname));
+    if (!window.location.hash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   // Modals & Drawers
   const [planHolidayOpen, setPlanHolidayOpen] = useState(false);
   const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | null>(null);
   const [preselectedAccommodation, setPreselectedAccommodation] = useState<DetailedAccommodation | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const handleOpenPlanHoliday = () => {
-    setPreselectedPackage(null);
-    setPreselectedAccommodation(null);
-    setPlanHolidayOpen(true);
-  };
-
-  // Accommodation Handlers
-  const handleSelectAccommodationDetail = (prop: DetailedAccommodation) => {
-    setSelectedAccommodation(prop);
-    setActiveView('accommodation-detail');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleExploreAllAccommodations = () => {
-    setActiveView('accommodation');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Travel Package Handlers
-  const handleSelectPackageDetail = (pkg: DetailedPackage) => {
-    setSelectedPackage(pkg);
-    setActiveView('package-detail');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleExploreAllPackages = () => {
-    setActiveView('packages');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSelectExperience = (exp: Experience) => {
-    if (exp.id === 'boma-dinner-show') {
-      setActiveView('boma');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (exp.id === 'bungee-jump' || exp.slug === 'bungee-jump') {
-      setActiveView('bungee');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      setSelectedExperience(exp);
-      setActiveView('experience-detail');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const handleSelectCategory = (catId: string) => {
-    setSelectedCategory(catId);
-    setActiveView('experience-category');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Smooth Section & Page Navigation
-  const handleNavigateSection = (sectionId: string) => {
-    if (sectionId === 'client-gallery') {
-      setActiveView('client-gallery');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    if (sectionId === 'where-to-stay' || sectionId === 'accommodation' || sectionId === 'accommodations') {
-      setActiveView('accommodation');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (sectionId === 'travel-packages' || sectionId === 'packages') {
-      setActiveView('packages');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (sectionId === 'travel-experiences' || sectionId === 'experiences') {
-      setActiveView('experiences');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (sectionId === 'boma' || sectionId === 'boma-dinner') {
-      setActiveView('boma');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (sectionId === 'travel-guide' || sectionId === 'guide') {
-      setActiveView('guide');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (activeView !== 'home') {
-      setActiveView('home');
-      setTimeout(() => {
-        if (sectionId === 'hero') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          return;
-        }
-        const elem = document.getElementById(sectionId);
-        if (elem) {
-          elem.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 50);
-      return;
-    }
-
-    if (sectionId === 'hero') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    const elem = document.getElementById(sectionId);
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleSelectAccommodationDetail = (property: DetailedAccommodation) => navigate(accommodationPath(property));
+  const handleExploreAllAccommodations = () => navigate(sectionPath('accommodation'));
+  const handleSelectPackageDetail = (pkg: DetailedPackage) => navigate(packagePath(pkg));
+  const handleExploreAllPackages = () => navigate(sectionPath('packages'));
+  const handleSelectExperience = (experience: Experience) => navigate(experiencePath(experience));
+  const handleSelectCategory = (category: string) => navigate(categoryPath(category));
+  const handleNavigateSection = (section: string) => navigate(sectionPath(section));
+  const handleSearchQuery = (query: string) => {
+    setSearchQuery(query);
+    if (activeView !== 'packages') navigate(sectionPath('packages'));
   };
 
   return (
     <div className="min-h-screen bg-white text-[#1A2E35] flex flex-col font-sans pb-16 md:pb-0">
-      {/* Top Toast Banner Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-20 md:bottom-6 right-6 z-50 bg-[#0D5C75] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-xs font-bold border border-white/20">
-          <Check className="w-4 h-4 text-[#D97706]" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
       {/* Navigation Header */}
       <Header
         currency={currency}
@@ -186,6 +96,7 @@ export default function App() {
           setPlanHolidayOpen(true);
         }}
         searchQuery={searchQuery}
+        setSearchQuery={handleSearchQuery}
 
         onNavigateSection={handleNavigateSection}
         isGuideActive={activeView === 'guide'}
@@ -197,7 +108,13 @@ export default function App() {
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}
       <main className="flex-1">
-        {activeView === 'client-gallery' ? (
+        {activeView === 'not-found' ? (
+          <section className="max-w-3xl mx-auto px-6 py-20 text-center space-y-6">
+            <h1 className="font-serif text-4xl font-bold text-[#0B5E8E]">Page not found</h1>
+            <p>The page you’re looking for is unavailable. Explore our Victoria Falls holidays and experiences.</p>
+            <PageLink href="/" onClick={() => navigate('/')} className="inline-block rounded-xl bg-[#0B5E8E] px-6 py-3 text-white">Back to home</PageLink>
+          </section>
+        ) : activeView === 'client-gallery' ? (
           <ClientGallery key="gallery-page" onNavigateHome={() => handleNavigateSection('hero')} />
         ) : activeView === 'accommodation' ? (
           <AccommodationDirectoryPage
@@ -209,7 +126,7 @@ export default function App() {
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
@@ -225,20 +142,22 @@ export default function App() {
             onSelectExperience={handleSelectExperience}
             onSelectRelatedProperty={handleSelectAccommodationDetail}
             onNavigateBackToDirectory={() => {
-              setActiveView('accommodation');
+              navigate(sectionPath('accommodation'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         ) : activeView === 'packages' ? (
           <PackagesDirectoryPage
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
             currency={currency}
             onSelectPackage={handleSelectPackageDetail}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
@@ -252,15 +171,15 @@ export default function App() {
             }}
             onSelectExperience={handleSelectExperience}
             onSelectRelatedPackage={(pkg) => {
-              setSelectedPackage(pkg);
+              handleSelectPackageDetail(pkg);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onNavigateBackToPackages={() => {
-              setActiveView('packages');
+              navigate(sectionPath('packages'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
@@ -283,11 +202,11 @@ export default function App() {
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onBackToLanding={() => {
-              setActiveView('experiences');
+              navigate(sectionPath('experiences'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
@@ -299,14 +218,14 @@ export default function App() {
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onBackToDirectory={() => {
               if (selectedCategory) {
-                setActiveView('experience-category');
+                navigate(categoryPath(selectedCategory));
               } else {
-                setActiveView('experiences');
+                navigate(sectionPath('experiences'));
               }
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
@@ -319,12 +238,12 @@ export default function App() {
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onSelectRelatedExperience={(expTitle) => {
               const matched = ALL_EXPERIENCES.find((e) =>
-                e.title.toLowerCase().includes(expTitle.toLowerCase())
+                e.slug === expTitle || e.title.toLowerCase().includes(expTitle.toLowerCase())
               );
               if (matched) {
                 handleSelectExperience(matched);
@@ -340,11 +259,11 @@ export default function App() {
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onBackToDirectory={() => {
-              setActiveView('experiences');
+              navigate(sectionPath('experiences'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onSelectRelatedExperience={(exp) => handleSelectExperience(exp)}
@@ -356,7 +275,7 @@ export default function App() {
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
-              setActiveView('home');
+              navigate(sectionPath('home'));
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
@@ -374,11 +293,11 @@ export default function App() {
             {/* 2. Quick Planning Bar */}
             <QuickPlanningBar
               onOpenGuide={() => {
-                setActiveView('guide');
+                navigate(sectionPath('guide'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               onOpenExperiences={() => {
-                setActiveView('experiences');
+                navigate(sectionPath('experiences'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
@@ -395,7 +314,7 @@ export default function App() {
             <FeaturedExperiences
               onSelectExperience={handleSelectExperience}
               onExploreAll={() => {
-                setActiveView('experiences');
+                navigate(sectionPath('experiences'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
@@ -410,7 +329,7 @@ export default function App() {
             {/* 6. Victoria Falls Guide Preview */}
             <VicFallsGuide
               onOpenFullGuide={() => {
-                setActiveView('guide');
+                navigate(sectionPath('guide'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
@@ -443,6 +362,8 @@ export default function App() {
         {/* Global Travel Newsletter Section */}
         <Newsletter />
       </main>
+
+      <PageMetadata route={route} />
 
       {/* Footer */}
       <Footer

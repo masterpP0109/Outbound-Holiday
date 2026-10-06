@@ -1,22 +1,23 @@
+import { PHONE_URL } from '../../../utils/whatsapp';
 import React from 'react';
 import { GUIDE_HUB_CATEGORIES } from '../../../data/guideArticles';
+import {
+Clock,
+BookOpen,
+ArrowRight,
+Sparkles,
+CalendarCheck,
+PhoneCall,
+CheckCircle2,
+MapPin,
+ShieldCheck,
+Award
+} from 'lucide-react';
 
 const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
 // Public image paths for experiences
-const founderGuideImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
-import { 
-  Compass, 
-  Clock, 
-  BookOpen, 
-  ArrowRight, 
-  Sparkles, 
-  CalendarCheck, 
-  PhoneCall, 
-  CheckCircle2, 
-  MapPin, 
-  ShieldCheck,
-  Award
-} from 'lucide-react';
+// Experience photo; replace with a verified team portrait when available.
+const elephantExperienceImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
 
 interface GuideHubViewProps {
   onSelectArticle: (slug: string) => void;
@@ -205,8 +206,8 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
             {/* Author Profile Card & Actions */}
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 text-center space-y-4">
               <img 
-                src={founderGuideImg} 
-                alt="Outbound Holidays Local Specialist" 
+                src={elephantExperienceImg}
+                alt="Elephant interaction experience in Victoria Falls"
                 className="w-16 h-16 rounded-full mx-auto object-cover ring-4 ring-[#C9A66B]/40 shadow-md"
               />
               <div>
@@ -226,7 +227,7 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
                   <span>Build My Holiday</span>
                 </button>
                 <a
-                  href="tel:+263771234567"
+                  href={PHONE_URL}
                   className="w-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-2.5 rounded-xl border border-white/20 transition-all flex items-center justify-center gap-2 block cursor-pointer"
                 >
                   <PhoneCall className="w-3.5 h-3.5 text-[#C9A66B]" />

@@ -68,7 +68,6 @@ const bomaDinnerImg4 = '/Experiences/Boma Dinner_/IMG_0367.PNG';
 const bomaDinnerImg5 = '/Experiences/Boma Dinner_/IMG_0368.PNG';
 const bomaDinnerImg6 = '/Experiences/Boma Dinner_/IMG_0369.PNG';
 const bomaDinnerImg7 = '/Experiences/Boma Dinner_/IMG_0370.PNG';
-const bomaDinnerImg8 = '/Experiences/Boma Dinner_/Boma prepping on the fire.webp';
 
 // Chobe Day Trip
 const chobeImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
@@ -156,13 +155,6 @@ const simunyeImg9 = '/Experiences/Simunye_/Theatre10.jpg';
 const craftMarketImg = '/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
 
 // Spa Treatments
-const spaImg = '/Experiences/Spa Treatments/IMG_0375.PNG';
-const spaImg2 = '/Experiences/Spa Treatments/IMG_0376.PNG';
-const spaImg3 = '/Experiences/Spa Treatments/IMG_0377.PNG';
-const spaImg4 = '/Experiences/Spa Treatments/IMG_0378.PNG';
-const spaImg5 = '/Experiences/Spa Treatments/IMG_0379.PNG';
-const spaImg6 = '/Experiences/Spa Treatments/IMG_0380.PNG';
-const spaImg7 = '/Experiences/Spa Treatments/IMG_0381.PNG';
 
 // Icon images
 const intentVicFallsIconicImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
@@ -334,7 +326,7 @@ export const ALL_EXPERIENCES: Experience[] = [
     fromPrice: 'From US$55',
     priceAmount: 55,
     featuredImage: bomaDinnerImg,
-    galleryImages: [bomaDinnerImg, bomaDinnerImg2, bomaDinnerImg3, bomaDinnerImg4, bomaDinnerImg5, bomaDinnerImg6, bomaDinnerImg7, bomaDinnerImg8],
+    galleryImages: [bomaDinnerImg, bomaDinnerImg2, bomaDinnerImg3, bomaDinnerImg4, bomaDinnerImg5, bomaDinnerImg6, bomaDinnerImg7],
     highlights: [
       'Traditional chitenge wrap & village beer welcome',
       '4-course buffet with open-fire braai and game meats',

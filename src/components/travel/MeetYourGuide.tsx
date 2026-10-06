@@ -1,8 +1,9 @@
+import { getWhatsAppUrl } from '../../utils/whatsapp';
 import React from 'react';
-import { CheckCircle2, MessageSquare, PhoneCall } from 'lucide-react';
+import { CheckCircle2,MessageSquare,PhoneCall } from 'lucide-react';
 
 // Public image paths for experiences
-const furqalFounderImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+const elephantExperienceImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
 
 interface MeetYourGuideProps {
   onOpenConsultation: () => void;
@@ -13,12 +14,12 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
     <section className="py-14 px-4 sm:px-6 lg:px-8 bg-[#FDFBF7] border-b border-gray-200">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Column: Authentic Team / Consultation Photo */}
+          {/* Experience photo; replace with a verified team portrait when available. */}
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white">
               <img
-                src={furqalFounderImg}
-                alt="Furqal - Lead Victoria Falls Travel Specialist at Outbound Holidays"
+                src={elephantExperienceImg}
+                alt="Elephant interaction experience in Victoria Falls"
                 className="w-full h-[380px] object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -26,10 +27,10 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
               <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-white/40 shadow-lg text-[#1A2E35]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#0D5C75] text-white flex items-center justify-center font-bold text-sm shrink-0">
-                    FK
+                    OH
                   </div>
                   <div>
-                    <h4 className="font-bold text-xs text-[#0D5C75]">Furqal & The Outbound Concierge Team</h4>
+                    <h4 className="font-bold text-xs text-[#0D5C75]">Outbound Holidays Travel Specialist</h4>
                     <p className="text-[11px] text-gray-600">On-ground in Victoria Falls, Zimbabwe</p>
                   </div>
                 </div>
@@ -79,7 +80,7 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
               </button>
 
               <a
-                href="https://wa.me/263771234567?text=Hi%20Outbound%20Holidays%2C%20I%20would%20like%20to%20talk%20to%20a%20Victoria%20Falls%20travel%20specialist."
+                href={getWhatsAppUrl("Hi Outbound Holidays, I would like to talk to a Victoria Falls travel specialist.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-md transition-all flex items-center gap-2"
