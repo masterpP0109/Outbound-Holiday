@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ShieldCheck, MapPin, ChevronLeft, ChevronRight, Heart, Users, Compass } from 'lucide-react';
 
-// Public image paths for experiences
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
+// Dedicated public images for each hero carousel slide.
+const fallsTour1 = '/heroImg/familyTrip.png';
+const cruise1 = '/heroImg/LookingForHoneyMoon.png';
+const gameDrive10 = '/heroImg/dreamingOfwildLilife.png';
 
 interface TravelHeroProps {
   onOpenPlanHoliday: () => void;
@@ -104,7 +104,7 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
       <div 
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        className="relative w-full min-h-[640px] sm:min-h-[720px] bg-[#0B5E8E] text-white flex flex-col items-start justify-center p-6 sm:p-12 lg:p-20 shadow-md group/hero"
+        className="travel-hero relative w-full bg-[#0B5E8E] text-white flex flex-col items-start justify-center shadow-md group/hero"
       >
         
         {/* Carousel Background Images with Cross-Fade Effect */}
@@ -119,9 +119,11 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
             >
               <img
                 src={slide.imageUrl}
+                width={1920}
+                height={1080}
                 alt={slide.altText}
                 loading={idx === 0 ? 'eager' : 'lazy'}
-                className="w-full h-full object-cover object-center block"
+                className="w-full h-full object-contain object-center block bg-[#0B5E8E]"
                 onError={(e) => {
                   console.error('Hero image failed to load:', slide.imageUrl);
                   (e.target as HTMLImageElement).src = slide.fallbackUrl;
@@ -138,7 +140,7 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0B5E8E]/95 via-[#0B5E8E]/70 to-black/30 md:to-transparent" />
 
         {/* Main Content Area - Left-aligned with max-width container */}
-        <div key={currentSlideIndex} className="relative z-10 max-w-2xl text-left space-y-6 flex flex-col items-start justify-center my-auto animate-fadeIn duration-500 max-w-[1280px] w-full">
+        <div key={currentSlideIndex} className="travel-hero-content relative z-10 text-left flex flex-col items-start justify-center my-auto animate-fadeIn duration-500 max-w-2xl w-full">
           
           {/* Active Carousel Category Pill Label */}
           <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-md border border-[#C9A66B]/60 rounded-full px-5 py-2 text-xs font-semibold text-[#C9A66B] tracking-wide uppercase shadow-sm transition-all duration-300">
@@ -147,17 +149,17 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
           </div>
 
           {/* Dynamic Headline - Left Aligned */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif text-white leading-[1.12] tracking-tight drop-shadow-md">
+          <h1 className="travel-hero-title font-bold font-serif text-white leading-[1.12] tracking-tight drop-shadow-md">
             {HERO_SLIDES[currentSlideIndex].headline}
           </h1>
 
           {/* Dynamic Description - Left Aligned */}
-          <p className="text-sm sm:text-base lg:text-xl text-white/95 font-normal leading-relaxed drop-shadow-sm max-w-2xl">
+          <p className="travel-hero-description text-sm sm:text-base lg:text-lg text-white/95 font-normal leading-relaxed drop-shadow-sm max-w-2xl">
             {HERO_SLIDES[currentSlideIndex].description}
           </p>
 
           {/* Left-aligned Action Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4 w-full sm:w-auto">
+          <div className="travel-hero-actions flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-3 w-full sm:w-auto">
             <button
               onClick={onOpenPlanHoliday}
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-9 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 group cursor-pointer"
@@ -187,7 +189,7 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
           </div>
 
           {/* Carousel Slide Indicators / Dots - Left Aligned */}
-          <div className="pt-4 flex items-center justify-start gap-2.5 z-20">
+          <div className="flex items-center justify-start gap-2.5 z-20">
             {HERO_SLIDES.map((slide, idx) => (
               <button
                 key={slide.id}
@@ -207,7 +209,7 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
         <button
           onClick={handlePrevSlide}
           aria-label="Previous slide"
-          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center opacity-90 sm:opacity-0 group-hover/hero:opacity-100 transition-all duration-300 cursor-pointer shadow-md"
+          className="absolute left-3 sm:left-6 bottom-4 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all duration-300 cursor-pointer shadow-md"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -216,13 +218,13 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
         <button
           onClick={handleNextSlide}
           aria-label="Next slide"
-          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center opacity-90 sm:opacity-0 group-hover/hero:opacity-100 transition-all duration-300 cursor-pointer shadow-md"
+          className="absolute left-16 sm:left-20 bottom-4 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all duration-300 cursor-pointer shadow-md"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
 
         {/* Floating Local Support Card - Bottom Badge */}
-        <div className="relative sm:absolute sm:bottom-6 sm:right-6 z-10 mt-8 sm:mt-0 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-[0_16px_40px_rgba(47,58,68,0.18)] border border-white/60 max-w-xs text-[#2F3A44] flex items-center gap-3.5">
+        <div className="travel-hero-support relative z-10 bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-[0_16px_40px_rgba(47,58,68,0.18)] border border-white/60 max-w-xs text-[#2F3A44] flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-xl bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0">
             <MapPin className="w-5 h-5 text-[#0B5E8E]" />
           </div>

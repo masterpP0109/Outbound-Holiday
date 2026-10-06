@@ -1,5 +1,46 @@
 @import "tailwindcss";
 
+#client-gallery {
+  scroll-margin-top: calc(var(--header-height, 116px) + 16px);
+}
+
+/* Use the actual navigation height, including changes at each breakpoint. */
+.travel-hero {
+  min-height: calc(100svh - var(--header-height, 116px));
+  padding: clamp(16px, 3vh, 40px) clamp(24px, 5vw, 80px) 76px;
+  gap: clamp(12px, 2vh, 24px);
+}
+
+.travel-hero-content {
+  gap: clamp(12px, 2.5vh, 24px);
+}
+
+.travel-hero-title {
+  font-size: clamp(28px, min(4.5vw, 7vh), 60px);
+}
+
+.travel-hero-actions button {
+  padding: clamp(10px, 2vh, 16px) 24px;
+}
+
+@media (min-width: 1024px) {
+  .travel-hero {
+    padding-bottom: 120px;
+  }
+
+  .travel-hero-support {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+  }
+}
+
+@media (max-height: 700px) {
+  .travel-hero-content { gap: 10px; }
+  .travel-hero-description { font-size: 14px; }
+  .travel-hero-support { padding: 8px 12px; }
+}
+
 @layer base {
   :root {
     --vf-blue: #0B5E8E;

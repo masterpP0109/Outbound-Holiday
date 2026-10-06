@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
 const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
@@ -23,6 +23,7 @@ interface HeaderProps {
   isExperiencesActive?: boolean;
   isAccommodationActive?: boolean;
   isPackagesActive?: boolean;
+  isGalleryActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -36,12 +37,29 @@ export const Header: React.FC<HeaderProps> = ({
   isExperiencesActive = false,
   isAccommodationActive = false,
   isPackagesActive = false,
+  isGalleryActive = false,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const updateHeight = () => {
+      document.documentElement.style.setProperty('--header-height', `${header.getBoundingClientRect().height}px`);
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--header-height');
+    };
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200/80 shadow-xs">
+    <header ref={headerRef} className="sticky top-0 z-50 bg-white border-b border-gray-200/80 shadow-xs">
       {/* Top Banner Bar */}
       <div className="bg-[#0B5E8E] text-white text-[11px] px-4 py-2 border-b border-white/10">
         <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-2">
@@ -100,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-2 lg:gap-4">
         {/* Brand Logo */}
         <div 
           onClick={() => onNavigateSection('hero')}
@@ -109,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
           <img 
             src={outboundLogo} 
             alt="Outbound Holidays" 
-            className="h-28 sm:h-36 max-w-[160px] sm:max-w-[200px] w-auto object-contain"
+            className="h-20 sm:h-24 max-w-[140px] sm:max-w-[180px] w-auto object-contain"
             onError={(e) => {
               console.error('Header logo failed to load from:', outboundLogo);
             }}
@@ -120,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Main Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-xs sm:text-sm text-[#2F3A44]">
+        <nav className="hidden lg:flex items-center gap-2 xl:gap-4 font-semibold text-xs xl:text-sm text-[#2F3A44]">
           {/* Victoria Falls Guide Link with Active Highlight */}
           <button 
             onClick={() => onNavigateSection('travel-guide')} 
@@ -180,6 +198,20 @@ export const Header: React.FC<HeaderProps> = ({
             }`} />
             <span>Packages</span>
           </button>
+          <button
+            onClick={() => onNavigateSection('client-gallery')}
+            aria-current={isGalleryActive ? 'page' : undefined}
+            className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
+              isGalleryActive
+                ? 'border-[#C9A66B] text-[#0B5E8E]'
+                : 'border-transparent text-[#2F3A44] hover:text-[#0B5E8E] hover:border-[#C9A66B]/50'
+            }`}
+          >
+            <span className={`w-2 h-2 rounded-full transition-all ${
+              isGalleryActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
+            }`} />
+            <span>Client Gallery</span>
+          </button>
           <button 
             onClick={() => onNavigateSection('contact-us')} 
             className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
@@ -191,7 +223,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Action Controls & Primary CTA */}
         <div className="flex items-center gap-3">
           {/* Search Input */}
-          <div className="relative hidden xl:block w-44">
+          <div className="relative hidden 2xl:block w-44">
             <input
               type="text"
               placeholder="Search packages..."
@@ -214,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-[#0B5E8E]"
+            className="lg:hidden p-2 text-[#0B5E8E]"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -224,7 +256,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-4 space-y-3">
+        <div className="lg:hidden bg-white border-t border-gray-200 px-4 py-4 space-y-3">
           <div className="relative mb-3">
             <input
               type="text"
@@ -269,6 +301,21 @@ export const Header: React.FC<HeaderProps> = ({
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
               <span>Holiday Packages</span>
+            </button>
+            <button
+              onClick={() => { onNavigateSection('client-gallery'); setMobileMenuOpen(false); }}
+              aria-current={isGalleryActive ? 'page' : undefined}
+              className={`text-left py-2.5 px-3.5 rounded-xl flex items-center justify-between transition-colors ${
+                isGalleryActive
+                  ? 'bg-[#0B5E8E]/10 text-[#0B5E8E] font-bold border-l-4 border-[#C9A66B]'
+                  : 'hover:bg-gray-50 text-[#2F3A44]'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {isGalleryActive && <span className="w-2 h-2 rounded-full bg-[#C9A66B]" />}
+                <span>Client Gallery</span>
+              </div>
+              {isGalleryActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
             </button>
             <button 
               onClick={() => { onNavigateSection('contact-us'); setMobileMenuOpen(false); }}

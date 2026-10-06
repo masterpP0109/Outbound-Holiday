@@ -1,0 +1,1 @@
+remind to ask to pay for the analytics payment from mp , after finishing the backend and email , Auth , WhatsApp auth , dashboard for lead analytics (check relume analytics for design and match with mms colors and color pallet , connect remaining  gateways and components for mms and African memories websites make sure all postgress backends are integrated without errors 

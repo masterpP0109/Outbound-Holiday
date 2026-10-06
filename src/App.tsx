@@ -17,6 +17,7 @@ import { PackagesDirectoryPage } from './components/travel/PackagesDirectoryPage
 import { PackageDetailPage } from './components/travel/PackageDetailPage';
 import { DetailedPackage } from './data/packagesData';
 import { TravellerStories } from './components/travel/TravellerStories';
+import { ClientGallery } from './components/travel/ClientGallery';
 import { HowWeHelp } from './components/travel/HowWeHelp';
 import { FaqSection } from './components/travel/FaqSection';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
@@ -34,7 +35,7 @@ import { Check } from 'lucide-react';
 export default function App() {
   // Application View & Navigation State
   const [activeView, setActiveView] = useState<
-    'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee'
+    'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee' | 'client-gallery'
   >('home');
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('first-visit');
@@ -106,6 +107,11 @@ export default function App() {
 
   // Smooth Section & Page Navigation
   const handleNavigateSection = (sectionId: string) => {
+    if (sectionId === 'client-gallery') {
+      setActiveView('client-gallery');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     if (sectionId === 'where-to-stay' || sectionId === 'accommodation' || sectionId === 'accommodations') {
       setActiveView('accommodation');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -186,11 +192,14 @@ export default function App() {
         isExperiencesActive={activeView === 'experiences' || activeView === 'experience-category' || activeView === 'experience-detail' || activeView === 'boma' || activeView === 'bungee'}
         isAccommodationActive={activeView === 'accommodation' || activeView === 'accommodation-detail'}
         isPackagesActive={activeView === 'packages' || activeView === 'package-detail'}
+        isGalleryActive={activeView === 'client-gallery'}
       />
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}
       <main className="flex-1">
-        {activeView === 'accommodation' ? (
+        {activeView === 'client-gallery' ? (
+          <ClientGallery key="gallery-page" onNavigateHome={() => handleNavigateSection('hero')} />
+        ) : activeView === 'accommodation' ? (
           <AccommodationDirectoryPage
             currency={currency}
             onSelectProperty={handleSelectAccommodationDetail}
@@ -415,6 +424,8 @@ export default function App() {
 
             {/* 8. Genuine Testimonials */}
             <TravellerStories />
+
+            <ClientGallery preview onSeeGallery={() => handleNavigateSection('client-gallery')} />
 
             {/* 9. How We Help */}
             <HowWeHelp />
