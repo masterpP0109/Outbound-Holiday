@@ -20,6 +20,7 @@ import { PackagesDirectoryPage } from './components/travel/PackagesDirectoryPage
 import { PackageDetailPage } from './components/travel/PackageDetailPage';
 import { DetailedPackage } from './data/packagesData';
 import { TravellerStories } from './components/travel/TravellerStories';
+import { AboutPage } from './components/travel/AboutPage';
 import { ClientGallery } from './components/travel/ClientGallery';
 import { HowWeHelp } from './components/travel/HowWeHelp';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
@@ -104,6 +105,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
         isAccommodationActive={activeView === 'accommodation' || activeView === 'accommodation-detail'}
         isPackagesActive={activeView === 'packages' || activeView === 'package-detail'}
         isGalleryActive={activeView === 'client-gallery'}
+        isAboutActive={activeView === 'about'}
       />
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}
@@ -114,6 +116,8 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             <p>The page you’re looking for is unavailable. Explore our Victoria Falls holidays and experiences.</p>
             <PageLink href="/" onClick={() => navigate('/')} className="inline-block rounded-xl bg-[#0B5E8E] px-6 py-3 text-white">Back to home</PageLink>
           </section>
+        ) : activeView === 'about' ? (
+          <AboutPage onNavigateSection={handleNavigateSection} onOpenPlanHoliday={() => { setPreselectedPackage(null); setPreselectedAccommodation(null); setPlanHolidayOpen(true); }} />
         ) : activeView === 'client-gallery' ? (
           <ClientGallery key="gallery-page" onNavigateHome={() => handleNavigateSection('hero')} />
         ) : activeView === 'accommodation' ? (

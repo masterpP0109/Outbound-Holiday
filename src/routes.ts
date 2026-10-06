@@ -4,7 +4,7 @@ import { ALL_ACCOMMODATIONS,DetailedAccommodation } from './data/accommodationsD
 import { FIRST_TIME_VISITOR_ARTICLE } from './data/guideArticles';
 
 export const SITE_URL = 'https://outbound-holiday.vercel.app';
-export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee' | 'client-gallery' | 'not-found';
+export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee' | 'client-gallery' | 'about' | 'not-found';
 export interface PageRoute {
   path: string;
   view: View;
@@ -30,6 +30,7 @@ export const PAGE_ROUTES: PageRoute[] = [
   { path: '/victoria-falls-accommodation', view: 'accommodation', title: 'Victoria Falls Accommodation | Outbound Holidays', description: 'Compare Victoria Falls hotels, lodges and self-catering stays. Find accommodation for families, couples and safari holidays with local specialist advice.' },
   { path: '/victoria-falls-packages', view: 'packages', title: 'Victoria Falls Holiday Packages | Outbound Holidays', description: 'Explore Victoria Falls holiday packages for families, honeymoons, adventures and safaris. Tailor your accommodation, activities and itinerary with local specialists.' },
   { path: '/client-gallery', view: 'client-gallery', title: 'Client Gallery | Outbound Holidays', description: 'Explore photos from holidays and experiences enjoyed by Outbound Holidays clients. Discover travel memories from Victoria Falls and beyond.' },
+  { path: '/about', view: 'about', title: 'About Fungai Mtetwa & Outbound Holidays | Victoria Falls', description: 'Meet Fungai Mtetwa, the Victoria Falls-based founder of Outbound Holidays. Personal holiday planning informed by more than nine years in tourism.' },
   ...Object.entries(categories).map(([category, name]): PageRoute => ({ path: categoryPath(category), view: 'experience-category', category, title: `${name} in Victoria Falls | Outbound Holidays`, description: `Discover ${name.toLowerCase()} experiences in Victoria Falls. Compare activities and plan your visit with advice from Outbound Holidays local specialists.` })),
   ...ALL_EXPERIENCES.map((experience): PageRoute => ({ path: experiencePath(experience), view: experience.id === 'boma-dinner-show' ? 'boma' : experience.slug === 'bungee-jump' ? 'bungee' : 'experience-detail', experience, title: `${experience.title} | Outbound Holidays`, description: experience.shortDescription })),
   ...ALL_PACKAGES.map((pkg): PageRoute => ({ path: packagePath(pkg), view: 'package-detail', package: pkg, title: `${pkg.title} | Outbound Holidays`, description: pkg.description })),
@@ -43,7 +44,7 @@ export function resolveRoute(pathname: string): PageRoute {
 
 export function sectionPath(section: string): string {
   const paths: Record<string, string> = {
-    hero: '/', home: '/', 'client-gallery': '/client-gallery', 'travel-guide': '/victoria-falls-guide', guide: '/victoria-falls-guide',
+    hero: '/', home: '/', about: '/about', 'about-us': '/about', 'client-gallery': '/client-gallery', 'travel-guide': '/victoria-falls-guide', guide: '/victoria-falls-guide',
     'travel-experiences': '/things-to-do-in-victoria-falls', experiences: '/things-to-do-in-victoria-falls',
     accommodation: '/victoria-falls-accommodation', accommodations: '/victoria-falls-accommodation', 'where-to-stay': '/victoria-falls-accommodation',
     'travel-packages': '/victoria-falls-packages', packages: '/victoria-falls-packages', boma: '/things-to-do/boma-dinner', 'boma-dinner': '/things-to-do/boma-dinner',

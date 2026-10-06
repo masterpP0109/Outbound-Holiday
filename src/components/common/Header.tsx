@@ -26,6 +26,7 @@ interface HeaderProps {
   isAccommodationActive?: boolean;
   isPackagesActive?: boolean;
   isGalleryActive?: boolean;
+  isAboutActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -40,6 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
   isAccommodationActive = false,
   isPackagesActive = false,
   isGalleryActive = false,
+  isAboutActive = false,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
@@ -211,6 +213,20 @@ export const Header: React.FC<HeaderProps> = ({
             }`} />
             <span>Client Gallery</span>
           </PageLink>
+          <PageLink href={sectionPath('about')}
+            onClick={() => onNavigateSection('about')}
+            aria-current={isAboutActive ? 'page' : undefined}
+            className={`transition-all whitespace-nowrap py-1 cursor-pointer flex items-center gap-2 border-b-2 font-bold ${
+              isAboutActive
+                ? 'border-[#C9A66B] text-[#0B5E8E]'
+                : 'border-transparent text-[#2F3A44] hover:text-[#0B5E8E] hover:border-[#C9A66B]/50'
+            }`}
+          >
+            <span className={`w-2 h-2 rounded-full transition-all ${
+              isAboutActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
+            }`} />
+            <span>About</span>
+          </PageLink>
           <PageLink href={sectionPath('contact-us')}
             onClick={() => onNavigateSection('contact-us')} 
             className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
@@ -315,6 +331,21 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Client Gallery</span>
               </div>
               {isGalleryActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
+            </PageLink>
+            <PageLink href={sectionPath('about')}
+              onClick={() => { onNavigateSection('about'); setMobileMenuOpen(false); }}
+              aria-current={isAboutActive ? 'page' : undefined}
+              className={`text-left py-2.5 px-3.5 rounded-xl flex items-center justify-between transition-colors ${
+                isAboutActive
+                  ? 'bg-[#0B5E8E]/10 text-[#0B5E8E] font-bold border-l-4 border-[#C9A66B]'
+                  : 'hover:bg-gray-50 text-[#2F3A44]'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {isAboutActive && <span className="w-2 h-2 rounded-full bg-[#C9A66B]" />}
+                <span>About</span>
+              </div>
+              {isAboutActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
             </PageLink>
             <PageLink href={sectionPath('contact-us')}
               onClick={() => { onNavigateSection('contact-us'); setMobileMenuOpen(false); }}

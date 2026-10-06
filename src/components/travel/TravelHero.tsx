@@ -125,7 +125,7 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
                 height={1080}
                 alt={slide.altText}
                 loading={idx === 0 ? 'eager' : 'lazy'}
-                className="w-full h-full object-contain object-center block bg-[#0B5E8E]"
+                className="w-full h-full object-fill object-center block bg-[#0B5E8E]"
                 onError={(e) => {
                   console.error('Hero image failed to load:', slide.imageUrl);
                   (e.target as HTMLImageElement).src = slide.fallbackUrl;

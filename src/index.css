@@ -6,7 +6,9 @@
 
 /* Use the actual navigation height, including changes at each breakpoint. */
 .travel-hero {
-  min-height: calc(100svh - var(--header-height, 116px));
+  /* Keep the carousel slightly below the sticky navigation and inside the viewport. */
+  margin-top: 16px;
+  min-height: calc(100svh - var(--header-height, 116px) - 16px);
   padding: clamp(16px, 3vh, 40px) clamp(24px, 5vw, 80px) 76px;
   gap: clamp(12px, 2vh, 24px);
 }

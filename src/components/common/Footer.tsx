@@ -113,7 +113,7 @@ export const Footer: React.FC<FooterProps> = ({
             <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
               <li>
                 <PageLink href={sectionPath('about-us')} onClick={() => onNavigateSection('about-us')} className="hover:text-white transition-colors font-medium cursor-pointer">
-                  About Us & Promises
+                  About Outbound Holidays
                 </PageLink>
               </li>
               <li>
