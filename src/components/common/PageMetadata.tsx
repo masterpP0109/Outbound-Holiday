@@ -14,7 +14,7 @@ export function PageMetadata({ route }: { route: PageRoute }) {
       element.content = content;
     };
     setMeta('description', route.description);
-    setMeta('robots', route.view === 'not-found' ? 'noindex, follow' : 'index, follow');
+    setMeta('robots', ['not-found','newsletter-confirmed'].includes(route.view) ? 'noindex, follow' : 'index, follow');
     setMeta('og:title', route.title, 'property');
     setMeta('og:description', route.description, 'property');
     setMeta('og:url', SITE_URL + route.path, 'property');

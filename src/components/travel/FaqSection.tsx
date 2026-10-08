@@ -1,3 +1,4 @@
+import { editorial, editorialValue } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { sectionPath } from '../../routes';
 import React,{ useState } from 'react';
@@ -10,28 +11,7 @@ interface FaqSectionProps {
 export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenGuide }) => {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
-  const faqs = [
-    {
-      q: 'How much should I budget for a Victoria Falls trip?',
-      a: 'Trips typically start from $350 per person for smart budget stays up to $2,150+ for luxury all-inclusive riverfront lodges. Packages usually include accommodation, transfers, guided rainforest tours, and sunset cruises. We tailor every itinerary to match your exact budget.',
-    },
-    {
-      q: 'Can I pay a deposit to secure my booking?',
-      a: 'Yes! You can secure your lodge dates and activity reservations with a small deposit (typically 20% - 30%), and pay the remaining balance closer to your arrival date. We offer flexible payment arrangements.',
-    },
-    {
-      q: 'Is the initial planning consultation free?',
-      a: '100% free with zero obligation to book! You can speak or chat with our Victoria Falls travel specialists, receive itemized quote options, and ask as many questions as you need without paying anything.',
-    },
-    {
-      q: 'Can you plan around my specific budget or custom dates?',
-      a: 'Absolutely. Whether you have 2 days or 2 weeks, a tight budget or an unrestricted luxury vision, our local team builds custom itineraries from scratch specifically for your dates and party size.',
-    },
-    {
-      q: 'How quickly will I receive my custom quotation?',
-      a: 'Once you submit your details via our 3-minute Holiday Builder or WhatsApp, a Victoria Falls specialist will review your preferences and send an itemized quotation within 2 to 4 hours during office hours.',
-    },
-  ];
+  const faqs = editorialValue("travel/FaqSection.section1", {});
 
   return (
     <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100">
@@ -41,14 +21,11 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenGuide }) => {
           {/* Left Column (35-40% width) - Heading & Intro */}
           <div className="lg:col-span-5 space-y-4">
             <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
-              Clear Answers
-            </span>
+              {editorial("travel/FaqSection.text11")}</span>
             <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight">
-              Planning a trip to Victoria Falls? We've answered some of the questions we hear most often.
-            </h2>
+              {editorial("travel/FaqSection.text12")}</h2>
             <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed max-w-md">
-              Everything you need to know about planning your Victoria Falls holiday with total confidence.
-            </p>
+              {editorial("travel/FaqSection.text13")}</p>
 
             {onOpenGuide && (
               <div className="pt-4">
@@ -56,7 +33,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenGuide }) => {
                   onClick={onOpenGuide}
                   className="inline-flex items-center gap-2 text-xs font-bold text-[#0B5E8E] hover:text-[#E67E22] transition-colors cursor-pointer group"
                 >
-                  <span>Read the Outbound Victoria Falls Travel Guide</span>
+                  <span>{editorial("travel/FaqSection.text14")}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </PageLink>
               </div>

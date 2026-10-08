@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { experiencePath,sectionPath } from '../../routes';
 import React,{ useState,useEffect } from 'react';
@@ -24,11 +26,12 @@ import { Experience,getExperienceById } from '../../data/experiencesData';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 
 // Public image paths for experiences
-const bungeeImg = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-const bungeeImg2 = '/Experiences/Bungee Jump_/Bungee-8.jpg';
-const bungeeImg3 = '/Experiences/Bungee Jump_/Bungee-9-scaled.jpg';
-const bungeeImg4 = '/Experiences/Bungee Jump_/1-1.jpg';
-const bungeeImg5 = '/Experiences/Bungee Jump_/2-8.jpg';
+let bungeeImg: any;
+registerContent(() => { bungeeImg = editorialValue("travel/BungeeExperiencePage.bungeeImg", {}); });
+
+
+
+
 
 interface BungeeExperiencePageProps {
   onOpenPlanHoliday: () => void;
@@ -75,73 +78,11 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
   const videoPackageCost = includeVideoPackage ? 55 : 0;
   const totalEstimatedCost = (bungeePricePerPerson + transferCostPerPerson) * jumperCount + (includeVideoPackage ? videoPackageCost : 0);
 
-  const steps = [
-    {
-      stepNumber: 1,
-      time: "Phase 1",
-      title: "The Historic Bridge Approach",
-      description: "Walk out onto the famous 1905 steel Victoria Falls Railway Bridge spanning the Batoka Gorge. Positioned in the neutral 'No-Man's Land' between Zimbabwe and Zambia, you'll feel the rush of wind and catch your first glimpse of the roaring river 111 meters below.",
-      highlight: "Free bridge pass provided at border control—no visa needed!",
-      image: bungeeImg2
-    },
-    {
-      stepNumber: 2,
-      time: "Phase 2",
-      title: "Safety Briefing & Precision Harnessing",
-      description: "Meet your team of certified master riggers at the bridge jump station. You will be weighed, fitted with specialized padded ankle harnesses, and backed up with a heavy-duty climbing body harness for dual-redundant safety.",
-      highlight: "Operated with a 100% safety record over 500,000+ jumps.",
-      image: bungeeImg3
-    },
-    {
-      stepNumber: 3,
-      time: "Phase 3",
-      title: "The Edge Walk & Gantry Launchpad",
-      description: "Step onto the wooden jump gantry suspended directly over the abyss. With the spray of Mosi-oa-Tunya drifting past and the Zambezi rapids surging under your feet, the jump master guides you to the threshold.",
-      highlight: "Breathtaking 360° panoramic view of Batoka Canyon.",
-      image: bungeeImg4
-    },
-    {
-      stepNumber: 4,
-      time: "Phase 4",
-      title: "5... 4... 3... 2... 1... BUNGEE!",
-      description: "Leap forward into pure weightlessness! Experience 4 seconds of exhilarating freefall reaching terminal speeds over 120 km/h before the custom rubber bungee cord smoothly catches you in a series of gentle, soaring bounces.",
-      highlight: "4 seconds of sheer vertical zero-gravity freefall.",
-      image: bungeeImg5
-    },
-    {
-      stepNumber: 5,
-      time: "Phase 5",
-      title: "Winch Recovery & Certificate of Bravery",
-      description: "After the rebounds settle, a winch operator gently lowers a recovery line to hoist you smoothly back up to the bridge deck. Celebrate with fellow jumpers, receive your official Certificate of Bravery, and view your HD video footage.",
-      highlight: "Official Certificate of Bravery & HD video memories.",
-      image: bungeeImg
-    }
-  ];
+  const steps = editorialValue("travel/BungeeExperiencePage.section1", {});
 
-  const faqs = [
-    {
-      q: "Is a visa required to go onto the Victoria Falls Bridge?",
-      a: "No! Border control at both the Zimbabwean and Zambian posts issue a complimentary Bridge Pass so you can step onto the bridge without using up a visa entry or paying border entry fees."
-    },
-    {
-      q: "How safe is the Victoria Falls Bungee Jump?",
-      a: "It is operated under strict British & Australian bungee standards with dual-redundant harness systems, daily cord inspections, and a 100% safety record across more than 500,000 jumps since 1994."
-    },
-    {
-      q: "Can non-jumping family and friends watch from the bridge?",
-      a: "Absolutely! Spectating from the bridge walkways or enjoying a cold beverage at the Bridge Café is completely free and provides an incredible vantage point for photos and videos."
-    },
-    {
-      q: "What are the age and weight requirements?",
-      a: "Minimum age is 14 years. Minimum weight requirement is 40 kg (88 lbs) and maximum weight is 140 kg (308 lbs). Parents or legal guardians must sign consent for jumpers under 18."
-    },
-    {
-      q: "What should I wear for the bungee jump?",
-      a: "Wear comfortable clothing and closed-toe footwear like sneakers or running shoes. Loose objects, glasses, and pocket items must be secured or left in lockers at the jump office."
-    }
-  ];
+  const faqs = editorialValue("travel/BungeeExperiencePage.section2", {});
 
-  const relatedList = ['gorge-swing', 'white-water-rafting', 'flight-of-angels', 'upper-zambezi-sunset-cruise']
+  const relatedList = editorialValue("travel/BungeeExperiencePage.section3", {})
     .map(id => getExperienceById(id))
     .filter((e): e is Experience => e !== undefined);
 
@@ -157,7 +98,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
               className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5 font-semibold text-gray-300 cursor-pointer text-[11px]"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Home</span>
+              <span>{editorial("travel/BungeeExperiencePage.text27")}</span>
             </PageLink>
             {onBackToDirectory && (
               <>
@@ -166,15 +107,14 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                   onClick={onBackToDirectory}
                   className="hover:text-[#C9A66B] transition-colors font-semibold text-gray-300 cursor-pointer text-[11px]"
                 >
-                  All Experiences
-                </PageLink>
+                  {editorial("travel/BungeeExperiencePage.text28")}</PageLink>
               </>
             )}
           </div>
 
           <div className="flex items-center gap-2 text-[#C9A66B] font-bold text-[11px] uppercase tracking-wider hidden sm:flex">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>World Iconic Adrenaline Bucket List</span>
+            <span>{editorial("travel/BungeeExperiencePage.text29")}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -195,7 +135,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
         <div className="absolute inset-0 z-0">
           <img 
             src={bungeeImg} 
-            alt="Bungee jumper launching off the Victoria Falls Bridge above Batoka Gorge"
+            alt={editorial("travel/BungeeExperiencePage.text30")}
             className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/70 to-[#0D2833]/40" />
@@ -207,29 +147,27 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             {/* Category Tag Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/20 backdrop-blur-md border border-[#C9A66B]/50 text-[#E5C989] text-xs font-bold uppercase tracking-widest">
               <Award className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>One of the World's Great Bucket List Jumps</span>
+              <span>{editorial("travel/BungeeExperiencePage.text31")}</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
-              Bungee Jump at Victoria Falls Bridge
-            </h1>
+              {editorial("travel/BungeeExperiencePage.text32")}</h1>
 
             {/* Subtitle / Excerpt */}
             <p className="text-lg sm:text-xl text-gray-200 font-light leading-relaxed max-w-2xl">
-              Plunge 111 meters into the dramatic Batoka Gorge with the thunderous spray of Victoria Falls framing the horizon behind you.
-            </p>
+              {editorial("travel/BungeeExperiencePage.text33")}</p>
 
             {/* Hero CTAs */}
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <a
-                href={getWhatsAppEnquiryUrl("Victoria Falls Bridge Bungee Jump")}
+                href={getWhatsAppEnquiryUrl(editorialFormat("travel/BungeeExperiencePage.copy1"))}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
               >
                 <WhatsAppIcon className="w-5 h-5 shrink-0" />
-                <span>Enquire About Availability</span>
+                <span>{editorial("travel/BungeeExperiencePage.text34")}</span>
               </a>
 
               <button
@@ -237,7 +175,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                 className="bg-white/10 hover:bg-white/20 text-white font-bold text-sm px-6 py-3.5 rounded-xl border border-white/30 backdrop-blur-md transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-                <span>Add to Custom Itinerary</span>
+                <span>{editorial("travel/BungeeExperiencePage.text35")}</span>
               </button>
             </div>
 
@@ -245,19 +183,19 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             <div className="pt-8 border-t border-white/15 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
               <div className="flex items-center gap-2 text-gray-200">
                 <Clock className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                <span className="font-medium">2 Hours Duration</span>
+                <span className="font-medium">{editorial("travel/BungeeExperiencePage.text36")}</span>
               </div>
               <div className="flex items-center gap-2 text-gray-200">
                 <MapPin className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                <span className="font-medium">Victoria Falls Bridge (No-Man's Land)</span>
+                <span className="font-medium">{editorial("travel/BungeeExperiencePage.text37")}</span>
               </div>
               <div className="flex items-center gap-2 text-gray-200">
                 <Zap className="w-4 h-4 text-[#E5C989] shrink-0" />
-                <span className="font-medium">111m / 364ft Drop</span>
+                <span className="font-medium">{editorial("travel/BungeeExperiencePage.text38")}</span>
               </div>
               <div className="flex items-center gap-2 text-gray-200">
                 <ShieldCheck className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                <span className="font-medium">From US$160 per person</span>
+                <span className="font-medium">{editorial("travel/BungeeExperiencePage.text39")}</span>
               </div>
             </div>
 
@@ -276,67 +214,36 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  Local Specialist Perspective
-                </span>
+                  {editorial("travel/BungeeExperiencePage.text40")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  Why We Recommend This Jump
-                </h2>
+                  {editorial("travel/BungeeExperiencePage.text41")}</h2>
               </div>
 
               {/* Singita Style Editorial Block */}
               <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-[#0B5E8E]/10 to-[#0D2833]/5 border-l-4 border-[#C9A66B] space-y-3">
                 <div className="flex items-center gap-2 font-bold text-sm text-[#0B5E8E]">
                   <Star className="w-4 h-4 text-[#C9A66B] fill-[#C9A66B]" />
-                  <span>National Geographic Meets African Bush Camp Storytelling</span>
+                  <span>{editorial("travel/BungeeExperiencePage.text42")}</span>
                 </div>
                 <p className="text-base sm:text-lg text-[#1A2E35] italic font-serif leading-relaxed">
-                  "The Victoria Falls Bridge bungee isn't just a jump; it's a plunge into the natural border between Zimbabwe and Zambia with one of the Seven Natural Wonders of the World roaring right beside you. The sheer drop, the wind, and the mist create an adrenaline rush unmatched anywhere in Africa."
-                </p>
+                  {editorial("travel/BungeeExperiencePage.text43")}</p>
               </div>
 
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                Spanning the canyon between two countries, the historic 1905 Victoria Falls Railway Bridge offers a leaping platform unlike any other on earth. As you stand on the jump gantry 111 meters above the churning white water of the Zambezi River, the roaring mist of Mosi-oa-Tunya forms giant rainbows across the basalt cliffs. It is equal parts awe-inspiring engineering, raw nature, and extreme bucket-list adventure.
-              </p>
+                {editorial("travel/BungeeExperiencePage.text44")}</p>
             </section>
 
             {/* 4. Experience Highlights */}
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  Unrivalled Adventure Features
-                </span>
+                  {editorial("travel/BungeeExperiencePage.text45")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  Experience Highlights
-                </h2>
+                  {editorial("travel/BungeeExperiencePage.text46")}</h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  {
-                    title: "111m Sheer Plunge",
-                    desc: "Drop 111 meters (364 feet) directly over the swirling Zambezi River rapids."
-                  },
-                  {
-                    title: "Historic 'No-Man's Land'",
-                    desc: "Jump from the neutral international border bridge between Zimbabwe and Zambia."
-                  },
-                  {
-                    title: "Spectacular Falls Mist Backdrop",
-                    desc: "Leap with the thunderous roar and rising rainbow spray of Victoria Falls."
-                  },
-                  {
-                    title: "100% Safety Track Record",
-                    desc: "Operated by master riggers under strict Australian/British bungee safety standards."
-                  },
-                  {
-                    title: "Dual Harness Redundancy",
-                    desc: "Custom padded ankle harnesses paired with a climbing body harness backup system."
-                  },
-                  {
-                    title: "HD Video & Photo Package",
-                    desc: "Multiple camera angles capture your jump, freefall expressions, and winch recovery."
-                  }
-                ].map((item, idx) => (
+                {editorialValue("travel/BungeeExperiencePage.section4", {}).map((item, idx) => (
                   <div key={idx} className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/60 flex items-start gap-3">
                     <div className="w-7 h-7 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E] flex items-center justify-center shrink-0 mt-0.5">
                       <Check className="w-4 h-4 text-[#0B5E8E]" />
@@ -354,14 +261,11 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-8">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  The Experience Journey
-                </span>
+                  {editorial("travel/BungeeExperiencePage.text59")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  What To Expect Step by Step
-                </h2>
+                  {editorial("travel/BungeeExperiencePage.text60")}</h2>
                 <p className="text-sm text-gray-600">
-                  Here is how your bungee jump adventure unfolds on the Victoria Falls Bridge.
-                </p>
+                  {editorial("travel/BungeeExperiencePage.text61")}</p>
               </div>
 
               {/* Timeline Items */}
@@ -375,7 +279,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-2 left-2 bg-[#0D2833]/90 text-[#E5C989] text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md">
-                        Step {st.stepNumber} • {st.time}
+                        {editorial("travel/BungeeExperiencePage.text62")}{st.stepNumber} • {st.time}
                       </div>
                     </div>
 
@@ -400,19 +304,13 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  Visual Gallery
-                </span>
+                  {editorial("travel/BungeeExperiencePage.text63")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  Bungee Experience Gallery
-                </h2>
+                  {editorial("travel/BungeeExperiencePage.text64")}</h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
-                  bungeeImg2,
-                  bungeeImg3,
-                  bungeeImg4
-                ].map((imgUrl, idx) => (
+                {editorialValue("travel/BungeeExperiencePage.section5", {}).map((imgUrl, idx) => (
                   <div 
                     key={idx} 
                     className="h-52 rounded-2xl overflow-hidden border border-gray-200 shadow-xs cursor-pointer"
@@ -428,7 +326,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
               </div>
               {lightboxIndex !== null && (
                 <GalleryLightbox
-                  images={[bungeeImg2, bungeeImg3, bungeeImg4]}
+                  images={editorialValue("travel/BungeeExperiencePage.section6", {})}
                   initialIndex={lightboxIndex}
                   onClose={() => setLightboxIndex(null)}
                 />
@@ -442,24 +340,24 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-xs space-y-4">
                 <h3 className="font-serif text-xl font-bold text-[#0B5E8E] flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-[#0B5E8E]" />
-                  <span>What's Included</span>
+                  <span>{editorial("travel/BungeeExperiencePage.text65")}</span>
                 </h3>
                 <ul className="space-y-3 text-xs sm:text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#C9A66B] mt-2 shrink-0" />
-                    <span>Full bungee safety briefing by master riggers</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text66")}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#C9A66B] mt-2 shrink-0" />
-                    <span>Dual padded ankle harness & body backup harness</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text67")}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#C9A66B] mt-2 shrink-0" />
-                    <span>Complimentary Victoria Falls Bridge border pass</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text68")}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#C9A66B] mt-2 shrink-0" />
-                    <span>Personal Certificate of Bravery upon completion</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text69")}</span>
                   </li>
                 </ul>
               </section>
@@ -468,20 +366,20 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-xs space-y-4">
                 <h3 className="font-serif text-xl font-bold text-[#0B5E8E] flex items-center gap-2">
                   <XCircle className="w-5 h-5 text-gray-400" />
-                  <span>What's Excluded / Optional</span>
+                  <span>{editorial("travel/BungeeExperiencePage.text70")}</span>
                 </h3>
                 <ul className="space-y-3 text-xs sm:text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2 shrink-0" />
-                    <span>National park / bridge access fee ($10 payable cash on site)</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text71")}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2 shrink-0" />
-                    <span>Return hotel transfers (optional bundle for $15 pp)</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text72")}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2 shrink-0" />
-                    <span>HD Video & Photo souvenir package ($55 optional)</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text73")}</span>
                   </li>
                 </ul>
               </section>
@@ -496,14 +394,11 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                 </div>
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-widest text-[#E5C989]">
-                    ⭐ Local Specialist Tip
-                  </span>
+                    {editorial("travel/BungeeExperiencePage.text74")}</span>
                   <h3 className="font-serif text-xl sm:text-2xl font-bold text-white">
-                    Timing Your Jump for Rainbow Magic
-                  </h3>
+                    {editorial("travel/BungeeExperiencePage.text75")}</h3>
                   <p className="text-sm text-gray-200 leading-relaxed">
-                    Book your jump for late afternoon when the angle of the sun hits the rising spray of Victoria Falls, creating vibrant double rainbows directly inside the gorge as you dive toward the river!
-                  </p>
+                    {editorial("travel/BungeeExperiencePage.text76")}</p>
                 </div>
               </div>
             </section>
@@ -512,44 +407,42 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  Essential Jump Criteria
-                </span>
+                  {editorial("travel/BungeeExperiencePage.text77")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  Requirements & Good to Know
-                </h2>
+                  {editorial("travel/BungeeExperiencePage.text78")}</h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/60 space-y-1">
                   <span className="font-bold text-xs text-[#0B5E8E] flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Age Limits</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text79")}</span>
                   </span>
-                  <p className="text-gray-600">Minimum age is 14 years. Jumpers under 18 require signed parental consent.</p>
+                  <p className="text-gray-600">{editorial("travel/BungeeExperiencePage.text80")}</p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/60 space-y-1">
                   <span className="font-bold text-xs text-[#0B5E8E] flex items-center gap-1.5">
                     <Zap className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Weight Limits</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text81")}</span>
                   </span>
-                  <p className="text-gray-600">Minimum weight is 40 kg (88 lbs); maximum weight is 140 kg (308 lbs).</p>
+                  <p className="text-gray-600">{editorial("travel/BungeeExperiencePage.text82")}</p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/60 space-y-1">
                   <span className="font-bold text-xs text-[#0B5E8E] flex items-center gap-1.5">
                     <FileCheck className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Passport Required</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text83")}</span>
                   </span>
-                  <p className="text-gray-600">Bring your physical passport to clear the border control post for your free bridge pass.</p>
+                  <p className="text-gray-600">{editorial("travel/BungeeExperiencePage.text84")}</p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/60 space-y-1">
                   <span className="font-bold text-xs text-[#0B5E8E] flex items-center gap-1.5">
                     <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Footwear & Clothing</span>
+                    <span>{editorial("travel/BungeeExperiencePage.text85")}</span>
                   </span>
-                  <p className="text-gray-600">Wear closed athletic shoes with laces. Loose jewelry or glasses must be removed.</p>
+                  <p className="text-gray-600">{editorial("travel/BungeeExperiencePage.text86")}</p>
                 </div>
               </div>
             </section>
@@ -558,11 +451,9 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  Common Questions
-                </span>
+                  {editorial("travel/BungeeExperiencePage.text87")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  Frequently Asked Questions
-                </h2>
+                  {editorial("travel/BungeeExperiencePage.text88")}</h2>
               </div>
 
               <div className="space-y-3">
@@ -596,11 +487,9 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
               <section className="space-y-6">
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                    Recommended Combinations
-                  </span>
+                    {editorial("travel/BungeeExperiencePage.text89")}</span>
                   <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                    Pair Your Bungee Jump With
-                  </h2>
+                    {editorial("travel/BungeeExperiencePage.text90")}</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -641,20 +530,20 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-lg space-y-6">
               
               <div className="space-y-1 border-b border-gray-200 pb-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Experience Investment</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{editorial("travel/BungeeExperiencePage.text91")}</span>
                 <div className="text-3xl font-bold font-serif text-[#0B5E8E]">
-                  US$160 <span className="text-xs font-normal text-gray-500">per jumper</span>
+                  {editorial("travel/BungeeExperiencePage.text92")}<span className="text-xs font-normal text-gray-500">{editorial("travel/BungeeExperiencePage.text93")}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-gray-500 pt-1">
                   <Clock className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>Duration: Approx 2 Hours</span>
+                  <span>{editorial("travel/BungeeExperiencePage.text94")}</span>
                 </div>
               </div>
 
               {/* Interactive Booking Calculator Form */}
               <div className="space-y-4 text-xs">
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Preferred Jump Date</label>
+                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/BungeeExperiencePage.text95")}</label>
                   <input 
                     type="date"
                     value={selectedDate}
@@ -664,7 +553,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Number of Jumpers</label>
+                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/BungeeExperiencePage.text96")}</label>
                   <select
                     value={jumperCount}
                     onChange={(e) => setJumperCount(Number(e.target.value))}
@@ -679,7 +568,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                 {/* Add-on Toggles */}
                 <div className="space-y-2 pt-1 border-t border-gray-100">
                   <label className="flex items-center justify-between cursor-pointer p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200">
-                    <span className="font-semibold text-gray-700">Include Return Hotel Transfer (+$15/pp)</span>
+                    <span className="font-semibold text-gray-700">{editorial("travel/BungeeExperiencePage.text97")}</span>
                     <input 
                       type="checkbox" 
                       checked={includeTransfers} 
@@ -689,7 +578,7 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                   </label>
 
                   <label className="flex items-center justify-between cursor-pointer p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200">
-                    <span className="font-semibold text-gray-700">HD Video & Photo Package (+$55)</span>
+                    <span className="font-semibold text-gray-700">{editorial("travel/BungeeExperiencePage.text98")}</span>
                     <input 
                       type="checkbox" 
                       checked={includeVideoPackage} 
@@ -701,12 +590,12 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
 
                 {/* Estimated Total Display */}
                 <div className="p-3.5 rounded-xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 flex items-center justify-between">
-                  <span className="font-bold text-gray-700">Estimated Total:</span>
-                  <span className="font-serif font-bold text-lg text-[#0B5E8E]">US${totalEstimatedCost}</span>
+                  <span className="font-bold text-gray-700">{editorial("travel/BungeeExperiencePage.text99")}</span>
+                  <span className="font-serif font-bold text-lg text-[#0B5E8E]">{editorial("travel/BungeeExperiencePage.text100")}{totalEstimatedCost}</span>
                 </div>
 
                 <WhatsAppEnquiryButton 
-                  experienceName="Victoria Falls Bridge Bungee Jump"
+                  experienceName={editorialFormat("travel/BungeeExperiencePage.copy2")}
                   date={selectedDate}
                   guests={jumperCount}
                   buttonText="Enquire About Availability"
@@ -719,11 +608,10 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
               <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 space-y-2 text-xs">
                 <div className="flex items-center gap-2 font-bold text-[#0B5E8E]">
                   <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-                  <span>Outbound Guarantee</span>
+                  <span>{editorial("travel/BungeeExperiencePage.text101")}</span>
                 </div>
                 <p className="text-gray-600 leading-relaxed text-[11px]">
-                  Verified local Victoria Falls operator with 100% safety standards, certified master riggers, and full comprehensive insurance.
-                </p>
+                  {editorial("travel/BungeeExperiencePage.text102")}</p>
               </div>
             </div>
           </aside>

@@ -1,3 +1,4 @@
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { WHATSAPP_DISPLAY_NUMBER,getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from './PageLink';
 import { sectionPath } from '../../routes';
@@ -12,7 +13,8 @@ ChevronDown,
 PhoneCall,
 CalendarCheck
 } from 'lucide-react';
-const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
+let outboundLogo: any;
+registerContent(() => { outboundLogo = editorialValue("common/Header.outboundLogo", {}); });
 
 interface HeaderProps {
   currency: Currency;
@@ -70,9 +72,8 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Tagline */}
           <div className="flex items-center gap-2 text-[11px] font-medium text-white/90">
             <span className="hidden sm:inline bg-[#E67E22] text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              Victoria Falls Specialist
-            </span>
-            <span className="truncate">Honest local guidance for holidays planned with confidence</span>
+              {editorial("common/Header.text1")}</span>
+            <span className="truncate">{editorial("common/Header.text2")}</span>
           </div>
 
           {/* Quick Info & Currency Switcher */}
@@ -84,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="hidden lg:inline-flex items-center gap-1.5 hover:text-[#C9A66B] transition-colors"
             >
               <PhoneCall className="w-3 h-3 text-[#C9A66B]" />
-              <span>Concierge WhatsApp: {WHATSAPP_DISPLAY_NUMBER}</span>
+              <span>{editorial("common/Header.text3")}{WHATSAPP_DISPLAY_NUMBER}</span>
             </a>
 
             {/* Currency Selector Dropdown */}
@@ -130,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <img 
             src={outboundLogo} 
-            alt="Outbound Holidays" 
+            alt={editorial("common/Header.text4")}
             className="h-20 sm:h-24 max-w-[140px] sm:max-w-[180px] w-auto object-contain"
             onError={() => {
               console.error('Header logo failed to load from:', outboundLogo);
@@ -154,7 +155,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`w-2 h-2 rounded-full transition-all ${
               isGuideActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
-            <span>Victoria Falls Guide</span>
+            <span>{editorial("common/Header.text5")}</span>
           </PageLink>
 
           <PageLink href={sectionPath('travel-experiences')}
@@ -169,7 +170,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`w-2 h-2 rounded-full transition-all ${
               isExperiencesActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
-            <span>Things to do</span>
+            <span>{editorial("common/Header.text6")}</span>
           </PageLink>
           <PageLink href={sectionPath('accommodation')}
             onClick={() => onNavigateSection('accommodation')} 
@@ -183,7 +184,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`w-2 h-2 rounded-full transition-all ${
               isAccommodationActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
-            <span>Where to Stay</span>
+            <span>{editorial("common/Header.text7")}</span>
           </PageLink>
           <PageLink href={sectionPath('travel-packages')}
             onClick={() => onNavigateSection('travel-packages')} 
@@ -197,7 +198,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`w-2 h-2 rounded-full transition-all ${
               isPackagesActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
-            <span>Packages</span>
+            <span>{editorial("common/Header.text8")}</span>
           </PageLink>
           <PageLink href={sectionPath('client-gallery')}
             onClick={() => onNavigateSection('client-gallery')}
@@ -211,7 +212,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`w-2 h-2 rounded-full transition-all ${
               isGalleryActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
-            <span>Client Gallery</span>
+            <span>{editorial("common/Header.text9")}</span>
           </PageLink>
           <PageLink href={sectionPath('about')}
             onClick={() => onNavigateSection('about')}
@@ -225,14 +226,13 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`w-2 h-2 rounded-full transition-all ${
               isAboutActive ? 'bg-[#C9A66B] ring-4 ring-[#C9A66B]/20' : 'bg-transparent'
             }`} />
-            <span>About</span>
+            <span>{editorial("common/Header.text10")}</span>
           </PageLink>
           <PageLink href={sectionPath('contact-us')}
             onClick={() => onNavigateSection('contact-us')} 
             className="hover:text-[#0B5E8E] transition-colors whitespace-nowrap py-1 border-b-2 border-transparent hover:border-[#0B5E8E] cursor-pointer"
           >
-            Contact
-          </PageLink>
+            {editorial("common/Header.text11")}</PageLink>
         </nav>
 
         {/* Action Controls & Primary CTA */}
@@ -241,7 +241,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative hidden 2xl:block w-44">
             <input
               type="text"
-              placeholder="Search packages..."
+              placeholder={editorial("common/Header.text12")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-gray-100 border border-gray-200 rounded-full py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
@@ -255,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-1.5 sm:gap-2 cursor-pointer"
           >
             <CalendarCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span>Plan My Holiday</span>
+            <span>{editorial("common/Header.text13")}</span>
           </button>
 
           {/* Mobile Menu Button */}
@@ -275,7 +275,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative mb-3">
             <input
               type="text"
-              placeholder="Search packages..."
+              placeholder={editorial("common/Header.text14")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-gray-100 border border-gray-200 rounded-xl py-2 pl-9 pr-3 text-xs"
@@ -295,27 +295,27 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <div className="flex items-center gap-2">
                 {isGuideActive && <span className="w-2 h-2 rounded-full bg-[#C9A66B]" />}
-                <span>Victoria Falls Guide</span>
+                <span>{editorial("common/Header.text15")}</span>
               </div>
-              {isGuideActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
+              {isGuideActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">{editorial("common/Header.text16")}</span>}
             </PageLink>
             <PageLink href={sectionPath('travel-experiences')}
               onClick={() => { onNavigateSection('travel-experiences'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
-              <span>Things to do</span>
+              <span>{editorial("common/Header.text17")}</span>
             </PageLink>
             <PageLink href={sectionPath('accommodation')}
               onClick={() => { onNavigateSection('accommodation'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
-              <span>Where to Stay</span>
+              <span>{editorial("common/Header.text18")}</span>
             </PageLink>
             <PageLink href={sectionPath('travel-packages')}
               onClick={() => { onNavigateSection('travel-packages'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
-              <span>Holiday Packages</span>
+              <span>{editorial("common/Header.text19")}</span>
             </PageLink>
             <PageLink href={sectionPath('client-gallery')}
               onClick={() => { onNavigateSection('client-gallery'); setMobileMenuOpen(false); }}
@@ -328,9 +328,9 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <div className="flex items-center gap-2">
                 {isGalleryActive && <span className="w-2 h-2 rounded-full bg-[#C9A66B]" />}
-                <span>Client Gallery</span>
+                <span>{editorial("common/Header.text20")}</span>
               </div>
-              {isGalleryActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
+              {isGalleryActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">{editorial("common/Header.text21")}</span>}
             </PageLink>
             <PageLink href={sectionPath('about')}
               onClick={() => { onNavigateSection('about'); setMobileMenuOpen(false); }}
@@ -343,15 +343,15 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <div className="flex items-center gap-2">
                 {isAboutActive && <span className="w-2 h-2 rounded-full bg-[#C9A66B]" />}
-                <span>About</span>
+                <span>{editorial("common/Header.text22")}</span>
               </div>
-              {isAboutActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">Active</span>}
+              {isAboutActive && <span className="text-[10px] font-extrabold uppercase text-[#C9A66B]">{editorial("common/Header.text23")}</span>}
             </PageLink>
             <PageLink href={sectionPath('contact-us')}
               onClick={() => { onNavigateSection('contact-us'); setMobileMenuOpen(false); }}
               className="text-left py-2 px-3 hover:bg-gray-50 rounded-xl flex items-center justify-between"
             >
-              <span>Contact Specialist</span>
+              <span>{editorial("common/Header.text24")}</span>
             </PageLink>
           </div>
         </div>

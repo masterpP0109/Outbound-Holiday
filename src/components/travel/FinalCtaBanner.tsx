@@ -1,9 +1,11 @@
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import React from 'react';
 import { CalendarCheck,ShieldCheck,ArrowRight,MessageCircle } from 'lucide-react';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 // Public image paths for experiences
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+let fallsTour1: any;
+registerContent(() => { fallsTour1 = editorialValue("travel/FinalCtaBanner.fallsTour1", {}); });
 
 interface FinalCtaBannerProps {
   onOpenPlanHoliday: () => void;
@@ -27,16 +29,13 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
           {/* Content Area */}
           <div className="relative z-10 max-w-3xl mx-auto space-y-6">
             <span className="text-xs font-bold text-[#C9A66B] bg-white/10 border border-[#C9A66B]/40 px-4 py-1.5 rounded-full uppercase tracking-widest inline-block">
-              START YOUR JOURNEY
-            </span>
+              {editorial("travel/FinalCtaBanner.text1")}</span>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif text-white leading-tight">
-              Ready to Plan Your Victoria Falls Holiday?
-            </h2>
+              {editorial("travel/FinalCtaBanner.text2")}</h2>
 
             <p className="text-sm sm:text-lg text-white/90 leading-relaxed max-w-xl mx-auto">
-              Tell us what you are considering, who you are travelling with and the budget you are working around. A Victoria Falls specialist will help you understand your best options.
-            </p>
+              {editorial("travel/FinalCtaBanner.text3")}</p>
 
             <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4 max-w-md mx-auto">
               <button
@@ -44,7 +43,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
                 className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <CalendarCheck className="w-4 h-4" />
-                <span>Plan My Holiday</span>
+                <span>{editorial("travel/FinalCtaBanner.text4")}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
@@ -55,13 +54,13 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
                 className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm px-7 py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <MessageCircle className="w-5 h-5 shrink-0" />
-                <span>Chat on WhatsApp</span>
+                <span>{editorial("travel/FinalCtaBanner.text5")}</span>
               </a>
             </div>
 
             <div className="pt-4 flex items-center justify-center gap-2 text-xs text-white/80 font-medium">
               <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-              <span>Free initial consultation • Honest guidance • No obligation to book</span>
+              <span>{editorial("travel/FinalCtaBanner.text6")}</span>
             </div>
           </div>
 

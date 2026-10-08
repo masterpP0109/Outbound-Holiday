@@ -1,8 +1,10 @@
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import React from 'react';
 import { ShieldCheck,HeartHandshake,MapPin,Award,Sparkles } from 'lucide-react';
 
 // Public image paths for experiences
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+let fallsTour1: any;
+registerContent(() => { fallsTour1 = editorialValue("travel/AboutUsView.fallsTour1", {}); });
 
 interface AboutUsViewProps {
   onOpenPlanHoliday?: () => void;
@@ -20,30 +22,28 @@ export const AboutUsView: React.FC<AboutUsViewProps> = () => {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-semibold px-3.5 py-1.5 rounded-full uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>Zimbabwe's Dedicated Travel Partner</span>
+              <span>{editorial("travel/AboutUsView.text1")}</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight">
-              Bridging Natural Wonder with Local Heart
-            </h2>
+              {editorial("travel/AboutUsView.text2")}</h2>
 
             <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed max-w-xl">
-              Outbound Holidays was founded in Victoria Falls, Zimbabwe, with a simple yet profound mission: to enable travelers from across Zimbabwe and the world to experience the majesty of Mosi-oa-Tunya with absolute confidence.
-            </p>
+              {editorial("travel/AboutUsView.text3")}</p>
 
             {/* Statistics */}
             <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-100 max-w-lg">
               <div>
-                <span className="block text-2xl sm:text-3xl font-bold text-[#0B5E8E] font-serif">10+ Years</span>
-                <span className="text-xs text-[#2F3A44]/70 font-medium">Local Experience</span>
+                <span className="block text-2xl sm:text-3xl font-bold text-[#0B5E8E] font-serif">{editorial("travel/AboutUsView.text4")}</span>
+                <span className="text-xs text-[#2F3A44]/70 font-medium">{editorial("travel/AboutUsView.text5")}</span>
               </div>
               <div>
                 <span className="block text-2xl sm:text-3xl font-bold text-[#3F6B3C] font-serif">12,000+</span>
-                <span className="text-xs text-[#2F3A44]/70 font-medium">Happy Travellers</span>
+                <span className="text-xs text-[#2F3A44]/70 font-medium">{editorial("travel/AboutUsView.text6")}</span>
               </div>
               <div>
                 <span className="block text-2xl sm:text-3xl font-bold text-[#E67E22] font-serif">4.9 ★</span>
-                <span className="text-xs text-[#2F3A44]/70 font-medium">Google Rating</span>
+                <span className="text-xs text-[#2F3A44]/70 font-medium">{editorial("travel/AboutUsView.text7")}</span>
               </div>
             </div>
           </div>
@@ -53,7 +53,7 @@ export const AboutUsView: React.FC<AboutUsViewProps> = () => {
             <div className="relative rounded-[28px] overflow-hidden shadow-[0_20px_50px_rgba(11,94,142,0.12)] border border-gray-100 group">
               <img
                 src={fallsTour1}
-                alt="Victoria Falls Mosi-oa-Tunya"
+                alt={editorial("travel/AboutUsView.text8")}
                 className="w-full h-80 sm:h-[420px] object-cover group-hover:scale-[1.02] transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -61,8 +61,7 @@ export const AboutUsView: React.FC<AboutUsViewProps> = () => {
               {/* Quote overlay */}
               <div className="absolute bottom-6 left-6 right-6 p-5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white">
                 <p className="font-serif italic text-xs sm:text-sm leading-relaxed">
-                  "Travel with confidence. Experience Mosi-oa-Tunya through genuine Zimbabwean eyes."
-                </p>
+                  {editorial("travel/AboutUsView.text9")}</p>
               </div>
             </div>
           </div>
@@ -73,39 +72,36 @@ export const AboutUsView: React.FC<AboutUsViewProps> = () => {
         <div className="bg-[#FDFBF7] p-8 sm:p-12 rounded-[28px] border border-gray-200/80">
           <div className="text-center max-w-xl mx-auto mb-10">
             <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block mb-2">
-              Our Core Pillars
-            </span>
+              {editorial("travel/AboutUsView.text10")}</span>
             <h3 className="text-2xl sm:text-3xl font-bold font-serif text-[#0B5E8E]">
-              The Outbound Holidays Promise
-            </h3>
+              {editorial("travel/AboutUsView.text11")}</h3>
             <p className="text-xs sm:text-sm text-[#2F3A44]/80 mt-1">
-              Four pillars that define every itinerary we craft
-            </p>
+              {editorial("travel/AboutUsView.text12")}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                title: 'Verified Partners',
-                desc: 'We only recommend hotels and guides we personally inspect.',
+                title: editorial("travel/AboutUsView.text13"),
+                desc: editorial("travel/AboutUsView.text14"),
                 icon: <ShieldCheck className="w-6 h-6 text-[#0B5E8E]" />,
                 highlight: true,
               },
               {
-                title: 'Transparent Pricing',
-                desc: 'No hidden resort fees or surprise levies. Itemized costs upfront.',
+                title: editorial("travel/AboutUsView.text15"),
+                desc: editorial("travel/AboutUsView.text16"),
                 icon: <Award className="w-6 h-6 text-[#3F6B3C]" />,
                 highlight: false,
               },
               {
-                title: '24/7 On-Ground Concierge',
-                desc: 'Our Victoria Falls team is available around the clock while you travel.',
+                title: editorial("travel/AboutUsView.text17"),
+                desc: editorial("travel/AboutUsView.text18"),
                 icon: <MapPin className="w-6 h-6 text-[#E67E22]" />,
                 highlight: false,
               },
               {
-                title: 'Authentic Impact',
-                desc: 'Every booking directly supports local Zimbabwean safari rangers.',
+                title: editorial("travel/AboutUsView.text19"),
+                desc: editorial("travel/AboutUsView.text20"),
                 icon: <HeartHandshake className="w-6 h-6 text-[#C9A66B]" />,
                 highlight: false,
               },

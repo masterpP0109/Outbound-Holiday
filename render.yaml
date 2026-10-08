@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: outbound-holidays-api
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # Docker CMD validates settings, migrates and imports missing content, then starts the API.
+    healthCheckPath: /ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MIGRATE_ON_START
+        value: "true"
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: APP_URL
+        value: https://outbound-holiday.vercel.app
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: API_PUBLIC_BASE_URL
+        sync: false
+      - key: EMAIL_DELIVERY_MODE
+        value: disabled
+      - key: EMAIL_PROVIDER
+        value: disabled
+      - key: NEWSLETTER_PROVIDER
+        value: disabled
+      - key: CRON_SECRET
+        generateValue: true
+# Select an always-on plan for production traffic after confirming cost.
+# A separate scheduled outbox job is documented in docs/BACKEND.md.
+# This blueprint does not create a paid cron service or newsletter subscription.

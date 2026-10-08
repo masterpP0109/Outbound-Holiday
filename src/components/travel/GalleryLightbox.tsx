@@ -3,12 +3,14 @@ import { X,ChevronLeft,ChevronRight } from 'lucide-react';
 
 interface GalleryLightboxProps {
   images: string[];
+  metadata?: ({alt?:string;caption?:string|null}|undefined)[];
   initialIndex: number;
   onClose: () => void;
 }
 
 export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
   images,
+  metadata,
   initialIndex,
   onClose,
 }) => {
@@ -91,7 +93,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
       >
         <img
           src={images[currentIndex]}
-          alt={`Gallery image ${currentIndex + 1}`}
+          alt={metadata?.[currentIndex]?.alt ?? `Gallery image ${currentIndex+1}`}
           className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
         />
       </div>
@@ -128,6 +130,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
           </button>
         </div>
       )}
+      {metadata?.[currentIndex]?.caption && <p className="absolute bottom-16 text-white text-center px-6">{metadata[currentIndex]?.caption}</p>}
     </div>
   );
 };

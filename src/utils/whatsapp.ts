@@ -1,8 +1,11 @@
-export const WHATSAPP_NUMBER = '263714701721';
-export const WHATSAPP_DISPLAY_NUMBER = '+263 714 701 721';
-export const PHONE_NUMBER = `+${WHATSAPP_NUMBER}`;
-export const PHONE_URL = `tel:${PHONE_NUMBER}`;
-export const CONTACT_EMAIL = 'travel@outboundholidays.co.zw';
+import { registerContent, getSnapshot } from '../runtime/catalog';
+export let WHATSAPP_NUMBER: string;
+export let WHATSAPP_DISPLAY_NUMBER: string;
+export let PHONE_NUMBER: string;
+export let PHONE_URL: string;
+export let CONTACT_EMAIL: string;
+
+registerContent(()=>{const contact=getSnapshot().site.contact;WHATSAPP_NUMBER=contact.whatsappNumber;WHATSAPP_DISPLAY_NUMBER=contact.displayNumber;PHONE_NUMBER='+'+WHATSAPP_NUMBER;PHONE_URL='tel:'+PHONE_NUMBER;CONTACT_EMAIL=contact.email;});
 
 /** Encode the complete message once, including user-entered punctuation and newlines. */
 export function getWhatsAppUrl(message: string): string {

@@ -1,21 +1,28 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import React,{ useState } from 'react';
 import { Compass,Shield,Trees,Heart,Utensils,ArrowRight } from 'lucide-react';
 
 // Public image paths for experiences
-const guidedTourImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const standardCruiseImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-const bomaDinnerImg = '/Experiences/Boma Dinner_/IMG_0364.JPG';
-const chobeImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-const gameDriveImg = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-const gameDriveImg2 = '/Experiences/Game Drive/Game-Drive-2-scaled.jpg';
-const gameDriveImg4 = '/Experiences/Game Drive/Game-Drive-4-scaled.jpg';
-const raftingImg = '/Experiences/White Water Rafting_/whitewater-rafting-images-2.jpg';
-const heli1Img = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-const gorgeSwingImg = '/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
-const spaImg = '/Experiences/Spa Treatments/IMG_0375.PNG';
-const elephantImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
-const simunyeImg = '/Experiences/Simunye_/Simunye-refresh-29.jpg';
-const bungeeImg = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
+let guidedTourImg: any;
+registerContent(() => { guidedTourImg = editorialValue("travel/ExperienceExplorer.guidedTourImg", {}); });
+let standardCruiseImg: any;
+registerContent(() => { standardCruiseImg = editorialValue("travel/ExperienceExplorer.standardCruiseImg", {}); });
+
+
+let gameDriveImg: any;
+registerContent(() => { gameDriveImg = editorialValue("travel/ExperienceExplorer.gameDriveImg", {}); });
+
+
+
+
+
+
+let elephantImg: any;
+registerContent(() => { elephantImg = editorialValue("travel/ExperienceExplorer.elephantImg", {}); });
+
+let bungeeImg: any;
+registerContent(() => { bungeeImg = editorialValue("travel/ExperienceExplorer.bungeeImg", {}); });
 
 interface ExperienceExplorerProps {
   onExploreExperiences: () => void;
@@ -46,233 +53,48 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
   const categories: CategoryData[] = [
     {
       id: 'first-visit',
-      label: 'First Visit',
+      label: editorial("travel/ExperienceExplorer.text1"),
       icon: <Compass className="w-3.5 h-3.5" />,
       imageUrl: guidedTourImg,
-      title: 'Victoria Falls Essentials',
-      subtitle: 'The iconic highlights recommended for anyone visiting for the first time.',
-      items: [
-        { 
-          title: 'Guided Rainforest Tour of the Falls', 
-          desc: 'Walk along the 16 viewpoints opposite Mosi-oa-Tunya.', 
-          price: 'From US$55 pp',
-          duration: '2.5 Hours',
-          advisorTip: '⭐ Best first experience if you’ve never visited Victoria Falls.',
-          whyWeRecommend: 'If it’s your first visit to Victoria Falls, this is where we suggest you start. It gives you the best introduction to the Falls, the rainforest, and the history behind one of the Seven Natural Wonders of the World.',
-          imageUrl: guidedTourImg
-        },
-        { 
-          title: 'Upper Zambezi Sunset River Cruise', 
-          desc: 'Watch hippos & elephants with complimentary sundowners.', 
-          price: 'From US$85 pp',
-          duration: '2 Hours',
-          advisorTip: '❤️ Perfect for couples and photographers.',
-          whyWeRecommend: 'One of our favourite ways to end the day. Relax on the Zambezi River, enjoy incredible sunsets, and often spot hippos, crocodiles, and elephants along the riverbanks.',
-          imageUrl: standardCruiseImg
-        },
-        { 
-          title: 'The Boma - Dinner & Drum Show', 
-          desc: 'Traditional feast, face painting, and energetic African drumming.', 
-          price: 'From US$55 pp',
-          duration: '3 Hours',
-          advisorTip: '🥁 Festive cultural celebration & traditional feast for all ages.',
-          whyWeRecommend: 'A festive, warm cultural celebration that brings everyone together for traditional dishes and interactive drumming.',
-          imageUrl: bomaDinnerImg
-        },
-        { 
-          title: 'Chobe Day Safari Trip (Botswana)', 
-          desc: 'Game drive & river safari across the border in Chobe.', 
-          price: 'From US$185 pp',
-          duration: 'Full Day',
-          advisorTip: '🐘 Highest chance of seeing elephants in one day.',
-          whyWeRecommend: 'Ideal if you want to add a world-class elephant safari into a single day without moving hotels.',
-          imageUrl: chobeImg
-        },
-      ],
+      title: editorial("travel/ExperienceExplorer.text2"),
+      subtitle: editorialFormat("travel/ExperienceExplorer.copy1"),
+      items: editorialValue("travel/ExperienceExplorer.section1", {}),
     },
     {
       id: 'wildlife',
-      label: 'Wildlife & Safari',
+      label: editorial("travel/ExperienceExplorer.text15"),
       icon: <Trees className="w-3.5 h-3.5" />,
       imageUrl: gameDriveImg,
-      title: 'Big Game & River Safaris',
-      subtitle: 'Discover Africa’s wildlife with local expert rangers and guided game tracks.',
-      items: [
-        { 
-          title: 'Zambezi National Park Game Drive', 
-          desc: '4x4 tracking of lion, leopard, buffalo, and elephant.', 
-          price: 'From US$75 pp',
-          duration: '3.5 Hours',
-          advisorTip: '🌅 Peaceful riverbank wildlife tracking just 10 mins from hotels.',
-          whyWeRecommend: 'Just minutes from town, this park offers peaceful game drives along the riverbanks without long transfer times.',
-          imageUrl: gameDriveImg
-        },
-        { 
-          title: 'Rhino Tracking Drive in Victoria Falls', 
-          desc: 'Walk with endangered white rhinos accompanied by armed rangers.', 
-          price: 'From US$120 pp',
-          duration: '3 Hours',
-          advisorTip: '🦏 Rare chance to track white rhinos safely on foot with armed rangers.',
-          whyWeRecommend: 'A rare opportunity to support local conservation while tracking white rhinos safely on foot with expert park rangers.',
-          imageUrl: gameDriveImg2
-        },
-        { 
-          title: 'Chobe River Safari Cruise', 
-          desc: 'Up-close views of swimming elephants and hippos.', 
-          price: 'From US$185 pp',
-          duration: 'Full Day',
-          advisorTip: '🐊 Water-level wildlife encounters along the Chobe River.',
-          whyWeRecommend: 'During the dry season, river safaris offer some of the most dramatic wildlife viewing in southern Africa.',
-          imageUrl: chobeImg
-        },
-        { 
-          title: 'Hwange National Park Day Safari', 
-          desc: 'Visit Zimbabwe’s largest national park for famous elephant herds.', 
-          price: 'From US$220 pp',
-          duration: 'Full Day',
-          advisorTip: '🦁 Zimbabwe’s premier game reserve with legendary elephant herds.',
-          whyWeRecommend: 'Hwange is legendary for its massive elephant herds. We match you with top-tier local guides for the best sightings.',
-          imageUrl: gameDriveImg4
-        },
-      ],
+      title: editorial("travel/ExperienceExplorer.text16"),
+      subtitle: editorialFormat("travel/ExperienceExplorer.copy2"),
+      items: editorialValue("travel/ExperienceExplorer.section2", {}),
     },
     {
       id: 'adventure',
-      label: 'Adventure',
+      label: editorial("travel/ExperienceExplorer.text29"),
       icon: <Shield className="w-3.5 h-3.5" />,
       imageUrl: bungeeImg,
-      title: 'Adrenaline & High Thrills',
-      subtitle: 'Feel the roar of the Batoka Gorge with carefully selected, high-safety thrill experiences.',
-      items: [
-        { 
-          title: 'White Water Rafting (Batoka Gorge)', 
-          desc: 'Tackle the world’s most intense Grade 5 rapids on the Zambezi.', 
-          price: 'From US$135 pp',
-          duration: 'Full Day',
-          advisorTip: '🌊 World-class Grade 5 rapids with master river captains.',
-          whyWeRecommend: 'Renowned worldwide for thrilling Grade 5 rapids. We only partner with licensed river captains with perfect safety records.',
-          imageUrl: raftingImg
-        },
-        { 
-          title: '13-min "Flight of Angels" Helicopter', 
-          desc: 'Soar directly above the curtain of mist and gorge.', 
-          price: 'From US$150 pp',
-          duration: '15 Mins',
-          advisorTip: '🚁 The ultimate panoramic view of the full 1,700m water curtain.',
-          whyWeRecommend: 'The only way to comprehend the sheer scale of Mosi-oa-Tunya. Unmatched aerial photography opportunities.',
-          imageUrl: heli1Img
-        },
-        { 
-          title: 'Gorge Swing & Zip Line', 
-          desc: 'Freefall 70m into the Batoka Gorge for an incredible adrenaline rush.', 
-          price: 'From US$110 pp',
-          duration: '2 Hours',
-          advisorTip: '💥 Unforgettable canyon freefall for brave adrenaline lovers.',
-          whyWeRecommend: 'An unforgettable leap over the canyon with high safety standards and stunning gorge views.',
-          imageUrl: gorgeSwingImg
-        },
-        { 
-          title: 'Devil’s Pool / Livingstone Island', 
-          desc: 'Swim right up to the lip of the Falls during low-water season.', 
-          price: 'From US$125 pp',
-          duration: 'Half Day',
-          advisorTip: '🏊 Exclusive low-water seasonal swim right on the edge of the lip.',
-          whyWeRecommend: 'A bucket-list experience available strictly during low-water months under strict expert supervision.',
-          imageUrl: gorgeSwingImg
-        },
-      ],
+      title: editorial("travel/ExperienceExplorer.text30"),
+      subtitle: editorialFormat("travel/ExperienceExplorer.copy3"),
+      items: editorialValue("travel/ExperienceExplorer.section3", {}),
     },
     {
       id: 'relaxation',
-      label: 'Relaxation',
+      label: editorial("travel/ExperienceExplorer.text43"),
       icon: <Heart className="w-3.5 h-3.5" />,
       imageUrl: standardCruiseImg,
-      title: 'Serenity & Sunset Luxury',
-      subtitle: 'Unwind along the tranquil banks of the Zambezi River with fine dining and gentle breezes.',
-      items: [
-        { 
-          title: 'Luxury Pontoon Sundowner Cruise', 
-          desc: 'Signature cocktails and gourmet tapas in total peace.', 
-          price: 'From US$110 pp',
-          duration: '2.5 Hours',
-          advisorTip: '🥂 Boutique river lounge with gourmet tapas & quiet seating.',
-          whyWeRecommend: 'A boutique, quieter alternative to larger riverboats, featuring plush seating and refined dining.',
-          imageUrl: standardCruiseImg
-        },
-        { 
-          title: 'Lookout Cafe High Tea & Lunch', 
-          desc: 'Dine on the edge of the Batoka Gorge with panoramic views.', 
-          price: 'From US$45 pp',
-          duration: '2 Hours',
-          advisorTip: '☕ Unmatched cliffside lunch views 120m above the rapids.',
-          whyWeRecommend: 'Offers the best lunch view in Victoria Falls, overlooking the gorge and historic railway bridge.',
-          imageUrl: gorgeSwingImg
-        },
-        { 
-          title: 'Riverside Spa & Wellness Treatment', 
-          desc: 'Massages overlooking the Zambezi riverbanks.', 
-          price: 'From US$80 pp',
-          duration: '1.5 Hours',
-          advisorTip: '🌿 Open-air soothing therapies accompanied by natural river sounds.',
-          whyWeRecommend: 'Soothing open-air treatments accompanied by the natural sounds of river wildlife.',
-          imageUrl: spaImg
-        },
-        { 
-          title: 'Sunset Island High Tea', 
-          desc: 'Private boat transfer to a secluded Zambezi island.', 
-          price: 'From US$95 pp',
-          duration: '3 Hours',
-          advisorTip: '🏝️ Exclusive private island afternoon tea surrounded by wild river.',
-          whyWeRecommend: 'An exclusive riverside afternoon experience surrounded by pristine river channel views.',
-          imageUrl: standardCruiseImg
-        },
-      ],
+      title: editorial("travel/ExperienceExplorer.text44"),
+      subtitle: editorialFormat("travel/ExperienceExplorer.copy4"),
+      items: editorialValue("travel/ExperienceExplorer.section4", {}),
     },
     {
       id: 'family',
-      label: 'Family Friendly',
+      label: editorial("travel/ExperienceExplorer.text57"),
       icon: <Utensils className="w-3.5 h-3.5" />,
       imageUrl: elephantImg,
-      title: 'Safe Family Discoveries',
-      subtitle: 'Memorable, educational and kid-safe experiences designed for parents and children.',
-      items: [
-        { 
-          title: 'Gentle Guided Falls Canopy Tour', 
-          desc: 'Fun cable-bridge forest network suitable for ages 6+.', 
-          price: 'From US$70 pp',
-          duration: '2 Hours',
-          advisorTip: '🌿 Kid-safe forest rope walks & gentle slides for ages 6+.',
-          whyWeRecommend: 'Travelling with kids? We recommend this morning forest canopy walk for safe, active family fun.',
-          imageUrl: guidedTourImg
-        },
-        { 
-          title: 'Victoria Falls Bridge History Tour', 
-          desc: 'Step onto the historic 1905 bridge with theatrical guides.', 
-          price: 'From US$65 pp',
-          duration: '2 Hours',
-          advisorTip: '🌉 Educational & theatrical history brought to life under the bridge.',
-          whyWeRecommend: 'Fascinating engineering history brought to life by local guides in a safe, scenic environment.',
-          imageUrl: bungeeImg
-        },
-        { 
-          title: 'Elephant Sanctuary & Conservation', 
-          desc: 'Learn about elephant rescue and rehabilitation efforts.', 
-          price: 'From US$90 pp',
-          duration: '2 Hours',
-          advisorTip: '🐘 Heartwarming rescue sanctuary encounter that children adore.',
-          whyWeRecommend: 'An engaging, gentle educational encounter teaching children about wildlife rescue.',
-          imageUrl: elephantImg
-        },
-        { 
-          title: 'Traditional Village Culture Visit', 
-          desc: 'Interactive drumming and story sessions with local villagers.', 
-          price: 'From US$40 pp',
-          duration: '2.5 Hours',
-          advisorTip: '🤝 Authentic rural village cultural sharing & warm community welcome.',
-          whyWeRecommend: 'A warm, authentic community interaction that broadens horizons for travellers of all ages.',
-          imageUrl: simunyeImg
-        },
-      ],
+      title: editorial("travel/ExperienceExplorer.text58"),
+      subtitle: editorialFormat("travel/ExperienceExplorer.copy5"),
+      items: editorialValue("travel/ExperienceExplorer.section5", {}),
     },
   ];
 
@@ -284,14 +106,11 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-8">
           <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-            Experience Explorer
-          </span>
+            {editorial("travel/ExperienceExplorer.text71")}</span>
           <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75] mb-2">
-            How would you like to experience Victoria Falls?
-          </h2>
+            {editorial("travel/ExperienceExplorer.text72")}</h2>
           <p className="text-gray-600 text-xs sm:text-sm">
-            Select a category to filter signature Victoria Falls activities curated by local specialists.
-          </p>
+            {editorial("travel/ExperienceExplorer.text73")}</p>
 
           {/* Category Tabs */}
           <div className="flex flex-wrap justify-center gap-2 mt-5">
@@ -326,8 +145,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
             
             <div className="absolute bottom-6 left-6 right-6 text-white">
               <span className="inline-flex items-center gap-1 bg-[#D97706] text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-widest mb-2 shadow-xs">
-                ⭐ Outbound Recommends
-              </span>
+                {editorial("travel/ExperienceExplorer.text74")}</span>
               <h3 className="text-xl sm:text-2xl font-bold font-serif mb-1">{activeCategory.title}</h3>
               <p className="text-xs text-gray-200 line-clamp-2">{activeCategory.subtitle}</p>
             </div>
@@ -337,8 +155,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
           <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
             <div>
               <h4 className="font-bold text-sm text-[#0D5C75] uppercase tracking-wider mb-3 pb-2 border-b border-gray-200">
-                Recommended Activities:
-              </h4>
+                {editorial("travel/ExperienceExplorer.text75")}</h4>
 
               <div className="space-y-3">
                 {activeCategory.items.map((item, idx) => (
@@ -390,8 +207,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
                       {item.whyWeRecommend && (
                         <div className="bg-[#FDFBF7] p-2.5 rounded-lg border-l-2 border-[#C9A66B] text-[11px] text-[#2F3A44] mt-2 shadow-2xs">
                           <span className="font-bold text-[#0D5C75] block text-[10px] uppercase tracking-wider mb-0.5">
-                            💡 Local Advisor Insight
-                          </span>
+                            {editorial("travel/ExperienceExplorer.text76")}</span>
                           <span>{item.whyWeRecommend}</span>
                         </div>
                       )}
@@ -403,7 +219,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
                             onClick={onSelectBoma}
                             className="bg-[#0D5C75] hover:bg-[#0A485C] text-white font-bold text-xs px-3.5 py-1.5 rounded-lg shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
                           >
-                            <span>Read Boma Experience Guide</span>
+                            <span>{editorial("travel/ExperienceExplorer.text77")}</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
@@ -419,7 +235,7 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
                 onClick={onExploreExperiences}
                 className="w-full bg-[#0D5C75] hover:bg-[#0A485C] text-white font-bold text-xs py-3.5 rounded-lg shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
-                <span>Plan Around These Experiences</span>
+                <span>{editorial("travel/ExperienceExplorer.text78")}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

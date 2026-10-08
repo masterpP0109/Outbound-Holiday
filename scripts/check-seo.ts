@@ -1,3 +1,5 @@
+import { loadPublishedContent } from './load-content';
+import { installContent } from '../src/runtime/catalog';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -6,6 +8,8 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { PackagesDirectoryPage } from '../src/components/travel/PackagesDirectoryPage';
 import { ALL_PACKAGES } from '../src/data/packagesData';
+installContent(await loadPublishedContent());
+
 
 const sitemap = await readFile('dist/sitemap.xml', 'utf8');
 const titles = new Set<string>();
@@ -15,12 +19,13 @@ for (const route of PAGE_ROUTES) {
   assert.match(html, /<h1\b/, `${route.path} must have a main heading before JavaScript runs`);
   assert.match(html, /<meta name="description" content="[^"]+"/, `${route.path} must have a description`);
   assert.ok(html.includes(`rel="canonical" href="${SITE_URL}${route.path}"`), `${route.path} must have its own canonical URL`);
-  assert.ok(sitemap.includes(`<loc>${SITE_URL}${route.path}</loc>`), `${route.path} must appear in the sitemap`);
+  assert.equal(sitemap.includes(`<loc>${SITE_URL}${route.path}</loc>`),route.view!=='newsletter-confirmed',`${route.path} sitemap visibility`);
   assert.equal(resolveRoute(route.path + (route.path === '/' ? '' : '/')).path, route.path);
   const title = html.match(/<title>(.*?)<\/title>/)?.[1];
   assert.ok(title && !titles.has(title), `${route.path} must have a unique title`);
   titles.add(title!);
   for (const match of html.matchAll(/<a\b[^>]*\bhref="(\/[^"#?]*)[^"]*"/g)) {
+    if(/\.(?:jpeg|jpg|png|webp|pdf)$/i.test(match[1])){await readFile(join('public',decodeURIComponent(match[1])));continue;}
     assert.notEqual(resolveRoute(match[1]).view, 'not-found', `${route.path} links to an unknown page: ${match[1]}`);
   }
 }

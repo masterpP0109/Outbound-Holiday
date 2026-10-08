@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from '../common/PageLink';
 import { categoryPath,experiencePath } from '../../routes';
@@ -30,14 +32,15 @@ Grid
 } from 'lucide-react';
 
 // Public image paths for experiences
-const heroVictoriaFalls = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
-const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-const chobe1 = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-const spaImg1 = '/Experiences/Spa Treatments/IMG_0375.PNG';
+let heroVictoriaFalls: any;
+registerContent(() => { heroVictoriaFalls = editorialValue("travel/ExperiencesDirectoryPage.heroVictoriaFalls", {}); });
+
+
+
+
+
+
+
 
 interface ExperiencesDirectoryPageProps {
   onSelectExperience: (experience: Experience) => void;
@@ -69,57 +72,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
   };
 
   // 7 Main Categories
-  const categoryDefinitions = [
-    {
-      id: 'first-visit',
-      title: 'First Visit Essentials',
-      icon: Sun,
-      image: fallsTour1,
-      desc: 'The experiences we recommend before anything else on a first visit to Victoria Falls.'
-    },
-    {
-      id: 'wildlife',
-      title: 'Wildlife & Safari',
-      icon: Binoculars,
-      image: gameDrive10,
-      desc: 'River safaris, game drives and unforgettable encounters with Southern Africa’s wildlife.'
-    },
-    {
-      id: 'adventure',
-      title: 'Adventure',
-      icon: Zap,
-      image: bungee1,
-      desc: 'Bungee jumping, rafting, gorge activities and adrenaline-filled experiences.'
-    },
-    {
-      id: 'river',
-      title: 'River Experiences',
-      icon: Waves,
-      image: cruise1,
-      desc: 'Sunset cruises, luxury river journeys and relaxed experiences on the Zambezi.'
-    },
-    {
-      id: 'culture',
-      title: 'Culture & Food',
-      icon: Utensils,
-      image: bomaImg1,
-      desc: 'Local cuisine, traditional performances and experiences that connect travellers with Zimbabwean culture.'
-    },
-    {
-      id: 'day-trips',
-      title: 'Day Trips',
-      icon: Map,
-      image: chobe1,
-      desc: 'Full-day adventures beyond Victoria Falls, including Chobe and other nearby destinations.'
-    },
-    {
-      id: 'wellness',
-      title: 'Spa & Wellness',
-      icon: Heart,
-      image: spaImg1,
-      desc: 'Holistic botanical massages, plunge pools and rejuvenating safari wellness overlooking the bush.'
-    }
-  ];
+  const categoryDefinitions = editorialValue("travel/ExperiencesDirectoryPage.section1", {Sun,Binoculars,Zap,Waves,Utensils,Map,Heart});
 
   // Directory filter logic for all 14 experiences
   const directoryExperiences = selectedDirectoryFilter === 'all' 
@@ -137,40 +90,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
   );
 
   // Experience FAQs
-  const experienceFaqs = [
-    {
-      q: 'Which experiences should a first-time visitor prioritise?',
-      a: 'For first-time visitors, we strongly recommend starting with a Guided Tour of Victoria Falls rainforest, an Upper Zambezi Sunset Cruise, and the iconic Boma Dinner Experience. If time allows, adding the Flight of Angels helicopter tour provides an extraordinary aerial perspective.'
-    },
-    {
-      q: 'How far in advance should I book activities?',
-      a: 'We recommend booking popular experiences—such as helicopter flights, sunset cruises, and Chobe day safaris—at least 2 to 4 weeks in advance during peak season (June to October) to guarantee preferred time slots.'
-    },
-    {
-      q: 'Can experiences be combined into one itinerary?',
-      a: 'Absolutely! Most activities can be seamlessly scheduled across 2 to 4 days. Our local specialists ensure ideal timing so you enjoy relaxed transitions between morning tours, afternoon safaris, and evening dining.'
-    },
-    {
-      q: 'Are transfers included?',
-      a: 'Yes, almost all guided experiences in Victoria Falls town include return hotel transfers from major lodges and hotels.'
-    },
-    {
-      q: 'Are activities suitable for children?',
-      a: 'Many activities—including rainforest tours, sunset cruises, cultural Boma dinners, and family safaris—are fantastic for all ages. Age restrictions apply only to extreme adrenaline adventures like bungee jumping or white-water rafting.'
-    },
-    {
-      q: 'Do prices include park fees?',
-      a: 'Activity costs cover guided services and transport, while government park entry fees ($50 international per person for rainforest entry) are paid directly at park gates unless specified in your custom package.'
-    },
-    {
-      q: 'Can Outbound Holidays recommend experiences based on my budget?',
-      a: 'Yes! Our local advisors design custom experience bundles tailored precisely to your budget, travel dates, and preferred pace.'
-    },
-    {
-      q: 'What happens if weather affects an activity?',
-      a: 'Your safety is our priority. If an activity like a helicopter flight is postponed due to weather, we will rebook it for another time during your stay or issue a full refund.'
-    }
-  ];
+  const experienceFaqs = editorialValue("travel/ExperiencesDirectoryPage.section2", {});
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen text-[#1A2E35]">
@@ -180,7 +100,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
         <div className="absolute inset-0 z-0">
           <img
             src={heroVictoriaFalls}
-            alt="Victoria Falls aerial view showing the Zambezi River, gorge and mist"
+            alt={editorial("travel/ExperiencesDirectoryPage.text31")}
             className="w-full h-full object-cover object-center scale-105 filter brightness-90 saturate-110"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/90 via-[#0D2833]/75 to-[#0D2833]/90" />
@@ -191,24 +111,22 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0D2833]/80 backdrop-blur-md border border-[#C9A66B]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest shadow-lg">
             <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>Curated by Local Specialists</span>
+            <span>{editorial("travel/ExperiencesDirectoryPage.text32")}</span>
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight drop-shadow-md max-w-3xl mx-auto">
-            Victoria Falls Experience Library
-          </h1>
+            {editorial("travel/ExperiencesDirectoryPage.text33")}</h1>
 
           {/* Paragraph */}
           <p className="text-base sm:text-lg text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-xs">
-            Explore our complete collection of Victoria Falls experiences, carefully selected by local specialists to help you find what suits your interests, time and travel style.
-          </p>
+            {editorial("travel/ExperiencesDirectoryPage.text34")}</p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <button
               onClick={() => scrollToSection('featured-experiences')}
               className="w-full sm:w-auto bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-sm px-7 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-[#C9A66B]/40"
             >
-              <span>Explore Featured Experiences</span>
+              <span>{editorial("travel/ExperiencesDirectoryPage.text35")}</span>
               <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
             </button>
 
@@ -216,7 +134,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
               onClick={() => scrollToSection('browse-by-type')}
               className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-bold text-sm px-7 py-3.5 rounded-xl border border-white/25 backdrop-blur-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Browse by Experience Type</span>
+              <span>{editorial("travel/ExperiencesDirectoryPage.text36")}</span>
               <ChevronDown className="w-4 h-4 text-[#C9A66B]" />
             </button>
           </div>
@@ -226,7 +144,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search experiences — e.g. Chobe Safari, Sunset Cruise, Helicopter Flight..."
+                placeholder={editorial("travel/ExperiencesDirectoryPage.text37")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white/95 backdrop-blur-md text-gray-900 placeholder-gray-500 rounded-2xl py-3.5 pl-12 pr-4 text-xs sm:text-sm shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#C9A66B] border border-white/20"
@@ -239,15 +157,15 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
           <div className="pt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-gray-200 font-medium">
             <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
               <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-              <span>{ALL_EXPERIENCES.length}+ Handpicked Activities</span>
+              <span>{ALL_EXPERIENCES.length}{editorial("travel/ExperiencesDirectoryPage.text38")}</span>
             </div>
             <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
               <CheckCircle2 className="w-4 h-4 text-[#C9A66B]" />
-              <span>100% Specialist Vetted</span>
+              <span>{editorial("travel/ExperiencesDirectoryPage.text39")}</span>
             </div>
             <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
               <CheckCircle2 className="w-4 h-4 text-[#25D366]" />
-              <span>Instant WhatsApp Advice</span>
+              <span>{editorial("travel/ExperiencesDirectoryPage.text40")}</span>
             </div>
           </div>
 
@@ -262,7 +180,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
             className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-[#0B5E8E] hover:text-white flex items-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>Featured ({featuredExperiences.length})</span>
+            <span>{editorial("travel/ExperiencesDirectoryPage.text41")}{featuredExperiences.length})</span>
           </button>
 
           <button
@@ -270,7 +188,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
             className="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap bg-[#FAF9F6] text-[#0B5E8E] border border-[#0B5E8E]/20 hover:bg-[#0B5E8E] hover:text-white flex items-center gap-1.5"
           >
             <Grid className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>All ({ALL_EXPERIENCES.length})</span>
+            <span>{editorial("travel/ExperiencesDirectoryPage.text42")}{ALL_EXPERIENCES.length})</span>
           </button>
 
           {categoryDefinitions.map((cat) => {
@@ -299,20 +217,19 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
           <div className="flex items-center justify-between border-b border-gray-200 pb-4">
             <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-              Search Results for "{searchQuery}"
+              {editorial("travel/ExperiencesDirectoryPage.text43")}{searchQuery}"
             </h2>
             <button
               onClick={() => setSearchQuery('')}
               className="text-xs font-bold text-[#C9A66B] hover:underline cursor-pointer"
             >
-              Clear Search
-            </button>
+              {editorial("travel/ExperiencesDirectoryPage.text44")}</button>
           </div>
 
           {searchResults.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-2xl border border-gray-200 p-8 space-y-3">
               <HelpCircle className="w-10 h-10 text-gray-400 mx-auto" />
-              <p className="text-gray-600 text-sm">No experiences match your search phrase. Try searching for safari, cruise, helicopter, or tour.</p>
+              <p className="text-gray-600 text-sm">{editorial("travel/ExperiencesDirectoryPage.text45")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -336,19 +253,16 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF9F6] border border-[#C9A66B]/40 text-[#0B5E8E] text-[11px] font-bold uppercase tracking-wider">
                     <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Carefully Selected Experiences</span>
+                    <span>{editorial("travel/ExperiencesDirectoryPage.text46")}</span>
                   </div>
                   <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#0B5E8E]">
-                    Featured Experiences
-                  </h2>
+                    {editorial("travel/ExperiencesDirectoryPage.text47")}</h2>
                   <p className="text-xs sm:text-sm text-gray-600 max-w-2xl font-light leading-relaxed">
-                    Handpicked signature activities every traveller should consider for their Victoria Falls itinerary.
-                  </p>
+                    {editorial("travel/ExperiencesDirectoryPage.text48")}</p>
                 </div>
 
                 <span className="text-xs font-bold text-[#C9A66B] bg-[#FAF9F6] px-3.5 py-1.5 rounded-full border border-gray-200/60 shrink-0">
-                  {featuredExperiences.length} Signature Activities
-                </span>
+                  {featuredExperiences.length} {editorial("travel/ExperiencesDirectoryPage.text49")}</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -363,14 +277,11 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
           <section id="browse-by-type" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-36 space-y-8">
             <div className="text-center max-w-3xl mx-auto space-y-3">
               <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
-                EXPLORE BY CATEGORY
-              </span>
+                {editorial("travel/ExperiencesDirectoryPage.text50")}</span>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E]">
-                Browse by Experience Type
-              </h2>
+                {editorial("travel/ExperiencesDirectoryPage.text51")}</h2>
               <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed">
-                Start with the kind of holiday experience you are looking for, then explore the activities our local specialists recommend within each category.
-              </p>
+                {editorial("travel/ExperiencesDirectoryPage.text52")}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -392,8 +303,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/60 to-transparent" />
 
                     <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md text-[#0B5E8E] text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                      {count} Experiences
-                    </div>
+                      {count} {editorial("travel/ExperiencesDirectoryPage.text53")}</div>
 
                     <div className="relative z-10 p-6 space-y-2 text-white">
                       <div className="flex items-center gap-2 text-[#E5C989]">
@@ -417,7 +327,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                           }}
                           className="w-full bg-[#0B5E8E] group-hover:bg-[#08486e] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md border border-white/20"
                         >
-                          <span>Explore Category</span>
+                          <span>{editorial("travel/ExperiencesDirectoryPage.text54")}</span>
                           <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                         </PageLink>
                       </div>
@@ -435,14 +345,13 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF9F6] border border-[#C9A66B]/40 text-[#0B5E8E] text-[11px] font-bold uppercase tracking-wider">
                     <Grid className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Complete Victoria Falls Catalogue</span>
+                    <span>{editorial("travel/ExperiencesDirectoryPage.text55")}</span>
                   </div>
                   <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#0B5E8E]">
-                    All Victoria Falls Experiences ({ALL_EXPERIENCES.length})
+                    {editorial("travel/ExperiencesDirectoryPage.text56")}{ALL_EXPERIENCES.length})
                   </h2>
                   <p className="text-xs sm:text-sm text-gray-600 max-w-2xl font-light leading-relaxed">
-                    Explore our complete collection of 14 verified activities, safaris, river adventures and cultural encounters with authentic photography and clear pricing.
-                  </p>
+                    {editorial("travel/ExperiencesDirectoryPage.text57")}</p>
                 </div>
 
                 {/* Filter Pills */}
@@ -455,7 +364,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
-                    All ({ALL_EXPERIENCES.length})
+                    {editorial("travel/ExperiencesDirectoryPage.text58")}{ALL_EXPERIENCES.length})
                   </button>
                   {categoryDefinitions.map((cat) => {
                     const count = ALL_EXPERIENCES.filter(e => e.categories.some(category => category === cat.id)).length;
@@ -496,14 +405,12 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
               <div className="text-center max-w-2xl mx-auto space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF9F6] border border-[#C9A66B]/40 text-[#0B5E8E] text-[11px] font-bold uppercase tracking-wider">
                   <Award className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>OUR QUALITY STANDARD</span>
+                  <span>{editorial("travel/ExperiencesDirectoryPage.text59")}</span>
                 </div>
                 <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E]">
-                  How We Choose Our Experiences
-                </h2>
+                  {editorial("travel/ExperiencesDirectoryPage.text60")}</h2>
                 <p className="text-xs sm:text-sm text-gray-600 font-light leading-relaxed">
-                  Every experience featured on Outbound Holidays has been carefully selected based on guest experience, operator quality, safety standards, value for money and our local knowledge of Victoria Falls.
-                </p>
+                  {editorial("travel/ExperiencesDirectoryPage.text61")}</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -511,40 +418,36 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                   <div className="w-10 h-10 rounded-xl bg-[#0B5E8E] text-white flex items-center justify-center shadow-xs">
                     <Compass className="w-5 h-5 text-[#C9A66B]" />
                   </div>
-                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">Local Expertise</h3>
+                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">{editorial("travel/ExperiencesDirectoryPage.text62")}</h3>
                   <p className="text-xs text-gray-600 font-light leading-relaxed">
-                    Guided by born-and-raised local specialists with decades of experience in Victoria Falls.
-                  </p>
+                    {editorial("travel/ExperiencesDirectoryPage.text63")}</p>
                 </div>
 
                 <div className="p-6 bg-[#FAF9F6] rounded-2xl border border-gray-200/80 space-y-3">
                   <div className="w-10 h-10 rounded-xl bg-[#0B5E8E] text-white flex items-center justify-center shadow-xs">
                     <ShieldCheck className="w-5 h-5 text-[#C9A66B]" />
                   </div>
-                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">Trusted Operators</h3>
+                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">{editorial("travel/ExperiencesDirectoryPage.text64")}</h3>
                   <p className="text-xs text-gray-600 font-light leading-relaxed">
-                    We only partner with fully insured, top-tier safari and activity operators with proven safety records.
-                  </p>
+                    {editorial("travel/ExperiencesDirectoryPage.text65")}</p>
                 </div>
 
                 <div className="p-6 bg-[#FAF9F6] rounded-2xl border border-gray-200/80 space-y-3">
                   <div className="w-10 h-10 rounded-xl bg-[#0B5E8E] text-white flex items-center justify-center shadow-xs">
                     <Star className="w-5 h-5 text-[#C9A66B]" />
                   </div>
-                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">Excellent Guest Experience</h3>
+                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">{editorial("travel/ExperiencesDirectoryPage.text66")}</h3>
                   <p className="text-xs text-gray-600 font-light leading-relaxed">
-                    Regularly audited for high hospitality standards, comfort, and guest satisfaction.
-                  </p>
+                    {editorial("travel/ExperiencesDirectoryPage.text67")}</p>
                 </div>
 
                 <div className="p-6 bg-[#FAF9F6] rounded-2xl border border-gray-200/80 space-y-3">
                   <div className="w-10 h-10 rounded-xl bg-[#0B5E8E] text-white flex items-center justify-center shadow-xs">
                     <Sparkles className="w-5 h-5 text-[#C9A66B]" />
                   </div>
-                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">Carefully Curated</h3>
+                  <h3 className="font-serif font-bold text-base text-[#0B5E8E]">{editorial("travel/ExperiencesDirectoryPage.text68")}</h3>
                   <p className="text-xs text-gray-600 font-light leading-relaxed">
-                    We avoid overcrowded commercial traps in favor of authentic, high-value African adventures.
-                  </p>
+                    {editorial("travel/ExperiencesDirectoryPage.text69")}</p>
                 </div>
               </div>
             </div>
@@ -556,14 +459,12 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
               <div className="space-y-3 max-w-xl text-center md:text-left z-10">
                 <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#E5C989]">
                   <Users className="w-4 h-4 text-[#C9A66B]" />
-                  <span>PERSONAL RECOMMENDATIONS</span>
+                  <span>{editorial("travel/ExperiencesDirectoryPage.text70")}</span>
                 </div>
                 <h3 className="font-serif text-2xl sm:text-4xl font-bold leading-tight text-white">
-                  Not Sure Which Experiences Are Right For You?
-                </h3>
+                  {editorial("travel/ExperiencesDirectoryPage.text71")}</h3>
                 <p className="text-xs sm:text-sm text-gray-200 font-light leading-relaxed">
-                  Whether you're travelling as a couple, family, photographer, honeymooner or adventure seeker, our local specialists can recommend the experiences that best suit your interests, budget and available time.
-                </p>
+                  {editorial("travel/ExperiencesDirectoryPage.text72")}</p>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 z-10 shrink-0 w-full sm:w-auto">
@@ -572,19 +473,19 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                   className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
                   <CalendarCheck className="w-4 h-4" />
-                  <span>Plan My Holiday</span>
+                  <span>{editorial("travel/ExperiencesDirectoryPage.text73")}</span>
                 </button>
 
                 <a
                   href={getWhatsAppUrl(
-                    "Hello Outbound Holidays,\n\nI’m planning a Victoria Falls holiday and would like help choosing the experiences that best suit my interests, dates and budget.\n\nThank you."
+                    editorialFormat("travel/ExperiencesDirectoryPage.copy1")
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Chat on WhatsApp</span>
+                  <span>{editorial("travel/ExperiencesDirectoryPage.text74")}</span>
                 </a>
               </div>
             </div>
@@ -595,14 +496,12 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
             <div className="text-center space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-bold uppercase tracking-wider">
                 <HelpCircle className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>FREQUENTLY ASKED QUESTIONS</span>
+                <span>{editorial("travel/ExperiencesDirectoryPage.text75")}</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E]">
-                Questions About Victoria Falls Experiences
-              </h2>
+                {editorial("travel/ExperiencesDirectoryPage.text76")}</h2>
               <p className="text-xs sm:text-sm text-gray-600 font-light leading-relaxed max-w-xl mx-auto">
-                Everything you need to know about planning, booking, and enjoying your activities in Victoria Falls.
-              </p>
+                {editorial("travel/ExperiencesDirectoryPage.text77")}</p>
             </div>
 
             <div className="bg-white rounded-3xl border border-gray-200/80 shadow-xs divide-y divide-gray-100 overflow-hidden">
@@ -639,14 +538,12 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
               <div className="space-y-3 max-w-xl text-center md:text-left z-10">
                 <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#E5C989]">
                   <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-                  <span>VICTORIA FALLS ADVISOR SERVICE</span>
+                  <span>{editorial("travel/ExperiencesDirectoryPage.text78")}</span>
                 </div>
                 <h3 className="font-serif text-2xl sm:text-4xl font-bold leading-tight text-white">
-                  Start Planning Your Victoria Falls Adventure
-                </h3>
+                  {editorial("travel/ExperiencesDirectoryPage.text79")}</h3>
                 <p className="text-xs sm:text-sm text-gray-200 font-light leading-relaxed">
-                  Victoria Falls offers something for every traveller. Tell us about your interests, travel dates, pace and budget, and our local specialists will recommend the experiences that best fit your holiday.
-                </p>
+                  {editorial("travel/ExperiencesDirectoryPage.text80")}</p>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 z-10 shrink-0 w-full sm:w-auto">
@@ -655,19 +552,19 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                   className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
                   <CalendarCheck className="w-4 h-4" />
-                  <span>Plan My Holiday</span>
+                  <span>{editorial("travel/ExperiencesDirectoryPage.text81")}</span>
                 </button>
 
                 <a
                   href={getWhatsAppUrl(
-                    "Hello Outbound Holidays,\n\nI’m planning a Victoria Falls holiday and would like help choosing the experiences that best suit my interests, dates and budget.\n\nThank you."
+                    editorialFormat("travel/ExperiencesDirectoryPage.copy2")
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Chat on WhatsApp</span>
+                  <span>{editorial("travel/ExperiencesDirectoryPage.text82")}</span>
                 </a>
               </div>
 
@@ -734,7 +631,7 @@ const ExperienceCard: React.FC<{ experience: Experience; onSelect: () => void }>
           }}
           className="w-full bg-[#FAF9F6] group-hover:bg-[#0B5E8E] text-[#0B5E8E] group-hover:text-white border border-gray-200 group-hover:border-[#0B5E8E] text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
         >
-          <span>View Experience</span>
+          <span>{editorial("travel/ExperiencesDirectoryPage.text83")}</span>
           <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
         </PageLink>
       </div>

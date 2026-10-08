@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+.local/
+
+backend-dist/
+playwright-report/
+test-results/
+.neon

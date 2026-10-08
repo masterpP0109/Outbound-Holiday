@@ -1,3 +1,4 @@
+import { editorial, editorialValue, registerContent } from "../../../runtime/catalog";
 import { PHONE_URL } from '../../../utils/whatsapp';
 import React from 'react';
 import { GUIDE_HUB_CATEGORIES } from '../../../data/guideArticles';
@@ -14,10 +15,12 @@ ShieldCheck,
 Award
 } from 'lucide-react';
 
-const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
+let outboundLogo: any;
+registerContent(() => { outboundLogo = editorialValue("travel/guide/GuideHubView.outboundLogo", {}); });
 // Public image paths for experiences
 // Experience photo; replace with a verified team portrait when available.
-const elephantExperienceImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+let elephantExperienceImg: any;
+registerContent(() => { elephantExperienceImg = editorialValue("travel/guide/GuideHubView.elephantExperienceImg", {}); });
 
 interface GuideHubViewProps {
   onSelectArticle: (slug: string) => void;
@@ -37,33 +40,31 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
         <div className="max-w-6xl mx-auto relative z-10 space-y-6 text-center">
           
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-widest border border-[#C9A66B]/40 shadow-xs">
-            <img src={outboundLogo} alt="Outbound Holidays" className="w-6 h-6 object-contain" />
-            <span>Outbound Holidays Knowledge Hub</span>
+            <img src={outboundLogo} alt={editorial("travel/guide/GuideHubView.text1")} className="w-6 h-6 object-contain" />
+            <span>{editorial("travel/guide/GuideHubView.text2")}</span>
           </div>
 
           {/* Main Landing Title */}
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight max-w-4xl mx-auto leading-tight">
-            Victoria Falls Guide
-          </h1>
+            {editorial("travel/guide/GuideHubView.text3")}</h1>
 
           {/* Subtitle */}
           <p className="text-sm sm:text-base lg:text-lg text-gray-200 font-medium max-w-3xl mx-auto leading-relaxed">
-            Local advice, practical planning information and carefully curated recommendations for experiencing Victoria Falls with confidence.
-          </p>
+            {editorial("travel/guide/GuideHubView.text4")}</p>
 
           {/* Local Specialist Credentials Badge */}
           <div className="pt-2 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-300">
             <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/10">
               <MapPin className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>Based in Victoria Falls, Zimbabwe</span>
+              <span>{editorial("travel/guide/GuideHubView.text5")}</span>
             </span>
             <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/10">
               <ShieldCheck className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>Verified Destination Specialists</span>
+              <span>{editorial("travel/guide/GuideHubView.text6")}</span>
             </span>
             <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/10">
               <Award className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>100% Independent Local Advice</span>
+              <span>{editorial("travel/guide/GuideHubView.text7")}</span>
             </span>
           </div>
         </div>
@@ -79,7 +80,7 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
             <div className="border-b border-gray-200/80 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
               <div>
                 <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                  Section 0{idx + 1}
+                  {editorial("travel/guide/GuideHubView.text8")}{idx + 1}
                 </span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
                   {categoryGroup.title}
@@ -154,7 +155,7 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
                       <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#0B5E8E] group-hover:text-[#E67E22] transition-colors">
                         <span className="flex items-center gap-1.5">
                           <BookOpen className="w-3.5 h-3.5" />
-                          <span>Read Full Guide</span>
+                          <span>{editorial("travel/guide/GuideHubView.text9")}</span>
                         </span>
                         <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                       </div>
@@ -172,33 +173,31 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
             <div className="lg:col-span-2 space-y-4">
               <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C9A66B] bg-[#C9A66B]/10 px-3 py-1 rounded-full border border-[#C9A66B]/20">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Victoria Falls Local Travel Specialists</span>
+                <span>{editorial("travel/guide/GuideHubView.text10")}</span>
               </div>
               
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
-                Plan Your Victoria Falls Holiday with On-the-Ground Specialists
-              </h2>
+                {editorial("travel/guide/GuideHubView.text11")}</h2>
               
               <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                Outbound Holidays is based directly in Victoria Falls, Zimbabwe. We spend every day helping travellers from around the world plan memorable, seamless holidays. From handpicked river lodges to private airport transfers and guided rainforest walks, we handle every detail so you can travel with complete peace of mind.
-              </p>
+                {editorial("travel/guide/GuideHubView.text12")}</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-gray-200 font-medium">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                  <span>Personalized Tailor-Made Itineraries</span>
+                  <span>{editorial("travel/guide/GuideHubView.text13")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                  <span>Direct Local Concierge Support</span>
+                  <span>{editorial("travel/guide/GuideHubView.text14")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                  <span>Verified Hotel & Safari Lodge Rates</span>
+                  <span>{editorial("travel/guide/GuideHubView.text15")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                  <span>Zero Hidden Booking Fees</span>
+                  <span>{editorial("travel/guide/GuideHubView.text16")}</span>
                 </div>
               </div>
             </div>
@@ -207,16 +206,15 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 text-center space-y-4">
               <img 
                 src={elephantExperienceImg}
-                alt="Elephant interaction experience in Victoria Falls"
+                alt={editorial("travel/guide/GuideHubView.text17")}
                 className="w-16 h-16 rounded-full mx-auto object-cover ring-4 ring-[#C9A66B]/40 shadow-md"
               />
               <div>
-                <h3 className="font-serif font-bold text-base text-white">Outbound Holidays Specialists</h3>
-                <span className="text-xs text-[#E5C989] font-medium block">Victoria Falls, Zimbabwe</span>
+                <h3 className="font-serif font-bold text-base text-white">{editorial("travel/guide/GuideHubView.text18")}</h3>
+                <span className="text-xs text-[#E5C989] font-medium block">{editorial("travel/guide/GuideHubView.text19")}</span>
               </div>
               <p className="text-xs text-gray-300 italic">
-                "Our mission is simple: To give you honest local advice so you can experience Victoria Falls with confidence."
-              </p>
+                {editorial("travel/guide/GuideHubView.text20")}</p>
 
               <div className="space-y-2 pt-2">
                 <button
@@ -224,14 +222,14 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
                   className="w-full bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <CalendarCheck className="w-4 h-4" />
-                  <span>Build My Holiday</span>
+                  <span>{editorial("travel/guide/GuideHubView.text21")}</span>
                 </button>
                 <a
                   href={PHONE_URL}
                   className="w-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-2.5 rounded-xl border border-white/20 transition-all flex items-center justify-center gap-2 block cursor-pointer"
                 >
                   <PhoneCall className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>Talk to a Local Specialist</span>
+                  <span>{editorial("travel/guide/GuideHubView.text22")}</span>
                 </a>
               </div>
             </div>

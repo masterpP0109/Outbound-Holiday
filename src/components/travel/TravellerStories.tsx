@@ -1,27 +1,9 @@
+import { editorial, editorialValue } from "../../runtime/catalog";
 import React from 'react';
 import { Quote,Sparkles,MessageCircle } from 'lucide-react';
 
 export const TravellerStories: React.FC = () => {
-  const reviews = [
-    {
-      initials: 'T.M.',
-      type: 'Family Trip',
-      location: 'Zimbabwe',
-      text: 'Outbound Holidays handled our Victoria Falls arrangements seamlessly. From our transfers to local activities, having a dedicated specialist on hand made the holiday feel completely stress-free.',
-    },
-    {
-      initials: 'D.L.',
-      type: 'Honeymoon Couple',
-      location: 'United Kingdom',
-      text: 'Having a local team in Victoria Falls was invaluable. They provided honest recommendations on what was worth doing, and every detail was perfectly arranged.',
-    },
-    {
-      initials: 'N.F.',
-      type: 'Family Safari',
-      location: 'Zimbabwe',
-      text: 'Traveling with children can be complicated, but our itinerary was paced wonderfully. The kids loved the sunset cruise and rainforest walk.',
-    },
-  ];
+  const reviews = editorialValue("travel/TravellerStories.section1", {});
 
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#FDFBF7] border-b border-gray-200/80">
@@ -31,16 +13,14 @@ export const TravellerStories: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>REAL GUEST EXPERIENCES</span>
+            <span>{editorial("travel/TravellerStories.text4")}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight">
-            What Our Guests Say
-          </h2>
+            {editorial("travel/TravellerStories.text5")}</h2>
 
           <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed">
-            Experiences shared by travellers who trusted Outbound Holidays to help plan their time in Victoria Falls.
-          </p>
+            {editorial("travel/TravellerStories.text6")}</p>
         </div>
 
         {/* Clean Neutral Guest Quotes Grid */}
@@ -70,7 +50,7 @@ export const TravellerStories: React.FC = () => {
 
                 <div className="text-[#C9A66B] text-[11px] font-semibold flex items-center gap-1">
                   <MessageCircle className="w-3.5 h-3.5" />
-                  <span>Verified Feedback</span>
+                  <span>{editorial("travel/TravellerStories.text7")}</span>
                 </div>
               </div>
             </div>

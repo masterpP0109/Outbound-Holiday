@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial } from "../../runtime/catalog";
 import React from 'react';
 import { Calendar,FileText,Plane,Star,ArrowRight } from 'lucide-react';
 
@@ -14,28 +16,28 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
     {
       id: 'best-time',
       icon: Calendar,
-      title: 'Best Time to Visit',
-      subtitle: 'Water levels, weather & seasons',
+      title: editorial("travel/QuickPlanningBar.text1"),
+      subtitle: editorialFormat("travel/QuickPlanningBar.copy1"),
       action: onOpenGuide,
     },
     {
       id: 'visa',
       icon: FileText,
-      title: 'Visa & Entry Requirements',
-      subtitle: 'Kaza Univisa, Zimbabwe & Zambia',
+      title: editorial("travel/QuickPlanningBar.text2"),
+      subtitle: editorialFormat("travel/QuickPlanningBar.copy2"),
       action: onOpenGuide,
     },
     {
       id: 'getting-here',
       icon: Plane,
-      title: 'Getting Here',
-      subtitle: 'Flights, airport transfers & border crossings',
+      title: editorial("travel/QuickPlanningBar.text3"),
+      subtitle: editorialFormat("travel/QuickPlanningBar.copy3"),
       action: onOpenGuide,
     },
     {
       id: 'top-experiences',
       icon: Star,
-      title: 'Top Experiences',
+      title: editorial("travel/QuickPlanningBar.text4"),
       subtitle: 'Helicopter, safaris & cruises',
       action: onOpenExperiences,
     },
@@ -47,11 +49,9 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
         
         <div className="text-center max-w-xl mx-auto mb-8">
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-            Start Planning Your Victoria Falls Holiday
-          </h2>
+            {editorial("travel/QuickPlanningBar.text5")}</h2>
           <p className="text-xs sm:text-sm text-gray-600 mt-1">
-            Find practical answers on when to visit, entry requirements, getting here and what to experience.
-          </p>
+            {editorial("travel/QuickPlanningBar.text6")}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

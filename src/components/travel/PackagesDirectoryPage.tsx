@@ -1,3 +1,4 @@
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { packagePath } from '../../routes';
 import React,{ useState } from 'react';
@@ -16,7 +17,8 @@ ShieldCheck
 } from 'lucide-react';
 
 // Public image paths for experiences
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
+let fallsTour1: any;
+registerContent(() => { fallsTour1 = editorialValue("travel/PackagesDirectoryPage.fallsTour1", {}); });
 
 interface PackagesDirectoryPageProps {
   currency: Currency;
@@ -37,16 +39,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('all');
 
-  const filterCategories: { id: FilterCategory; label: string }[] = [
-    { id: 'all', label: 'All Holidays' },
-    { id: 'first-visit', label: 'First-Time Visitors' },
-    { id: 'couples', label: 'Couples & Honeymoons' },
-    { id: 'families', label: 'Families' },
-    { id: 'luxury', label: 'Luxury' },
-    { id: 'adventure', label: 'Adventure' },
-    { id: 'safari', label: 'Safari Extensions' },
-    { id: 'value', label: 'Best Value' },
-  ];
+  const filterCategories: { id: FilterCategory; label: string }[] = editorialValue("travel/PackagesDirectoryPage.section1", {});
 
   const formatPrice = (priceUSD: number) => {
     const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
@@ -79,7 +72,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
         <div className="absolute inset-0 z-0">
           <img 
             src={fallsTour1} 
-            alt="Victoria Falls mist and landscape" 
+            alt={editorial("travel/PackagesDirectoryPage.text9")}
             className="w-full h-full object-cover object-center filter brightness-90 saturate-110 scale-105"
           />
           {/* Multi-stage dark gradient overlays for maximum contrast */}
@@ -96,41 +89,39 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
               className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
-              <span>Home</span>
+              <span>{editorial("travel/PackagesDirectoryPage.text10")}</span>
             </PageLink>
             <span>/</span>
-            <span className="text-[#C9A66B] font-semibold">Holiday Packages</span>
+            <span className="text-[#C9A66B] font-semibold">{editorial("travel/PackagesDirectoryPage.text11")}</span>
           </nav>
 
           {/* Hero Titles & Intro */}
           <div className="max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D2833]/80 backdrop-blur-md border border-[#C9A66B]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest shadow-lg">
               <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>OUTBOUND HOLIDAY ITINERARIES</span>
+              <span>{editorial("travel/PackagesDirectoryPage.text12")}</span>
             </div>
 
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight drop-shadow-md">
-              Find the Holiday That's Right for You
-            </h1>
+              {editorial("travel/PackagesDirectoryPage.text13")}</h1>
 
             <p className="text-base sm:text-lg text-gray-100 font-light leading-relaxed drop-shadow-xs">
-              Every traveller experiences Victoria Falls differently. Whether you're visiting for the first time, celebrating a honeymoon, travelling with family or looking for adventure, our carefully designed itineraries provide the perfect starting point for your holiday.
-            </p>
+              {editorial("travel/PackagesDirectoryPage.text14")}</p>
           </div>
 
           {/* Trust Highlights */}
           <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-gray-200 font-medium">
             <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
               <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-              <span>100% Tailored by Local Specialists</span>
+              <span>{editorial("travel/PackagesDirectoryPage.text15")}</span>
             </div>
             <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
               <CheckCircle2 className="w-4 h-4 text-[#C9A66B]" />
-              <span>Flexible Accommodation & Activity Options</span>
+              <span>{editorial("travel/PackagesDirectoryPage.text16")}</span>
             </div>
             <div className="flex items-center gap-2 bg-[#0D2833]/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 shadow-xs">
               <CheckCircle2 className="w-4 h-4 text-[#25D366]" />
-              <span>Direct WhatsApp Advisor Support</span>
+              <span>{editorial("travel/PackagesDirectoryPage.text17")}</span>
             </div>
           </div>
 
@@ -150,7 +141,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search holidays by keyword, accommodation or experience..."
+                placeholder={editorial("travel/PackagesDirectoryPage.text18")}
                 className="w-full bg-[#FAF9F6] border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 text-xs sm:text-sm text-[#2F3A44] focus:outline-none focus:ring-2 focus:ring-[#0B5E8E] focus:bg-white"
               />
               <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
@@ -158,15 +149,14 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
 
             {/* Results Count Badge */}
             <div className="text-xs font-semibold text-gray-500 shrink-0">
-              Showing <span className="text-[#0B5E8E] font-bold">{filteredPackages.length}</span> holiday itineraries
-            </div>
+              {editorial("travel/PackagesDirectoryPage.text19")}<span className="text-[#0B5E8E] font-bold">{filteredPackages.length}</span> {editorial("travel/PackagesDirectoryPage.text20")}</div>
           </div>
 
           {/* Category Filter Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none pt-2 border-t border-gray-100">
             <div className="flex items-center gap-1.5 text-xs text-gray-400 font-bold uppercase tracking-wider shrink-0 pr-2">
               <SlidersHorizontal className="w-3.5 h-3.5 text-[#0B5E8E]" />
-              <span>Filter:</span>
+              <span>{editorial("travel/PackagesDirectoryPage.text21")}</span>
             </div>
 
             {filterCategories.map((cat) => (
@@ -218,9 +208,9 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                     {/* Price Starting From */}
                     <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white flex items-end justify-between">
                       <div>
-                        <span className="text-[10px] uppercase font-semibold text-gray-200 block">Estimated Holiday Investment</span>
+                        <span className="text-[10px] uppercase font-semibold text-gray-200 block">{editorial("travel/PackagesDirectoryPage.text22")}</span>
                         <span className="text-xl font-bold font-serif text-white leading-none">
-                          From {formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">/ person</span>
+                          {editorial("travel/PackagesDirectoryPage.text23")}{formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">{editorial("travel/PackagesDirectoryPage.text24")}</span>
                         </span>
                       </div>
                     </div>
@@ -245,8 +235,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                     {/* Highlights Summary List */}
                     <div className="p-3 rounded-xl bg-[#FAF9F6] border border-gray-200/80 space-y-2">
                       <span className="text-[10px] font-bold text-[#0B5E8E] uppercase tracking-wider block">
-                        Included Experience Highlights:
-                      </span>
+                        {editorial("travel/PackagesDirectoryPage.text25")}</span>
                       <ul className="space-y-1.5 text-xs text-gray-700">
                         {pkg.highlights.slice(0, 3).map((item, idx) => (
                           <li key={idx} className="flex items-start gap-2">
@@ -268,7 +257,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                     }}
                     className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                   >
-                    <span>View Holiday Details</span>
+                    <span>{editorial("travel/PackagesDirectoryPage.text26")}</span>
                     <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
                   </PageLink>
                 </div>
@@ -278,10 +267,9 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
         ) : (
           <div className="bg-white rounded-2xl p-12 text-center border border-gray-200/80 space-y-4">
             <Compass className="w-12 h-12 text-gray-300 mx-auto" />
-            <h3 className="font-serif font-bold text-xl text-[#0B5E8E]">No holiday itineraries match your search</h3>
+            <h3 className="font-serif font-bold text-xl text-[#0B5E8E]">{editorial("travel/PackagesDirectoryPage.text27")}</h3>
             <p className="text-sm text-gray-500 max-w-md mx-auto">
-              Try adjusting your category filter or search keywords. Alternatively, our local specialists can craft a custom itinerary for you.
-            </p>
+              {editorial("travel/PackagesDirectoryPage.text28")}</p>
             <button
               onClick={() => {
                 setSelectedCategory('all');
@@ -289,8 +277,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
               }}
               className="bg-[#E67E22] text-white font-bold text-xs px-6 py-2.5 rounded-xl hover:bg-[#d36e17] transition-colors cursor-pointer inline-block"
             >
-              Reset Filters
-            </button>
+              {editorial("travel/PackagesDirectoryPage.text29")}</button>
           </div>
         )}
 

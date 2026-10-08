@@ -1,3 +1,4 @@
+import { editorial } from "../../runtime/catalog";
 import React,{ useState } from 'react';
 import { CartItem,Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
@@ -68,7 +69,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         <div className="p-5 border-b border-gray-200 flex items-center justify-between bg-gray-50">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-[#0B5E8E]" />
-            <h3 className="font-bold text-lg text-[#0B5E8E]">Your Shopping Cart</h3>
+            <h3 className="font-bold text-lg text-[#0B5E8E]">{editorial("common/CartDrawer.text1")}</h3>
             <span className="bg-[#0B5E8E] text-white text-xs font-bold px-2 py-0.5 rounded-full">
               {cartItems.length}
             </span>
@@ -85,21 +86,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <div className="w-16 h-16 bg-[#3F6B3C]/10 text-[#3F6B3C] rounded-full flex items-center justify-center mx-auto">
                 <Check className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-[#0B5E8E]">Order Confirmed!</h3>
+              <h3 className="text-xl font-bold text-[#0B5E8E]">{editorial("common/CartDrawer.text2")}</h3>
               <p className="text-xs text-gray-600">
-                Your artwork purchase has been registered. An official Certificate of Authenticity and crate tracking number have been generated.
-              </p>
+                {editorial("common/CartDrawer.text3")}</p>
             </div>
           ) : cartItems.length === 0 ? (
             <div className="text-center py-16 text-gray-500 space-y-3">
               <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto" />
-              <p className="font-medium text-sm">Your shopping cart is currently empty.</p>
+              <p className="font-medium text-sm">{editorial("common/CartDrawer.text4")}</p>
               <button
                 onClick={onClose}
                 className="text-xs font-bold text-[#0B5E8E] underline hover:text-[#E67E22]"
               >
-                Browse Featured Artworks
-              </button>
+                {editorial("common/CartDrawer.text5")}</button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -130,7 +129,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     <button
                       onClick={() => onRemoveItem(item.product.id)}
                       className="text-gray-400 hover:text-red-600 p-1"
-                      title="Remove"
+                      title={editorial("common/CartDrawer.text6")}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -157,7 +156,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <form onSubmit={handleApplyCoupon} className="pt-2 flex gap-2">
                 <input
                   type="text"
-                  placeholder="Promo Code (e.g. OUTBOUND10)"
+                  placeholder={editorial("common/CartDrawer.text7")}
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   className="flex-1 p-2 border border-gray-300 rounded-md text-xs uppercase"
@@ -166,8 +165,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   type="submit"
                   className="bg-gray-800 text-white font-bold text-xs px-3 py-2 rounded-md hover:bg-black"
                 >
-                  Apply
-                </button>
+                  {editorial("common/CartDrawer.text8")}</button>
               </form>
             </div>
           )}
@@ -178,21 +176,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           <div className="p-5 border-t border-gray-200 bg-gray-50 space-y-3">
             <div className="space-y-1 text-xs">
               <div className="flex justify-between text-gray-600">
-                <span>Subtotal</span>
+                <span>{editorial("common/CartDrawer.text9")}</span>
                 <span>{formatPrice(rawSubtotalUSD)}</span>
               </div>
               {discountPercent > 0 && (
                 <div className="flex justify-between text-[#3F6B3C] font-semibold">
-                  <span>Discount ({discountPercent}%)</span>
+                  <span>{editorial("common/CartDrawer.text10")}{discountPercent}%)</span>
                   <span>-{formatPrice(discountAmountUSD)}</span>
                 </div>
               )}
               <div className="flex justify-between text-gray-600">
-                <span>Global Express Shipping</span>
-                <span className="text-[#3F6B3C] font-bold">Complimentary</span>
+                <span>{editorial("common/CartDrawer.text11")}</span>
+                <span className="text-[#3F6B3C] font-bold">{editorial("common/CartDrawer.text12")}</span>
               </div>
               <div className="flex justify-between text-base font-extrabold text-[#0B5E8E] pt-2 border-t border-gray-200">
-                <span>Total ({currency})</span>
+                <span>{editorial("common/CartDrawer.text13")}{currency})</span>
                 <span>{formatPrice(finalSubtotalUSD)}</span>
               </div>
             </div>
@@ -201,7 +199,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               onClick={handleCheckout}
               className="w-full bg-[#E67E22] hover:bg-[#d67118] text-white font-bold text-sm py-3 rounded-md shadow-md flex items-center justify-center gap-2 transition-colors"
             >
-              <span>Proceed to Checkout</span>
+              <span>{editorial("common/CartDrawer.text14")}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

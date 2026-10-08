@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { sectionPath } from '../../routes';
 import React,{ useState,useEffect } from 'react';
@@ -93,7 +95,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5 font-semibold text-gray-300 cursor-pointer text-[11px]"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Home</span>
+              <span>{editorial("travel/ExperienceDetailPage.text1")}</span>
             </PageLink>
             {onBackToDirectory && (
               <>
@@ -102,15 +104,14 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   onClick={onBackToDirectory}
                   className="hover:text-[#C9A66B] transition-colors font-semibold text-gray-300 cursor-pointer text-[11px]"
                 >
-                  All Experiences
-                </PageLink>
+                  {editorial("travel/ExperienceDetailPage.text2")}</PageLink>
               </>
             )}
           </div>
 
           <div className="flex items-center gap-2 text-[#C9A66B] font-bold text-[11px] uppercase tracking-wider hidden sm:flex">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>Victoria Falls Local Specialist Selection</span>
+            <span>{editorial("travel/ExperienceDetailPage.text3")}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -142,7 +143,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             {/* Tag */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/20 backdrop-blur-md border border-[#C9A66B]/50 text-[#E5C989] text-xs font-bold uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>{experience.badge || "Victoria Falls Premium Travel Feature"}</span>
+              <span>{experience.badge || editorialFormat("travel/ExperienceDetailPage.copy1")}</span>
             </div>
 
             {/* Title */}
@@ -164,7 +165,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
               >
                 <WhatsAppIcon className="w-5 h-5 shrink-0" />
-                <span>Enquire About Availability</span>
+                <span>{editorial("travel/ExperienceDetailPage.text4")}</span>
               </a>
 
               <button
@@ -172,7 +173,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 className="bg-white/10 hover:bg-white/20 text-white font-bold text-sm px-6 py-3.5 rounded-xl border border-white/30 backdrop-blur-md transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-                <span>Include in Custom Holiday</span>
+                <span>{editorial("travel/ExperienceDetailPage.text5")}</span>
               </button>
             </div>
 
@@ -188,7 +189,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               </div>
               <div className="flex items-center gap-2 text-gray-200">
                 <Star className="w-4 h-4 text-[#E5C989] shrink-0" />
-                <span className="font-medium">Local Specialist Verified</span>
+                <span className="font-medium">{editorial("travel/ExperienceDetailPage.text6")}</span>
               </div>
               <div className="flex items-center gap-2 text-gray-200">
                 <MapPin className="w-4 h-4 text-[#C9A66B] shrink-0" />
@@ -211,10 +212,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  Experience Overview
-                </span>
+                  {editorial("travel/ExperienceDetailPage.text7")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  About {experience.title}
+                  {editorial("travel/ExperienceDetailPage.text8")}{experience.title}
                 </h2>
               </div>
 
@@ -226,7 +226,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <div className="p-5 sm:p-6 rounded-2xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 space-y-2">
                 <div className="flex items-center gap-2 font-bold text-sm text-[#0B5E8E]">
                   <Star className="w-4 h-4 text-[#C9A66B] fill-[#C9A66B]" />
-                  <span>Why We Recommend It</span>
+                  <span>{editorial("travel/ExperienceDetailPage.text9")}</span>
                 </div>
                 <p className="text-sm sm:text-base text-gray-700 italic font-serif leading-relaxed">
                   "{experience.whyWeRecommend}"
@@ -238,11 +238,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                  Key Features
-                </span>
+                  {editorial("travel/ExperienceDetailPage.text10")}</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                  Experience Highlights
-                </h2>
+                  {editorial("travel/ExperienceDetailPage.text11")}</h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -262,11 +260,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-8">
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                    The Experience Journey
-                  </span>
+                    {editorial("travel/ExperienceDetailPage.text12")}</span>
                   <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                    What To Expect Step by Step
-                  </h2>
+                    {editorial("travel/ExperienceDetailPage.text13")}</h2>
                 </div>
 
                 <div className="space-y-6">
@@ -279,7 +275,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                       )}
                       <div className={st.image ? "md:col-span-8 space-y-1.5" : "md:col-span-12 space-y-1.5"}>
                         <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider block">
-                          Step {st.stepNumber} {st.time ? `• ${st.time}` : ''}
+                          {editorial("travel/ExperienceDetailPage.text14")}{st.stepNumber} {st.time ? `• ${st.time}` : ''}
                         </span>
                         <h3 className="font-serif text-lg font-bold text-[#0B5E8E]">{st.title}</h3>
                         <p className="text-xs text-gray-700 leading-relaxed">{st.description}</p>
@@ -300,11 +296,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                    Visual Gallery
-                  </span>
+                    {editorial("travel/ExperienceDetailPage.text15")}</span>
                   <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                    Experience Gallery
-                  </h2>
+                    {editorial("travel/ExperienceDetailPage.text16")}</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -339,7 +333,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-xs space-y-4">
                 <h3 className="font-serif text-xl font-bold text-[#0B5E8E] flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-[#0B5E8E]" />
-                  <span>What's Included</span>
+                  <span>{editorial("travel/ExperienceDetailPage.text17")}</span>
                 </h3>
                 <ul className="space-y-2.5 text-xs sm:text-sm text-gray-700">
                   {experience.whatsIncluded.map((item, idx) => (
@@ -355,7 +349,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-xs space-y-4">
                 <h3 className="font-serif text-xl font-bold text-[#0B5E8E] flex items-center gap-2">
                   <Info className="w-5 h-5 text-[#C9A66B]" />
-                  <span>Practical Information & Exclusions</span>
+                  <span>{editorial("travel/ExperienceDetailPage.text18")}</span>
                 </h3>
                 <ul className="space-y-2.5 text-xs sm:text-sm text-gray-700">
                   {experience.whatsExcluded && experience.whatsExcluded.map((item, idx) => (
@@ -384,8 +378,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   </div>
                   <div className="space-y-1.5">
                     <span className="text-xs font-bold uppercase tracking-widest text-[#E5C989]">
-                      ⭐ Local Specialist Tip
-                    </span>
+                      {editorial("travel/ExperienceDetailPage.text19")}</span>
                     <p className="text-sm text-gray-200 leading-relaxed font-serif italic">
                       "{experience.localExpertTip}"
                     </p>
@@ -399,11 +392,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-6">
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                    Common Questions
-                  </span>
+                    {editorial("travel/ExperienceDetailPage.text20")}</span>
                   <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                    Frequently Asked Questions
-                  </h2>
+                    {editorial("travel/ExperienceDetailPage.text21")}</h2>
                 </div>
 
                 <div className="space-y-3">
@@ -438,11 +429,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <section className="space-y-6">
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-widest text-[#C9A66B]">
-                    Recommended Combinations
-                  </span>
+                    {editorial("travel/ExperienceDetailPage.text22")}</span>
                   <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                    Related Experiences
-                  </h2>
+                    {editorial("travel/ExperienceDetailPage.text23")}</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -482,20 +471,20 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
           <aside id="experience-booking-sidebar" className="lg:col-span-4 sticky top-28 space-y-6">
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-lg space-y-6">
               <div className="space-y-1 border-b border-gray-200 pb-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Experience Rate</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{editorial("travel/ExperienceDetailPage.text24")}</span>
                 <div className="text-3xl font-bold font-serif text-[#0B5E8E]">
-                  {experience.fromPrice} <span className="text-xs font-normal text-gray-500">per person</span>
+                  {experience.fromPrice} <span className="text-xs font-normal text-gray-500">{editorial("travel/ExperienceDetailPage.text25")}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-gray-500 pt-1">
                   <Clock className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>Duration: {experience.duration}</span>
+                  <span>{editorial("travel/ExperienceDetailPage.text26")}{experience.duration}</span>
                 </div>
               </div>
 
               {/* Calculator Form */}
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Preferred Date</label>
+                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/ExperienceDetailPage.text27")}</label>
                   <input 
                     type="date"
                     value={selectedDate}
@@ -505,7 +494,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Number of Guests</label>
+                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/ExperienceDetailPage.text28")}</label>
                   <select
                     value={guestCount}
                     onChange={(e) => setGuestCount(Number(e.target.value))}
@@ -518,7 +507,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 </div>
 
                 <label className="flex items-center justify-between cursor-pointer p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200">
-                  <span className="font-semibold text-gray-700">Include Return Hotel Transfer (+$15/pp)</span>
+                  <span className="font-semibold text-gray-700">{editorial("travel/ExperienceDetailPage.text29")}</span>
                   <input 
                     type="checkbox" 
                     checked={includeTransfers} 
@@ -528,15 +517,15 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 </label>
 
                 <div className="p-3 rounded-xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 flex items-center justify-between">
-                  <span className="font-bold text-gray-700">Estimated Price:</span>
-                  <span className="font-serif font-bold text-base text-[#0B5E8E]">US${estimatedTotal}</span>
+                  <span className="font-bold text-gray-700">{editorial("travel/ExperienceDetailPage.text30")}</span>
+                  <span className="font-serif font-bold text-base text-[#0B5E8E]">{editorial("travel/ExperienceDetailPage.text31")}{estimatedTotal}</span>
                 </div>
 
                 <WhatsAppEnquiryButton 
                   experienceName={experience.title}
                   date={selectedDate}
                   guests={guestCount}
-                  additionalNotes={includeTransfers ? "Hotel return transfer requested" : undefined}
+                  additionalNotes={includeTransfers ? editorialFormat("travel/ExperienceDetailPage.copy2") : undefined}
                   buttonText="Enquire About Availability"
                   variant="whatsapp-green"
                 />
@@ -547,11 +536,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 space-y-2 text-xs">
                 <div className="flex items-center gap-2 font-bold text-[#0B5E8E]">
                   <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-                  <span>Outbound Guarantee</span>
+                  <span>{editorial("travel/ExperienceDetailPage.text32")}</span>
                 </div>
                 <p className="text-gray-600 leading-relaxed text-[11px]">
-                  All experiences are operated by licensed, vetted Victoria Falls specialists with 100% safety track records and full insurance.
-                </p>
+                  {editorial("travel/ExperienceDetailPage.text33")}</p>
               </div>
             </div>
           </aside>

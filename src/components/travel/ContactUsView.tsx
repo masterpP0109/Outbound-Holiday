@@ -1,3 +1,5 @@
+import { useSubmission, SubmissionSafety } from '../common/SubmissionSafety';
+import { editorial } from "../../runtime/catalog";
 import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER } from '../../utils/whatsapp';
 import React,{ useState } from 'react';
 import { Phone,Mail,MapPin,Clock,Send,Check } from 'lucide-react';
@@ -5,17 +7,20 @@ import { WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 export const ContactUsView: React.FC = () => {
+  const submission = useSubmission('enquiries');
+  const [marketingConsent,setMarketingConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    name: editorial("travel/ContactUsView.text1"),
     email: '',
     phone: '',
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    const saved=await submission.save({...formData,source:'contact',trip:{},marketingConsent});
+    if(saved)setSubmitted(true);
   };
 
   const openWhatsApp = () => {
@@ -27,21 +32,18 @@ export const ContactUsView: React.FC = () => {
       <div className="max-w-[1280px] mx-auto space-y-12">
         <div className="text-center max-w-xl mx-auto space-y-2">
           <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
-            We're Here To Help
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">
-            Contact Our Travel Specialists
-          </h2>
+            {editorial("travel/ContactUsView.text2")}</span>
+          <h1 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">
+            {editorial("travel/ContactUsView.text3")}</h1>
           <p className="text-xs sm:text-sm text-[#2F3A44]/80 leading-relaxed">
-            Reach out via WhatsApp for immediate response, or send us a message and our Victoria Falls office will reply within 2 hours.
-          </p>
+            {editorial("travel/ContactUsView.text4")}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Info & WhatsApp Box (Left 5 Cols) */}
           <div className="lg:col-span-5 space-y-6 bg-[#0B5E8E]/5 p-8 rounded-[24px] border border-[#0B5E8E]/15">
-            <h3 className="font-bold text-xl text-[#0B5E8E] font-serif">Direct Contact Information</h3>
+            <h3 className="font-bold text-xl text-[#0B5E8E] font-serif">{editorial("travel/ContactUsView.text5")}</h3>
 
             <div className="space-y-4 text-xs sm:text-sm text-[#2F3A44]">
               <div className="flex items-start gap-3.5">
@@ -49,8 +51,8 @@ export const ContactUsView: React.FC = () => {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Victoria Falls Office:</strong>
-                  <span>Suite 4, Mosi-oa-Tunya Commercial Centre, Victoria Falls, Zimbabwe</span>
+                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">{editorial("travel/ContactUsView.text6")}</strong>
+                  <span>{editorial("travel/ContactUsView.text7")}</span>
                 </div>
               </div>
 
@@ -59,7 +61,7 @@ export const ContactUsView: React.FC = () => {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Phone & WhatsApp:</strong>
+                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">{editorial("travel/ContactUsView.text8")}</strong>
                   <span>{WHATSAPP_DISPLAY_NUMBER}</span>
                 </div>
               </div>
@@ -69,7 +71,7 @@ export const ContactUsView: React.FC = () => {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Email:</strong>
+                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">{editorial("travel/ContactUsView.text9")}</strong>
                   <span>{CONTACT_EMAIL}</span>
                 </div>
               </div>
@@ -79,8 +81,8 @@ export const ContactUsView: React.FC = () => {
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">Office Hours:</strong>
-                  <span>Mon - Sun: 7:30 AM - 7:00 PM (CAT)</span>
+                  <strong className="block text-[#0B5E8E] text-xs font-bold uppercase tracking-wider mb-0.5">{editorial("travel/ContactUsView.text10")}</strong>
+                  <span>{editorial("travel/ContactUsView.text11")}</span>
                 </div>
               </div>
             </div>
@@ -91,7 +93,7 @@ export const ContactUsView: React.FC = () => {
                 className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <WhatsAppIcon className="w-5 h-5 shrink-0" />
-                <span>Chat Instantly on WhatsApp ({WHATSAPP_DISPLAY_NUMBER})</span>
+                <span>{editorial("travel/ContactUsView.text12")}{WHATSAPP_DISPLAY_NUMBER})</span>
               </button>
             </div>
           </div>
@@ -103,39 +105,38 @@ export const ContactUsView: React.FC = () => {
                 <div className="w-16 h-16 bg-[#3F6B3C]/10 text-[#3F6B3C] rounded-full flex items-center justify-center mx-auto">
                   <Check className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-bold font-serif text-[#0B5E8E]">Message Sent!</h3>
+                <h3 className="text-2xl font-bold font-serif text-[#0B5E8E]">{editorial("travel/ContactUsView.text13")}</h3>
+<p className="font-semibold" role="status">Saved enquiry reference: {submission.result?.reference}</p>
                 <p className="text-xs sm:text-sm text-[#2F3A44]/80 max-w-md mx-auto leading-relaxed">
-                  Thank you for contacting Outbound Holidays. One of our Victoria Falls travel specialists will review your inquiry and get back to you shortly.
-                </p>
+                  {editorial("travel/ContactUsView.text14")}</p>
                 <button
                   onClick={() => setSubmitted(false)}
                   className="bg-[#0B5E8E] text-white font-bold text-xs px-6 py-3 rounded-xl hover:bg-[#094b72] cursor-pointer"
                 >
-                  Send Another Message
-                </button>
+                  {editorial("travel/ContactUsView.text15")}</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <h3 className="font-bold text-xl text-[#0B5E8E] font-serif mb-2">Send Us A Message</h3>
+                <h3 className="font-bold text-xl text-[#0B5E8E] font-serif mb-2">{editorial("travel/ContactUsView.text16")}</h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#2F3A44] mb-1">Your Full Name *</label>
+                    <label className="block text-xs font-bold text-[#2F3A44] mb-1">{editorial("travel/ContactUsView.text17")}</label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Tendai Moyo"
+                      placeholder={editorial("travel/ContactUsView.text18")}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full p-3 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-[#2F3A44] mb-1">Email Address *</label>
+                    <label className="block text-xs font-bold text-[#2F3A44] mb-1">{editorial("travel/ContactUsView.text19")}</label>
                     <input
                       type="email"
                       required
-                      placeholder="name@example.com"
+                      placeholder={editorial("travel/ContactUsView.text20")}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full p-3 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
@@ -144,10 +145,10 @@ export const ContactUsView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2F3A44] mb-1">Phone / WhatsApp Number</label>
+                  <label className="block text-xs font-bold text-[#2F3A44] mb-1">{editorial("travel/ContactUsView.text21")}</label>
                   <input
                     type="tel"
-                    placeholder="+263 77 000 0000"
+                    placeholder={editorial("travel/ContactUsView.text22")}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full p-3 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
@@ -155,11 +156,11 @@ export const ContactUsView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2F3A44] mb-1">Your Message or Inquiry *</label>
+                  <label className="block text-xs font-bold text-[#2F3A44] mb-1">{editorial("travel/ContactUsView.text23")}</label>
                   <textarea
                     rows={4}
                     required
-                    placeholder="Tell us what you'd like to know about visiting Victoria Falls, packages, or lodging..."
+                    placeholder={editorial("travel/ContactUsView.text24")}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full p-3 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
@@ -167,13 +168,13 @@ export const ContactUsView: React.FC = () => {
                 </div>
 
                 <button
-                  type="submit"
+                  type="submit" disabled={submission.pending || false} aria-busy={submission.pending}
                   className="w-full bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
-                  <span>Send Message</span>
+                  <span>{editorial("travel/ContactUsView.text25")}</span>
                 </button>
-              </form>
+              <div className="w-full"><SubmissionSafety submission={submission} marketingConsent={marketingConsent} onConsent={setMarketingConsent} requireConsent={false} /></div></form>
             )}
           </div>
         </div>

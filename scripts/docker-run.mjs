@@ -1,0 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { parse } from 'dotenv';
+const envFile = process.argv[2] || '.env';
+const values = parse(readFileSync(envFile));
+const allowed = /^(DATABASE_URL|DIRECT_URL|PORT|NODE_ENV|MIGRATE_ON_START|APP_URL|ALLOWED_ORIGINS|API_PUBLIC_BASE_URL|CRON_SECRET|EMAIL_.*|SMTP_.*|NEWSLETTER_.*|TEAM_ENQUIRY_TO|TURNSTILE_.*|BREVO_.*|RESEND_.*)$/;
+const env = Object.fromEntries(Object.entries(values).filter(([key]) => allowed.test(key)));
+const args = ['run', '--rm', '-p', '10000:10000', '--name', 'outbound-holidays-api'];
+for (const key of Object.keys(env)) args.push('-e', key);
+args.push('-e', 'PORT=10000', '-e', 'NODE_ENV=production', 'outbound-holidays-api:local');
+const child = spawn('docker', args, { stdio: 'inherit', env: { ...process.env, ...env } });
+child.on('error', error => { console.error(error.message); process.exitCode = 1; });
+child.on('exit', code => { process.exitCode = code ?? 1; });

@@ -1,3 +1,4 @@
+import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { accommodationPath,sectionPath } from '../../routes';
 import React from 'react';
@@ -41,16 +42,14 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B5E8E]/10 border border-[#0B5E8E]/20 text-[#0B5E8E] text-xs font-bold uppercase tracking-widest">
             <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>LOCAL SPECIALIST RECOMMENDATIONS</span>
+            <span>{editorial("travel/WhereToStaySection.text1")}</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
-            Where to Stay in Victoria Falls
-          </h2>
+            {editorial("travel/WhereToStaySection.text2")}</h2>
 
           <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed">
-            From peaceful boutique lodges and family-friendly hotels to luxury riverfront retreats, our local specialists have carefully selected places we confidently recommend based on location, service, comfort and overall guest experience.
-          </p>
+            {editorial("travel/WhereToStaySection.text3")}</p>
         </div>
 
         {/* 4 Featured Accommodation Cards Grid */}
@@ -119,16 +118,16 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
               <div className="p-5 pt-0 space-y-3 border-t border-gray-100 mt-2">
                 <div className="flex items-baseline justify-between pt-3">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">From Rate</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">{editorial("travel/WhereToStaySection.text4")}</span>
                     <span className="font-serif font-bold text-base text-[#0B5E8E]">
                       {formatPrice(property.priceFromUSD)}
-                      <span className="text-[10px] text-gray-500 font-normal"> / night</span>
+                      <span className="text-[10px] text-gray-500 font-normal"> {editorial("travel/WhereToStaySection.text5")}</span>
                     </span>
                   </div>
 
                   <span className="text-[10px] font-bold text-[#3F6B3C] flex items-center gap-1 bg-[#3F6B3C]/10 px-2 py-0.5 rounded-md">
                     <ShieldCheck className="w-3 h-3" />
-                    <span>Outbound Choice</span>
+                    <span>{editorial("travel/WhereToStaySection.text6")}</span>
                   </span>
                 </div>
 
@@ -139,7 +138,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
                   }}
                   className="w-full bg-[#FAF9F6] hover:bg-[#0B5E8E] text-[#0B5E8E] hover:text-white border border-gray-200 hover:border-[#0B5E8E] text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
                 >
-                  <span>View Property</span>
+                  <span>{editorial("travel/WhereToStaySection.text7")}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </PageLink>
               </div>
@@ -154,7 +153,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
             onClick={onExploreAllProperties}
             className="inline-flex items-center justify-center gap-2 bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Explore Where to Stay</span>
+            <span>{editorial("travel/WhereToStaySection.text8")}</span>
             <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
           </PageLink>
         </div>

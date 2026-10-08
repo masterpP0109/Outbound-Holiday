@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from '../common/PageLink';
 import { accommodationPath } from '../../routes';
@@ -43,31 +45,18 @@ export interface ScoredRecommendation {
   tradeOff: string;
 }
 
-const DEFAULT_ANSWERS: AdvisorAnswers = {
+let DEFAULT_ANSWERS: AdvisorAnswers;
+registerContent(() => { DEFAULT_ANSWERS = {
   firstVisit: 'first-time',
   travellerGroup: 'couple',
   budgetLevel: 'comfortable',
-  priorities: ['walking-distance', 'boutique', 'romantic'],
+  priorities: editorialValue("travel/AccommodationAdvisor.section1", {}),
   style: 'boutique-lodge',
   timeSpent: 'balanced',
-};
+}; });
 
-const PRIORITY_OPTIONS = [
-  { id: 'walking-distance', label: 'Walking distance to town' },
-  { id: 'access-falls', label: 'Easy access to the Falls' },
-  { id: 'luxury', label: '5-Star Luxury & Service' },
-  { id: 'wildlife', label: 'Wildlife setting & Waterhole' },
-  { id: 'family-friendly', label: 'Family-friendly facilities' },
-  { id: 'privacy', label: 'Peace, quiet & privacy' },
-  { id: 'river-views', label: 'Zambezi River views' },
-  { id: 'swimming-pool', label: 'Swimming pool' },
-  { id: 'restaurant', label: 'On-site dining' },
-  { id: 'boutique', label: 'Boutique atmosphere' },
-  { id: 'large-rooms', label: 'Large rooms or family space' },
-  { id: 'self-catering', label: 'Self-catering flexibility' },
-  { id: 'romantic', label: 'Romantic atmosphere' },
-  { id: 'good-value', label: 'Good overall value' },
-];
+let PRIORITY_OPTIONS: any;
+registerContent(() => { PRIORITY_OPTIONS = editorialValue("travel/AccommodationAdvisor.PRIORITY_OPTIONS", {}); });
 
 export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
   currency,
@@ -124,7 +113,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
       if (answers.firstVisit === 'first-time') {
         if (property.filterTags.includes('walking-distance') || property.slug === 'victoria-falls-safari-lodge') {
           score += 10;
-          whySuits.push('Ideal for first-time visitors seeking easy transfers and iconic scenery.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy1"));
         }
       }
 
@@ -132,17 +121,17 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
       if (answers.travellerGroup === 'couple' || answers.travellerGroup === 'honeymoon') {
         if (property.filterTags.includes('romantic-escapes') || property.badge === 'Romantic' || property.badge === 'Boutique') {
           score += 15;
-          whySuits.push('Offers an intimate, serene setting designed for couples and romantic escapes.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy2"));
         }
       } else if (answers.travellerGroup === 'family' || answers.travellerGroup === 'multi-gen') {
         if (property.filterTags.includes('family-friendly') || property.category === 'Self-Catering') {
           score += 15;
-          whySuits.push('Features spacious family suites, pool facilities, and child-friendly dining options.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy3"));
         }
       } else if (answers.travellerGroup === 'solo') {
         if (property.filterTags.includes('best-value') || property.filterTags.includes('walking-distance')) {
           score += 10;
-          whySuits.push('Centrally located and highly accessible for solo adventurers.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy4"));
         }
       }
 
@@ -157,12 +146,12 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
       } else if (answers.budgetLevel === 'comfortable') {
         if (property.priceFromUSD >= 180 && property.priceFromUSD <= 320) {
           score += 20;
-          whySuits.push('Comfortable price point offering high hospitality standards and great amenities.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy5"));
         }
       } else if (answers.budgetLevel === 'premium' || answers.budgetLevel === 'luxury' || answers.budgetLevel === 'ultra-luxury') {
         if (property.priceFromUSD >= 300) {
           score += 20;
-          whySuits.push('5-Star luxury service, fine dining, and exclusive riverfront or bridge vistas.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy6"));
         }
       }
 
@@ -170,19 +159,19 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
       answers.priorities.forEach(priority => {
         if (priority === 'walking-distance' && property.filterTags.includes('walking-distance')) {
           score += 10;
-          whySuits.push(`Prime walkability (${property.distanceFromFalls}) to town and rainforest entrance.`);
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy7", [property.distanceFromFalls]));
         }
         if (priority === 'wildlife' && (property.slug === 'victoria-falls-safari-lodge' || property.category === 'Safari Lodge')) {
           score += 12;
-          whySuits.push('Direct wildlife waterhole views right from your balcony.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy8"));
         }
         if (priority === 'river-views' && (property.slug === 'palm-river-hotel' || property.location.includes('River'))) {
           score += 12;
-          whySuits.push('Peaceful upper Zambezi riverfront setting with sunset vistas.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy9"));
         }
         if (priority === 'boutique' && (property.category === 'Boutique Hotel' || property.category === 'Guest Lodge')) {
           score += 8;
-          whySuits.push('Personalized, boutique service in a tranquil environment.');
+          whySuits.push(editorialFormat("travel/AccommodationAdvisor.copy10"));
         }
       });
 
@@ -200,12 +189,12 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
       }
 
       // Generate Personalized Reason Sentence
-      let recReason = `We recommend ${property.name} because you are travelling as a ${answers.travellerGroup} on your ${answers.firstVisit === 'first-time' ? 'first visit' : 'trip'}, and it aligns with your budget and preferred atmosphere.`;
+      let recReason = editorialFormat("travel/AccommodationAdvisor.copy11", [property.name,answers.travellerGroup,answers.firstVisit === 'first-time' ? 'first visit' : 'trip']);
       
       if (property.slug === 'batonka-guest-lodge') {
-        recReason = `We recommend Batonka Guest Lodge because you are travelling as a ${answers.travellerGroup}, looking for a peaceful boutique atmosphere, and wanting convenient town access at a very reasonable rate.`;
+        recReason = editorialFormat("travel/AccommodationAdvisor.copy12", [answers.travellerGroup]);
       } else if (property.slug === 'victoria-falls-safari-lodge') {
-        recReason = `We recommend Victoria Falls Safari Lodge because it provides an iconic wildlife waterhole experience, magnificent African sunset views, and great resort facilities ideal for ${answers.travellerGroup} travellers.`;
+        recReason = editorialFormat("travel/AccommodationAdvisor.copy13", [answers.travellerGroup]);
       } else if (property.slug === 'ilala-lodge-hotel') {
         recReason = `We recommend Ilala Lodge Hotel because it is the closest hotel to Victoria Falls, allowing you to walk to the rainforest entry in minutes while enjoying award-winning dining.`;
       } else if (property.slug === 'victoria-falls-hotel') {
@@ -262,16 +251,14 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
         <div className="max-w-3xl mx-auto text-center space-y-2 relative z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0B5E8E]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest border border-[#C9A66B]/40">
             <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>INTERACTIVE ACCOMMODATION ADVISOR</span>
+            <span>{editorial("travel/AccommodationAdvisor.text1")}</span>
           </div>
 
           <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
-            Find the Right Place to Stay
-          </h2>
+            {editorial("travel/AccommodationAdvisor.text2")}</h2>
 
           <p className="text-xs sm:text-sm text-gray-200 font-light max-w-xl mx-auto leading-relaxed">
-            Answer a few simple questions and our local specialist system will recommend the properties that best match your travel style, priorities and budget.
-          </p>
+            {editorial("travel/AccommodationAdvisor.text3")}</p>
         </div>
 
         <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#C9A66B_1px,transparent_1px)] [background-size:16px_16px]" />
@@ -284,8 +271,8 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
           {/* Progress Indicator */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
-              <span>Step {currentStep} of 6</span>
-              <span className="text-[#0B5E8E]">{Math.round((currentStep / 6) * 100)}% Completed</span>
+              <span>{editorial("travel/AccommodationAdvisor.text4")}{currentStep} {editorial("travel/AccommodationAdvisor.text5")}</span>
+              <span className="text-[#0B5E8E]">{Math.round((currentStep / 6) * 100)}{editorial("travel/AccommodationAdvisor.text6")}</span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
               <div 
@@ -299,18 +286,13 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
           {currentStep === 1 && (
             <div className="space-y-6 animate-fadeIn">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">QUESTION 1</span>
+                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">{editorial("travel/AccommodationAdvisor.text7")}</span>
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                  Is this your first visit to Victoria Falls?
-                </h3>
+                  {editorial("travel/AccommodationAdvisor.text8")}</h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {([
-                  { id: 'first-time', label: 'Yes, this is my first visit', sub: 'We will prioritize well-located stays with easy excursion access.' },
-                  { id: 'repeat', label: 'No, I’ve visited before', sub: 'Looking for a fresh perspective, quiet river setting, or boutique luxury.' },
-                  { id: 'unsure', label: 'I’m not sure yet', sub: 'Recommend overall versatile properties suitable for all travellers.' },
-                ] as const).map(item => (
+                {(editorialValue("travel/AccommodationAdvisor.section2", {})).map(item => (
                   <button
                     key={item.id}
                     onClick={() => setAnswers(prev => ({ ...prev, firstVisit: item.id }))}
@@ -335,22 +317,13 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
           {currentStep === 2 && (
             <div className="space-y-6 animate-fadeIn">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">QUESTION 2</span>
+                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">{editorial("travel/AccommodationAdvisor.text12")}</span>
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                  Who are you travelling with?
-                </h3>
+                  {editorial("travel/AccommodationAdvisor.text13")}</h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-                {([
-                  { id: 'solo', label: 'Solo Traveller', icon: Users },
-                  { id: 'couple', label: 'Couple', icon: Heart },
-                  { id: 'honeymoon', label: 'Honeymoon', icon: Sparkles },
-                  { id: 'family', label: 'Family with kids', icon: Home },
-                  { id: 'friends', label: 'Friends', icon: Users },
-                  { id: 'multi-gen', label: 'Multi-generational group', icon: Users },
-                  { id: 'business', label: 'Business / Corporate', icon: Compass },
-                ] as const).map(item => {
+                {(editorialValue("travel/AccommodationAdvisor.section3", {Sparkles,Compass,Heart,Users,Home})).map(item => {
                   const Icon = item.icon;
                   const isSel = answers.travellerGroup === item.id;
                   return (
@@ -379,23 +352,15 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
           {currentStep === 3 && (
             <div className="space-y-6 animate-fadeIn">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">QUESTION 3</span>
+                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">{editorial("travel/AccommodationAdvisor.text21")}</span>
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                  What is your preferred budget level?
-                </h3>
+                  {editorial("travel/AccommodationAdvisor.text22")}</h3>
                 <p className="text-xs text-gray-500 font-light">
-                  Indicative room rate ranges per night. No exact commitment required.
-                </p>
+                  {editorial("travel/AccommodationAdvisor.text23")}</p>
               </div>
 
               <div className="space-y-3">
-                {([
-                  { id: 'value', title: 'Best Value', range: '$100 – $200 / night', desc: 'Clean, comfortable & reliable stays offering great value without unnecessary extras.' },
-                  { id: 'comfortable', title: 'Comfortable', range: '$200 – $300 / night', desc: 'Boutique lodges & 4-star hotels with pools, garden verandas & excellent service.' },
-                  { id: 'premium', title: 'Premium', range: '$300 – $450 / night', desc: 'Prime location, superior dining, waterhole views & elevated comfort.' },
-                  { id: 'luxury', title: 'Luxury', range: '$450 – $650 / night', desc: '5-Star riverfront luxury, private butler access & high-end safari experiences.' },
-                  { id: 'ultra-luxury', title: 'Ultra-Luxury', range: '$650+ / night', desc: 'Exclusive private villas, private game reserves & bespoke 5-star service.' },
-                ] as const).map(item => {
+                {(editorialValue("travel/AccommodationAdvisor.section4", {})).map(item => {
                   const isSel = answers.budgetLevel === item.id;
                   return (
                     <button
@@ -428,11 +393,10 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
           {currentStep === 4 && (
             <div className="space-y-6 animate-fadeIn">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">QUESTION 4</span>
+                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">{editorial("travel/AccommodationAdvisor.text34")}</span>
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                  What matters most to you?
-                </h3>
-                <p className="text-xs text-gray-500 font-light">Select all priorities that apply to your trip.</p>
+                  {editorial("travel/AccommodationAdvisor.text35")}</h3>
+                <p className="text-xs text-gray-500 font-light">{editorial("travel/AccommodationAdvisor.text36")}</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -465,20 +429,13 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
           {currentStep === 5 && (
             <div className="space-y-6 animate-fadeIn">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">QUESTION 5</span>
+                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">{editorial("travel/AccommodationAdvisor.text37")}</span>
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                  Which accommodation style do you prefer?
-                </h3>
+                  {editorial("travel/AccommodationAdvisor.text38")}</h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {([
-                  { id: 'boutique-lodge', title: 'Boutique Lodge / Guest Lodge', desc: 'Intimate, personalized service in lush garden surroundings.' },
-                  { id: 'safari-lodge', title: 'Safari Lodge', desc: 'Authentic wilderness feel overlooking bush or waterhole.' },
-                  { id: 'hotel', title: 'Full Service Hotel', desc: 'Central location, extensive resort facilities & 24hr service.' },
-                  { id: 'self-catering', title: 'Self-Catering Lodge', desc: 'Independent 2/3 bedroom thatched units with kitchens.' },
-                  { id: 'no-preference', title: 'No Preference', desc: 'Let our algorithm recommend the highest matching stay.' },
-                ] as const).map(item => {
+                {(editorialValue("travel/AccommodationAdvisor.section5", {})).map(item => {
                   const isSel = answers.style === item.id;
                   return (
                     <button
@@ -506,19 +463,13 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
           {currentStep === 6 && (
             <div className="space-y-6 animate-fadeIn">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">QUESTION 6</span>
+                <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-wider">{editorial("travel/AccommodationAdvisor.text49")}</span>
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B5E8E]">
-                  How much time do you expect to spend at the property?
-                </h3>
+                  {editorial("travel/AccommodationAdvisor.text50")}</h3>
               </div>
 
               <div className="space-y-3">
-                {([
-                  { id: 'sleeping', title: 'Mainly sleeping between activities', desc: 'We will be out on safaris, tours and cruises most of the day.' },
-                  { id: 'balanced', title: 'A balanced mix of exploring and relaxing', desc: 'Mornings out on excursions, afternoons relaxing by the pool or garden.' },
-                  { id: 'significant', title: 'A significant part of the holiday', desc: 'We want high dining quality, river views, or waterhole lounge decks.' },
-                  { id: 'major-part', title: 'The property itself is a major part of the experience', desc: 'Seeking destination luxury where the resort setting defines the stay.' },
-                ] as const).map(item => {
+                {(editorialValue("travel/AccommodationAdvisor.section6", {})).map(item => {
                   const isSel = answers.timeSpent === item.id;
                   return (
                     <button
@@ -550,7 +501,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                 className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-[#0B5E8E] transition-colors cursor-pointer px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Previous Question</span>
+                <span>{editorial("travel/AccommodationAdvisor.text59")}</span>
               </button>
             ) : <div />}
 
@@ -558,7 +509,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               onClick={handleNextStep}
               className="inline-flex items-center gap-2 bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md transition-all cursor-pointer border border-[#C9A66B]/30"
             >
-              <span>{currentStep === 6 ? 'See Personalised Recommendations' : 'Next Question'}</span>
+              <span>{currentStep === 6 ? editorialFormat("travel/AccommodationAdvisor.copy14") : 'Next Question'}</span>
               <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
             </button>
           </div>
@@ -572,13 +523,12 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A66B] uppercase tracking-wider">
                 <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-                <span>MATCH RESULTS GENERATED</span>
+                <span>{editorial("travel/AccommodationAdvisor.text60")}</span>
               </div>
               <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                Recommended Places to Stay for You
-              </h3>
+                {editorial("travel/AccommodationAdvisor.text61")}</h3>
               <p className="text-xs sm:text-sm text-gray-600 font-light">
-                Curated based on: <span className="font-medium text-[#0B5E8E]">{answers.travellerGroup}</span> • <span className="font-medium text-[#0B5E8E]">{answers.budgetLevel} budget</span> • <span className="font-medium text-[#0B5E8E]">{answers.firstVisit === 'first-time' ? 'First Visit' : 'Return Trip'}</span>
+                {editorial("travel/AccommodationAdvisor.text62")}<span className="font-medium text-[#0B5E8E]">{answers.travellerGroup}</span> • <span className="font-medium text-[#0B5E8E]">{answers.budgetLevel} {editorial("travel/AccommodationAdvisor.text63")}</span> • <span className="font-medium text-[#0B5E8E]">{answers.firstVisit === 'first-time' ? 'First Visit' : 'Return Trip'}</span>
               </p>
             </div>
 
@@ -587,7 +537,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#0B5E8E] bg-gray-100 hover:bg-gray-200 px-4 py-2.5 rounded-xl transition-colors cursor-pointer shrink-0"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Adjust Preferences</span>
+              <span>{editorial("travel/AccommodationAdvisor.text64")}</span>
             </button>
           </div>
 
@@ -615,15 +565,13 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                           {rec.matchLabel}
                         </div>
                         <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md text-[#0B5E8E] text-xs font-bold px-3 py-1 rounded-lg shadow-sm">
-                          From {formatPrice(prop.priceFromUSD)} / night
-                        </div>
+                          {editorial("travel/AccommodationAdvisor.text65")}{formatPrice(prop.priceFromUSD)} {editorial("travel/AccommodationAdvisor.text66")}</div>
                       </div>
 
                       <div className="flex items-center justify-between text-xs text-gray-600 px-1 font-medium">
                         <span className="flex items-center gap-1">
                           <Star className="w-3.5 h-3.5 text-[#C9A66B] fill-[#C9A66B]" />
-                          <span className="font-bold text-gray-800">{prop.rating}</span> ({prop.reviewCount} reviews)
-                        </span>
+                          <span className="font-bold text-gray-800">{prop.rating}</span> ({prop.reviewCount} {editorial("travel/AccommodationAdvisor.text67")}</span>
                         <span className="flex items-center gap-1 text-gray-500">
                           <MapPin className="w-3.5 h-3.5 text-[#C9A66B]" />
                           <span>{prop.distanceFromFalls}</span>
@@ -647,7 +595,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                       <div className="bg-white p-4 rounded-2xl border border-gray-200/90 space-y-1.5 shadow-2xs">
                         <div className="flex items-center gap-1.5 text-xs font-bold text-[#0B5E8E]">
                           <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-                          <span>Why We Recommend This Stay For You</span>
+                          <span>{editorial("travel/AccommodationAdvisor.text68")}</span>
                         </div>
                         <p className="text-xs text-gray-700 leading-relaxed font-light">
                           {rec.recommendationReason}
@@ -657,8 +605,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                       {/* Why It Suits You Bullet Points */}
                       <div className="space-y-2">
                         <span className="text-xs font-bold text-[#0B5E8E] uppercase tracking-wider block">
-                          Key Reasons It Suits Your Trip:
-                        </span>
+                          {editorial("travel/AccommodationAdvisor.text69")}</span>
                         <ul className="space-y-1.5">
                           {rec.whyItSuitsYou.map((reason, rIdx) => (
                             <li key={rIdx} className="flex items-start gap-2 text-xs text-gray-700 leading-relaxed">
@@ -673,7 +620,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                       <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 leading-relaxed flex items-start gap-2">
                         <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
                         <div>
-                          <span className="font-bold">Honest Local Advice: </span>
+                          <span className="font-bold">{editorial("travel/AccommodationAdvisor.text70")}</span>
                           <span>{rec.tradeOff}</span>
                         </div>
                       </div>
@@ -684,7 +631,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                           onClick={() => onSelectProperty(prop)}
                           className="bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                         >
-                          <span>View Property Details</span>
+                          <span>{editorial("travel/AccommodationAdvisor.text71")}</span>
                           <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                         </PageLink>
 
@@ -693,19 +640,19 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                           className="bg-[#E67E22] hover:bg-[#d36e17] text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                         >
                           <CalendarCheck className="w-3.5 h-3.5" />
-                          <span>Include This Stay in My Holiday</span>
+                          <span>{editorial("travel/AccommodationAdvisor.text72")}</span>
                         </button>
 
                         <a
                           href={getWhatsAppUrl(
-                            `Hello Outbound Holidays,\n\nI’m interested in ${prop.name} and would like to know about availability, current pricing and whether you think it is a good fit for my Victoria Falls holiday.\n\nThank you.`
+                            editorialFormat("travel/AccommodationAdvisor.copy15", [prop.name])
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                         >
                           <MessageCircle className="w-3.5 h-3.5" />
-                          <span>WhatsApp Enquiry</span>
+                          <span>{editorial("travel/AccommodationAdvisor.text73")}</span>
                         </a>
                       </div>
 

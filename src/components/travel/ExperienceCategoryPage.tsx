@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from '../common/PageLink';
 import { experiencePath,sectionPath } from '../../routes';
@@ -20,13 +22,13 @@ MessageCircle,HelpCircle,Heart
 } from 'lucide-react';
 
 // Public image paths for experiences
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
-const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-const chobe1 = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-const spaImg1 = '/Experiences/Spa Treatments/IMG_0375.PNG';
+
+
+
+
+
+
+
 
 export interface ExperienceCategoryPageProps {
   categoryId: string;
@@ -49,145 +51,8 @@ interface CategoryDetail {
   faqs: { q: string; a: string }[];
 }
 
-const CATEGORY_DETAILS: Record<string, CategoryDetail> = {
-  'first-visit': {
-    id: 'first-visit',
-    title: 'First Visit Essentials',
-    metaTitle: 'First Time Visitor Experiences in Victoria Falls | Outbound Holidays',
-    heroCopy: 'If this is your first time in Victoria Falls, start here. These are the experiences our local specialists recommend for understanding the destination, seeing its iconic sights and capturing signature moments.',
-    editorialIntro: 'Victoria Falls is one of the Seven Natural Wonders of the World. For first-time visitors, structuring your itinerary around a guided rainforest tour, an iconic Zambezi sunset cruise, and a traditional cultural dinner guarantees you experience the true spirit of Mosi-oa-Tunya without feeling overwhelmed.',
-    image: fallsTour1,
-    icon: Sun,
-    highlights: [
-      { title: 'Rainforest Viewpoints', desc: 'Walk all 16 spectacular viewpoints along the Victoria Falls rainforest trail.' },
-      { title: 'Zambezi Sunsets', desc: 'Experience golden hour on the upper river with wildlife and complimentary drinks.' },
-      { title: 'Cultural Hospitality', desc: 'Enjoy authentic Zimbabwean dining and interactive djembe drumming.' },
-      { title: 'Aerial Perspectives', desc: 'Optional Flight of Angels helicopter ride over the gorge and spray mist.' }
-    ],
-    faqs: [
-      { q: 'What is the best time of day to visit Victoria Falls rainforest?', a: 'Morning hours offer softer light, spectacular rainbows across the gorge, and cooler temperatures for walking.' },
-      { q: 'Should I wear a raincoat for the guided tour?', a: 'During high-water season (March to July), raincoats and waterproof phone bags are essential due to heavy spray.' },
-      { q: 'Can I combine these first-visit essentials into a 3-day itinerary?', a: 'Yes! Our 3-day First Timer package combines all these essential experiences seamlessly.' }
-    ]
-  },
-  'wildlife': {
-    id: 'wildlife',
-    title: 'Wildlife & Safari',
-    metaTitle: 'Wildlife Safaris & Game Drives in Victoria Falls | Outbound Holidays',
-    heroCopy: 'Victoria Falls is surrounded by some of Southern Africa’s most rewarding wildlife destinations. From river safaris and game drives to full-day national park adventures.',
-    editorialIntro: 'Located at the meeting point of Zimbabwe, Botswana, Zambia, and Namibia, Victoria Falls offers effortless access to world-class game viewing. Track endangered black rhinos in Zambezi National Park or embark on a day safari to Chobe, guided by certified local trackers.',
-    image: gameDrive10,
-    icon: Binoculars,
-    highlights: [
-      { title: 'Big Five Opportunities', desc: 'Track elephant, lion, buffalo, leopard, and endangered rhinos.' },
-      { title: 'Chobe Day Safaris', desc: 'Experience the world’s highest elephant density in nearby Botswana.' },
-      { title: 'Zambezi River Safaris', desc: 'Up-close sightings of hippo pods, crocodiles, and diverse birdlife.' },
-      { title: 'Rhino Tracking Safaris', desc: 'Guided walking safaris with armed rangers in private game reserves.' }
-    ],
-    faqs: [
-      { q: 'Are wildlife sightings guaranteed on game drives?', a: 'While wild animals move freely in their natural habitats, certified trackers have an extremely high success rate locating herds.' },
-      { q: 'Is Chobe National Park far from Victoria Falls?', a: 'Chobe is just 70 km away across the Kazungula border, making it a comfortable 1-day safari excursion.' },
-      { q: 'What should I bring on a safari drive?', a: 'Bring neutral-colored clothing, sun protection, binoculars, camera, and your passport for border crossings.' }
-    ]
-  },
-  'adventure': {
-    id: 'adventure',
-    title: 'Adventure',
-    metaTitle: 'Adventure & Adrenaline Experiences in Victoria Falls | Outbound Holidays',
-    heroCopy: 'Known as Africa’s adventure capital, Victoria Falls offers everything from bridge jumps and gorge swings to white-water rafting and high-speed river runs.',
-    editorialIntro: 'The dramatic Batoka Gorge below Victoria Falls forms one of the world’s greatest natural adventure arenas. All extreme activities adhere to rigorous international safety standards, certified equipment inspections, and veteran jump masters.',
-    image: bungee1,
-    icon: Zap,
-    highlights: [
-      { title: '111m Bridge Bungee', desc: 'Jump into the Batoka Gorge from the historic Victoria Falls Bridge.' },
-      { title: 'Class V Rafting', desc: 'Navigate world-famous rapids on the turbulent Zambezi River.' },
-      { title: 'High-Wire Canopy', desc: 'Experience high-speed zip lines, flying fox, and tandem gorge swings.' },
-      { title: 'Helicopter Flights', desc: 'Soar through the Batoka Gorge on the exhilarating Flight of Angels.' }
-    ],
-    faqs: [
-      { q: 'What safety certifications do adventure operators hold?', a: 'All operators are audited by international adventure safety bodies and hold comprehensive medical liability insurance.' },
-      { q: 'Is white-water rafting available year-round?', a: 'Low water season (August to January) offers the most intense rapids, while high water season runs from February to July.' },
-      { q: 'Can I do a bridge jump if I have no prior experience?', a: 'Yes! Full safety briefings are provided by master jump directors prior to every jump.' }
-    ]
-  },
-  'river': {
-    id: 'river',
-    title: 'River Experiences',
-    metaTitle: 'Zambezi River Cruises & Sunset Safaris in Victoria Falls | Outbound Holidays',
-    heroCopy: 'The Zambezi River offers a completely different side of Victoria Falls. Choose from relaxed sunset cruises, premium river journeys and unhurried moments on the water.',
-    editorialIntro: 'Gliding along the upper Zambezi as the golden African sun sets behind palm-fringed islands is an essential Victoria Falls ritual. Whether on a luxury catamaran or a classic safari boat, river cruises combine tranquility with exceptional wildlife viewing.',
-    image: cruise1,
-    icon: Waves,
-    highlights: [
-      { title: 'Relaxed River Pace', desc: 'Navigate calm river channels surrounded by lush riverine forest.' },
-      { title: 'Luxury Craft Options', desc: 'Gourmet tapas, open bar, and spacious observation decks.' },
-      { title: 'Iconic Sunsets', desc: 'Unmatched golden-hour photographic light across the Zambezi.' },
-      { title: 'Abundant River Wildlife', desc: 'Watch elephants swimming across islands and hippos surfacing.' }
-    ],
-    faqs: [
-      { q: 'What is included in a luxury Zambezi sunset cruise?', a: 'Cruises include return hotel transfers, premium open bar, chef-prepared appetizers, and guided wildlife commentary.' },
-      { q: 'How long do sunset cruises last?', a: 'Standard cruises last approximately 2 to 2.5 hours on the water during sunset.' },
-      { q: 'Are children allowed on sunset river cruises?', a: 'Yes! River cruises are calm, safe, and enjoyable for guests of all ages.' }
-    ]
-  },
-  'culture': {
-    id: 'culture',
-    title: 'Culture & Food',
-    metaTitle: 'Cultural & Culinary Experiences in Victoria Falls | Outbound Holidays',
-    heroCopy: 'Go beyond sightseeing and connect with Victoria Falls through local food, live performances, traditional hospitality and cultural storytelling.',
-    editorialIntro: 'Zimbabwean hospitality is legendary for its warmth and vibrancy. From interactive djembe drumming and traditional Shangaan dancers to traditional village tours and craft markets, these experiences immerse you in local heritage.',
-    image: bomaImg1,
-    icon: Utensils,
-    highlights: [
-      { title: 'Traditional Feast', desc: 'Sample spit-roasted game meats, local sadza, and traditional delicacies.' },
-      { title: 'Interactive Drumming', desc: 'Join in live djembe drumming performances guided by master drummers.' },
-      { title: 'Artisanal Craft Markets', desc: 'Discover hand-carved wooden sculptures, stone art, and woven crafts.' },
-      { title: 'Authentic Heritage', desc: 'Learn about local customs, folklore, and historical traditions.' }
-    ],
-    faqs: [
-      { q: 'Is the Boma Dinner suitable for vegetarians?', a: 'Yes! The Boma features a massive buffet with extensive vegetarian, vegan, and gluten-free selections.' },
-      { q: 'Are hotel transfers included for dinner shows?', a: 'Yes, return hotel transfers are included with all Boma and cultural dinner bookings.' }
-    ]
-  },
-  'day-trips': {
-    id: 'day-trips',
-    title: 'Day Trips',
-    metaTitle: 'Day Excursions from Victoria Falls | Chobe & Hwange | Outbound Holidays',
-    heroCopy: 'Use Victoria Falls as your base for exploring nearby wildlife destinations, border towns and regional highlights that can be experienced in a single day.',
-    editorialIntro: 'Thanks to its central geographic location, Victoria Falls serves as the perfect springboard for day trips into Botswana’s Chobe National Park or Zimbabwe’s massive Hwange National Park, returning to your lodge by evening.',
-    image: chobe1,
-    icon: Map,
-    highlights: [
-      { title: 'Chobe National Park', desc: 'Combine a river safari and land 4x4 drive in Botswana.' },
-      { title: 'Hwange Game Drives', desc: 'Explore Zimbabwe’s premier elephant sanctuary on a day safari.' },
-      { title: 'Cross-Border Efficiency', desc: 'Seamless border assistance handled by our professional transfer crew.' },
-      { title: 'All-Inclusive Excursions', desc: 'Includes hotel pickup, park fees, guided safaris, and buffet lunch.' }
-    ],
-    faqs: [
-      { q: 'Do I need a visa for the Chobe Day Trip to Botswana?', a: 'Many nationalities receive visa-free entry or a KAZA Univisa covering Zimbabwe and Zambia. Check passport requirements before travel.' },
-      { q: 'What time does a Chobe Day Safari start and end?', a: 'Pickups begin around 07:00 AM with return transfers bringing you back to Victoria Falls by 17:30 PM.' }
-    ]
-  },
-  'wellness': {
-    id: 'wellness',
-    title: 'Spa & Wellness',
-    metaTitle: 'Luxury Safari Spa & Wellness in Victoria Falls | Outbound Holidays',
-    heroCopy: 'Rejuvenate your senses after thrilling safari adventures with bespoke African botanical spa treatments, open-air bush massages, and tranquil hydrotherapy.',
-    editorialIntro: 'Victoria Falls is the perfect sanctuary to unwind. Set within tranquil safari estate grounds overlooking wildlife waterholes and indigenous teak forests, our partnered wellness sanctuaries offer signature massages using marula and baobab oils.',
-    image: spaImg1,
-    icon: Heart,
-    highlights: [
-      { title: 'African Botanical Therapies', desc: 'Indulge in treatments infused with organic marula, baobab, and melon seed oils.' },
-      { title: 'Bushveld View Pavilions', desc: 'Relax in open-air treatment suites overlooking tranquil wildlife watering holes.' },
-      { title: 'Hydrotherapy Pools', desc: 'Enjoy restorative plunge pools, herbal sauna suites, and tranquil sun decks.' },
-      { title: 'Couples Sanctuary', desc: 'Private double massage pavilions with outdoor soaking tubs for partners.' }
-    ],
-    faqs: [
-      { q: 'Are hotel transfers included with spa bookings?', a: 'Yes, complimentary return road transfers from any Victoria Falls hotel or lodge are included with treatments over 60 minutes.' },
-      { q: 'Can spa treatments be tailored for couples?', a: 'Yes, dedicated couples suites with dual massage beds and private baths are available upon request.' }
-    ]
-  }
-};
+let CATEGORY_DETAILS: Record<string, CategoryDetail>;
+registerContent(() => { CATEGORY_DETAILS = editorialValue("travel/ExperienceCategoryPage.CATEGORY_DETAILS", {Sun,Binoculars,Zap,Waves,Utensils,Map,Heart}); });
 
 export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
   categoryId,
@@ -233,24 +98,21 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
           {/* Breadcrumb Navigation */}
           <nav className="inline-flex items-center gap-2 text-xs text-white/80 font-medium bg-[#0D2833]/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10">
             <PageLink href={'/'} onClick={onNavigateHome} className="hover:text-white transition-colors cursor-pointer">
-              Home
-            </PageLink>
+              {editorial("travel/ExperienceCategoryPage.text1")}</PageLink>
             <span>/</span>
             <PageLink href={sectionPath('experiences')} onClick={onBackToLanding} className="hover:text-white transition-colors cursor-pointer">
-              Things to Do
-            </PageLink>
+              {editorial("travel/ExperienceCategoryPage.text2")}</PageLink>
             <span>/</span>
             <span className="text-[#C9A66B] font-semibold">{detail.title}</span>
           </nav>
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0D2833]/80 backdrop-blur-md border border-[#C9A66B]/60 text-[#E5C989] text-xs font-bold uppercase tracking-widest shadow-lg mx-auto">
             <CategoryIcon className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>CATEGORY SELECTION ({categoryExperiences.length} ACTIVITIES)</span>
+            <span>{editorial("travel/ExperienceCategoryPage.text3")}{categoryExperiences.length} {editorial("travel/ExperienceCategoryPage.text4")}</span>
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight drop-shadow-md">
-            {detail.title} in Victoria Falls
-          </h1>
+            {detail.title} {editorial("travel/ExperienceCategoryPage.text5")}</h1>
 
           <p className="text-base sm:text-lg text-gray-100 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-xs">
             {detail.heroCopy}
@@ -264,7 +126,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
               }}
               className="w-full sm:w-auto bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-sm px-7 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-[#C9A66B]/40"
             >
-              <span>Explore {detail.title}</span>
+              <span>{editorial("travel/ExperienceCategoryPage.text6")}{detail.title}</span>
               <ArrowRight className="w-4 h-4 text-[#C9A66B]" />
             </button>
 
@@ -273,7 +135,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm px-7 py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <CalendarCheck className="w-4 h-4" />
-              <span>Plan My Holiday</span>
+              <span>{editorial("travel/ExperienceCategoryPage.text7")}</span>
             </button>
           </div>
 
@@ -285,11 +147,11 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
         <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-xs space-y-4 text-center">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
             <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-            <span>LOCAL ADVISOR GUIDANCE</span>
+            <span>{editorial("travel/ExperienceCategoryPage.text8")}</span>
           </div>
 
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-            Why Choose {detail.title}?
+            {editorial("travel/ExperienceCategoryPage.text9")}{detail.title}?
           </h2>
 
           <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-light max-w-2xl mx-auto">
@@ -325,21 +187,18 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
-              CURATED ACTIVITIES
-            </div>
+              {editorial("travel/ExperienceCategoryPage.text10")}</div>
             <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#0B5E8E]">
-              {detail.title} Experiences
-            </h2>
+              {detail.title} {editorial("travel/ExperienceCategoryPage.text11")}</h2>
           </div>
           <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3.5 py-1.5 rounded-xl border border-gray-200/60">
-            Showing all {categoryExperiences.length} activities
-          </span>
+            {editorial("travel/ExperienceCategoryPage.text12")}{categoryExperiences.length} {editorial("travel/ExperienceCategoryPage.text13")}</span>
         </div>
 
         {categoryExperiences.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-2xl border border-gray-200 p-8 space-y-3">
             <HelpCircle className="w-10 h-10 text-gray-400 mx-auto" />
-            <p className="text-gray-600 text-sm">No experiences available in this category at the moment.</p>
+            <p className="text-gray-600 text-sm">{editorial("travel/ExperienceCategoryPage.text14")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -393,7 +252,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
                     }}
                     className="w-full bg-[#FAF9F6] group-hover:bg-[#0B5E8E] text-[#0B5E8E] group-hover:text-white border border-gray-200 group-hover:border-[#0B5E8E] text-xs font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                   >
-                    <span>View Experience Details</span>
+                    <span>{editorial("travel/ExperienceCategoryPage.text15")}</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                   </PageLink>
                 </div>
@@ -407,11 +266,9 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-200/60 space-y-6">
         <div className="space-y-1">
           <div className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
-            MORE WAYS TO EXPERIENCE VICTORIA FALLS
-          </div>
+            {editorial("travel/ExperienceCategoryPage.text16")}</div>
           <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-            Visitors exploring {detail.title} also enjoy:
-          </h2>
+            {editorial("travel/ExperienceCategoryPage.text17")}{detail.title} {editorial("travel/ExperienceCategoryPage.text18")}</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -435,13 +292,13 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
                 <div className="relative z-10 space-y-1 text-white">
                   <div className="flex items-center gap-1.5 text-[#E5C989] text-[11px] font-bold">
                     <RelIcon className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>{count} Activities</span>
+                    <span>{count} {editorial("travel/ExperienceCategoryPage.text19")}</span>
                   </div>
                   <h3 className="font-serif font-bold text-lg text-white group-hover:text-[#E5C989] transition-colors">
                     {relCat.title}
                   </h3>
                   <div className="flex items-center gap-1 text-xs text-[#C9A66B] font-bold pt-1">
-                    <span>Explore Category</span>
+                    <span>{editorial("travel/ExperienceCategoryPage.text20")}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -456,7 +313,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-200/60 space-y-6">
           <div className="text-center space-y-2">
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-              Frequently Asked Questions: {detail.title}
+              {editorial("travel/ExperienceCategoryPage.text21")}{detail.title}
             </h2>
           </div>
 
@@ -495,13 +352,12 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
           <div className="space-y-3 max-w-xl text-center md:text-left z-10">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#E5C989]">
               <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-              <span>START PLANNING</span>
+              <span>{editorial("travel/ExperienceCategoryPage.text22")}</span>
             </div>
             <h3 className="font-serif text-2xl sm:text-4xl font-bold leading-tight text-white">
-              Start Planning Your Victoria Falls Adventure
-            </h3>
+              {editorial("travel/ExperienceCategoryPage.text23")}</h3>
             <p className="text-xs sm:text-sm text-gray-200 font-light leading-relaxed">
-              Tell us about your interests, travel dates, pace and budget, and our local specialists will build a custom itinerary featuring {detail.title.toLowerCase()}.
+              {editorial("travel/ExperienceCategoryPage.text24")}{detail.title.toLowerCase()}.
             </p>
           </div>
 
@@ -511,19 +367,19 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
             >
               <CalendarCheck className="w-4 h-4" />
-              <span>Plan My Holiday</span>
+              <span>{editorial("travel/ExperienceCategoryPage.text25")}</span>
             </button>
 
             <a
               href={getWhatsAppUrl(
-                `Hello Outbound Holidays,\n\nI’m planning a Victoria Falls trip and am interested in ${detail.title}. Could you help me select the best activities for my dates?\n\nThank you.`
+                editorialFormat("travel/ExperienceCategoryPage.copy1", [detail.title])
               )}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Chat on WhatsApp</span>
+              <span>{editorial("travel/ExperienceCategoryPage.text26")}</span>
             </a>
           </div>
 

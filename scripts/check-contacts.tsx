@@ -1,3 +1,5 @@
+import { loadPublishedContent } from './load-content';
+import { installContent,editorialFormat } from '../src/runtime/catalog';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -11,6 +13,8 @@ import { HolidayBuilderModal } from '../src/components/travel/HolidayBuilderModa
 import { MeetYourGuide } from '../src/components/travel/MeetYourGuide';
 import { GuideHubView } from '../src/components/travel/guide/GuideHubView';
 import { MobileStickyCta } from '../src/components/common/MobileStickyCta';
+installContent(await loadPublishedContent());
+
 
 const noop = () => {};
 const message = "Rudo & Tawanda + family #1, 50% 🐘\nDates: 1–4 December";
@@ -50,8 +54,8 @@ function findBuilder(node: ts.Node) {
 }
 findBuilder(sourceFile);
 assert.ok(builderBody);
-const buildLink = new Function('getWhatsAppUrl', 'selectedActivitiesList', 'selectedStayTierObj', 'adultsCount', 'kidsCount', 'partyType', 'nightsCount', 'estimatedMinUSD', 'estimatedMaxUSD', 'travelSeason', 'fullName', builderBody);
-const builderUrl = new URL(buildLink(getWhatsAppUrl, [{ title: 'Cruise & Safari' }], { name: 'Comfort' }, 2, 1, 'family', 3, 1000, 1180, 'December', message));
+const buildLink = new Function('editorialFormat','getWhatsAppUrl', 'selectedActivitiesList', 'selectedStayTierObj', 'adultsCount', 'kidsCount', 'partyType', 'nightsCount', 'estimatedMinUSD', 'estimatedMaxUSD', 'travelSeason', 'fullName', builderBody);
+const builderUrl = new URL(buildLink(editorialFormat,getWhatsAppUrl, [{ title: 'Cruise & Safari' }], { name: 'Comfort' }, 2, 1, 'family', 3, 1000, 1180, 'December', message));
 assert.equal(builderUrl.pathname, `/${WHATSAPP_NUMBER}`);
 assert.equal([...builderUrl.searchParams.keys()].join(','), 'text');
 assert.ok(builderUrl.searchParams.get('text')?.includes(message));

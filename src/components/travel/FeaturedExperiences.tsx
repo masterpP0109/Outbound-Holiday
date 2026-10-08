@@ -1,3 +1,4 @@
+import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { experiencePath,sectionPath } from '../../routes';
 import React from 'react';
@@ -23,16 +24,14 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>CAREFULLY SELECTED EXPERIENCES</span>
+            <span>{editorial("travel/FeaturedExperiences.text1")}</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
-            Featured Victoria Falls Experiences
-          </h2>
+            {editorial("travel/FeaturedExperiences.text2")}</h2>
 
           <p className="text-base sm:text-lg text-gray-600 leading-relaxed font-light">
-            Explore a small selection of memorable experiences our local team confidently recommends for first-time visitors, families, couples and safari travellers.
-          </p>
+            {editorial("travel/FeaturedExperiences.text3")}</p>
         </div>
 
         {/* 4 Featured Cards Grid */}
@@ -91,7 +90,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                 <div className="p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200/80 space-y-1">
                   <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#C9A66B] uppercase tracking-wider">
                     <Star className="w-3 h-3 text-[#C9A66B] fill-[#C9A66B]" />
-                    <span>Why We Recommend It</span>
+                    <span>{editorial("travel/FeaturedExperiences.text4")}</span>
                   </div>
                   <p className="text-[11px] text-gray-700 italic line-clamp-2 leading-tight">
                     "{item.whyWeRecommend}"
@@ -106,7 +105,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                   }}
                   className="w-full mt-2 bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
-                  <span>View Experience</span>
+                  <span>{editorial("travel/FeaturedExperiences.text5")}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                 </PageLink>
               </div>
@@ -120,7 +119,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
             onClick={onExploreAll}
             className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Explore All Experiences</span>
+            <span>{editorial("travel/FeaturedExperiences.text6")}</span>
             <ArrowRight className="w-4 h-4" />
           </PageLink>
         </div>

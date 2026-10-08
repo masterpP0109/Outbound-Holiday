@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+enum ContentKind {
+  accommodation
+  experience
+  package
+  packageStay
+  guide
+  album
+  site
+  builderActivity
+  stayTier
+}
+enum PublicationStatus {
+  draft
+  published
+  archived
+}
+// Typed payloads are validated by shared/content-schema.ts on import and every read.
+// Ordered editorial blocks stay structured; identity, prices, media and links are relational.
+model Content {
+  id String @id
+  kind ContentKind
+  slug String
+  title String
+  metaTitle String?
+  metaDescription String?
+  category String?
+  location String?
+  duration String?
+  startingPrice Decimal? @db.Decimal(12, 2)
+  currency String @default("USD")
+  priceBasis String?
+  featured Boolean @default(false)
+  status PublicationStatus @default(published)
+  displayOrder Int @default(0)
+  payload Json
+  sourceHash String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  images Media[]
+  outgoing ContentRelation[] @relation("from")
+  incoming ContentRelation[] @relation("to")
+  @@unique([kind, slug])
+  @@index([kind, status, displayOrder])
+}
+model Media {
+  id String @id
+  contentId String
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  url String
+  alt String
+  caption String?
+  displayOrder Int
+  role String @default("gallery")
+  @@unique([contentId, role, displayOrder])
+}
+model ContentRelation {
+  fromId String
+  toId String
+  type String
+  displayOrder Int
+  from Content @relation("from", fields: [fromId], references: [id], onDelete: Cascade)
+  to Content @relation("to", fields: [toId], references: [id], onDelete: Restrict)
+  @@id([fromId, toId, type])
+  @@index([fromId, type, displayOrder])
+}
+model Enquiry {
+  status String @default("new")
+  updatedAt DateTime @updatedAt
+  id String @id @default(uuid())
+  reference String @unique
+  idempotencyKey String @unique
+  requestHash String
+  fingerprint String
+  name String
+  email String
+  phone String?
+  message String
+  source String
+  trip Json
+  selectionSnapshot Json
+  marketingConsent Boolean @default(false)
+  createdAt DateTime @default(now())
+  notifications Notification[]
+  @@index([fingerprint, createdAt])
+}
+model Subscription {
+  id String @id @default(uuid())
+  email String @unique
+  status String @default("pending")
+  consentVersion String
+  consentAt DateTime
+  confirmedAt DateTime?
+  unsubscribedAt DateTime?
+  providerUpdatedAt DateTime?
+  tokenHash String @unique
+  providerId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notifications Notification[]
+}
+model SubmissionKey {
+  key String @id
+  hash String
+  result Json
+  createdAt DateTime @default(now())
+}
+model Notification {
+  id String @id @default(uuid())
+  dedupeKey String @unique
+  enquiryId String?
+  enquiry Enquiry? @relation(fields: [enquiryId], references: [id], onDelete: Restrict)
+  subscriptionId String?
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
+  kind String
+  payload Json
+  status String @default("pending")
+  attempts Int @default(0)
+  nextAttemptAt DateTime @default(now())
+  leaseUntil DateTime?
+  leaseToken String?
+  providerId String?
+  lastError String?
+  sentAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([status, nextAttemptAt, leaseUntil])
+}
+model RateLimit {
+  key String @id
+  count Int @default(1)
+  expiresAt DateTime
+  @@index([expiresAt])
+}
+model ImportRun {
+  id String @id @default(uuid())
+  updateExisting Boolean
+  report Json
+  createdAt DateTime @default(now())
+}

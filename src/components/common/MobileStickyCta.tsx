@@ -1,3 +1,4 @@
+import { editorial } from "../../runtime/catalog";
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 import React from 'react';
 import { CalendarCheck } from 'lucide-react';
@@ -21,7 +22,7 @@ export const MobileStickyCta: React.FC<MobileStickyCtaProps> = ({ onOpenPlanHoli
         className="flex-1 bg-[#0B5E8E] active:bg-[#08486e] text-white font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
       >
         <CalendarCheck className="w-4 h-4" />
-        <span>Custom Itinerary</span>
+        <span>{editorial("common/MobileStickyCta.text1")}</span>
       </button>
 
       <a
@@ -32,7 +33,7 @@ export const MobileStickyCta: React.FC<MobileStickyCtaProps> = ({ onOpenPlanHoli
         aria-label="Chat on WhatsApp"
       >
         <WhatsAppIcon className="w-4 h-4" />
-        <span>WhatsApp Enquiry</span>
+        <span>{editorial("common/MobileStickyCta.text2")}</span>
       </a>
     </div>
   );

@@ -1,3 +1,3 @@
-import { ALL_GUIDE_ARTICLES,FIRST_TIME_VISITOR_ARTICLE,GUIDE_HUB_CATEGORIES } from './allGuideArticles';
-
-export { ALL_GUIDE_ARTICLES, FIRST_TIME_VISITOR_ARTICLE, GUIDE_HUB_CATEGORIES };
+// Compatibility exports. All runtime content is installed from the validated backend snapshot.
+export * from '../runtime/catalog';
+export type * from '../types/content';

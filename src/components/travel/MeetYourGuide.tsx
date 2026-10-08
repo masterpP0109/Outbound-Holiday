@@ -1,9 +1,12 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import React from 'react';
 import { CheckCircle2,MessageSquare,PhoneCall } from 'lucide-react';
 
 // Public image paths for experiences
-const elephantExperienceImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
+let elephantExperienceImg: any;
+registerContent(() => { elephantExperienceImg = editorialValue("travel/MeetYourGuide.elephantExperienceImg", {}); });
 
 interface MeetYourGuideProps {
   onOpenConsultation: () => void;
@@ -19,7 +22,7 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
             <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white">
               <img
                 src={elephantExperienceImg}
-                alt="Elephant interaction experience in Victoria Falls"
+                alt={editorial("travel/MeetYourGuide.text1")}
                 className="w-full h-[380px] object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -27,11 +30,10 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
               <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-white/40 shadow-lg text-[#1A2E35]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#0D5C75] text-white flex items-center justify-center font-bold text-sm shrink-0">
-                    OH
-                  </div>
+                    {editorial("travel/MeetYourGuide.text2")}</div>
                   <div>
-                    <h4 className="font-bold text-xs text-[#0D5C75]">Outbound Holidays Travel Specialist</h4>
-                    <p className="text-[11px] text-gray-600">On-ground in Victoria Falls, Zimbabwe</p>
+                    <h4 className="font-bold text-xs text-[#0D5C75]">{editorial("travel/MeetYourGuide.text3")}</h4>
+                    <p className="text-[11px] text-gray-600">{editorial("travel/MeetYourGuide.text4")}</p>
                   </div>
                 </div>
               </div>
@@ -41,28 +43,19 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
           {/* Right Column: Conversational Pitch */}
           <div className="lg:col-span-7 space-y-5">
             <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block">
-              Personal Travel Specialist
-            </span>
+              {editorial("travel/MeetYourGuide.text5")}</span>
 
             <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#0D5C75] leading-tight">
-              You don’t need to plan everything alone.
-            </h2>
+              {editorial("travel/MeetYourGuide.text6")}</h2>
 
             <p className="text-gray-700 text-xs sm:text-base leading-relaxed">
-              Planning a Victoria Falls holiday shouldn't feel overwhelming. With so many accommodation options, activities, and prices online, it's hard to know what truly suits your trip. Our local travel specialists take the guesswork away, helping you plan with confidence from your first enquiry to your return home.
-            </p>
+              {editorial("travel/MeetYourGuide.text7")}</p>
 
             <p className="text-xs sm:text-sm font-semibold text-[#0D5C75] bg-[#0D5C75]/5 p-3 rounded-lg border-l-4 border-[#D97706]">
-              Trusted by families, couples, and adventure travellers planning unforgettable Victoria Falls holidays.
-            </p>
+              {editorial("travel/MeetYourGuide.text8")}</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              {[
-                'Honest, unbiased recommendations',
-                'Carefully selected and verified suppliers',
-                'Personal advice based on your budget',
-                'Support before, during, and after your holiday',
-              ].map((item, idx) => (
+              {editorialValue("travel/MeetYourGuide.section1", {}).map((item, idx) => (
                 <div key={idx} className="flex items-center gap-2.5 bg-white p-3 rounded-lg border border-gray-200 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 text-[#D97706] shrink-0" />
                   <span className="text-xs font-semibold text-[#1A2E35]">{item}</span>
@@ -76,17 +69,17 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
                 className="bg-[#D97706] hover:bg-[#b45309] text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-md shadow-md transition-all flex items-center gap-2"
               >
                 <PhoneCall className="w-4 h-4" />
-                <span>Talk to a Travel Specialist</span>
+                <span>{editorial("travel/MeetYourGuide.text12")}</span>
               </button>
 
               <a
-                href={getWhatsAppUrl("Hi Outbound Holidays, I would like to talk to a Victoria Falls travel specialist.")}
+                href={getWhatsAppUrl(editorialFormat("travel/MeetYourGuide.copy1"))}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-md transition-all flex items-center gap-2"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Chat on WhatsApp</span>
+                <span>{editorial("travel/MeetYourGuide.text13")}</span>
               </a>
             </div>
           </div>

@@ -1,0 +1,281 @@
+{
+  "routes": [
+    {
+      "route": "/",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do-in-victoria-falls",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-accommodation",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-packages",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/client-gallery",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/about",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/category/first-visit",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/category/wildlife",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/category/adventure",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/category/river",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/category/culture",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/category/day-trips",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/category/wellness",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/guided-tour-falls",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/upper-zambezi-sunset-cruise",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/chobe-day-safari",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/flight-of-angels",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/boma-dinner",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/lookout-cafe",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/rhino-tracking-safari",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/game-drive-zambezi",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/elephant-interaction",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/white-water-rafting",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/gorge-swing",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/bungee-jump",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/zip-line",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/flying-fox",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/jet-boat-gorge",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/canopy-tour",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/luxury-pontoon-cruise",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/breakfast-cruise",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/fishing-trips",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/canoeing-zambezi",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/local-village-tour",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/art-galleries-markets",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/hwange-day-safari",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/livingstone-zambia-tour",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/things-to-do/simunye-theatre-show",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/victoria-falls-essentials",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/classic-victoria-falls",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/family-adventure",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/romantic-escape",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/victoria-falls-chobe-explorer",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/adventure-itinerary",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/vic-falls-hwange-safari",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/packages/luxury-escape",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/victoria-falls-safari-lodge",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/ilala-lodge-hotel",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/pioneers-victoria-falls",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/batonka-guest-lodge",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/victoria-falls-hotel",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/palm-river-hotel",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/lokuthula-lodges",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/accommodation/shearwater-explorers-village",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/contact",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/best-time-to-visit",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/month-by-month-guide",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/weather-guide",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/where-to-stay-victoria-falls",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/experience-victoria-falls",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/victoria-falls-itineraries",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/victoria-falls-budget-guide",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/getting-to-victoria-falls",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/visa-entry-requirements",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/victoria-falls-guide/victoria-falls-faqs",
+      "status": "connected browser heading passed"
+    },
+    {
+      "route": "/newsletter-confirmed",
+      "status": "connected browser heading passed"
+    }
+  ],
+  "checks": [
+    "All routes render without JavaScript errors",
+    "Experience search shows matching records and a genuine empty state",
+    "Client gallery opens, advances and closes with Escape",
+    "Contact failure retains fields; retry reuses durable idempotency key and saves a reference",
+    "Eight-stage builder saves selected IDs, contact details and server-verified estimate",
+    "Newsletter requires consent and shows pending configuration truthfully",
+    "Mobile homepage fits viewport"
+  ]
+}

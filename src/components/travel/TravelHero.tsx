@@ -1,12 +1,10 @@
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { sectionPath } from '../../routes';
 import React,{ useState,useEffect } from 'react';
 import { ArrowRight,ShieldCheck,MapPin,ChevronLeft,ChevronRight,Heart,Users,Compass } from 'lucide-react';
 
 // Dedicated public images for each hero carousel slide.
-const fallsTour1 = '/heroImg/familyTrip.png';
-const cruise1 = '/heroImg/LookingForHoneyMoon.png';
-const gameDrive10 = '/heroImg/dreamingOfwildLilife.png';
 
 interface TravelHeroProps {
   onOpenPlanHoliday: () => void;
@@ -25,56 +23,8 @@ interface HeroSlide {
   altText: string;
 }
 
-const HERO_SLIDES: HeroSlide[] = [
-  {
-    id: 'family-tour',
-    imageUrl: fallsTour1,
-    fallbackUrl: fallsTour1,
-    titleTag: 'PLANNED BY LOCAL VICTORIA FALLS SPECIALISTS',
-    headline: (
-      <>
-        Planning Your Family’s Trip <br className="hidden sm:inline" />
-        to Victoria Falls?
-      </>
-    ),
-    description: 'We’ll help you choose the right accommodation, activities and itinerary for every member of the family—planned around your interests, pace and budget.',
-    primaryCtaText: 'Plan Your Family Holiday',
-    badgeIcon: <Users className="w-3.5 h-3.5 text-[#C9A66B]" />,
-    altText: 'Zimbabwean family exploring Mosi-oa-Tunya Victoria Falls with mist and waterfall vistas',
-  },
-  {
-    id: 'couple-honeymoon',
-    imageUrl: cruise1,
-    fallbackUrl: cruise1,
-    titleTag: 'TRAVEL WITH CONFIDENCE',
-    headline: (
-      <>
-        Looking for a Honeymoon <br className="hidden sm:inline" />
-        You’ll Never Forget?
-      </>
-    ),
-    description: 'Let us create a romantic Victoria Falls escape around your story, combining carefully selected stays with memorable Zambezi sunsets and experiences worth celebrating.',
-    primaryCtaText: 'Plan Your Honeymoon Escape',
-    badgeIcon: <Heart className="w-3.5 h-3.5 text-[#E67E22]" />,
-    altText: 'Zimbabwean couple enjoying a romantic sunset Zambezi River cruise',
-  },
-  {
-    id: 'family-safari',
-    imageUrl: gameDrive10,
-    fallbackUrl: gameDrive10,
-    titleTag: 'LOCAL SAFARI KNOWLEDGE',
-    headline: (
-      <>
-        Dreaming of Seeing <br className="hidden sm:inline" />
-        Africa’s Wildlife Up Close?
-      </>
-    ),
-    description: 'We’ll help you combine Victoria Falls with the right safari experience in Hwange or Chobe—without making your holiday feel rushed or unnecessarily expensive.',
-    primaryCtaText: 'Plan Your Safari Experience',
-    badgeIcon: <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />,
-    altText: 'Family guided African wildlife safari discovery tour in Victoria Falls and Hwange',
-  },
-];
+let HERO_SLIDES: HeroSlide[];
+registerContent(()=>{HERO_SLIDES=editorialValue('travel/TravelHero.slides',{Users,Heart,Compass});});
 
 export const TravelHero: React.FC<TravelHeroProps> = ({
   onOpenPlanHoliday,
@@ -171,20 +121,18 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
               onClick={onBrowsePackages}
               className="w-full sm:w-auto bg-black/30 hover:bg-black/50 backdrop-blur-md border border-white/50 text-white font-semibold text-sm sm:text-base px-9 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
             >
-              Browse Packages
-            </PageLink>
+              {editorial("travel/TravelHero.text10")}</PageLink>
           </div>
 
           {/* Reassurance Line - Left Aligned */}
           <div className="pt-2 flex flex-wrap items-center justify-start gap-3.5 text-xs sm:text-sm text-white/95 font-medium drop-shadow-xs">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-              Travel with Confidence
-            </span>
+              {editorial("travel/TravelHero.text11")}</span>
             <span className="hidden sm:inline text-white/40">•</span>
-            <span>Honest, no-obligation guidance</span>
+            <span>{editorial("travel/TravelHero.text12")}</span>
             <span className="hidden sm:inline text-white/40">•</span>
-            <span>Victoria Falls-based specialists</span>
+            <span>{editorial("travel/TravelHero.text13")}</span>
           </div>
 
           {/* Carousel Slide Indicators / Dots - Left Aligned */}
@@ -229,11 +177,9 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
           </div>
           <div className="text-left">
             <span className="font-bold font-serif text-xs sm:text-sm block text-[#0B5E8E] leading-snug">
-              Based in Victoria Falls
-            </span>
+              {editorial("travel/TravelHero.text14")}</span>
             <span className="text-[11px] text-[#2F3A44]/80 leading-normal block mt-0.5">
-              First-hand local knowledge and personal support before and during your holiday.
-            </span>
+              {editorial("travel/TravelHero.text15")}</span>
           </div>
         </div>
 

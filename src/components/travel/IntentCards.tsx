@@ -1,75 +1,21 @@
+import { editorial, editorialValue } from "../../runtime/catalog";
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
 // Public image paths for experiences
-const guidedTourImg = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const elephantImg = '/Experiences/Elephant Interaction_/elecrew-5.jpg';
-const standardCruiseImg = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-const chobeImg = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-const bomaDinnerImg = '/Experiences/Boma Dinner_/IMG_0364.JPG';
-const heli1Img = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
+
+
+
+
+
+
 
 interface IntentCardsProps {
   onSelectIntent: (intentKey: string) => void;
 }
 
 export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
-  const collections = [
-    {
-      id: 'first-time',
-      categoryLabel: 'FIRST-TIME VISITORS',
-      title: 'Your First Victoria Falls Adventure',
-      description: 'Experience the highlights that make Victoria Falls unforgettable. Perfect for first-time visitors who want to see the Falls, cruise the Zambezi and enjoy the destination\'s must-do experiences—all without the stress of planning.',
-      ctaText: 'Explore this Holiday',
-      imageUrl: guidedTourImg,
-      fallbackUrl: guidedTourImg,
-    },
-    {
-      id: 'family',
-      categoryLabel: 'FAMILY FAVOURITE',
-      title: 'Create Family Memories That Last',
-      description: 'Relax while we take care of the details. From family-friendly accommodation to exciting experiences for all ages, this holiday is designed to bring everyone together.',
-      ctaText: 'Explore this Holiday',
-      imageUrl: elephantImg,
-      fallbackUrl: elephantImg,
-    },
-    {
-      id: 'romantic',
-      categoryLabel: 'ROMANTIC ESCAPES',
-      title: 'Celebrate Something Special',
-      description: 'Whether it\'s your honeymoon, anniversary or simply time away together, enjoy romantic sunsets, luxury accommodation and unforgettable moments in one of Africa\'s most spectacular destinations.',
-      ctaText: 'Explore this Holiday',
-      imageUrl: standardCruiseImg,
-      fallbackUrl: standardCruiseImg,
-    },
-    {
-      id: 'best-value',
-      categoryLabel: 'BEST VALUE',
-      title: 'Experience More for Less',
-      description: 'A carefully planned Victoria Falls holiday that delivers incredible experiences while making the most of your budget. Great value without compromising on what matters most.',
-      ctaText: 'Explore this Holiday',
-      imageUrl: chobeImg,
-      fallbackUrl: chobeImg,
-    },
-    {
-      id: 'celebration',
-      categoryLabel: 'CELEBRATIONS',
-      title: 'Celebrate Life\'s Biggest Moments',
-      description: 'Birthdays, anniversaries, graduations or family celebrations—let us create a personalised Victoria Falls experience worthy of the occasion.',
-      ctaText: 'Explore this Holiday',
-      imageUrl: bomaDinnerImg,
-      fallbackUrl: bomaDinnerImg,
-    },
-    {
-      id: 'planning-assistance',
-      categoryLabel: 'TAILOR-MADE',
-      title: 'Your Holiday, Expertly Planned',
-      description: 'Looking for something unique? We\'ll create a personalised itinerary tailored to your interests, pace and budget, with expert advice every step of the way.',
-      ctaText: 'Start Planning',
-      imageUrl: heli1Img,
-      fallbackUrl: heli1Img,
-    },
-  ];
+  const collections = editorialValue("travel/IntentCards.section1", {});
 
   return (
     <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100">
@@ -78,14 +24,11 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-3">
           <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
-            Curated Holiday Collections
-          </span>
+            {editorial("travel/IntentCards.text13")}</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif text-[#0B5E8E] leading-tight">
-            Find the Holiday That Fits You
-          </h2>
+            {editorial("travel/IntentCards.text14")}</h2>
           <p className="text-sm sm:text-base text-[#2F3A44]/90 font-normal leading-relaxed max-w-2xl mx-auto pt-1">
-            Every traveller is different. Whether you're visiting Victoria Falls for the first time, planning a romantic escape or celebrating a special occasion, we've curated a collection of holidays designed around the experiences that matter most.
-          </p>
+            {editorial("travel/IntentCards.text15")}</p>
         </div>
 
         {/* 6 Curated Holiday Collection Cards */}

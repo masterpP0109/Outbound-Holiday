@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from '../common/PageLink';
 import { accommodationPath,sectionPath } from '../../routes';
@@ -57,7 +59,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
     return `${rateObj.symbol}${converted.toLocaleString()}`;
   };
 
-  const whatsappMessage = `Hello Outbound Holidays,\n\nI'm interested in staying at ${property.name} and would like to know about availability, pricing and your recommendation.\n\nThank you.`;
+  const whatsappMessage = editorialFormat("travel/AccommodationDetailPage.copy1", [property.name]);
   const whatsappUrl = getWhatsAppUrl(whatsappMessage);
 
   // Match nearby experiences
@@ -84,15 +86,14 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
-              <span>Home</span>
+              <span>{editorial("travel/AccommodationDetailPage.text1")}</span>
             </PageLink>
             <span>/</span>
             <PageLink href={sectionPath('accommodation')}
               onClick={onNavigateBackToDirectory}
               className="hover:text-white transition-colors cursor-pointer"
             >
-              Where to Stay
-            </PageLink>
+              {editorial("travel/AccommodationDetailPage.text2")}</PageLink>
             <span>/</span>
             <span className="text-[#C9A66B] font-semibold truncate max-w-[160px] sm:max-w-none">
               {property.name}
@@ -104,7 +105,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
             className="flex items-center gap-1.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Back to Places to Stay</span>
+            <span className="hidden sm:inline">{editorial("travel/AccommodationDetailPage.text3")}</span>
           </PageLink>
         </div>
       </div>
@@ -150,19 +151,19 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               {/* Price & Rating Callout */}
               <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-xs uppercase font-bold text-gray-500 block">Indicative Starting Rate</span>
+                  <span className="text-xs uppercase font-bold text-gray-500 block">{editorial("travel/AccommodationDetailPage.text4")}</span>
                   <div className="flex items-baseline gap-2 mt-0.5">
                     <span className="text-3xl font-serif font-bold text-[#0B5E8E]">
-                      From {formatPrice(property.priceFromUSD)}
+                      {editorial("travel/AccommodationDetailPage.text5")}{formatPrice(property.priceFromUSD)}
                     </span>
-                    <span className="text-xs text-gray-500 font-normal">/ night</span>
+                    <span className="text-xs text-gray-500 font-normal">{editorial("travel/AccommodationDetailPage.text6")}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-200 text-xs">
                   <Star className="w-4 h-4 text-[#C9A66B] fill-[#C9A66B]" />
                   <span className="font-bold text-[#0B5E8E]">{property.rating} / 5.0</span>
-                  <span className="text-gray-400">({property.reviewCount} guest reviews)</span>
+                  <span className="text-gray-400">({property.reviewCount} {editorial("travel/AccommodationDetailPage.text7")}</span>
                 </div>
               </div>
 
@@ -173,7 +174,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                   className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
                   <CalendarCheck className="w-4 h-4" />
-                  <span>Check Availability</span>
+                  <span>{editorial("travel/AccommodationDetailPage.text8")}</span>
                 </button>
 
                 <a
@@ -183,7 +184,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                   className="bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Chat on WhatsApp</span>
+                  <span>{editorial("travel/AccommodationDetailPage.text9")}</span>
                 </a>
               </div>
 
@@ -205,11 +206,11 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                 <div className="absolute bottom-4 left-4 right-4 text-white text-xs bg-black/60 backdrop-blur-md p-3 rounded-xl border border-white/20 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-                    <span className="font-semibold">Outbound Local Advisor Choice</span>
+                    <span className="font-semibold">{editorial("travel/AccommodationDetailPage.text10")}</span>
                   </div>
                   <span className="text-[11px] text-[#C9A66B] font-bold flex items-center gap-1">
                     <Maximize2 className="w-3 h-3" />
-                    <span>View Photos</span>
+                    <span>{editorial("travel/AccommodationDetailPage.text11")}</span>
                   </span>
                 </div>
               </div>
@@ -226,72 +227,71 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
         <section className="space-y-6">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
             <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-            <span>PROPERTY AT A GLANCE</span>
+            <span>{editorial("travel/AccommodationDetailPage.text12")}</span>
           </div>
 
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-            At a Glance Overview
-          </h2>
+            {editorial("travel/AccommodationDetailPage.text13")}</h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Hotel className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Type</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text14")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.type}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Star className="w-5 h-5 text-[#C9A66B]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Star Rating</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text15")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.starRating}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Users className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Best For</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text16")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.bestFor}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <MapPin className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Distance to Falls</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text17")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.distanceFromFalls}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Waves className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Swimming Pool</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text18")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.pool}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Utensils className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Restaurant</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text19")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.restaurant}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Wifi className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Wi-Fi</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text20")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.wifi}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Users className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Family Friendly</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text21")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.familyFriendly}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Plane className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Transfers</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text22")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.transfers}</span>
             </div>
 
             <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-1.5">
               <Bed className="w-5 h-5 text-[#0B5E8E]" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Room Types</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text23")}</span>
               <span className="text-xs font-semibold text-[#0B5E8E] line-clamp-1">{property.atAGlance.roomTypesSummary}</span>
             </div>
 
@@ -302,12 +302,11 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
         <section className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200/80 shadow-xs space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
             <Compass className="w-4 h-4 text-[#C9A66B]" />
-            <span>LOCAL ADVISOR EDITORIAL REVIEW</span>
+            <span>{editorial("travel/AccommodationDetailPage.text24")}</span>
           </div>
 
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-            Editorial Overview
-          </h2>
+            {editorial("travel/AccommodationDetailPage.text25")}</h2>
 
           <p className="text-sm sm:text-base text-gray-700 font-light leading-relaxed">
             {property.editorialOverview}
@@ -318,12 +317,11 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
         <section className="bg-gradient-to-r from-[#0B5E8E]/10 via-[#FAF9F6] to-[#C9A66B]/10 p-6 sm:p-8 rounded-2xl border border-[#0B5E8E]/20 space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
             <Award className="w-4 h-4 text-[#C9A66B]" />
-            <span>OUTBOUND SPECIALIST SELECTION</span>
+            <span>{editorial("travel/AccommodationDetailPage.text26")}</span>
           </div>
 
           <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-            Why We Recommend This Stay
-          </h2>
+            {editorial("travel/AccommodationDetailPage.text27")}</h2>
 
           <p className="text-sm sm:text-base text-gray-800 font-serif leading-relaxed italic">
             "{property.whyWeRecommend}"
@@ -336,13 +334,12 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
             <div>
               <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
                 <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-                <span>PHOTO GALLERY</span>
+                <span>{editorial("travel/AccommodationDetailPage.text28")}</span>
               </div>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E] mt-1">
-                Explore Property Photos
-              </h2>
+                {editorial("travel/AccommodationDetailPage.text29")}</h2>
             </div>
-            <span className="text-xs text-gray-500 font-medium hidden sm:inline">Click any photo to enlarge</span>
+            <span className="text-xs text-gray-500 font-medium hidden sm:inline">{editorial("travel/AccommodationDetailPage.text30")}</span>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -371,12 +368,11 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
           <section className="space-y-6">
             <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
               <Bed className="w-4 h-4 text-[#C9A66B]" />
-              <span>ACCOMMODATION OPTIONS</span>
+              <span>{editorial("travel/AccommodationDetailPage.text31")}</span>
             </div>
 
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-              Room Types & Suites
-            </h2>
+              {editorial("travel/AccommodationDetailPage.text32")}</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {property.roomTypes.map((room, idx) => (
@@ -392,7 +388,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md">
-                        Occupancy: {room.occupancy}
+                        {editorial("travel/AccommodationDetailPage.text33")}{room.occupancy}
                       </div>
                     </div>
 
@@ -418,13 +414,12 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                   </div>
 
                   <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Customisable for your stay</span>
+                    <span className="text-xs text-gray-500">{editorial("travel/AccommodationDetailPage.text34")}</span>
                     <button
                       onClick={() => onOpenPlanHolidayWithProperty(property)}
                       className="text-xs font-bold text-[#E67E22] hover:underline cursor-pointer"
                     >
-                      Request This Room →
-                    </button>
+                      {editorial("travel/AccommodationDetailPage.text35")}</button>
                   </div>
                 </div>
               ))}
@@ -436,12 +431,11 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
         <section className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200/80 shadow-xs space-y-6">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
             <Building className="w-4 h-4 text-[#C9A66B]" />
-            <span>PROPERTY AMENITIES</span>
+            <span>{editorial("travel/AccommodationDetailPage.text36")}</span>
           </div>
 
           <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-            Lodge Facilities & Guest Amenities
-          </h2>
+            {editorial("travel/AccommodationDetailPage.text37")}</h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {property.facilities.map((fac, idx) => (
@@ -465,41 +459,40 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
         <section className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200/80 shadow-xs space-y-6">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
             <MapPin className="w-4 h-4 text-[#C9A66B]" />
-            <span>LOCATION & ACCESSIBILITY</span>
+            <span>{editorial("travel/AccommodationDetailPage.text38")}</span>
           </div>
 
           <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-            Location & Surrounding Area
-          </h2>
+            {editorial("travel/AccommodationDetailPage.text39")}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4 text-xs sm:text-sm text-gray-700">
               <div className="space-y-1">
-                <span className="font-bold text-[#0B5E8E] block">Address / Setting:</span>
+                <span className="font-bold text-[#0B5E8E] block">{editorial("travel/AccommodationDetailPage.text40")}</span>
                 <p className="font-light">{property.locationInfo.address}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div className="bg-[#FAF9F6] p-3 rounded-xl border border-gray-200">
-                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Distance to Falls</span>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">{editorial("travel/AccommodationDetailPage.text41")}</span>
                   <span className="font-bold text-[#0B5E8E]">{property.locationInfo.distanceToFalls}</span>
                 </div>
 
                 <div className="bg-[#FAF9F6] p-3 rounded-xl border border-gray-200">
-                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Distance to Airport</span>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">{editorial("travel/AccommodationDetailPage.text42")}</span>
                   <span className="font-bold text-[#0B5E8E]">{property.locationInfo.distanceToAirport}</span>
                 </div>
               </div>
 
               <div className="pt-2">
-                <span className="font-bold text-[#0B5E8E] block mb-1">Departure & Activity Pickups:</span>
+                <span className="font-bold text-[#0B5E8E] block mb-1">{editorial("travel/AccommodationDetailPage.text43")}</span>
                 <p className="font-light">{property.locationInfo.departurePoints}</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200 space-y-2">
-                <span className="font-bold text-xs text-[#0B5E8E] uppercase tracking-wider block">Nearby Attractions</span>
+                <span className="font-bold text-xs text-[#0B5E8E] uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text44")}</span>
                 <ul className="space-y-1.5 text-xs text-gray-600 font-light">
                   {property.locationInfo.nearbyAttractions.map((item, i) => (
                     <li key={i} className="flex items-center gap-2">
@@ -511,7 +504,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               </div>
 
               <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200 space-y-2">
-                <span className="font-bold text-xs text-[#0B5E8E] uppercase tracking-wider block">Nearby Dining Options</span>
+                <span className="font-bold text-xs text-[#0B5E8E] uppercase tracking-wider block">{editorial("travel/AccommodationDetailPage.text45")}</span>
                 <ul className="space-y-1.5 text-xs text-gray-600 font-light">
                   {property.locationInfo.nearbyRestaurants.map((item, i) => (
                     <li key={i} className="flex items-center gap-2">
@@ -530,16 +523,15 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
           <section className="space-y-6">
             <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
               <Sparkles className="w-4 h-4 text-[#C9A66B]" />
-              <span>NEARBY EXPERIENCES</span>
+              <span>{editorial("travel/AccommodationDetailPage.text46")}</span>
             </div>
 
             <div>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-                Activities Easily Accessible from {property.name}
+                {editorial("travel/AccommodationDetailPage.text47")}{property.name}
               </h2>
               <p className="text-xs sm:text-sm text-gray-600 font-light mt-1">
-                Click any experience below to view activity itineraries and details.
-              </p>
+                {editorial("travel/AccommodationDetailPage.text48")}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -575,7 +567,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
 
                   <div className="p-4 pt-0">
                     <span className="text-[11px] font-bold text-[#0B5E8E] flex items-center gap-1">
-                      <span>View Activity</span>
+                      <span>{editorial("travel/AccommodationDetailPage.text49")}</span>
                       <ArrowRight className="w-3 h-3 text-[#C9A66B]" />
                     </span>
                   </div>
@@ -590,11 +582,9 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
           <section className="space-y-6 pt-6 border-t border-gray-200">
             <div>
               <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-                You May Also Like
-              </h2>
+                {editorial("travel/AccommodationDetailPage.text50")}</h2>
               <p className="text-xs sm:text-sm text-gray-600 font-light mt-1">
-                Explore similar recommended stays in Victoria Falls.
-              </p>
+                {editorial("travel/AccommodationDetailPage.text51")}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -620,7 +610,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                       )}
 
                       <div className="absolute bottom-3 left-3 text-white text-xs font-serif font-bold">
-                        From {formatPrice(rel.priceFromUSD)}
+                        {editorial("travel/AccommodationDetailPage.text52")}{formatPrice(rel.priceFromUSD)}
                       </div>
                     </div>
 
@@ -642,7 +632,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                       }}
                       className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold py-2 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <span>View Property</span>
+                      <span>{editorial("travel/AccommodationDetailPage.text53")}</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                     </PageLink>
                   </div>
@@ -656,14 +646,11 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
         <section className="bg-[#0B5E8E] text-white rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-xl relative overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-3 relative z-10">
             <span className="text-[#C9A66B] text-xs font-bold uppercase tracking-widest block">
-              YOUR VICTORIA FALLS ITINERARY
-            </span>
+              {editorial("travel/AccommodationDetailPage.text54")}</span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">
-              Ready to Stay Here?
-            </h2>
+              {editorial("travel/AccommodationDetailPage.text55")}</h2>
             <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed">
-              Let our local Victoria Falls specialists include {property.name} in your personalised holiday itinerary.
-            </p>
+              {editorial("travel/AccommodationDetailPage.text56")}{property.name} {editorial("travel/AccommodationDetailPage.text57")}</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10 pt-2">
@@ -672,7 +659,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <CalendarCheck className="w-4 h-4" />
-              <span>Include This Stay in My Holiday</span>
+              <span>{editorial("travel/AccommodationDetailPage.text58")}</span>
             </button>
 
             <a
@@ -682,7 +669,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Chat on WhatsApp</span>
+              <span>{editorial("travel/AccommodationDetailPage.text59")}</span>
             </a>
           </div>
         </section>

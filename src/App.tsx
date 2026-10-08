@@ -1,3 +1,4 @@
+import { ContactUsView } from './components/travel/ContactUsView';
 import { useEffect,useState } from 'react';
 import { resolveRoute,sectionPath,experiencePath,packagePath,accommodationPath,categoryPath } from './routes';
 import { PageMetadata } from './components/common/PageMetadata';
@@ -34,9 +35,10 @@ import { MobileStickyCta } from './components/common/MobileStickyCta';
 import { Newsletter } from './components/common/Newsletter';
 import { Footer } from './components/common/Footer';
 
-export default function App({ initialPath }: { initialPath?: string } = {}) {
+export default function App({ initialPath,contentVersion }: { initialPath?: string;contentVersion?:string } = {}) {
   // Application View & Navigation State
   const [route, setRoute] = useState(() => resolveRoute(initialPath ?? (typeof window === 'undefined' ? '/' : window.location.pathname)));
+  useEffect(() => { setRoute(resolveRoute(window.location.pathname)); },[contentVersion]);
   const activeView = route.view;
   const selectedExperience = route.experience;
   const selectedCategory = route.category;
@@ -70,6 +72,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
   };
 
   // Modals & Drawers
+  const [preselectedActivity,setPreselectedActivity]=useState<string|null>(null);
   const [planHolidayOpen, setPlanHolidayOpen] = useState(false);
   const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | null>(null);
   const [preselectedAccommodation, setPreselectedAccommodation] = useState<DetailedAccommodation | null>(null);
@@ -93,7 +96,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
         currency={currency}
         setCurrency={setCurrency}
         onOpenPlanHoliday={() => {
-          setPreselectedPackage(null);
+          setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
           setPlanHolidayOpen(true);
         }}
         searchQuery={searchQuery}
@@ -116,8 +119,12 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             <p>The page you’re looking for is unavailable. Explore our Victoria Falls holidays and experiences.</p>
             <PageLink href="/" onClick={() => navigate('/')} className="inline-block rounded-xl bg-[#0B5E8E] px-6 py-3 text-white">Back to home</PageLink>
           </section>
+        ) : activeView === 'newsletter-confirmed' ? (
+          <section className="max-w-3xl mx-auto p-12 text-center space-y-5"><h1 className="text-3xl font-serif text-[#0B5E8E]">Travel updates confirmation</h1><p>Use the confirmation link sent to your email to confirm your request. Visiting this page alone does not confirm a subscription.</p><PageLink href="/" onClick={()=>navigate('/')}>Explore Outbound Holidays</PageLink></section>
+        ) : activeView === 'contact' ? (
+          <ContactUsView />
         ) : activeView === 'about' ? (
-          <AboutPage onNavigateSection={handleNavigateSection} onOpenPlanHoliday={() => { setPreselectedPackage(null); setPreselectedAccommodation(null); setPlanHolidayOpen(true); }} />
+          <AboutPage onNavigateSection={handleNavigateSection} onOpenPlanHoliday={() => { setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null); setPreselectedAccommodation(null); setPlanHolidayOpen(true); }} />
         ) : activeView === 'client-gallery' ? (
           <ClientGallery key="gallery-page" onNavigateHome={() => handleNavigateSection('hero')} />
         ) : activeView === 'accommodation' ? (
@@ -125,7 +132,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             currency={currency}
             onSelectProperty={handleSelectAccommodationDetail}
             onIncludeInHoliday={(prop) => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPreselectedAccommodation(prop);
               setPlanHolidayOpen(true);
             }}
@@ -139,7 +146,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             property={selectedAccommodation}
             currency={currency}
             onOpenPlanHolidayWithProperty={(prop) => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPreselectedAccommodation(prop);
               setPlanHolidayOpen(true);
             }}
@@ -170,7 +177,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             packageData={selectedPackage}
             currency={currency}
             onPlanHoliday={(pkg) => {
-              setPreselectedPackage(pkg);
+              setPreselectedPackage(pkg); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPlanHolidayOpen(true);
             }}
             onSelectExperience={handleSelectExperience}
@@ -192,7 +199,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             onSelectExperience={handleSelectExperience}
             onSelectCategory={handleSelectCategory}
             onOpenPlanHoliday={() => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPlanHolidayOpen(true);
             }}
           />
@@ -202,7 +209,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             onSelectExperience={handleSelectExperience}
             onSelectCategory={handleSelectCategory}
             onOpenPlanHoliday={() => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
@@ -218,7 +225,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
           <ExperienceDetailPage
             experience={selectedExperience}
             onOpenPlanHoliday={() => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(selectedExperience?.id??null);
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
@@ -238,7 +245,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
         ) : activeView === 'boma' ? (
           <BomaExperiencePage
             onOpenPlanHoliday={() => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(selectedExperience?.id??null);
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
@@ -259,7 +266,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
         ) : activeView === 'bungee' ? (
           <BungeeExperiencePage
             onOpenPlanHoliday={() => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(selectedExperience?.id??null);
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
@@ -274,8 +281,9 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
           />
         ) : activeView === 'guide' ? (
           <VicFallsGuidePage
+            article={route.article}
             onOpenPlanHoliday={() => {
-              setPreselectedPackage(null);
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPlanHolidayOpen(true);
             }}
             onNavigateHome={() => {
@@ -288,7 +296,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             {/* 1. Hero */}
             <TravelHero
               onOpenPlanHoliday={() => {
-                setPreselectedPackage(null);
+                setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
                 setPlanHolidayOpen(true);
               }}
               onBrowsePackages={() => handleNavigateSection('travel-packages')}
@@ -309,7 +317,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             {/* 3. Why Plan With Outbound Holidays */}
             <WhyChooseOutbound
               onOpenPlanHoliday={() => {
-                setPreselectedPackage(null);
+                setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
                 setPlanHolidayOpen(true);
               }}
             />
@@ -356,7 +364,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
             {/* 10. Final Call To Action */}
             <FinalCtaBanner
               onOpenPlanHoliday={() => {
-                setPreselectedPackage(null);
+                setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
                 setPlanHolidayOpen(true);
               }}
             />
@@ -373,7 +381,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
       <Footer
         onNavigateSection={handleNavigateSection}
         onOpenPlanHoliday={() => {
-          setPreselectedPackage(null);
+          setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
           setPlanHolidayOpen(true);
         }}
       />
@@ -381,7 +389,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
       {/* Mobile Sticky CTA Bar */}
       <MobileStickyCta
         onOpenPlanHoliday={() => {
-          setPreselectedPackage(null);
+          setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
           setPlanHolidayOpen(true);
         }}
       />
@@ -390,6 +398,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
       <PlanHolidayModal
         isOpen={planHolidayOpen}
         onClose={() => setPlanHolidayOpen(false)}
+        preselectedActivity={preselectedActivity}
         preselectedPackage={preselectedPackage}
         preselectedAccommodation={preselectedAccommodation}
       />

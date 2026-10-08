@@ -8,7 +8,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.{ts,tsx}', 'vite.config.ts', 'eslint.config.js'],
+    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.{ts,tsx,mjs}', 'server/**/*.ts', 'api/**/*.ts', 'shared/**/*.ts', 'prisma/**/*.ts', 'tests/**/*.{ts,tsx}', 'vite.config.ts', 'eslint.config.js'],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
     plugins: { 'react-hooks': reactHooks },
     rules: {

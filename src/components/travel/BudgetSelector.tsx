@@ -1,3 +1,4 @@
+import { editorial, editorialValue } from "../../runtime/catalog";
 import React from 'react';
 import { Currency } from '../../types';
 import { CURRENCY_RATES } from '../../data/travelData';
@@ -22,50 +23,38 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
   const tiers = [
     {
       id: 'smart-value',
-      name: 'Smart Value',
+      name: editorial("travel/BudgetSelector.text1"),
       icon: <ShieldCheck className="w-5 h-5 text-[#0D5C75]" />,
-      tagline: 'Comfortable, memorable and carefully budgeted',
+      tagline: editorial("travel/BudgetSelector.text2"),
       priceRangeUSD: 650,
       priceLabel: `From ${formatPrice(650)} per person`,
-      perfectFor: ['First-time visitors', 'Young couples', 'Small families'],
+      perfectFor: editorialValue("travel/BudgetSelector.section1", {}),
       stayLevel: '3-Star Boutique Lodge / Safari Chalet',
-      experiences: [
-        'Guided Rainforest Falls Tour',
-        'Zambezi Sundowner Cruise',
-        'Airport Transfers & Park Fees',
-      ],
+      experiences: editorialValue("travel/BudgetSelector.section2", {}),
       badge: 'Popular Value',
     },
     {
       id: 'signature-comfort',
-      name: 'Signature Comfort',
+      name: editorial("travel/BudgetSelector.text5"),
       icon: <Sparkles className="w-5 h-5 text-[#D97706]" />,
-      tagline: 'Prime locations and a balanced range of experiences',
+      tagline: editorial("travel/BudgetSelector.text6"),
       priceRangeUSD: 1250,
       priceLabel: `From ${formatPrice(1250)} per person`,
-      perfectFor: ['Couples', 'Families', 'Most travellers'],
+      perfectFor: editorialValue("travel/BudgetSelector.section3", {}),
       stayLevel: '4-Star Luxury Lodge / Riverfront Hotel',
-      experiences: [
-        'All Smart Value Experiences',
-        'Boma Traditional Dinner Feast',
-        'Full-Day Chobe Safari (Botswana)',
-      ],
+      experiences: editorialValue("travel/BudgetSelector.section4", {}),
       badge: 'Recommended',
     },
     {
       id: 'premium-escape',
-      name: 'Premium Escape',
+      name: editorial("travel/BudgetSelector.text10"),
       icon: <Crown className="w-5 h-5 text-[#0D5C75]" />,
-      tagline: 'Exceptional accommodation and private experiences',
+      tagline: editorial("travel/BudgetSelector.text11"),
       priceRangeUSD: 2150,
       priceLabel: `From ${formatPrice(2150)} per person`,
-      perfectFor: ['Honeymoons', 'Special celebrations', 'Luxury travellers'],
+      perfectFor: editorialValue("travel/BudgetSelector.section5", {}),
       stayLevel: '5-Star Ultra-Luxury River Suite / Villa',
-      experiences: [
-        'Flight of Angels Helicopter Flight',
-        'Private Zambezi Pontoon Dining',
-        'All-Inclusive Meals & Premium Beverages',
-      ],
+      experiences: editorialValue("travel/BudgetSelector.section6", {}),
       badge: 'VIP Luxury',
     },
   ];
@@ -75,14 +64,11 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-            Transparent Pricing Guidance
-          </span>
+            {editorial("travel/BudgetSelector.text14")}</span>
           <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75] mb-2">
-            What kind of holiday fits your budget?
-          </h2>
+            {editorial("travel/BudgetSelector.text15")}</h2>
           <p className="text-gray-600 text-xs sm:text-sm">
-            Understand exactly what each travel tier offers before planning your itinerary.
-          </p>
+            {editorial("travel/BudgetSelector.text16")}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -113,15 +99,13 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
                     {tier.priceLabel}
                   </span>
                   <span className="text-[11px] text-gray-500">
-                    Typical 3-4 day package investment
-                  </span>
+                    {editorial("travel/BudgetSelector.text17")}</span>
                 </div>
 
                 <div className="space-y-3.5 text-xs text-gray-700 mb-6">
                   <div>
                     <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-1">
-                      Perfect for:
-                    </strong>
+                      {editorial("travel/BudgetSelector.text18")}</strong>
                     <ul className="space-y-1">
                       {tier.perfectFor.map((item, i) => (
                         <li key={i} className="flex items-center gap-1.5 text-gray-700 font-medium">
@@ -134,15 +118,13 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
 
                   <div>
                     <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-0.5">
-                      Accommodation Level:
-                    </strong>
+                      {editorial("travel/BudgetSelector.text19")}</strong>
                     <span className="text-gray-600">{tier.stayLevel}</span>
                   </div>
 
                   <div>
                     <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-1">
-                      Key Inclusions:
-                    </strong>
+                      {editorial("travel/BudgetSelector.text20")}</strong>
                     <ul className="space-y-1">
                       {tier.experiences.map((exp, i) => (
                         <li key={i} className="flex items-center gap-1.5 text-gray-600">
@@ -159,7 +141,7 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
                 onClick={() => onSelectBudgetStyle(tier.name)}
                 className="w-full bg-[#0D5C75] hover:bg-[#0A485C] text-white font-bold text-xs py-3 rounded-lg shadow-2xs flex items-center justify-center gap-1.5 transition-colors mt-2"
               >
-                <span>See what this budget can create</span>
+                <span>{editorial("travel/BudgetSelector.text21")}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

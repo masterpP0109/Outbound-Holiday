@@ -1,3 +1,5 @@
+import { editorialFormat } from "../../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../../runtime/catalog";
 import { PHONE_URL } from '../../../utils/whatsapp';
 import { PageLink } from '../../common/PageLink';
 import React,{ useState,useEffect,useRef } from 'react';
@@ -34,17 +36,8 @@ interface GuideArticleTemplateProps {
   onNavigateHome?: () => void;
 }
 
-const FAQ_FILTER_TABS = [
-  { id: 'All', label: 'All' },
-  { id: 'Planning', label: 'Planning', category: 'Planning Your Trip' },
-  { id: 'Money', label: 'Money', category: 'Money & Payments' },
-  { id: 'Activities', label: 'Activities', category: 'Activities' },
-  { id: 'Safety', label: 'Safety', category: 'Health & Safety' },
-  { id: 'Weather', label: 'Weather', category: 'Weather' },
-  { id: 'Wildlife', label: 'Wildlife', category: 'Wildlife' },
-  { id: 'Accommodation', label: 'Accommodation', category: 'Accommodation' },
-  { id: 'Booking', label: 'Booking', category: 'Booking with Outbound Holidays' },
-];
+let FAQ_FILTER_TABS: any;
+registerContent(() => { FAQ_FILTER_TABS = editorialValue("travel/guide/GuideArticleTemplate.FAQ_FILTER_TABS", {}); });
 
 export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
   article,
@@ -93,7 +86,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
       },
       'publisher': {
         '@type': 'Organization',
-        'name': 'Outbound Holidays Victoria Falls',
+        'name': editorialFormat("travel/guide/GuideArticleTemplate.copy1"),
         'logo': {
           '@type': 'ImageObject',
           'url': 'https://outboundholidays.co.zw/logo.png',
@@ -245,10 +238,10 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
             onClick={onNavigateHome}
             className="hover:text-[#0B5E8E] transition-colors cursor-pointer flex items-center gap-1"
           >
-            <span>Home</span>
+            <span>{editorial("travel/guide/GuideArticleTemplate.text1")}</span>
           </PageLink>
           <ChevronRight className="w-3.5 h-3.5 mx-2 text-gray-400 shrink-0" />
-          <span className="text-gray-700 font-semibold">Victoria Falls Guide</span>
+          <span className="text-gray-700 font-semibold">{editorial("travel/guide/GuideArticleTemplate.text2")}</span>
           <ChevronRight className="w-3.5 h-3.5 mx-2 text-gray-400 shrink-0" />
           <span className="text-[#0B5E8E] font-bold truncate max-w-xs sm:max-w-md">{article.title}</span>
         </div>
@@ -303,7 +296,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                     <ShieldCheck className="w-3.5 h-3.5 text-[#C9A66B]" />
                   </div>
                   <div className="text-[11px] text-gray-300">
-                    {article.author.role} • Updated {article.lastUpdatedDate}
+                    {article.author.role} {editorial("travel/guide/GuideArticleTemplate.text3")}{article.lastUpdatedDate}
                   </div>
                 </div>
               </div>
@@ -325,7 +318,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                   className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <CalendarCheck className="w-3.5 h-3.5" />
-                  <span>Plan My Holiday</span>
+                  <span>{editorial("travel/guide/GuideArticleTemplate.text4")}</span>
                 </button>
               </div>
             </div>
@@ -381,7 +374,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>Guide Chapters ({article.sections.length})</span>
+                <span>{editorial("travel/guide/GuideArticleTemplate.text5")}{article.sections.length})</span>
               </button>
 
               <button
@@ -393,7 +386,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                 }`}
               >
                 <Users className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>Traveller Types</span>
+                <span>{editorial("travel/guide/GuideArticleTemplate.text6")}</span>
               </button>
 
               <button
@@ -409,7 +402,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                 }`}
               >
                 <HelpCircle className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>Practical FAQs</span>
+                <span>{editorial("travel/guide/GuideArticleTemplate.text7")}</span>
               </button>
             </div>
 
@@ -428,7 +421,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
           {/* Chapter Quick Selector Row */}
           {activeMainTab === 'chapters' && (
             <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-              <span className="text-[11px] font-bold text-gray-400 shrink-0 uppercase tracking-wider">Chapters:</span>
+              <span className="text-[11px] font-bold text-gray-400 shrink-0 uppercase tracking-wider">{editorial("travel/guide/GuideArticleTemplate.text8")}</span>
               {article.sections.map((sec, idx) => (
                 <button
                   key={sec.id}
@@ -458,10 +451,9 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               <div className="bg-white rounded-2xl border border-gray-200/90 shadow-xs p-5 space-y-4">
                 <div className="pb-3 border-b border-gray-100 flex items-center justify-between">
                   <h3 className="font-serif font-bold text-base text-[#0B5E8E]">
-                    Guide Index ({article.sections.length} Chapters)
-                  </h3>
+                    {editorial("travel/guide/GuideArticleTemplate.text9")}{article.sections.length} {editorial("travel/guide/GuideArticleTemplate.text10")}</h3>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A66B] bg-[#C9A66B]/10 px-2 py-0.5 rounded-full">
-                    Chapter {activeSectionIndex + 1} of {article.sections.length}
+                    {editorial("travel/guide/GuideArticleTemplate.text11")}{activeSectionIndex + 1} {editorial("travel/guide/GuideArticleTemplate.text12")}{article.sections.length}
                   </span>
                 </div>
 
@@ -497,11 +489,10 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                   <div className="p-3.5 rounded-xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/15 space-y-2.5">
                     <div className="flex items-center gap-2 text-xs font-bold text-[#0B5E8E]">
                       <PhoneCall className="w-3.5 h-3.5 text-[#C9A66B]" />
-                      <span>Have Victoria Falls Questions?</span>
+                      <span>{editorial("travel/guide/GuideArticleTemplate.text13")}</span>
                     </div>
                     <p className="text-[11px] text-gray-600 leading-relaxed">
-                      Connect with our local Zimbabwe team for custom advice and lodge bookings.
-                    </p>
+                      {editorial("travel/guide/GuideArticleTemplate.text14")}</p>
                     <button
                       onClick={() => {
                         trackGuideEvent('cta_clicked', { articleSlug: article.slug, ctaName: 'sidebar_speak_specialist' });
@@ -510,7 +501,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                       className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-xs py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                     >
                       <CalendarCheck className="w-3.5 h-3.5 text-[#C9A66B]" />
-                      <span>Talk to a Specialist</span>
+                      <span>{editorial("travel/guide/GuideArticleTemplate.text15")}</span>
                     </button>
                   </div>
                 </div>
@@ -528,7 +519,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                   <div className="pb-4 border-b border-gray-100 flex items-center justify-between gap-4">
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                        Chapter {activeSectionIndex + 1} of {article.sections.length}
+                        {editorial("travel/guide/GuideArticleTemplate.text16")}{activeSectionIndex + 1} {editorial("travel/guide/GuideArticleTemplate.text17")}{article.sections.length}
                       </span>
                       <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E] leading-tight">
                         {activeSection.heading}
@@ -575,7 +566,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                               <figcaption className="p-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-500 flex flex-wrap justify-between gap-2">
                                 <span>{block.imageCaption}</span>
                                 {block.imageCredit && (
-                                  <span className="font-semibold text-gray-400">Photo: {block.imageCredit}</span>
+                                  <span className="font-semibold text-gray-400">{editorial("travel/guide/GuideArticleTemplate.text18")}{block.imageCredit}</span>
                                 )}
                               </figcaption>
                             )}
@@ -649,7 +640,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                       }`}
                     >
                       <ChevronLeft className="w-4 h-4" />
-                      <span>Previous Chapter</span>
+                      <span>{editorial("travel/guide/GuideArticleTemplate.text19")}</span>
                     </button>
 
                     <button
@@ -661,7 +652,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                           : 'bg-[#0B5E8E] hover:bg-[#08486e] text-white shadow-xs'
                       }`}
                     >
-                      <span>Next Chapter</span>
+                      <span>{editorial("travel/guide/GuideArticleTemplate.text20")}</span>
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -675,7 +666,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                       <div className="pb-4 border-b border-gray-100 flex items-center justify-between gap-4">
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                            Chapter {sIdx + 1} of {article.sections.length}
+                            {editorial("travel/guide/GuideArticleTemplate.text21")}{sIdx + 1} {editorial("travel/guide/GuideArticleTemplate.text22")}{article.sections.length}
                           </span>
                           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E] leading-tight">
                             {section.heading}
@@ -721,7 +712,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                                   <figcaption className="p-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-500 flex flex-wrap justify-between gap-2">
                                     <span>{block.imageCaption}</span>
                                     {block.imageCredit && (
-                                      <span className="font-semibold text-gray-400">Photo: {block.imageCredit}</span>
+                                      <span className="font-semibold text-gray-400">{editorial("travel/guide/GuideArticleTemplate.text23")}{block.imageCredit}</span>
                                     )}
                                   </figcaption>
                                 )}
@@ -792,14 +783,12 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                 <div className="space-y-2 max-w-lg">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-[11px] font-bold uppercase tracking-wider">
                     <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-                    <span>Free Local Concierge Service</span>
+                    <span>{editorial("travel/guide/GuideArticleTemplate.text24")}</span>
                   </span>
                   <h3 className="font-serif text-2xl font-bold text-white">
-                    Need Help Customising Your Victoria Falls Itinerary?
-                  </h3>
+                    {editorial("travel/guide/GuideArticleTemplate.text25")}</h3>
                   <p className="text-xs text-gray-200 leading-relaxed">
-                    Our Victoria Falls specialists offer complimentary custom trip planning and lodge bookings.
-                  </p>
+                    {editorial("travel/guide/GuideArticleTemplate.text26")}</p>
                 </div>
 
                 <button
@@ -810,7 +799,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                   className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-md transition-all shrink-0 whitespace-nowrap cursor-pointer flex items-center gap-2"
                 >
                   <CalendarCheck className="w-4 h-4" />
-                  <span>Build My Custom Trip</span>
+                  <span>{editorial("travel/guide/GuideArticleTemplate.text27")}</span>
                 </button>
               </section>
 
@@ -818,11 +807,9 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               <section className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-6">
                 <div className="pb-4 border-b border-gray-100">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                    Local Advantage
-                  </span>
+                    {editorial("travel/guide/GuideArticleTemplate.text28")}</span>
                   <h3 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-                    Why Plan Your Victoria Falls Journey with Outbound Holidays?
-                  </h3>
+                    {editorial("travel/guide/GuideArticleTemplate.text29")}</h3>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -831,10 +818,9 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                       <MapPin className="w-4 h-4 text-[#0B5E8E]" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-[#0B5E8E]">Based in Victoria Falls</h4>
+                      <h4 className="font-bold text-sm text-[#0B5E8E]">{editorial("travel/guide/GuideArticleTemplate.text30")}</h4>
                       <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-                        Our main office and concierge team live in Victoria Falls with 24/7 on-ground support.
-                      </p>
+                        {editorial("travel/guide/GuideArticleTemplate.text31")}</p>
                     </div>
                   </div>
 
@@ -843,10 +829,9 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                       <ShieldCheck className="w-4 h-4 text-[#0B5E8E]" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-[#0B5E8E]">Handpicked Lodges & Tours</h4>
+                      <h4 className="font-bold text-sm text-[#0B5E8E]">{editorial("travel/guide/GuideArticleTemplate.text32")}</h4>
                       <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-                        We only recommend lodges and riverboats we personally inspect and audit.
-                      </p>
+                        {editorial("travel/guide/GuideArticleTemplate.text33")}</p>
                     </div>
                   </div>
                 </div>
@@ -861,11 +846,9 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
           <section className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 shadow-xs space-y-6 mb-12">
             <div className="pb-4 border-b border-gray-100">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B] block mb-1">
-                Tailored Advice
-              </span>
+                {editorial("travel/guide/GuideArticleTemplate.text34")}</span>
               <h3 className="font-serif text-2xl font-bold text-[#0B5E8E]">
-                Victoria Falls for Every Traveller Type
-              </h3>
+                {editorial("travel/guide/GuideArticleTemplate.text35")}</h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -894,7 +877,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
 
                   <div className="p-4 pt-0">
                     <div className="pt-3 border-t border-gray-200/80 text-[11px] text-gray-700 space-y-1 bg-white p-3 rounded-lg border border-gray-100">
-                      <span className="font-bold text-[#0B5E8E] block">Specialist Tip:</span>
+                      <span className="font-bold text-[#0B5E8E] block">{editorial("travel/guide/GuideArticleTemplate.text36")}</span>
                       <p className="italic">{card.topTip}</p>
                     </div>
                   </div>
@@ -911,14 +894,12 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
           <div className="space-y-3 border-b border-gray-100 pb-6 text-center sm:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A66B]/15 text-[#8E713E] text-xs font-bold uppercase tracking-wider">
               <HelpCircle className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>Victoria Falls Knowledge Base</span>
+              <span>{editorial("travel/guide/GuideArticleTemplate.text37")}</span>
             </div>
             <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#0B5E8E] leading-tight">
-              Your Victoria Falls Questions, Answered
-            </h2>
+              {editorial("travel/guide/GuideArticleTemplate.text38")}</h2>
             <p className="text-sm sm:text-base text-gray-600 font-medium leading-relaxed max-w-3xl">
-              Clear answers to the questions travellers ask us most often before visiting Victoria Falls.
-            </p>
+              {editorial("travel/guide/GuideArticleTemplate.text39")}</p>
           </div>
 
           {/* Search Bar & Category Filter Tabs */}
@@ -933,7 +914,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                 type="text"
                 value={faqSearchQuery}
                 onChange={(e) => setFaqSearchQuery(e.target.value)}
-                placeholder="Search your Victoria Falls question…"
+                placeholder={editorial("travel/guide/GuideArticleTemplate.text40")}
                 className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-[#FAF9F6] text-sm text-[#1A2E35] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]/30 focus:border-[#0B5E8E] transition-all"
               />
               {faqSearchQuery && (
@@ -1022,16 +1003,14 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
             ) : (
               <div className="text-center py-10 px-4 bg-[#FAF9F6] rounded-2xl border border-gray-200/80 space-y-2">
                 <HelpCircle className="w-8 h-8 text-[#C9A66B] mx-auto opacity-60" />
-                <h4 className="font-serif font-bold text-base text-[#0B5E8E]">No questions found</h4>
+                <h4 className="font-serif font-bold text-base text-[#0B5E8E]">{editorial("travel/guide/GuideArticleTemplate.text41")}</h4>
                 <p className="text-xs text-gray-600 max-w-md mx-auto">
-                  We couldn’t find any questions matching "{faqSearchQuery}". Try another keyword or ask our local specialists directly below.
-                </p>
+                  {editorial("travel/guide/GuideArticleTemplate.text42")}{faqSearchQuery}{editorial("travel/guide/GuideArticleTemplate.text43")}</p>
                 <button
                   onClick={() => { setFaqSearchQuery(''); setActiveFaqFilter('All'); }}
                   className="text-xs font-bold text-[#0B5E8E] underline hover:text-[#E67E22] pt-2 inline-block cursor-pointer"
                 >
-                  Reset FAQ Search Filters
-                </button>
+                  {editorial("travel/guide/GuideArticleTemplate.text44")}</button>
               </div>
             )}
           </div>
@@ -1041,14 +1020,12 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
             <div className="space-y-2 max-w-xl">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-wider">
                 <MessageCircle className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>Direct Local Concierge</span>
+                <span>{editorial("travel/guide/GuideArticleTemplate.text45")}</span>
               </div>
               <h3 className="font-serif text-xl sm:text-2xl font-bold text-white">
-                Still Have a Question?
-              </h3>
+                {editorial("travel/guide/GuideArticleTemplate.text46")}</h3>
               <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                Planning a holiday is personal, and every traveller is different. If you have not found the answer you are looking for, our local Victoria Falls specialists are ready to help.
-              </p>
+                {editorial("travel/guide/GuideArticleTemplate.text47")}</p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
@@ -1057,7 +1034,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                 className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-3 px-5 rounded-xl border border-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <PhoneCall className="w-3.5 h-3.5 text-[#C9A66B]" />
-                <span>Ask a Local Specialist</span>
+                <span>{editorial("travel/guide/GuideArticleTemplate.text48")}</span>
               </a>
               <button
                 onClick={() => {
@@ -1067,7 +1044,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                 className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs py-3 px-5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <CalendarCheck className="w-3.5 h-3.5" />
-                <span>Build My Holiday</span>
+                <span>{editorial("travel/guide/GuideArticleTemplate.text49")}</span>
               </button>
             </div>
           </div>
@@ -1078,14 +1055,12 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
           <div className="max-w-2xl mx-auto space-y-2 relative z-10">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-wider border border-[#C9A66B]/30">
               <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>Start Your Victoria Falls Experience</span>
+              <span>{editorial("travel/guide/GuideArticleTemplate.text50")}</span>
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              Ready to Experience Mosi-oa-Tunya?
-            </h2>
+              {editorial("travel/guide/GuideArticleTemplate.text51")}</h2>
             <p className="text-xs sm:text-sm text-gray-200 leading-relaxed">
-              Let our local Victoria Falls specialists craft your bespoke itinerary — complete with handpicked river lodges, guided rainforest walks, and seamless transfers.
-            </p>
+              {editorial("travel/guide/GuideArticleTemplate.text52")}</p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 relative z-10">
@@ -1097,7 +1072,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-8 py-3.5 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
             >
               <CalendarCheck className="w-4 h-4" />
-              <span>Plan My Holiday Now</span>
+              <span>{editorial("travel/guide/GuideArticleTemplate.text53")}</span>
             </button>
           </div>
         </section>

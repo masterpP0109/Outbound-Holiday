@@ -1,10 +1,15 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import React,{ useState } from 'react';
 import { ClipboardList,Sparkles,UserCheck,ArrowRight,CheckCircle2 } from 'lucide-react';
 
 // Public image paths for experiences
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-const simunyeShow = '/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg';
+let fallsTour1: any;
+registerContent(() => { fallsTour1 = editorialValue("travel/HowItWorks.fallsTour1", {}); });
+let cruise1: any;
+registerContent(() => { cruise1 = editorialValue("travel/HowItWorks.cruise1", {}); });
+let simunyeShow: any;
+registerContent(() => { simunyeShow = editorialValue("travel/HowItWorks.simunyeShow", {}); });
 
 interface HowItWorksProps {
   onStartPlanning: () => void;
@@ -16,25 +21,25 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
   const steps = [
     {
       num: '01',
-      title: 'Tell us about your trip',
-      desc: 'Dates, party size, travel interests, and your approximate budget.',
-      detail: 'Specify whether you want a weekend getaway or a 5-day safari combo. Our builder adapts to couples, families, or solo explorers.',
+      title: editorial("travel/HowItWorks.text1"),
+      desc: editorial("travel/HowItWorks.text2"),
+      detail: editorialFormat("travel/HowItWorks.copy1"),
       imageUrl: fallsTour1,
       icon: <ClipboardList className="w-5 h-5" />,
     },
     {
       num: '02',
-      title: 'Receive personalised recommendations',
-      desc: 'We create options that genuinely suit your travel style and expectations.',
-      detail: 'Our intelligent concierge matches your stay tier with essential Victoria Falls activities, sunset river cruises, and safari extensions.',
+      title: editorial("travel/HowItWorks.text3"),
+      desc: editorial("travel/HowItWorks.text4"),
+      detail: editorialFormat("travel/HowItWorks.copy2"),
       imageUrl: cruise1,
       icon: <Sparkles className="w-5 h-5" />,
     },
     {
       num: '03',
-      title: 'Book with confidence',
-      desc: 'We confirm availability, handle logistics, and support you on the ground.',
-      detail: 'Connect directly with our local concierges in Victoria Falls via WhatsApp or email to lock in your booking effortlessly.',
+      title: editorial("travel/HowItWorks.text5"),
+      desc: editorial("travel/HowItWorks.text6"),
+      detail: editorialFormat("travel/HowItWorks.copy3"),
       imageUrl: simunyeShow,
       icon: <UserCheck className="w-5 h-5" />,
     },
@@ -47,14 +52,11 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
           <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block mb-2">
-            Simple 3-Step Process
-          </span>
+            {editorial("travel/HowItWorks.text7")}</span>
           <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight mb-3">
-            Planning your holiday is simple.
-          </h2>
+            {editorial("travel/HowItWorks.text8")}</h2>
           <p className="text-sm sm:text-base text-[#2F3A44] leading-relaxed">
-            Zero stress, no hidden surprises, guided by genuine Zimbabwean hospitality.
-          </p>
+            {editorial("travel/HowItWorks.text9")}</p>
         </div>
 
         {/* 3 Interactive Cards Row */}
@@ -126,8 +128,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2.5">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
                             <CheckCircle2 className="w-3.5 h-3.5 text-[#C9A66B]" />
-                            Step {step.num} Preview Active
-                          </span>
+                            {editorial("travel/HowItWorks.text10")}{step.num} {editorial("travel/HowItWorks.text11")}</span>
                         </div>
                       </div>
                     </div>
@@ -158,7 +159,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
             onClick={onStartPlanning}
             className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-10 py-4 rounded-xl shadow-lg hover:shadow-xl inline-flex items-center gap-3 transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Start Planning with Confidence</span>
+            <span>{editorial("travel/HowItWorks.text12")}</span>
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>

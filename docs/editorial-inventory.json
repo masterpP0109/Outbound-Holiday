@@ -1,0 +1,306 @@
+[
+  {
+    "component": "src\\components\\common\\CartDrawer.tsx",
+    "strings": 14,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\common\\Footer.tsx",
+    "strings": 22,
+    "sections": [
+      "outboundLogo",
+      "cruise1"
+    ]
+  },
+  {
+    "component": "src\\components\\common\\Header.tsx",
+    "strings": 24,
+    "sections": [
+      "outboundLogo"
+    ]
+  },
+  {
+    "component": "src\\components\\common\\MobileStickyCta.tsx",
+    "strings": 2,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\common\\Newsletter.tsx",
+    "strings": 7,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\common\\WishlistDrawer.tsx",
+    "strings": 5,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\AboutPage.tsx",
+    "strings": 43,
+    "sections": [
+      "services",
+      "principles"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\AboutUsView.tsx",
+    "strings": 20,
+    "sections": [
+      "fallsTour1"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\AccommodationAdvisor.tsx",
+    "strings": 73,
+    "sections": [
+      "PRIORITY_OPTIONS"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\AccommodationDetailPage.tsx",
+    "strings": 59,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\AccommodationDirectoryPage.tsx",
+    "strings": 60,
+    "sections": [
+      "FILTER_CATEGORIES",
+      "FAQS"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\BomaExperiencePage.tsx",
+    "strings": 204,
+    "sections": [
+      "bomaDinnerImg",
+      "bomaDinnerImg2",
+      "bomaDinnerImg3",
+      "bomaDinnerImg5",
+      "bomaDinnerImg6",
+      "bomaDinnerImg7",
+      "bomaDinnerImg8",
+      "cruiseImg",
+      "guidedTourImg",
+      "heli1Img",
+      "chobeImg"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\BudgetSelector.tsx",
+    "strings": 21,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\BungeeExperiencePage.tsx",
+    "strings": 102,
+    "sections": [
+      "bungeeImg",
+      "bungeeImg2",
+      "bungeeImg3",
+      "bungeeImg4",
+      "bungeeImg5"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\ClientGallery.tsx",
+    "strings": 5,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\ContactUsView.tsx",
+    "strings": 25,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\ExperienceCategoryPage.tsx",
+    "strings": 26,
+    "sections": [
+      "fallsTour1",
+      "cruise1",
+      "bomaImg1",
+      "bungee1",
+      "gameDrive10",
+      "chobe1",
+      "spaImg1",
+      "CATEGORY_DETAILS"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\ExperienceDetailPage.tsx",
+    "strings": 33,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\ExperienceExplorer.tsx",
+    "strings": 78,
+    "sections": [
+      "guidedTourImg",
+      "standardCruiseImg",
+      "bomaDinnerImg",
+      "chobeImg",
+      "gameDriveImg",
+      "gameDriveImg2",
+      "gameDriveImg4",
+      "raftingImg",
+      "heli1Img",
+      "gorgeSwingImg",
+      "spaImg",
+      "elephantImg",
+      "simunyeImg",
+      "bungeeImg"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\ExperiencesDirectoryPage.tsx",
+    "strings": 83,
+    "sections": [
+      "heroVictoriaFalls",
+      "fallsTour1",
+      "cruise1",
+      "bomaImg1",
+      "bungee1",
+      "gameDrive10",
+      "chobe1",
+      "spaImg1"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\FaqSection.tsx",
+    "strings": 14,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\FeaturedExperiences.tsx",
+    "strings": 6,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\FeaturedPackages.tsx",
+    "strings": 9,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\FinalCtaBanner.tsx",
+    "strings": 6,
+    "sections": [
+      "fallsTour1"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\guide\\GuideArticleTemplate.tsx",
+    "strings": 53,
+    "sections": [
+      "FAQ_FILTER_TABS"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\guide\\GuideHubView.tsx",
+    "strings": 22,
+    "sections": [
+      "outboundLogo",
+      "elephantExperienceImg"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\HolidayBuilderModal.tsx",
+    "strings": 230,
+    "sections": [
+      "fallsTour1",
+      "cruise1",
+      "bomaImg1",
+      "heli1",
+      "chobe1",
+      "gorgeSwing3",
+      "bungee1",
+      "gameDrive10",
+      "outboundLogo"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\HowItWorks.tsx",
+    "strings": 12,
+    "sections": [
+      "fallsTour1",
+      "cruise1",
+      "simunyeShow"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\HowWeHelp.tsx",
+    "strings": 15,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\IntentCards.tsx",
+    "strings": 15,
+    "sections": [
+      "guidedTourImg",
+      "elephantImg",
+      "standardCruiseImg",
+      "chobeImg",
+      "bomaDinnerImg",
+      "heli1Img"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\MeetYourGuide.tsx",
+    "strings": 13,
+    "sections": [
+      "elephantExperienceImg"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\PackageDetailPage.tsx",
+    "strings": 83,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\PackagesDirectoryPage.tsx",
+    "strings": 29,
+    "sections": [
+      "fallsTour1"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\QuickPlanningBar.tsx",
+    "strings": 6,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\TravelHero.tsx",
+    "strings": 15,
+    "sections": [
+      "fallsTour1",
+      "cruise1",
+      "gameDrive10"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\TravellerStories.tsx",
+    "strings": 7,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\VicFallsGuide.tsx",
+    "strings": 13,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\VicFallsGuidePage.tsx",
+    "strings": 4,
+    "sections": [
+      "outboundLogo"
+    ]
+  },
+  {
+    "component": "src\\components\\travel\\WhereToStaySection.tsx",
+    "strings": 8,
+    "sections": []
+  },
+  {
+    "component": "src\\components\\travel\\WhyChooseOutbound.tsx",
+    "strings": 18,
+    "sections": []
+  }
+]

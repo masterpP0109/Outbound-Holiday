@@ -1,3 +1,4 @@
+import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import { packagePath,sectionPath } from '../../routes';
 import React from 'react';
@@ -33,20 +34,17 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>THOUGHTFULLY PLANNED ITINERARIES</span>
+            <span>{editorial("travel/FeaturedPackages.text1")}</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
-            Recommended Victoria Falls Holidays
-          </h2>
+            {editorial("travel/FeaturedPackages.text2")}</h2>
 
           <p className="text-base sm:text-lg text-gray-600 leading-relaxed font-light">
-            Use these carefully balanced itineraries as a starting framework. Every package can be personalised around your interests, accommodation preferences, travel pace and budget.
-          </p>
+            {editorial("travel/FeaturedPackages.text3")}</p>
 
           <p className="text-xs text-gray-400 italic pt-1">
-            *Displayed prices are planning estimates per person. Final itinerary availability and pricing will be tailored by an Outbound specialist.
-          </p>
+            {editorial("travel/FeaturedPackages.text4")}</p>
         </div>
 
         {/* 4 Featured Package Cards Grid */}
@@ -81,9 +79,9 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                   {/* Price Starting From */}
                   <div className="absolute bottom-3 left-3 right-3 text-white flex items-end justify-between">
                     <div>
-                      <span className="text-[10px] uppercase font-semibold text-gray-200 block">From</span>
+                      <span className="text-[10px] uppercase font-semibold text-gray-200 block">{editorial("travel/FeaturedPackages.text5")}</span>
                       <span className="text-lg sm:text-xl font-bold font-serif text-white leading-none">
-                        {formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">/ person</span>
+                        {formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">{editorial("travel/FeaturedPackages.text6")}</span>
                       </span>
                     </div>
                   </div>
@@ -109,7 +107,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                   <div className="p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200/80 space-y-1">
                     <div className="flex items-center gap-1 text-[10px] font-bold text-[#C9A66B] uppercase tracking-wider">
                       <Star className="w-3 h-3 text-[#C9A66B] fill-[#C9A66B]" />
-                      <span>Key Included Highlight</span>
+                      <span>{editorial("travel/FeaturedPackages.text7")}</span>
                     </div>
                     <p className="text-[11px] text-gray-700 italic line-clamp-2 leading-tight">
                       "{pkg.highlights[0]}"
@@ -127,7 +125,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                   }}
                   className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
-                  <span>View Holiday Details</span>
+                  <span>{editorial("travel/FeaturedPackages.text8")}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                 </PageLink>
               </div>
@@ -141,7 +139,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
             onClick={onExploreAllPackages}
             className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Find Your Holiday →</span>
+            <span>{editorial("travel/FeaturedPackages.text9")}</span>
           </PageLink>
         </div>
 

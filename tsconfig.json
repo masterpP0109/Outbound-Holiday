@@ -1,5 +1,13 @@
 {
-  "include": ["src", "scripts", "vite.config.ts"],
+  "include": [
+    "src",
+    "scripts",
+    "vite.config.ts",
+    "server",
+    "shared",
+    "prisma",
+    "tests"
+  ],
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,
@@ -22,6 +30,7 @@
       ]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "strictNullChecks": true
   }
 }

@@ -1,3 +1,7 @@
+import { editorialFormat } from "../../runtime/catalog";
+import { useSubmission, SubmissionSafety } from '../common/SubmissionSafety';
+import { ACTIVITIES_DATA, STAY_TIERS, ALL_EXPERIENCES } from '../../runtime/catalog';
+import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import React,{ useState,useEffect } from 'react';
 import { TravelPackage } from '../../types';
@@ -14,15 +18,20 @@ ChevronUp
 import { DetailedAccommodation } from '../../data/accommodationsData';
 
 // Public image paths for experiences
-const fallsTour1 = '/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg';
-const cruise1 = '/Experiences/Standard Cruise_/Standard-1-scaled.jpg';
-const bomaImg1 = '/Experiences/Boma Dinner_/IMG_0364.JPG';
-const heli1 = '/Experiences/Flight of Angels/Heli-1-1-scaled.jpg';
-const chobe1 = '/Experiences/Chobe Day Trip_/Chobe-1-1-scaled.jpg';
-const gorgeSwing3 = '/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg';
-const bungee1 = '/Experiences/Bungee Jump_/Bungee-1-scaled.jpg';
-const gameDrive10 = '/Experiences/Game Drive/Game-drive-10-1-scaled.jpg';
-const outboundLogo = '/images/logo/outbound-holidays-logo.webp';
+let fallsTour1: any;
+registerContent(() => { fallsTour1 = editorialValue("travel/HolidayBuilderModal.fallsTour1", {}); });
+let cruise1: any;
+registerContent(() => { cruise1 = editorialValue("travel/HolidayBuilderModal.cruise1", {}); });
+
+
+
+
+let bungee1: any;
+registerContent(() => { bungee1 = editorialValue("travel/HolidayBuilderModal.bungee1", {}); });
+let gameDrive10: any;
+registerContent(() => { gameDrive10 = editorialValue("travel/HolidayBuilderModal.gameDrive10", {}); });
+let outboundLogo: any;
+registerContent(() => { outboundLogo = editorialValue("travel/HolidayBuilderModal.outboundLogo", {}); });
 
 interface HolidayBuilderModalProps {
   isOpen: boolean;
@@ -32,148 +41,8 @@ interface HolidayBuilderModalProps {
   preselectedAccommodation?: DetailedAccommodation | null;
 }
 
-interface ActivityItem {
-  id: string;
-  title: string;
-  duration: string;
-  priceUSD: number;
-  imageUrl: string;
-  badge: string;
-  shortDesc: string;
-  whyRecommend: string;
-  idealFor: string[];
-}
 
-export const ACTIVITIES_DATA: ActivityItem[] = [
-  {
-    id: 'act-guided-falls',
-    title: 'Guided Rainforest Walk of Victoria Falls',
-    duration: '2.5 Hours',
-    priceUSD: 40,
-    imageUrl: fallsTour1,
-    badge: 'First-Time Essential',
-    shortDesc: 'Walk along the precipice of Mosi-oa-Tunya across 16 spectacular viewpoints with an expert guide.',
-    whyRecommend: 'Essential for first-time visitors — local guides reveal secret rainbow spots and geological history.',
-    idealFor: ['first-time', 'family', 'romantic', 'value'],
-  },
-  {
-    id: 'act-sunset-cruise',
-    title: 'Zambezi Sunset River Cruise',
-    duration: '2.5 Hours',
-    priceUSD: 75,
-    imageUrl: cruise1,
-    badge: 'Most Popular',
-    shortDesc: 'Cruise the upper Zambezi while watching hippos, elephants, and golden sunset reflections with drinks & snacks.',
-    whyRecommend: 'The quintessential Victoria Falls evening ritual — serene, photogenic, and incredibly relaxing.',
-    idealFor: ['first-time', 'family', 'romantic', 'inspire'],
-  },
-  {
-    id: 'act-boma-dinner',
-    title: 'The BOMA - Dinner & Drum Show',
-    duration: '3.0 Hours',
-    priceUSD: 55,
-    imageUrl: bomaImg1,
-    badge: 'Cultural Feast',
-    shortDesc: 'Traditional Zimbabwean feast, face painting, local game meats, and energetic interactive drumming.',
-    whyRecommend: 'High energy night for families and groups — every guest gets their own djembe drum!',
-    idealFor: ['family', 'first-time', 'celebration'],
-  },
-  {
-    id: 'act-helicopter',
-    title: '13-Min "Flight of Angels" Helicopter',
-    duration: '15 Mins',
-    priceUSD: 150,
-    imageUrl: heli1,
-    badge: 'Bucket-List View',
-    shortDesc: 'Soar directly over the roaring curtain of mist, Batoka Gorge, and Zambezi National Park from above.',
-    whyRecommend: 'Offers the only vantage point to comprehend the full width and immense scale of Victoria Falls.',
-    idealFor: ['romantic', 'celebration', 'adventure', 'first-time'],
-  },
-  {
-    id: 'act-chobe-safari',
-    title: 'Full-Day Chobe National Park Safari (Botswana)',
-    duration: 'Full Day',
-    priceUSD: 170,
-    imageUrl: chobe1,
-    badge: 'Wildlife Spectacular',
-    shortDesc: 'Cross into Botswana for a morning Chobe River safari cruise and an afternoon 4x4 big game drive.',
-    whyRecommend: 'Home to over 50,000 elephants — virtually guarantees up-close wild elephant and lion encounters.',
-    idealFor: ['wildlife', 'family', 'adventure'],
-  },
-  {
-    id: 'act-gorge-swing',
-    title: 'Batoka Gorge Swing & Zipline',
-    duration: '2.0 Hours',
-    priceUSD: 95,
-    imageUrl: gorgeSwing3,
-    badge: 'Thrill Seekers',
-    shortDesc: 'Freefall 70 meters into the Batoka Gorge or slide across the canopy above the Zambezi rapids.',
-    whyRecommend: 'Top rated adrenaline activity in Africa — tandem leaps available for brave couples & teenagers!',
-    idealFor: ['adventure', 'celebration'],
-  },
-  {
-    id: 'act-devils-pool',
-    title: 'Devil’s Pool & Livingstone Island (Seasonal)',
-    duration: '3.5 Hours',
-    priceUSD: 160,
-    imageUrl: bungee1,
-    badge: 'Extreme Bucket-List',
-    shortDesc: 'Swim in a natural rock pool right on the precipice of Victoria Falls during dry low-water season.',
-    whyRecommend: 'Available August to January. Safe guided experience offering the ultimate edge-of-the-world photo.',
-    idealFor: ['adventure', 'celebration', 'romantic'],
-  },
-  {
-    id: 'act-hwange-extension',
-    title: 'Hwange National Park 2-Night Safari Extension',
-    duration: '2 Days / 2 Nights',
-    priceUSD: 480,
-    imageUrl: gameDrive10,
-    badge: 'Safari Kingdom',
-    shortDesc: 'Extend your stay into Zimbabwe’s premier game reserve with open 4x4 night drives and walking safaris.',
-    whyRecommend: 'Combine Victoria Falls with classic African wilderness — famous for massive elephant waterhole herds.',
-    idealFor: ['wildlife', 'romantic', 'family'],
-  },
-];
-
-export const STAY_TIERS = [
-  {
-    id: 'smart-value',
-    name: 'Smart Value',
-    tagline: 'Clean, comfortable & well-reviewed lodges',
-    pricePerNightUSD: 220,
-    imageUrl: gameDrive10,
-    desc: 'Clean, charming boutique lodges that leave more of your budget available for bucket-list experiences.',
-    highlights: ['Includes hot breakfast', 'Swimming pool & gardens', '10-min shuttle to Falls'],
-  },
-  {
-    id: 'comfort-plus',
-    name: 'Comfort Plus',
-    tagline: 'Upgraded resort facilities & prime location',
-    pricePerNightUSD: 380,
-    imageUrl: fallsTour1,
-    desc: 'Spacious resort rooms or riverfront chalets with lush gardens, wildlife on property, and dining options.',
-    highlights: ['River view or garden rooms', 'Spacious family suites', 'On-site spa & pool bar'],
-  },
-  {
-    id: 'premium-escape',
-    name: 'Premium Escape',
-    tagline: '5-Star luxury riverfront suites',
-    pricePerNightUSD: 750,
-    imageUrl: cruise1,
-    desc: 'Luxury river lodges with private plunge pools, gourmet fine dining, and direct Zambezi River frontage.',
-    highlights: ['All-inclusive dining & drinks', 'Private plunge pool', 'Personal lodge concierge'],
-  },
-  {
-    id: 'private-exclusive',
-    name: 'Private & Exclusive',
-    tagline: 'VIP river villas & private guides',
-    pricePerNightUSD: 1250,
-    imageUrl: heli1,
-    desc: 'Private luxury villa, dedicated butler service, private 4x4 safari vehicle, and bespoke pontoon dining.',
-    highlights: ['Private villa & pool', 'Private guide & safari 4x4', 'VIP airport helicopter transfers'],
-  },
-];
-
+export { ACTIVITIES_DATA, STAY_TIERS } from '../../runtime/catalog';
 export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   isOpen,
   onClose,
@@ -199,6 +68,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   ]);
   const [transportType, setTransportType] = useState<string>('private-transfers');
 
+  const submission = useSubmission('enquiries');
+  const [marketingConsent,setMarketingConsent] = useState(false);
   // Contact State
   const [fullName, setFullName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -251,6 +122,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   }, [isOpen, preselectedPackage, preselectedActivity, preselectedAccommodation]);
 
   if (!isOpen) return null;
+  if(!STAY_TIERS.length)return <div className="fixed inset-0 z-50 bg-white grid place-content-center p-8 text-center gap-4"><h1>Holiday planning options are currently unavailable</h1><p>No published stay options are available. Please contact our specialists or try again later.</p><button onClick={onClose}>Close</button></div>;
 
   // Toggle activity selection
   const toggleActivity = (actId: string) => {
@@ -277,7 +149,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   // Planning assumptions: two guests per room; room allocation must be confirmed.
   const totalGuests = adultsCount + kidsCount;
   const roomFactor = Math.ceil(totalGuests / 2);
-  const accommodationCostMin = selectedStayTierObj.pricePerNightUSD * nightsCount * roomFactor;
+  const accommodationCostMin = (preselectedAccommodation?.priceFromUSD ?? selectedStayTierObj.pricePerNightUSD) * nightsCount * roomFactor;
 
   const activitiesCost = selectedActivitiesList.reduce((acc, act) => {
     const adultTotal = act.priceUSD * adultsCount;
@@ -297,41 +169,39 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   const getIntelligentAdvice = () => {
     if (step === 1) {
       if (tripIntent === 'family') {
-        return "Perfect choice! We'll prioritize child-friendly accommodation, manageable activity times, and kid-safe safari experiences.";
+        return editorial("travel/HolidayBuilderModal.text49");
       }
       if (tripIntent === 'romantic') {
-        return "Wonderful choice! We'll focus on cozy riverfront lodge suites, romantic sunset cruises, and private candlelit moments.";
+        return editorial("travel/HolidayBuilderModal.text50");
       }
       if (tripIntent === 'first-time') {
-        return "Great decision! We'll make sure you experience the essential Victoria Falls highlights with zero stress and guided ease.";
+        return editorial("travel/HolidayBuilderModal.text51");
       }
       if (tripIntent === 'adventure') {
-        return "Thrilling choice! We'll highlight white water rafting, gorge swinging, and helicopter flights over Mosi-oa-Tunya.";
+        return editorial("travel/HolidayBuilderModal.text52");
       }
-      return "Excellent! We'll craft a well-balanced trip combining majestic nature, wildlife safaris, and local Zimbabwean culture.";
+      return editorial("travel/HolidayBuilderModal.text53");
     }
 
     if (step === 2) {
       if (partyType === 'family' || kidsCount > 0) {
-        return `Got it! Traveling with ${adultsCount} adults and ${kidsCount} child${
-          kidsCount > 1 ? 'ren' : ''
-        }. Kids under 12 receive special activity rates and tailored safari pacing.`;
+        return editorialFormat("travel/HolidayBuilderModal.copy1", [adultsCount,kidsCount,kidsCount > 1 ? 'ren' : '']);
       }
       if (partyType === 'couple') {
-        return "Perfect for two! We'll curate intimate rooms and romantic sunset views over the Zambezi River.";
+        return editorial("travel/HolidayBuilderModal.text54");
       }
-      return `Great! Planning for a party of ${adultsCount} adults.`;
+      return editorialFormat("travel/HolidayBuilderModal.copy2", [adultsCount]);
     }
 
     if (step === 3) {
       if (nightsCount === 2) {
-        return "2 nights is a great weekend teaser! Note: If you choose a full-day Chobe safari, it will leave 1 day for Victoria Falls.";
+        return editorial("travel/HolidayBuilderModal.text55");
       }
       if (nightsCount === 3) {
-        return "3 nights is the sweet spot! Perfect duration to experience the Falls, a sunset river cruise, and a Chobe day safari without rushing.";
+        return editorial("travel/HolidayBuilderModal.text56");
       }
       if (nightsCount >= 4) {
-        return `${nightsCount} nights gives you wonderful breathing room! You'll have time for Vic Falls highlights plus a safari in Hwange or Chobe.`;
+        return editorialFormat("travel/HolidayBuilderModal.copy3", [nightsCount]);
       }
     }
 
@@ -341,23 +211,21 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
     if (step === 5) {
       if (selectedActivityIds.length === 0) {
-        return "💡 Tip: We strongly recommend adding the Guided Rainforest Walk and Sunset Cruise as your core baseline!";
+        return editorial("travel/HolidayBuilderModal.text57");
       }
       if (nightsCount <= 2 && selectedActivityIds.length > 3) {
-        return `⚠️ Notice: You've selected ${selectedActivityIds.length} experiences for a 2-night trip. We recommend keeping 3 to 4 so your trip still feels relaxing!`;
+        return editorialFormat("travel/HolidayBuilderModal.copy4", [selectedActivityIds.length]);
       }
       if (partyType === 'family' && selectedActivityIds.includes('act-gorge-swing')) {
-        return "💡 Tip: Teenagers love the Gorge Swing! Min age is 12 years with adult accompaniment.";
+        return editorial("travel/HolidayBuilderModal.text58");
       }
       if (!selectedActivityIds.includes('act-guided-falls')) {
-        return "💡 Recommendation: Don't miss the Guided Rainforest Walk! A local guide makes the history and hidden viewpoints come alive.";
+        return editorial("travel/HolidayBuilderModal.text59");
       }
-      return `Great activity choices! You have selected ${selectedActivityIds.length} experience${
-        selectedActivityIds.length > 1 ? 's' : ''
-      }.`;
+      return editorialFormat("travel/HolidayBuilderModal.copy5", [selectedActivityIds.length,selectedActivityIds.length > 1 ? 's' : '']);
     }
 
-    return "Your holiday is taking shape beautifully. Review your custom day-by-day plan below.";
+    return editorial("travel/HolidayBuilderModal.text60");
   };
 
   // WhatsApp Link Builder
@@ -369,13 +237,14 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       `*Duration:* ${nightsCount} Nights / ${nightsCount + 1} Days\n` +
       `*Experiences (${selectedActivitiesList.length}):* ${actNames || 'To be selected'}\n` +
       `*Estimated Range:* $${estimatedMinUSD} - $${estimatedMaxUSD} USD\n\n` +
-      `I'd like to check availability for my dates: ${travelSeason}. My name is ${fullName || 'Guest'}.`;
+      editorialFormat("travel/HolidayBuilderModal.copy6", [travelSeason,fullName || 'Guest']);
     return getWhatsAppUrl(message);
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    const saved=await submission.save({name:fullName,email,phone,message:notes,source:'holiday-builder',marketingConsent,trip:{preferredContact:'email',displayedEstimate:{minimumUSD:estimatedMinUSD,maximumUSD:estimatedMaxUSD,currency:'USD',clientUnverified:true},itineraryDraft:[{day:editorial('travel/HolidayBuilderModal.text151'),title:editorial('travel/HolidayBuilderModal.text152'),description:editorial('travel/HolidayBuilderModal.text153')+selectedStayTierObj.name+editorial('travel/HolidayBuilderModal.text154')},{day:editorial('travel/HolidayBuilderModal.text155'),title:editorial('travel/HolidayBuilderModal.text156'),description:editorial('travel/HolidayBuilderModal.text157')},...(nightsCount>=3?[{day:editorial('travel/HolidayBuilderModal.text158'),title:editorial('travel/HolidayBuilderModal.text159'),description:editorial('travel/HolidayBuilderModal.text160')}]:[]),{day:editorial('travel/HolidayBuilderModal.text161'),title:editorial('travel/HolidayBuilderModal.text162'),description:editorial('travel/HolidayBuilderModal.text163')}],intent:tripIntent,partyType,adults:adultsCount,children:kidsCount,nights:nightsCount,travelDates:travelSeason,stayTierId,stayPreferences,activityIds:selectedActivityIds,experienceIds:preselectedActivity?[preselectedActivity]:[],transportType,accommodationId:preselectedAccommodation?.id,packageId:preselectedPackage?.id}});
+    if(saved)setSubmitted(true);
   };
 
   // Dynamic Theme Background photo based on trip intent
@@ -391,10 +260,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-[#FDFBF7] flex flex-col overflow-hidden animate-fade-in text-[#1A2E35]">
+      {preselectedActivity&&<p className="bg-blue-50 px-4 py-2 text-sm">Requested experience: {ALL_EXPERIENCES.find(e=>e.id===preselectedActivity)?.title??preselectedActivity}. Your specialist will include this request in the quote; additional catalogue experiences are priced separately from the builder estimate.</p>}
       {/* 1. IMMERSIVE TOP NAVIGATION BAR */}
       <header className="bg-[#0D5C75] text-white px-4 sm:px-8 py-3.5 flex items-center justify-between border-b border-white/10 shrink-0 shadow-md">
           <div className="flex items-center">
-            <img src={outboundLogo} alt="Outbound Holidays" className="h-12 sm:h-14 w-auto object-contain" />
+            <img src={outboundLogo} alt={editorial("travel/HolidayBuilderModal.text61")} className="h-12 sm:h-14 w-auto object-contain" />
           </div>
 
         {/* Step Indicator */}
@@ -402,7 +272,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           <div className="hidden md:flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full border border-white/20 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5 text-[#D97706]" />
             <span>
-              Step {step} of 8 •{' '}
+              {editorial("travel/HolidayBuilderModal.text62")}{step} {editorial("travel/HolidayBuilderModal.text63")}{' '}
               {step === 1
                 ? 'Trip Vision'
                 : step === 2
@@ -426,7 +296,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           onClick={onClose}
           className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-white border border-white/20"
         >
-          <span>Exit Builder</span>
+          <span>{editorial("travel/HolidayBuilderModal.text64")}</span>
           <X className="w-4 h-4" />
         </button>
       </header>
@@ -450,16 +320,14 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="text-center my-auto py-8 sm:py-12 space-y-8 max-w-2xl mx-auto">
               <div className="inline-flex items-center gap-2 bg-[#D97706]/10 text-[#D97706] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
                 <Sparkles className="w-4 h-4" />
-                <span>Interactive Holiday Architect</span>
+                <span>{editorial("travel/HolidayBuilderModal.text65")}</span>
               </div>
 
               <h1 className="text-3xl sm:text-5xl font-bold font-serif text-[#0D5C75] leading-tight">
-                Let’s shape your Victoria Falls holiday.
-              </h1>
+                {editorial("travel/HolidayBuilderModal.text66")}</h1>
 
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
-                Do you already know what you want to do, or would you like us to recommend a tailored itinerary for your travel style?
-              </p>
+                {editorial("travel/HolidayBuilderModal.text67")}</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 <button
@@ -473,14 +341,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       🎯
                     </span>
                     <h3 className="font-bold font-serif text-lg text-[#0D5C75] mb-1">
-                      I Know What I Want
-                    </h3>
+                      {editorial("travel/HolidayBuilderModal.text68")}</h3>
                     <p className="text-xs text-gray-500 leading-relaxed">
-                      Directly choose stay level, duration, and select specific activities & excursions.
-                    </p>
+                      {editorial("travel/HolidayBuilderModal.text69")}</p>
                   </div>
                   <span className="text-xs font-bold text-[#0D5C75] mt-4 flex items-center gap-1">
-                    <span>Build Directly</span>
+                    <span>{editorial("travel/HolidayBuilderModal.text70")}</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </button>
@@ -492,21 +358,18 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   className="p-6 rounded-2xl border-2 border-[#D97706] bg-[#D97706]/5 hover:bg-[#D97706]/10 hover:shadow-lg transition-all text-left group flex flex-col justify-between relative"
                 >
                   <span className="absolute top-3 right-3 bg-[#D97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
-                    Recommended
-                  </span>
+                    {editorial("travel/HolidayBuilderModal.text71")}</span>
                   <div>
                     <span className="w-10 h-10 rounded-xl bg-[#D97706] text-white flex items-center justify-center font-bold text-lg mb-3">
                       ✨
                     </span>
                     <h3 className="font-bold font-serif text-lg text-[#0D5C75] mb-1">
-                      Recommend Something for Me
-                    </h3>
+                      {editorial("travel/HolidayBuilderModal.text72")}</h3>
                     <p className="text-xs text-gray-600 leading-relaxed">
-                      Answer a few quick lifestyle questions and let our expert system recommend a tailored trip.
-                    </p>
+                      {editorial("travel/HolidayBuilderModal.text73")}</p>
                   </div>
                   <span className="text-xs font-bold text-[#D97706] mt-4 flex items-center gap-1">
-                    <span>Start Guided Builder</span>
+                    <span>{editorial("travel/HolidayBuilderModal.text74")}</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </button>
@@ -514,7 +377,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
               <div className="pt-6 border-t border-gray-200 text-xs text-gray-500 flex items-center justify-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#D97706]" />
-                <span>Takes about 2–3 minutes • Free & No obligation to book</span>
+                <span>{editorial("travel/HolidayBuilderModal.text75")}</span>
               </div>
             </div>
           )}
@@ -523,12 +386,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           {step > 0 && !submitted && (
             <div className="bg-[#0D5C75]/10 border border-[#0D5C75]/20 p-4 rounded-xl flex items-start gap-3 animate-fade-in shadow-2xs">
               <div className="w-8 h-8 rounded-full bg-[#0D5C75] text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                OH
-              </div>
+                {editorial("travel/HolidayBuilderModal.text76")}</div>
               <div className="text-xs">
                 <span className="font-bold text-[#0D5C75] block mb-0.5">
-                  Your Victoria Falls Travel Specialist says:
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text77")}</span>
                 <p className="text-gray-700 font-medium leading-relaxed">
                   "{getIntelligentAdvice()}"
                 </p>
@@ -541,55 +402,15 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               <div>
                 <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  Question 1 of 6
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text78")}</span>
                 <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  What kind of trip are you imagining?
-                </h2>
+                  {editorial("travel/HolidayBuilderModal.text79")}</h2>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  Select the main vision for your Victoria Falls getaway.
-                </p>
+                  {editorial("travel/HolidayBuilderModal.text80")}</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {[
-                  {
-                    id: 'first-time',
-                    title: 'Our first Victoria Falls trip',
-                    desc: 'Iconic sights, guided rainforest walk, sunset cruise & zero stress.',
-                    icon: '🌊',
-                  },
-                  {
-                    id: 'family',
-                    title: 'A family holiday',
-                    desc: 'Child-safe activities, family lodges & manageable activity times.',
-                    icon: '🐘',
-                  },
-                  {
-                    id: 'romantic',
-                    title: 'A romantic escape',
-                    desc: 'Riverfront suites, sunset pontoon, helicopter flight & candlelit dining.',
-                    icon: '🥂',
-                  },
-                  {
-                    id: 'celebration',
-                    title: 'Milestone celebration',
-                    desc: 'Honeymoon, anniversary or birthday with VIP special touches.',
-                    icon: '🎉',
-                  },
-                  {
-                    id: 'adventure',
-                    title: 'Thrill & adventure',
-                    desc: 'Batoka gorge swing, Grade 5 white water rafting & Devil’s Pool.',
-                    icon: '🚁',
-                  },
-                  {
-                    id: 'inspire',
-                    title: 'Inspire me!',
-                    desc: 'Curate a well-balanced mix of nature, safaris, and local culture.',
-                    icon: '✨',
-                  },
-                ].map((item) => (
+                {editorialValue("travel/HolidayBuilderModal.section1", {}).map((item) => (
                   <button
                     key={item.id}
                     onClick={() => setTripIntent(item.id)}
@@ -611,7 +432,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     {tripIntent === item.id && (
                       <div className="mt-3 flex items-center gap-1 text-[11px] font-bold text-[#D97706]">
                         <Check className="w-3.5 h-3.5" />
-                        <span>Selected</span>
+                        <span>{editorial("travel/HolidayBuilderModal.text93")}</span>
                       </div>
                     )}
                   </button>
@@ -625,23 +446,15 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               <div>
                 <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  Question 2 of 6
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text94")}</span>
                 <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  Who is travelling with you?
-                </h2>
+                  {editorial("travel/HolidayBuilderModal.text95")}</h2>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  Tell us who will be joining this trip.
-                </p>
+                  {editorial("travel/HolidayBuilderModal.text96")}</p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {([
-                  { id: 'couple', label: 'Couple / Romance', icon: '💑' },
-                  { id: 'family', label: 'Family with Kids', icon: '👨‍👩‍👧‍👦' },
-                  { id: 'friends', label: 'Group of Friends', icon: '👯' },
-                  { id: 'solo', label: 'Solo Traveller', icon: '🧳' },
-                ] as const).map((p) => (
+                {(editorialValue("travel/HolidayBuilderModal.section2", {})).map((p) => (
                   <button
                     key={p.id}
                     onClick={() => {
@@ -668,8 +481,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               <div className="bg-white p-6 rounded-2xl border border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="font-bold text-sm text-[#0D5C75] block">Adults</span>
-                    <span className="text-xs text-gray-500">Ages 12+</span>
+                    <span className="font-bold text-sm text-[#0D5C75] block">{editorial("travel/HolidayBuilderModal.text101")}</span>
+                    <span className="text-xs text-gray-500">{editorial("travel/HolidayBuilderModal.text102")}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
@@ -690,8 +503,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                 <div className="flex items-center justify-between border-t sm:border-t-0 sm:border-l border-gray-200 pt-4 sm:pt-0 sm:pl-6">
                   <div>
-                    <span className="font-bold text-sm text-[#0D5C75] block">Children</span>
-                    <span className="text-xs text-gray-500">Ages 0 to 11 (Special child rates!)</span>
+                    <span className="font-bold text-sm text-[#0D5C75] block">{editorial("travel/HolidayBuilderModal.text103")}</span>
+                    <span className="text-xs text-gray-500">{editorial("travel/HolidayBuilderModal.text104")}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
@@ -718,27 +531,18 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               <div>
                 <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  Question 3 of 6
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text105")}</span>
                 <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  When & for how long are you planning to stay?
-                </h2>
+                  {editorial("travel/HolidayBuilderModal.text106")}</h2>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  Choose your ideal length of stay and target season.
-                </p>
+                  {editorial("travel/HolidayBuilderModal.text107")}</p>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-[#0D5C75] uppercase tracking-wider mb-2">
-                  Number of Nights
-                </label>
+                  {editorial("travel/HolidayBuilderModal.text108")}</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { nights: 2, label: '2 Nights (3 Days)', badge: 'Short Break' },
-                    { nights: 3, label: '3 Nights (4 Days)', badge: 'Most Popular' },
-                    { nights: 4, label: '4 Nights (5 Days)', badge: 'Recommended' },
-                    { nights: 5, label: '5+ Nights', badge: 'Safari Combo' },
-                  ].map((opt) => (
+                  {editorialValue("travel/HolidayBuilderModal.section3", {}).map((opt) => (
                     <button
                       key={opt.nights}
                       onClick={() => setNightsCount(opt.nights)}
@@ -759,31 +563,9 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-[#0D5C75] uppercase tracking-wider mb-2">
-                  Target Travel Season or Dates
-                </label>
+                  {editorial("travel/HolidayBuilderModal.text113")}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    {
-                      id: 'flexible',
-                      title: 'Flexible Dates',
-                      desc: 'Open to recommendations for the best weather and prices.',
-                    },
-                    {
-                      id: 'high-water',
-                      title: 'High Water Season (Feb – Jun)',
-                      desc: 'Thunderous roar & dramatic spray across the rainforest.',
-                    },
-                    {
-                      id: 'peak-safari',
-                      title: 'Peak Safari Season (Jul – Oct)',
-                      desc: 'Clear skies & spectacular game viewing in Hwange & Chobe.',
-                    },
-                    {
-                      id: 'low-water',
-                      title: 'Low Water & Devil’s Pool (Nov – Jan)',
-                      desc: 'Clear gorge views & Devil’s Pool swimming availability.',
-                    },
-                  ].map((season) => (
+                  {editorialValue("travel/HolidayBuilderModal.section4", {}).map((season) => (
                     <button
                       key={season.id}
                       onClick={() => setTravelSeason(season.id)}
@@ -811,14 +593,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               <div>
                 <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  Question 4 of 6
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text122")}</span>
                 <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  What kind of stay feels right for you?
-                </h2>
+                  {editorial("travel/HolidayBuilderModal.text123")}</h2>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  Select your preferred accommodation style and key lodge amenities.
-                </p>
+                  {editorial("travel/HolidayBuilderModal.text124")}</p>
               </div>
 
               {/* 4 Rich Visual Stay Cards */}
@@ -845,8 +624,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         <p className="text-[11px] text-gray-200">{tier.tagline}</p>
                       </div>
                       <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-white/20">
-                        ~${tier.pricePerNightUSD} / night
-                      </div>
+                        ~${tier.pricePerNightUSD} {editorial("travel/HolidayBuilderModal.text125")}</div>
                     </div>
 
                     <div className="p-4 space-y-2">
@@ -869,18 +647,9 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               {/* What matters most filter tags */}
               <div className="pt-2">
                 <label className="block text-xs font-bold text-[#0D5C75] uppercase tracking-wider mb-2">
-                  What matters most in your accommodation?
-                </label>
+                  {editorial("travel/HolidayBuilderModal.text126")}</label>
                 <div className="flex flex-wrap gap-2">
-                  {[
-                    'Breakfast included',
-                    'Close to town',
-                    'Swimming pool',
-                    'Family rooms',
-                    'Quiet location',
-                    'Riverfront setting',
-                    'On-site spa',
-                  ].map((pref) => {
+                  {editorialValue("travel/HolidayBuilderModal.section5", {}).map((pref) => {
                     const isSelected = stayPreferences.includes(pref);
                     return (
                       <button
@@ -907,14 +676,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               <div>
                 <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  Question 5 of 6
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text127")}</span>
                 <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  What would you love to experience?
-                </h2>
+                  {editorial("travel/HolidayBuilderModal.text128")}</h2>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  Tap to add signature activities to your custom itinerary.
-                </p>
+                  {editorial("travel/HolidayBuilderModal.text129")}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -950,8 +716,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                               </span>
                             </div>
                             <span className="font-bold text-sm text-[#D97706] bg-black/50 px-2 py-0.5 rounded-md border border-white/20 whitespace-nowrap">
-                              ${act.priceUSD} / person
-                            </span>
+                              ${act.priceUSD} {editorial("travel/HolidayBuilderModal.text130")}</span>
                           </div>
                         </div>
 
@@ -960,7 +725,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                             {act.shortDesc}
                           </p>
                           <div className="p-2.5 bg-[#0D5C75]/5 rounded-lg border border-[#0D5C75]/10 text-[11px] text-[#0D5C75]">
-                            <strong className="block font-bold mb-0.5">Why we recommend:</strong>
+                            <strong className="block font-bold mb-0.5">{editorial("travel/HolidayBuilderModal.text131")}</strong>
                             <span>{act.whyRecommend}</span>
                           </div>
                         </div>
@@ -979,12 +744,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                           {isSelected ? (
                             <>
                               <Check className="w-4 h-4" />
-                              <span>✓ Added to My Holiday</span>
+                              <span>{editorial("travel/HolidayBuilderModal.text132")}</span>
                             </>
                           ) : (
                             <>
                               <Plus className="w-4 h-4" />
-                              <span>Add to My Holiday</span>
+                              <span>{editorial("travel/HolidayBuilderModal.text133")}</span>
                             </>
                           )}
                         </button>
@@ -1001,43 +766,15 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               <div>
                 <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  Question 6 of 6
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text134")}</span>
                 <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  How would you like to travel around Victoria Falls?
-                </h2>
+                  {editorial("travel/HolidayBuilderModal.text135")}</h2>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  Seamless transfers between Victoria Falls Airport (VFA), lodges & activity points.
-                </p>
+                  {editorial("travel/HolidayBuilderModal.text136")}</p>
               </div>
 
               <div className="space-y-3">
-                {[
-                  {
-                    id: 'private-transfers',
-                    title: 'Private Airport Transfers & Air-Conditioned Chauffeur',
-                    desc: 'Dedicated driver waiting for you at the airport arrivals with a sign. Comfort, privacy & zero waiting.',
-                    badge: 'Most Popular',
-                  },
-                  {
-                    id: 'shared-shuttle',
-                    title: 'Shared Lodge Shuttle Service',
-                    desc: 'Comfortable shared air-conditioned shuttles running between hotels, town center, and Falls rainforest.',
-                    badge: 'Smart Value',
-                  },
-                  {
-                    id: 'self-drive',
-                    title: 'Self-Drive Vehicle Rental',
-                    desc: 'Pick up a 4x4 or SUV rental vehicle at Victoria Falls airport for flexible self-guided exploring.',
-                    badge: 'Independent',
-                  },
-                  {
-                    id: 'undecided',
-                    title: 'Undecided — Ask Specialist for Recommendation',
-                    desc: 'We will suggest the best option based on your final accommodation location and party size.',
-                    badge: 'Advice Needed',
-                  },
-                ].map((opt) => (
+                {editorialValue("travel/HolidayBuilderModal.section6", {}).map((opt) => (
                   <button
                     key={opt.id}
                     onClick={() => setTransportType(opt.id)}
@@ -1067,35 +804,29 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               <div>
                 <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  Preview & Review
-                </span>
+                  {editorial("travel/HolidayBuilderModal.text145")}</span>
                 <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  Your Victoria Falls Escape Plan
-                </h2>
+                  {editorial("travel/HolidayBuilderModal.text146")}</h2>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  Here is your custom day-by-day suggested schedule based on your choices.
-                </p>
+                  {editorial("travel/HolidayBuilderModal.text147")}</p>
               </div>
 
               {/* Day-By-Day Itinerary Visual Preview */}
               <div className="space-y-4">
                 <div className="p-4 bg-white rounded-2xl border border-gray-200 shadow-xs space-y-4">
                   <h3 className="font-bold text-sm text-[#0D5C75] uppercase tracking-wider pb-2 border-b border-gray-200">
-                    Suggested Day-by-Day Schedule ({nightsCount} Nights / {nightsCount + 1} Days)
-                  </h3>
+                    {editorial("travel/HolidayBuilderModal.text148")}{nightsCount} {editorial("travel/HolidayBuilderModal.text149")}{nightsCount + 1} {editorial("travel/HolidayBuilderModal.text150")}</h3>
 
                   {/* Day 1 */}
                   <div className="flex gap-3 items-start">
                     <div className="w-16 text-center shrink-0">
                       <span className="bg-[#0D5C75] text-white text-xs font-bold px-2 py-1 rounded-md block">
-                        DAY 1
-                      </span>
+                        {editorial("travel/HolidayBuilderModal.text151")}</span>
                     </div>
                     <div className="text-xs space-y-1">
-                      <h4 className="font-bold text-[#1A2E35]">Arrival & Sunset River Cruise</h4>
+                      <h4 className="font-bold text-[#1A2E35]">{editorial("travel/HolidayBuilderModal.text152")}</h4>
                       <p className="text-gray-600">
-                        Airport pickup → Lodge Check-in ({selectedStayTierObj.name}) → In the late afternoon, embark on the Zambezi Sunset River Cruise with drinks & tapas.
-                      </p>
+                        {editorial("travel/HolidayBuilderModal.text153")}{selectedStayTierObj.name}{editorial("travel/HolidayBuilderModal.text154")}</p>
                     </div>
                   </div>
 
@@ -1103,14 +834,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   <div className="flex gap-3 items-start pt-3 border-t border-gray-100">
                     <div className="w-16 text-center shrink-0">
                       <span className="bg-[#0D5C75] text-white text-xs font-bold px-2 py-1 rounded-md block">
-                        DAY 2
-                      </span>
+                        {editorial("travel/HolidayBuilderModal.text155")}</span>
                     </div>
                     <div className="text-xs space-y-1">
-                      <h4 className="font-bold text-[#1A2E35]">Mosi-oa-Tunya Falls & Cultural Evening</h4>
+                      <h4 className="font-bold text-[#1A2E35]">{editorial("travel/HolidayBuilderModal.text156")}</h4>
                       <p className="text-gray-600">
-                        Morning Guided Rainforest Tour of Victoria Falls → Lunch at Lookout Café overlooking Batoka Gorge → Evening Boma Dinner & Drum Show experience.
-                      </p>
+                        {editorial("travel/HolidayBuilderModal.text157")}</p>
                     </div>
                   </div>
 
@@ -1119,14 +848,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     <div className="flex gap-3 items-start pt-3 border-t border-gray-100">
                       <div className="w-16 text-center shrink-0">
                         <span className="bg-[#0D5C75] text-white text-xs font-bold px-2 py-1 rounded-md block">
-                          DAY 3
-                        </span>
+                          {editorial("travel/HolidayBuilderModal.text158")}</span>
                       </div>
                       <div className="text-xs space-y-1">
-                        <h4 className="font-bold text-[#1A2E35]">Safari Excursion or Free Leisure</h4>
+                        <h4 className="font-bold text-[#1A2E35]">{editorial("travel/HolidayBuilderModal.text159")}</h4>
                         <p className="text-gray-600">
-                          Full-day Chobe Safari / Helicopter Flight of Angels OR relax at your lodge pool with craft market shopping.
-                        </p>
+                          {editorial("travel/HolidayBuilderModal.text160")}</p>
                       </div>
                     </div>
                   )}
@@ -1135,14 +862,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   <div className="flex gap-3 items-start pt-3 border-t border-gray-100">
                     <div className="w-16 text-center shrink-0">
                       <span className="bg-[#D97706] text-white text-xs font-bold px-2 py-1 rounded-md block">
-                        FINAL
-                      </span>
+                        {editorial("travel/HolidayBuilderModal.text161")}</span>
                     </div>
                     <div className="text-xs space-y-1">
-                      <h4 className="font-bold text-[#1A2E35]">Leisure Morning & Airport Transfer</h4>
+                      <h4 className="font-bold text-[#1A2E35]">{editorial("travel/HolidayBuilderModal.text162")}</h4>
                       <p className="text-gray-600">
-                        Gourmet breakfast → Souvenir craft shopping → Private driver transfer to Victoria Falls Airport.
-                      </p>
+                        {editorial("travel/HolidayBuilderModal.text163")}</p>
                     </div>
                   </div>
                 </div>
@@ -1151,33 +876,29 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                 <div className="bg-[#0D5C75]/10 p-5 rounded-2xl border border-[#0D5C75]/30 space-y-3">
                   <div className="flex items-center justify-between pb-2 border-b border-[#0D5C75]/20">
                     <span className="font-bold text-xs uppercase tracking-wider text-[#0D5C75]">
-                      Estimated Budget Range
-                    </span>
+                      {editorial("travel/HolidayBuilderModal.text164")}</span>
                     <span className="text-2xl font-extrabold text-[#0D5C75]">
-                      ${estimatedMinUSD} – ${estimatedMaxUSD} USD
-                    </span>
+                      ${estimatedMinUSD} – ${estimatedMaxUSD} {editorial("travel/HolidayBuilderModal.text165")}</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-gray-700">
                     <div>
-                      <span className="text-gray-500 block text-[10px]">Accommodation ({nightsCount} nights):</span>
-                      <strong className="text-[#0D5C75]">~${accommodationCostMin} USD</strong>
+                      <span className="text-gray-500 block text-[10px]">{editorial("travel/HolidayBuilderModal.text166")}{nightsCount} {editorial("travel/HolidayBuilderModal.text167")}</span>
+                      <strong className="text-[#0D5C75]">~${accommodationCostMin} {editorial("travel/HolidayBuilderModal.text168")}</strong>
                     </div>
                     <div>
                       <span className="text-gray-500 block text-[10px]">
-                        Activities ({selectedActivitiesList.length} experiences):
-                      </span>
-                      <strong className="text-[#0D5C75]">~${activitiesCost} USD</strong>
+                        {editorial("travel/HolidayBuilderModal.text169")}{selectedActivitiesList.length} {editorial("travel/HolidayBuilderModal.text170")}</span>
+                      <strong className="text-[#0D5C75]">~${activitiesCost} {editorial("travel/HolidayBuilderModal.text171")}</strong>
                     </div>
                     <div>
-                      <span className="text-gray-500 block text-[10px]">Transfers & Fees:</span>
-                      <strong className="text-[#0D5C75]">~${transferCost} USD</strong>
+                      <span className="text-gray-500 block text-[10px]">{editorial("travel/HolidayBuilderModal.text172")}</span>
+                      <strong className="text-[#0D5C75]">~${transferCost} {editorial("travel/HolidayBuilderModal.text173")}</strong>
                     </div>
                   </div>
 
                   <p className="text-[11px] text-gray-500 italic pt-1 border-t border-[#0D5C75]/10">
-                    *Based on {adultsCount} adults, {kidsCount} children, {nightsCount} nights, and {selectedActivitiesList.length} selected experiences. This is a planning estimate; a local specialist will confirm exact live availability before payment.
-                  </p>
+                    {editorial("travel/HolidayBuilderModal.text174")}{adultsCount} {editorial("travel/HolidayBuilderModal.text175")}{kidsCount} {editorial("travel/HolidayBuilderModal.text176")}{nightsCount} {editorial("travel/HolidayBuilderModal.text177")}{selectedActivitiesList.length} {editorial("travel/HolidayBuilderModal.text178")}</p>
                 </div>
               </div>
             </div>
@@ -1192,17 +913,16 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     <Check className="w-8 h-8" />
                   </div>
                   <h3 className="text-2xl font-bold font-serif text-[#0D5C75]">
-                    Your Victoria Falls Plan is Ready!
-                  </h3>
+                    {editorial("travel/HolidayBuilderModal.text179")}</h3>
+<p className="font-semibold" role="status">Saved enquiry reference: {submission.result?.reference}</p>
                   <p className="text-xs text-gray-600 leading-relaxed">
-                    Thank you, <strong className="text-[#0D5C75]">{fullName || 'Valued Guest'}</strong>. Our senior Victoria Falls travel concierge is reviewing your selections now and will send your itemized itinerary quote shortly.
-                  </p>
+                    {editorial("travel/HolidayBuilderModal.text180")}<strong className="text-[#0D5C75]">{fullName || 'Valued Guest'}</strong>{editorial("travel/HolidayBuilderModal.text181")}</p>
 
                   <div className="p-4 bg-[#FDFBF7] rounded-xl border border-gray-200 text-left text-xs space-y-1.5">
-                    <p><strong>Party:</strong> {adultsCount} Adults, {kidsCount} Kids ({partyType})</p>
-                    <p><strong>Duration:</strong> {nightsCount} Nights ({selectedStayTierObj.name})</p>
-                    <p><strong>Experiences ({selectedActivitiesList.length}):</strong> {selectedActivitiesList.map(a => a.title).join(', ')}</p>
-                    <p><strong>Estimated Total Range:</strong> ${estimatedMinUSD} - ${estimatedMaxUSD} USD</p>
+                    <p><strong>{editorial("travel/HolidayBuilderModal.text182")}</strong> {adultsCount} {editorial("travel/HolidayBuilderModal.text183")}{kidsCount} {editorial("travel/HolidayBuilderModal.text184")}{partyType})</p>
+                    <p><strong>{editorial("travel/HolidayBuilderModal.text185")}</strong> {nightsCount} {editorial("travel/HolidayBuilderModal.text186")}{selectedStayTierObj.name})</p>
+                    <p><strong>{editorial("travel/HolidayBuilderModal.text187")}{selectedActivitiesList.length}):</strong> {selectedActivitiesList.map(a => a.title).join(', ')}</p>
+                    <p><strong>{editorial("travel/HolidayBuilderModal.text188")}</strong> ${estimatedMinUSD} - ${estimatedMaxUSD} {editorial("travel/HolidayBuilderModal.text189")}</p>
                   </div>
 
                   <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -1213,40 +933,35 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       className="flex-1 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-xs"
                     >
                       <MessageSquare className="w-4 h-4" />
-                      <span>Chat on WhatsApp Now</span>
+                      <span>{editorial("travel/HolidayBuilderModal.text190")}</span>
                     </a>
 
                     <button
                       onClick={onClose}
                       className="flex-1 bg-[#0D5C75] text-white font-bold text-xs py-3 px-4 rounded-xl hover:bg-[#0A485C]"
                     >
-                      Return to Website
-                    </button>
+                      {editorial("travel/HolidayBuilderModal.text191")}</button>
                   </div>
                 </div>
               ) : (
                 <form onSubmit={handleContactSubmit} className="space-y-6">
                   <div>
                     <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                      Final Step
-                    </span>
+                      {editorial("travel/HolidayBuilderModal.text192")}</span>
                     <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                      Where should we send your custom itinerary?
-                    </h2>
+                      {editorial("travel/HolidayBuilderModal.text193")}</h2>
                     <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                      No obligation to book. Choose your preferred way to receive your plan.
-                    </p>
+                      {editorial("travel/HolidayBuilderModal.text194")}</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1">
-                        Full Name *
-                      </label>
+                        {editorial("travel/HolidayBuilderModal.text195")}</label>
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Farai Ndlovu"
+                        placeholder={editorial("travel/HolidayBuilderModal.text196")}
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
@@ -1255,12 +970,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1">
-                        Email Address *
-                      </label>
+                        {editorial("travel/HolidayBuilderModal.text197")}</label>
                       <input
                         type="email"
                         required
-                        placeholder="name@example.com"
+                        placeholder={editorial("travel/HolidayBuilderModal.text198")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
@@ -1271,11 +985,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1">
-                        WhatsApp / Phone Number
-                      </label>
+                        {editorial("travel/HolidayBuilderModal.text199")}</label>
                       <input
                         type="tel"
-                        placeholder="+263 77 000 0000"
+                        placeholder={editorial("travel/HolidayBuilderModal.text200")}
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
@@ -1284,11 +997,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1">
-                        Special Requests or Dietary Preferences
-                      </label>
+                        {editorial("travel/HolidayBuilderModal.text201")}</label>
                       <input
                         type="text"
-                        placeholder="e.g. Vegetarian meals, honeymoon surprise..."
+                        placeholder={editorial("travel/HolidayBuilderModal.text202")}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
@@ -1299,11 +1011,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   {/* Primary Handover Options */}
                   <div className="pt-4 space-y-3">
                     <button
-                      type="submit"
+                      type="submit" disabled={submission.pending || false} aria-busy={submission.pending}
                       className="w-full bg-[#D97706] hover:bg-[#b45309] text-white font-bold text-sm py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all"
                     >
                       <Send className="w-4 h-4" />
-                      <span>Send Me My Custom Itinerary Quote</span>
+                      <span>{editorial("travel/HolidayBuilderModal.text203")}</span>
                     </button>
 
                     <a
@@ -1313,10 +1025,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all"
                     >
                       <MessageSquare className="w-4 h-4" />
-                      <span>Send Directly to WhatsApp</span>
+                      <span>{editorial("travel/HolidayBuilderModal.text204")}</span>
                     </a>
                   </div>
-                </form>
+                <div className="w-full"><SubmissionSafety submission={submission} marketingConsent={marketingConsent} onConsent={setMarketingConsent} requireConsent={false} /></div></form>
               )}
             </div>
           )}
@@ -1330,7 +1042,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                 className="px-4 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 flex items-center gap-1.5 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back</span>
+                <span>{editorial("travel/HolidayBuilderModal.text205")}</span>
               </button>
 
               <button
@@ -1350,31 +1062,29 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           <aside className="hidden lg:block w-80 bg-white border-l border-gray-200 p-6 shrink-0 space-y-6 overflow-y-auto">
             <div>
               <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                Live Itinerary Builder
-              </span>
+                {editorial("travel/HolidayBuilderModal.text206")}</span>
               <h3 className="font-serif font-bold text-lg text-[#0D5C75]">
-                My Victoria Falls Holiday
-              </h3>
+                {editorial("travel/HolidayBuilderModal.text207")}</h3>
             </div>
 
             {/* Dynamic Hero Photo Card */}
             <div className="relative h-32 rounded-xl overflow-hidden shadow-xs">
               <img
                 src={getIntentHeroPhoto()}
-                alt="Victoria Falls Preview"
+                alt={editorial("travel/HolidayBuilderModal.text208")}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute bottom-2 left-3 right-3 text-white text-xs font-bold">
-                {nightsCount} Nights • {selectedStayTierObj.name}
+                {nightsCount} {editorial("travel/HolidayBuilderModal.text209")}{selectedStayTierObj.name}
               </div>
             </div>
 
             {/* Progress status */}
             <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs space-y-1">
               <div className="flex items-center justify-between font-bold text-[#0D5C75]">
-                <span>Progress:</span>
-                <span>{progressPercent}% Complete</span>
+                <span>{editorial("travel/HolidayBuilderModal.text210")}</span>
+                <span>{progressPercent}{editorial("travel/HolidayBuilderModal.text211")}</span>
               </div>
               <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
                 <div
@@ -1388,23 +1098,21 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="space-y-3 text-xs">
               <div>
                 <strong className="block text-[#0D5C75] text-[11px] uppercase tracking-wider mb-0.5">
-                  Party:
-                </strong>
+                  {editorial("travel/HolidayBuilderModal.text212")}</strong>
                 <span className="text-gray-700">
-                  {adultsCount} Adults, {kidsCount} Kids ({partyType})
+                  {adultsCount} {editorial("travel/HolidayBuilderModal.text213")}{kidsCount} {editorial("travel/HolidayBuilderModal.text214")}{partyType})
                 </span>
               </div>
 
               <div>
                 <strong className="block text-[#0D5C75] text-[11px] uppercase tracking-wider mb-0.5">
-                  Accommodation Tier:
-                </strong>
+                  {editorial("travel/HolidayBuilderModal.text215")}</strong>
                 <span className="text-gray-700">{selectedStayTierObj.name}</span>
               </div>
 
               <div>
                 <strong className="block text-[#0D5C75] text-[11px] uppercase tracking-wider mb-1">
-                  Selected Experiences ({selectedActivitiesList.length}):
+                  {editorial("travel/HolidayBuilderModal.text216")}{selectedActivitiesList.length}):
                 </strong>
                 <ul className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                   {selectedActivitiesList.map((act) => (
@@ -1428,14 +1136,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             {/* Estimated Total Range Card */}
             <div className="p-4 bg-[#0D5C75] text-white rounded-2xl shadow-sm space-y-1">
               <span className="text-[10px] uppercase font-bold text-white/80 block">
-                Estimated Budget Range
-              </span>
+                {editorial("travel/HolidayBuilderModal.text217")}</span>
               <span className="text-xl font-bold font-serif block">
-                ${estimatedMinUSD} – ${estimatedMaxUSD} USD
-              </span>
+                ${estimatedMinUSD} – ${estimatedMaxUSD} {editorial("travel/HolidayBuilderModal.text218")}</span>
               <span className="text-[10px] text-white/70 block">
-                Total for all {totalGuests} guests ({nightsCount} nights)
-              </span>
+                {editorial("travel/HolidayBuilderModal.text219")}{totalGuests} {editorial("travel/HolidayBuilderModal.text220")}{nightsCount} {editorial("travel/HolidayBuilderModal.text221")}</span>
             </div>
           </aside>
         )}
@@ -1451,11 +1156,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#D97706]" />
               <span>
-                My Holiday Range: ${estimatedMinUSD} – ${estimatedMaxUSD} USD
-              </span>
+                {editorial("travel/HolidayBuilderModal.text222")}{estimatedMinUSD} – ${estimatedMaxUSD} {editorial("travel/HolidayBuilderModal.text223")}</span>
             </div>
             <div className="flex items-center gap-1 text-[#D97706]">
-              <span>{selectedActivitiesList.length} Experiences</span>
+              <span>{selectedActivitiesList.length} {editorial("travel/HolidayBuilderModal.text224")}</span>
               {mobileSummaryExpanded ? (
                 <ChevronDown className="w-4 h-4" />
               ) : (
@@ -1467,13 +1171,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           {mobileSummaryExpanded && (
             <div className="p-4 space-y-2 bg-gray-50 text-xs max-h-48 overflow-y-auto">
               <p>
-                <strong>Party:</strong> {adultsCount} Adults, {kidsCount} Kids
-              </p>
+                <strong>{editorial("travel/HolidayBuilderModal.text225")}</strong> {adultsCount} {editorial("travel/HolidayBuilderModal.text226")}{kidsCount} {editorial("travel/HolidayBuilderModal.text227")}</p>
               <p>
-                <strong>Stay:</strong> {selectedStayTierObj.name} ({nightsCount} Nights)
-              </p>
+                <strong>{editorial("travel/HolidayBuilderModal.text228")}</strong> {selectedStayTierObj.name} ({nightsCount} {editorial("travel/HolidayBuilderModal.text229")}</p>
               <p>
-                <strong>Activities:</strong>{' '}
+                <strong>{editorial("travel/HolidayBuilderModal.text230")}</strong>{' '}
                 {selectedActivitiesList.map((a) => a.title).join(', ')}
               </p>
             </div>
