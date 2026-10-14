@@ -1,3 +1,4 @@
+import { EnquiryConfirmation } from '../common/EnquiryConfirmation';
 import { useSubmission, SubmissionSafety } from '../common/SubmissionSafety';
 import { editorial } from "../../runtime/catalog";
 import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER } from '../../utils/whatsapp';
@@ -106,7 +107,7 @@ export const ContactUsView: React.FC = () => {
                   <Check className="w-8 h-8" />
                 </div>
                 <h3 className="text-2xl font-bold font-serif text-[#0B5E8E]">{editorial("travel/ContactUsView.text13")}</h3>
-<p className="font-semibold" role="status">Saved enquiry reference: {submission.result?.reference}</p>
+<EnquiryConfirmation result={submission.result} />
                 <p className="text-xs sm:text-sm text-[#2F3A44]/80 max-w-md mx-auto leading-relaxed">
                   {editorial("travel/ContactUsView.text14")}</p>
                 <button

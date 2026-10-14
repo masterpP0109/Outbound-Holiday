@@ -1,3 +1,4 @@
+import { EnquiryConfirmation } from '../common/EnquiryConfirmation';
 import { editorialFormat } from "../../runtime/catalog";
 import { useSubmission, SubmissionSafety } from '../common/SubmissionSafety';
 import { ACTIVITIES_DATA, STAY_TIERS, ALL_EXPERIENCES } from '../../runtime/catalog';
@@ -914,7 +915,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   </div>
                   <h3 className="text-2xl font-bold font-serif text-[#0D5C75]">
                     {editorial("travel/HolidayBuilderModal.text179")}</h3>
-<p className="font-semibold" role="status">Saved enquiry reference: {submission.result?.reference}</p>
+<EnquiryConfirmation result={submission.result} />
                   <p className="text-xs text-gray-600 leading-relaxed">
                     {editorial("travel/HolidayBuilderModal.text180")}<strong className="text-[#0D5C75]">{fullName || 'Valued Guest'}</strong>{editorial("travel/HolidayBuilderModal.text181")}</p>
 

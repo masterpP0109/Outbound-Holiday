@@ -1,4 +1,4 @@
-import { createHash,randomBytes,randomUUID } from 'node:crypto';
+import { createHash,randomBytes } from 'node:crypto';
 import { Prisma } from '@prisma/client';
 import { db } from './db';
 import { EnquirySchema,NewsletterSchema,IdempotencySchema } from '../shared/submission-schema';
@@ -38,14 +38,17 @@ export async function saveEnquiry(raw:unknown,key:unknown){
   const used=await tx.submissionKey.findUnique({where:{key:idempotencyKey}});
   if(used){if(used.hash!==requestHash)throw new HttpError(409,'This retry key was used for different details. Please start a new submission.');return used.result;}
   const recent=await tx.enquiry.findFirst({where:{fingerprint,createdAt:{gte:new Date(Date.now()-600000)}}});
-  if(recent){const result={reference:recent.reference,saved:true,notificationStatus:'queued'};await tx.submissionKey.create({data:{key:idempotencyKey,hash:requestHash,result}});return result;}
+  if(recent){const result={reference:recent.reference,customerName:recent.name,submittedAt:recent.createdAt.toISOString(),saved:true,notificationStatus:'queued'};await tx.submissionKey.create({data:{key:idempotencyKey,hash:requestHash,result}});return result;}
   const selectionSnapshot=await selectTrip(tx,input.trip as Prisma.JsonObject);
-  const reference='OH-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+randomUUID().slice(0,8).toUpperCase();
-  const saved=await tx.enquiry.create({data:{reference,idempotencyKey,requestHash,fingerprint,...data,selectionSnapshot:selectionSnapshot as Prisma.InputJsonValue}});
-  const payload={...data,reference,selectionSnapshot,phone:input.phone??''};
+  const submittedAt=new Date();
+  const dateParts=new Intl.DateTimeFormat('en-GB',{timeZone:'Africa/Harare',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(submittedAt);
+  const referenceDate=['year','month','day'].map(type=>dateParts.find(part=>part.type===type)!.value).join('');
+  const reference='OH-'+referenceDate+'-'+randomBytes(8).toString('hex').toUpperCase();
+  const saved=await tx.enquiry.create({data:{reference,createdAt:submittedAt,idempotencyKey,requestHash,fingerprint,...data,selectionSnapshot:selectionSnapshot as Prisma.InputJsonValue}});
+  const payload={...data,reference,submittedAt:saved.createdAt.toISOString(),selectionSnapshot,phone:input.phone??''};
   await tx.notification.createMany({data:['team-enquiry','customer-acknowledgement'].map(kind=>({dedupeKey:kind+':'+saved.id,enquiryId:saved.id,kind,payload:payload as Prisma.InputJsonValue}))});
   if(input.marketingConsent)await subscription(tx,input.email);
-  const result={reference,saved:true,notificationStatus:'queued'};await tx.submissionKey.create({data:{key:idempotencyKey,hash:requestHash,result}});return result;
+  const result={reference,customerName:saved.name,submittedAt:saved.createdAt.toISOString(),saved:true,notificationStatus:'queued'};await tx.submissionKey.create({data:{key:idempotencyKey,hash:requestHash,result}});return result;
  },{timeout:15000});
 }
 export async function saveNewsletter(raw:unknown,key:unknown){

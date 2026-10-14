@@ -16,5 +16,5 @@ export function readInitialContent():ContentSnapshot{
 export async function submitForm(path:'enquiries'|'newsletter',payload:unknown,key:string){
  let response:Response;
  try{response=await fetch(API_BASE_URL+'/'+path,{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify(payload),signal:AbortSignal.timeout(75000)});}catch{throw new Error('Unable to reach our enquiry service. Please check your connection and retry.');}
- const result=await response.json();if(!response.ok){const error=new Error(result.error??'Unable to save. Please retry.') as Error & {fields?:Record<string,string>};error.fields=result.fields;throw error;}if(!result.saved)throw new Error('Saving was not confirmed. Please retry.');return result as {saved:boolean;reference?:string;status?:string;confirmationDelivery?:string};
+ const result=await response.json();if(!response.ok){const error=new Error(result.error??'Unable to save. Please retry.') as Error & {fields?:Record<string,string>};error.fields=result.fields;throw error;}if(!result.saved)throw new Error('Saving was not confirmed. Please retry.');return result as {saved:boolean;reference?:string;customerName?:string;submittedAt?:string;status?:string;confirmationDelivery?:string};
 }

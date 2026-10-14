@@ -1,7 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import { submitForm } from '../../runtime/api';
 export function useSubmission(path:'enquiries'|'newsletter'){
- const [pending,setPending]=useState(false);const [error,setError]=useState('');const [fields,setFields]=useState<Record<string,string>>({});const [result,setResult]=useState<{reference?:string;status?:string;confirmationDelivery?:string}|null>(null);
+ const [pending,setPending]=useState(false);const [error,setError]=useState('');const [fields,setFields]=useState<Record<string,string>>({});const [result,setResult]=useState<{reference?:string;customerName?:string;submittedAt?:string;status?:string;confirmationDelivery?:string}|null>(null);
  const [website,setWebsite]=useState('');const [token,setToken]=useState('');const started=useRef(Date.now());const retry=useRef<{payload:string;key:string}>();const locked=useRef(false);
  const save=async(payload:Record<string,unknown>)=>{
   if(locked.current)return null;locked.current=true;setPending(true);setError('');setFields({});
