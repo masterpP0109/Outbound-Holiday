@@ -1,0 +1,41 @@
+{
+  "checks": [
+    {
+      "route": "/",
+      "title": "Planning Your Family’s Trip\nto Victoria Falls?"
+    },
+    {
+      "route": "/things-to-do-in-victoria-falls",
+      "title": "Victoria Falls Experience Library"
+    },
+    {
+      "route": "/victoria-falls-packages",
+      "title": "Find the Holiday That's Right for You"
+    },
+    {
+      "route": "/victoria-falls-accommodation",
+      "title": "Where to Stay in Victoria Falls"
+    },
+    {
+      "route": "/client-gallery",
+      "title": "Client Gallery"
+    },
+    {
+      "route": "/victoria-falls-guide",
+      "title": "The Ultimate First-Time Visitor Guide to Victoria Falls"
+    },
+    {
+      "route": "/about",
+      "title": "Local Knowledge. Personal Service. Better Victoria Falls Holidays."
+    },
+    {
+      "route": "/contact",
+      "title": "Contact Our Travel Specialists"
+    }
+  ],
+  "cloudCatalogueRequests": 17,
+  "errors": [],
+  "badImages": [],
+  "visibleImagesLoaded": true,
+  "mobileOverflow": false
+}

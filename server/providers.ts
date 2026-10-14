@@ -2,11 +2,12 @@ import nodemailer from 'nodemailer';
 import { createHash } from 'node:crypto';
 import type { Notification } from '@prisma/client';
 import { db } from './db';
-export const escapeHtml=(value:unknown)=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+import { enquiryEmail, escapeHtml } from './enquiry-email';
+import { emailRecipient as recipient } from './email-recipient';
+export { escapeHtml } from './enquiry-email';
 const required=(key:string)=>{const v=process.env[key];if(!v)throw new Error('Missing server configuration: '+key);return v;};
-function recipient(email:string){const mode=process.env.EMAIL_DELIVERY_MODE??'disabled';if(mode==='test')return required('EMAIL_TEST_TO');if(mode==='live')return email;throw new Error('Email delivery is disabled. Configure a designated test destination before enabling.');}
 export async function brevo(path:string,method='GET',body?:unknown){const response=await fetch('https://api.brevo.com/v3/'+path,{method,headers:{'api-key':required('BREVO_API_KEY'),'content-type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(10000)});if(!response.ok){if(response.status===404)return null;throw new Error('Brevo request failed ('+response.status+').');}return response.status===204?{}:response.json();}
-export async function deliverNotification(job:Notification){
+export async function deliverNotification(job:Notification,options:{testPreview?:boolean}={}){
  const p=job.payload as any;
  if(job.kind==='newsletter-doi'){
   const current=job.subscriptionId?await db.subscription.findUnique({where:{id:job.subscriptionId}}):null;if(!current||current.status!=='pending'||current.tokenHash!==createHash('sha256').update(p.token).digest('hex'))return 'cancelled';
@@ -21,10 +22,8 @@ export async function deliverNotification(job:Notification){
  }
  if(job.kind==='newsletter-unsubscribe'){const current=job.subscriptionId?await db.subscription.findUnique({where:{id:job.subscriptionId}}):null;if(!current||current.status!=='unsubscribed')return 'cancelled';if(process.env.NEWSLETTER_PROVIDER!=='brevo')return 'local-preference-saved';await brevo('contacts/'+encodeURIComponent(recipient(p.email)),'PUT',{emailBlacklisted:true});return 'brevo-unsubscribed';}
  const team=job.kind==='team-enquiry';
- const details=team?JSON.stringify({name:p.name,email:p.email,phone:p.phone,message:p.message,trip:p.trip,selectionSnapshot:p.selectionSnapshot,marketingConsent:p.marketingConsent},null,2):'Thank you, '+p.name+'. Your enquiry has been saved. Our team will review your trip preferences and contact you. Displayed prices are estimates; no booking or availability is confirmed.';
- const subject=(team?'New holiday enquiry ':'Your Outbound Holidays enquiry ')+p.reference;
- const html='<h1>'+escapeHtml(subject)+'</h1><p>Reference: '+escapeHtml(p.reference)+'</p><pre style="white-space:pre-wrap">'+escapeHtml(details)+'</pre>';
- return sendMail(job,team?required('TEAM_ENQUIRY_TO'):p.email,subject,subject+'\n\n'+details,html,team?p.email:required('TEAM_ENQUIRY_TO'));
+ const { subject, text, html }=enquiryEmail(p,team);
+ return sendMail(job,team?required('TEAM_ENQUIRY_TO'):p.email,subject,text,html,team?p.email:required('TEAM_ENQUIRY_TO'),options.testPreview);
 }
 export async function syncSubscriber(email:string){
  if(process.env.NEWSLETTER_PROVIDER!=='brevo')return;
@@ -48,8 +47,8 @@ export async function syncEmailDeliveries(limit=5){
  }catch{/* Next authenticated worker polls again. */}}
 }
 
-async function sendMail(job:Notification,to:string,subject:string,text:string,html:string,replyTo?:string){
- const target=recipient(to),provider=process.env.EMAIL_PROVIDER??'disabled';
+async function sendMail(job:Notification,to:string,subject:string,text:string,html:string,replyTo?:string,testPreview=false){
+ const target=recipient(to,process.env,{customerAcknowledgement:job.kind==='customer-acknowledgement',testPreview}),provider=process.env.EMAIL_PROVIDER??'disabled';
  if(provider==='smtp'){
   const port=Number(required('SMTP_PORT'));if(![465,587].includes(port))throw new Error('SMTP must use TLS port 465 or STARTTLS port 587.');
   const transport=nodemailer.createTransport({host:required('SMTP_HOST'),port,secure:port===465,requireTLS:port===587,auth:{user:required('SMTP_USER'),pass:required('SMTP_PASSWORD')},tls:{rejectUnauthorized:true},connectionTimeout:10000,socketTimeout:20000});

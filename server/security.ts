@@ -1,12 +1,12 @@
 import { createHash,timingSafeEqual } from 'node:crypto';
 import type { Request } from 'express';
 import { db } from './db';
+import { allowedOrigins } from './origins';
 export class HttpError extends Error { constructor(public status:number,message:string,public fields?:Record<string,string>){super(message);} }
 export function authenticated(actual:string|undefined,expected:string|undefined){if(!actual||!expected)return false;const a=Buffer.from(actual),b=Buffer.from(expected);return a.length===b.length&&timingSafeEqual(a,b);}
 export function assertOrigin(req:Request){
  const origin=req.headers.origin;if(!origin)throw new HttpError(403,'A same-site request is required.');
- const allowed=[process.env.APP_URL,...(process.env.ALLOWED_ORIGINS??'').split(',')].filter(Boolean);
- if(process.env.NODE_ENV!=='production')allowed.push('http://localhost:3000','http://127.0.0.1:3000','http://localhost:3100');
+ const allowed=allowedOrigins();
  if(!allowed.includes(origin))throw new HttpError(403,'Origin is not allowed.');
  if(!String(req.headers['content-type']??'').toLowerCase().startsWith('application/json'))throw new HttpError(415,'Use application/json.');
 }

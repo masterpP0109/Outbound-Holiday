@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-10-09T10:21:20.763Z",
+  "api": "https://br-icy-darkness-b4agzqde-api.compute.c-6.us-east-2.aws.neon.tech/api/v1",
+  "counts": {
+    "accommodations": 8,
+    "experiences": 25,
+    "packages": 8,
+    "guides": 11,
+    "galleryImages": 36
+  },
+  "uniqueCloudImages": 145,
+  "localImageReferences": 0,
+  "checks": [
+    "Published schema validation",
+    "All catalogue endpoints",
+    "Database readiness",
+    "Allowed/rejected CORS origins",
+    "ETag revalidation",
+    "Invalid enquiry rejected without saving"
+  ]
+}

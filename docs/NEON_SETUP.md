@@ -1,3 +1,5 @@
+> Updated 9 October 2026: the full API and converted images are now deployed on Neon. See [CLOUD_BACKEND.md](CLOUD_BACKEND.md) for current configuration and verification. Earlier setup notes below are historical.
+
 # Neon setup and deployment
 
 Linked project: outbound-holidays (little-cherry-82979985).

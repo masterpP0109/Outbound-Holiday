@@ -1,3 +1,5 @@
+import cloudImages from './fixtures/cloud-images.json';
+import { replaceImageUrls } from '../shared/cloud-images';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import type { ContentKind } from '@prisma/client';
@@ -17,7 +19,8 @@ export async function fixtureRecords(){
   const site={routeSeo,editorial,contact:{whatsappNumber:'263714701721',displayNumber:'+263 714 701 721',email:'travel@outboundholidays.co.zw',address:'Suite 4, Mosi-oa-Tunya Commercial Centre, Victoria Falls, Zimbabwe',hours:'Mon - Sun: 7:30 AM - 7:00 PM (CAT)'},currencyRates:travel.CURRENCY_RATES,guideCategories:GUIDE_HUB_CATEGORIES,featured:{accommodationIds:FEATURED_HOMEPAGE_ACCOMMODATIONS.map(x=>x.id),experienceIds:getFeaturedExperiences().map(x=>x.id),packageIds:getHomepageFeaturedPackages().map(x=>x.id)},legacy:{TRUST_BUILDERS:travel.TRUST_BUILDERS,FEATURED_PACKAGES:travel.FEATURED_PACKAGES,VIC_FALLS_SPOTS:travel.VIC_FALLS_SPOTS,ACCOMMODATIONS:travel.ACCOMMODATIONS,TRAVEL_REVIEWS:travel.TRAVEL_REVIEWS}};
   const album={id:'client-memories',slug:'client-memories',title:'Outbound Holidays Client Memories',featured:true,images:clientGalleryImages.map((url,i)=>({id:'client-image-'+i,url,alt:'Outbound Holidays client travel memory '+(i+1),caption:null,displayOrder:i,role:'gallery'}))};
   const groups:[ContentKind,any[]][]=[['accommodation',ALL_ACCOMMODATIONS],['experience',ALL_EXPERIENCES],['package',ALL_PACKAGES],['packageStay',ALL_PACKAGES.flatMap(pkg=>pkg.recommendedHotels.map(h=>({...h,id:pkg.id+'--'+h.id,originalId:h.id,packageId:pkg.id})))],['guide',Object.values(ALL_GUIDE_ARTICLES)],['album',[album]],['site',[{...site}]],['builderActivity',ACTIVITIES_DATA],['stayTier',STAY_TIERS]];
-  const records=groups.flatMap(([kind,items])=>items.map((payload,displayOrder)=>{
+  const records=groups.flatMap(([kind,items])=>items.map((originalPayload,displayOrder)=>{
+    const payload=replaceImageUrls(originalPayload,cloudImages);
     validatePayload(kind,payload);if(kind==='guide')validateGuideBlocks(payload);
     const originalId=payload.id??'shared';const id=kind+':'+originalId;
     const metaTitle=payload.seo?.metaTitle??(kind==='accommodation'?payload.name+' | Victoria Falls Accommodation | Outbound Holidays':['experience','package'].includes(kind)?payload.title+' | Outbound Holidays':null);

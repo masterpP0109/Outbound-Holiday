@@ -1537,9 +1537,9 @@
     "travel/QuickPlanningBar.copy3": "Flights, airport transfers & border crossings"
   },
   "structures": {
-    "common/Footer.outboundLogo": "/images/logo/outbound-holidays-logo.webp",
+    "common/Footer.outboundLogo": "/logo/outbound-holidays-logo.webp",
     "common/Footer.cruise1": "/Experiences/Standard Cruise_/Standard-1-scaled.jpg",
-    "common/Header.outboundLogo": "/images/logo/outbound-holidays-logo.webp",
+    "common/Header.outboundLogo": "/logo/outbound-holidays-logo.webp",
     "travel/AboutPage.services": [
       {
         "icon": {
@@ -2129,7 +2129,7 @@
         "category": "Booking with Outbound Holidays"
       }
     ],
-    "travel/guide/GuideHubView.outboundLogo": "/images/logo/outbound-holidays-logo.webp",
+    "travel/guide/GuideHubView.outboundLogo": "/logo/outbound-holidays-logo.webp",
     "travel/guide/GuideHubView.elephantExperienceImg": "/Experiences/Elephant Interaction_/elecrew-5.jpg",
     "travel/HolidayBuilderModal.fallsTour1": "/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg",
     "travel/HolidayBuilderModal.cruise1": "/Experiences/Standard Cruise_/Standard-1-scaled.jpg",
@@ -2139,7 +2139,7 @@
     "travel/HolidayBuilderModal.gorgeSwing3": "/Experiences/Gorge Swing_/Bridge-Swing-3-scaled.jpg",
     "travel/HolidayBuilderModal.bungee1": "/Experiences/Bungee Jump_/Bungee-1-scaled.jpg",
     "travel/HolidayBuilderModal.gameDrive10": "/Experiences/Game Drive/Game-drive-10-1-scaled.jpg",
-    "travel/HolidayBuilderModal.outboundLogo": "/images/logo/outbound-holidays-logo.webp",
+    "travel/HolidayBuilderModal.outboundLogo": "/logo/outbound-holidays-logo.webp",
     "travel/HowItWorks.fallsTour1": "/Experiences/Guided Tour of the Falls_/Tour-of-the-Falls-1-scaled.jpg",
     "travel/HowItWorks.cruise1": "/Experiences/Standard Cruise_/Standard-1-scaled.jpg",
     "travel/HowItWorks.simunyeShow": "/Experiences/Simunye_/Simunye-Spirit-Of-Africa-31.jpg",
@@ -2154,7 +2154,7 @@
     "travel/TravelHero.fallsTour1": "/heroImg/familyTrip.png",
     "travel/TravelHero.cruise1": "/heroImg/LookingForHoneyMoon.png",
     "travel/TravelHero.gameDrive10": "/heroImg/dreamingOfwildLilife.png",
-    "travel/VicFallsGuidePage.outboundLogo": "/images/logo/outbound-holidays-logo.webp",
+    "travel/VicFallsGuidePage.outboundLogo": "/logo/outbound-holidays-logo.webp",
     "travel/AccommodationAdvisor.section1": [
       "walking-distance",
       "boutique",

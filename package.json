@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build && tsx scripts/prerender.tsx",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
@@ -21,6 +21,7 @@
     "test:backend": "tsx --test tests/*.test.ts",
     "outbox:run": "tsx scripts/outbox.ts",
     "content:export": "tsx scripts/export-content.ts",
+    "content:snapshot": "tsx scripts/snapshot-content.ts",
     "dev:db": "tsx scripts/local-postgres.ts",
     "build:api": "tsup server/index.ts scripts/outbox.ts prisma/seed.ts scripts/validate-container.ts --format esm --platform node --target node22 --out-dir backend-dist --clean --splitting",
     "start:api": "node backend-dist/server/index.js",
@@ -31,7 +32,13 @@
     "docker:build": "docker build --platform linux/amd64 -t outbound-holidays-api:local .",
     "docker:run": "node scripts/docker-run.mjs",
     "images:upload": "tsx scripts/upload-webp.ts",
-    "test:images": "tsx --test tests/upload-images.test.ts"
+    "test:images": "tsx --test tests/upload-images.test.ts",
+    "dev:local": "node scripts/local-run.mjs",
+    "test:local": "node scripts/local-run.mjs test",
+    "build:neon": "prisma generate && node scripts/build-neon.mjs",
+    "deploy:neon": "npm run build:neon && neon deploy --env .env",
+    "images:cloud": "tsx scripts/cloud-images.ts",
+    "build:cloud": "node scripts/build-cloud.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1147.0",
