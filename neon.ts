@@ -2,6 +2,14 @@ import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
   auth: true,
+  triggers: {
+    "email-outbox": {
+      type: "schedule",
+      function: "api",
+      cron: "* * * * *",
+      functionPath: "/internal/email-outbox",
+    },
+  },
   preview: {
     // Upgrade to a paid plan to enable AI Gateway for your project.
     // aiGateway: true,
