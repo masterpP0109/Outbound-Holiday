@@ -3,7 +3,7 @@ import { PageLink } from '../common/PageLink';
 import { experiencePath,sectionPath } from '../../routes';
 import React from 'react';
 import { getFeaturedExperiences,Experience } from '../../data/experiencesData';
-import { Clock,ArrowRight,Sparkles,Star } from 'lucide-react';
+import { ArrowRight,Sparkles } from 'lucide-react';
 
 interface FeaturedExperiencesProps {
   onSelectExperience: (experience: Experience) => void;
@@ -17,11 +17,11 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
   const featured = getFeaturedExperiences();
 
   return (
-    <section id="travel-experiences" className="py-16 sm:py-20 lg:py-24 bg-[#FAF9F6]">
+    <section id="travel-experiences" className="py-10 sm:py-14 lg:py-16 bg-[#FAF9F6]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
+        <div className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
             <span>{editorial("travel/FeaturedExperiences.text1")}</span>
@@ -29,30 +29,23 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
             {editorial("travel/FeaturedExperiences.text2")}</h2>
-
-          <p className="text-base sm:text-lg text-gray-600 leading-relaxed font-light">
-            {editorial("travel/FeaturedExperiences.text3")}</p>
         </div>
 
         {/* 4 Featured Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {featured.map((item) => (
             <div
               key={item.id}
               onClick={() => onSelectExperience(item)}
-              className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group cursor-pointer transform hover:-translate-y-1"
+              className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer transform hover:-translate-y-1"
             >
               {/* Image Container */}
-              <div className="relative h-56 w-full overflow-hidden bg-gray-100">
-                {/* DEBUG: Show image path */}
-                <div className="absolute inset-0 bg-gray-200 text-gray-600 text-xs p-2 overflow-auto hidden">
-                  {item.featuredImage}
-                </div>
+              <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-gray-100 shrink-0">
                 <img
                   src={item.featuredImage}
                   alt={item.title}
                   width="100%"
-                  height="224"
+                  height="208"
                   loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 block"
                   onError={(e) => {
@@ -60,52 +53,22 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                     (e.target as HTMLImageElement).src = '';
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
-
-                {/* Price Badge */}
-                <div className="absolute top-3 right-3 bg-[#0D2833]/85 text-white backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/20">
-                  {item.fromPrice}
-                </div>
-
-                {/* Duration Badge */}
-                <div className="absolute bottom-3 left-3 bg-white/90 text-[#0B5E8E] backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-[#C9A66B]" />
-                  <span>{item.duration}</span>
-                </div>
               </div>
 
-              {/* Card Body */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="font-serif font-bold text-lg text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors leading-snug">
-                    {item.title}
-                  </h3>
+              {/* Card Body & Action */}
+              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-[#C9A66B] group-hover:text-[#0B5E8E] transition-colors leading-snug line-clamp-2">
+                  {item.title}
+                </h3>
 
-                  <p className="text-xs text-gray-600 leading-relaxed line-clamp-2 font-normal">
-                    {item.shortDescription}
-                  </p>
-                </div>
-
-                {/* Why We Recommend It Badge */}
-                <div className="p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200/80 space-y-1">
-                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#C9A66B] uppercase tracking-wider">
-                    <Star className="w-3 h-3 text-[#C9A66B] fill-[#C9A66B]" />
-                    <span>{editorial("travel/FeaturedExperiences.text4")}</span>
-                  </div>
-                  <p className="text-[11px] text-gray-700 italic line-clamp-2 leading-tight">
-                    "{item.whyWeRecommend}"
-                  </p>
-                </div>
-
-                {/* Action Button */}
                 <PageLink href={experiencePath(item)}
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelectExperience(item);
                   }}
-                  className="w-full mt-2 bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-[#C9A66B] text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
                 >
-                  <span>{editorial("travel/FeaturedExperiences.text5")}</span>
+                  <span className="text-[#C9A66B]">{editorial("travel/FeaturedExperiences.text5")}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                 </PageLink>
               </div>
@@ -114,10 +77,10 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
         </div>
 
         {/* Section Bottom CTA */}
-        <div className="mt-12 sm:mt-16 text-center">
+        <div className="mt-8 sm:mt-10 text-center">
           <PageLink href={sectionPath('experiences')}
             onClick={onExploreAll}
-            className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-base px-5 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
             <span>{editorial("travel/FeaturedExperiences.text6")}</span>
             <ArrowRight className="w-4 h-4" />

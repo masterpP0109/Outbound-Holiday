@@ -39,18 +39,18 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ preview = false, o
   );
 
   return (
-    <section id="client-gallery" aria-labelledby="client-gallery-title" className="bg-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+    <section id="client-gallery" aria-labelledby="client-gallery-title" className="bg-white py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {!preview && (
           <PageLink href={'/'} onClick={onNavigateHome} className="mb-6 text-sm font-semibold text-[#0B5E8E] hover:underline cursor-pointer">
             {editorial("travel/ClientGallery.text1")}</PageLink>
         )}
-        <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
+        <div className="text-center max-w-2xl mx-auto mb-6 space-y-2">
           <span className="inline-flex items-center gap-2 rounded-full bg-[#C9A66B]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-[#0B5E8E]">
             <Camera className="w-4 h-4" aria-hidden="true" />
             {editorial("travel/ClientGallery.text2")}</span>
           <Heading id="client-gallery-title" className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">{editorial("travel/ClientGallery.text3")}</Heading>
-          <p className="text-sm sm:text-base text-gray-600">{editorial("travel/ClientGallery.text4")}</p>
+          {!preview && <p className="text-sm sm:text-base text-gray-600">{editorial("travel/ClientGallery.text4")}</p>}
         </div>
 
         {images.length===0&&<p role="status" className="text-center">No published gallery photos are available yet.</p>}

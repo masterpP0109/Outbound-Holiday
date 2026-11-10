@@ -23,7 +23,6 @@ import { DetailedPackage } from './data/packagesData';
 import { TravellerStories } from './components/travel/TravellerStories';
 import { AboutPage } from './components/travel/AboutPage';
 import { ClientGallery } from './components/travel/ClientGallery';
-import { HowWeHelp } from './components/travel/HowWeHelp';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
 import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
@@ -33,6 +32,7 @@ import { BungeeExperiencePage } from './components/travel/BungeeExperiencePage';
 import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
 import { MobileStickyCta } from './components/common/MobileStickyCta';
 import { Newsletter } from './components/common/Newsletter';
+import { NewsletterAdmin } from './components/admin/NewsletterAdmin';
 import { Footer } from './components/common/Footer';
 
 export default function App({ initialPath,contentVersion }: { initialPath?: string;contentVersion?:string } = {}) {
@@ -74,7 +74,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
   // Modals & Drawers
   const [preselectedActivity,setPreselectedActivity]=useState<string|null>(null);
   const [planHolidayOpen, setPlanHolidayOpen] = useState(false);
-  const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | null>(null);
+  const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | DetailedPackage | null>(null);
   const [preselectedAccommodation, setPreselectedAccommodation] = useState<DetailedAccommodation | null>(null);
 
   const handleSelectAccommodationDetail = (property: DetailedAccommodation) => navigate(accommodationPath(property));
@@ -90,7 +90,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#1A2E35] flex flex-col font-sans pb-16 md:pb-0">
+    <div className="min-h-screen bg-white text-[#1A2E35] flex flex-col font-sans pb-20 md:pb-0">
       {/* Navigation Header */}
       <Header
         currency={currency}
@@ -119,6 +119,8 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
             <p>The page you’re looking for is unavailable. Explore our Victoria Falls holidays and experiences.</p>
             <PageLink href="/" onClick={() => navigate('/')} className="inline-block rounded-xl bg-[#0B5E8E] px-6 py-3 text-white">Back to home</PageLink>
           </section>
+        ) : activeView === 'admin-newsletter' ? (
+          <NewsletterAdmin onNavigateHome={() => navigate('/')} />
         ) : activeView === 'newsletter-confirmed' ? (
           <section className="max-w-3xl mx-auto p-12 text-center space-y-5"><h1 className="text-3xl font-serif text-[#0B5E8E]">Travel updates confirmation</h1><p>Use the confirmation link sent to your email to confirm your request. Visiting this page alone does not confirm a subscription.</p><PageLink href="/" onClick={()=>navigate('/')}>Explore Outbound Holidays</PageLink></section>
         ) : activeView === 'contact' ? (
@@ -203,7 +205,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               setPlanHolidayOpen(true);
             }}
           />
-        ) : activeView === 'experience-category' ? (
+        ) : activeView === 'experience-category' && selectedCategory ? (
           <ExperienceCategoryPage
             categoryId={selectedCategory}
             onSelectExperience={handleSelectExperience}
@@ -302,7 +304,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               onBrowsePackages={() => handleNavigateSection('travel-packages')}
             />
 
-            {/* 2. Quick Planning Bar */}
+            {/* 2. Simple Holiday Discovery / Quick Planning Bar */}
             <QuickPlanningBar
               onOpenGuide={() => {
                 navigate(sectionPath('guide'));
@@ -314,21 +316,20 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               }}
             />
 
-            {/* 3. Why Plan With Outbound Holidays */}
-            <WhyChooseOutbound
-              onOpenPlanHoliday={() => {
-                setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
-                setPlanHolidayOpen(true);
-              }}
-            />
-
-            {/* 4. Featured Experiences */}
+            {/* 3. Featured Victoria Falls Experiences */}
             <FeaturedExperiences
               onSelectExperience={handleSelectExperience}
               onExploreAll={() => {
                 navigate(sectionPath('experiences'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+            />
+
+            {/* 4. Recommended Victoria Falls Holidays */}
+            <FeaturedPackages
+              currency={currency}
+              onSelectPackage={handleSelectPackageDetail}
+              onExploreAllPackages={handleExploreAllPackages}
             />
 
             {/* 5. Where to Stay in Victoria Falls */}
@@ -338,7 +339,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               onExploreAllProperties={handleExploreAllAccommodations}
             />
 
-            {/* 6. Victoria Falls Guide Preview */}
+            {/* 6. Victoria Falls Travel Guide / Local Insight */}
             <VicFallsGuide
               onOpenFullGuide={() => {
                 navigate(sectionPath('guide'));
@@ -346,22 +347,21 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               }}
             />
 
-            {/* 7. Recommended Victoria Falls Holidays */}
-            <FeaturedPackages
-              currency={currency}
-              onSelectPackage={handleSelectPackageDetail}
-              onExploreAllPackages={handleExploreAllPackages}
+            {/* 7. Why Choose Outbound Holidays */}
+            <WhyChooseOutbound
+              onOpenPlanHoliday={() => {
+                setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
+                setPlanHolidayOpen(true);
+              }}
             />
 
-            {/* 8. Genuine Testimonials */}
+            {/* 8. Traveller Stories / Testimonials */}
             <TravellerStories />
 
+            {/* Client Gallery Preview */}
             <ClientGallery preview onSeeGallery={() => handleNavigateSection('client-gallery')} />
 
-            {/* 9. How We Help */}
-            <HowWeHelp />
-
-            {/* 10. Final Call To Action */}
+            {/* 9. Final Call To Action */}
             <FinalCtaBanner
               onOpenPlanHoliday={() => {
                 setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
@@ -372,7 +372,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
         )}
 
         {/* Global Travel Newsletter Section */}
-        <Newsletter />
+        {activeView !== 'admin-newsletter' && <Newsletter />}
       </main>
 
       <PageMetadata route={route} />
@@ -388,6 +388,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
 
       {/* Mobile Sticky CTA Bar */}
       <MobileStickyCta
+        isModalOpen={planHolidayOpen}
         onOpenPlanHoliday={() => {
           setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
           setPlanHolidayOpen(true);

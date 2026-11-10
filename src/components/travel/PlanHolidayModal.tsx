@@ -1,12 +1,13 @@
 import React from 'react';
 import { TravelPackage } from '../../types';
 import { DetailedAccommodation } from '../../data/accommodationsData';
+import { DetailedPackage } from '../../data/packagesData';
 import { HolidayBuilderModal } from './HolidayBuilderModal';
 
 interface PlanHolidayModalProps {
   isOpen: boolean;
   onClose: () => void;
-  preselectedPackage?: TravelPackage | null;
+  preselectedPackage?: TravelPackage | DetailedPackage | null;
   preselectedActivity?: string | null;
   preselectedAccommodation?: DetailedAccommodation | null;
 }

@@ -6,7 +6,7 @@ import { ALL_ACCOMMODATIONS,DetailedAccommodation } from './data/accommodationsD
 import { FIRST_TIME_VISITOR_ARTICLE } from './data/guideArticles';
 
 export const SITE_URL = 'https://outbound-holiday.vercel.app';
-export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee' | 'client-gallery' | 'about' | 'newsletter-confirmed' | 'contact' | 'not-found';
+export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee' | 'client-gallery' | 'about' | 'newsletter-confirmed' | 'contact' | 'admin-newsletter' | 'not-found';
 export interface PageRoute {
   path: string;
   view: View;
@@ -41,6 +41,7 @@ registerContent(() => { PAGE_ROUTES = [
   ...ALL_ACCOMMODATIONS.map((accommodation): PageRoute => ({ path: accommodationPath(accommodation), view: 'accommodation-detail', accommodation, title: `${accommodation.name} | Victoria Falls Accommodation | Outbound Holidays`, description: accommodation.shortDescription })),
   { path:'/newsletter-confirmed',view:'newsletter-confirmed',title:'Newsletter Confirmation | Outbound Holidays',description:'Thank you for confirming your travel updates subscription.' },
   { path:'/contact',view:'contact',title:'Contact Outbound Holidays',description:'Speak with our Victoria Falls travel specialists.' },
+  { path:'/admin/newsletter',view:'admin-newsletter',title:'Newsletter Administration | Outbound Holidays',description:'Administer subscribers, campaigns and email delivery.' },
   ...Object.values(ALL_GUIDE_ARTICLES).filter(g=>g.slug!=='first-time-visitor-guide').map((article):PageRoute=>({path:'/victoria-falls-guide/'+article.slug,view:'guide',article,title:article.seo.metaTitle,description:article.seo.metaDescription})),
 ];for(const route of PAGE_ROUTES){const seo=getSnapshot().site.routeSeo[route.path];if(seo){route.title=seo.title;route.description=seo.description;}} });
 

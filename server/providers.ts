@@ -4,11 +4,15 @@ import type { Notification } from '@prisma/client';
 import { db } from './db';
 import { enquiryEmail, escapeHtml } from './enquiry-email';
 import { emailRecipient as recipient } from './email-recipient';
+import { deliverCampaignNotification } from './newsletter/delivery';
 export { escapeHtml } from './enquiry-email';
 const required=(key:string)=>{const v=process.env[key];if(!v)throw new Error('Missing server configuration: '+key);return v;};
 export async function brevo(path:string,method='GET',body?:unknown){const response=await fetch('https://api.brevo.com/v3/'+path,{method,headers:{'api-key':required('BREVO_API_KEY'),'content-type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(10000)});if(!response.ok){if(response.status===404)return null;throw new Error('Brevo request failed ('+response.status+').');}return response.status===204?{}:response.json();}
 export async function deliverNotification(job:Notification,options:{testPreview?:boolean}={}){
  const p=job.payload as any;
+ if(job.kind==='newsletter-campaign'){
+  return deliverCampaignNotification(job);
+ }
  if(job.kind==='newsletter-doi'){
   const current=job.subscriptionId?await db.subscription.findUnique({where:{id:job.subscriptionId}}):null;if(!current||current.status!=='pending'||current.tokenHash!==createHash('sha256').update(p.token).digest('hex'))return 'cancelled';
   if((process.env.NEWSLETTER_PROVIDER??'disabled')==='self-hosted'){

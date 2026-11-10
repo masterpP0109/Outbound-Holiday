@@ -1,188 +1,70 @@
-import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
-import { PageLink } from '../common/PageLink';
-import { sectionPath } from '../../routes';
-import React,{ useState,useEffect } from 'react';
-import { ArrowRight,ShieldCheck,MapPin,ChevronLeft,ChevronRight,Heart,Users,Compass } from 'lucide-react';
-
-// Dedicated public images for each hero carousel slide.
+import React from 'react';
+import { ArrowRight } from 'lucide-react';
 
 interface TravelHeroProps {
   onOpenPlanHoliday: () => void;
-  onBrowsePackages: () => void;
+  onBrowsePackages?: () => void;
 }
 
-interface HeroSlide {
-  id: string;
-  imageUrl: string;
-  fallbackUrl: string;
-  titleTag: string;
-  headline: React.ReactNode;
-  description: string;
-  primaryCtaText: string;
-  badgeIcon: React.ReactNode;
-  altText: string;
-}
-
-let HERO_SLIDES: HeroSlide[];
-registerContent(()=>{HERO_SLIDES=editorialValue('travel/TravelHero.slides',{Users,Heart,Compass});});
+const FALLS_HERO_IMAGE = '/Experiences/Guided Tour of the Falls_/5-4.jpg';
 
 export const TravelHero: React.FC<TravelHeroProps> = ({
   onOpenPlanHoliday,
-  onBrowsePackages,
 }) => {
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      setCurrentSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 5500);
-
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
-  const handleNextSlide = () => {
-    setCurrentSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-  };
-
-  const handlePrevSlide = () => {
-    setCurrentSlideIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
-  };
-
   return (
-    <section className="w-full relative overflow-hidden">
-      {/* Full-bleed Hero Container with background image carousel */}
-      <div 
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        className="travel-hero relative w-full bg-[#0B5E8E] text-white flex flex-col items-start justify-center shadow-md group/hero"
-      >
-        
-        {/* Carousel Background Images with Cross-Fade Effect */}
-        {HERO_SLIDES.map((slide, idx) => {
-          const isActive = idx === currentSlideIndex;
-          return (
-            <div
-              key={slide.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                isActive ? 'opacity-100 z-0' : 'opacity-0 z-0 pointer-events-none'
-              }`}
-            >
-              <img
-                src={slide.imageUrl}
-                width={1920}
-                height={1080}
-                alt={slide.altText}
-                loading={idx === 0 ? 'eager' : 'lazy'}
-                className="w-full h-full object-fill object-center block bg-[#0B5E8E]"
-                onError={(e) => {
-                  console.error('Hero image failed to load:', slide.imageUrl);
-                  (e.target as HTMLImageElement).src = slide.fallbackUrl;
-                }}
-              />
-            </div>
-          );
-        })}
+    <section className="w-full relative overflow-hidden bg-[#0B5E8E]">
+      {/* Full-bleed Static Hero Container - justify-end pushes content down */}
+      <div className="travel-hero relative w-full flex flex-col justify-end items-end text-white">
+        {/* Single Static High-Resolution Victoria Falls Photograph */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={FALLS_HERO_IMAGE}
+            width={1920}
+            height={1244}
+            alt="Majestic panoramic view of Victoria Falls with mist rising from the Zambezi gorge"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="w-full h-full object-cover object-[center_62%] block"
+          />
+        </div>
 
-        {/* Dark Gradient Overlay for left-aligned text contrast */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0B5E8E]/95 via-[#0B5E8E]/70 to-black/30 md:to-transparent" />
+        {/* Dark Gradient Overlay calibrated so the entire falls remain visible while maintaining text contrast */}
+        <div
+          className="absolute inset-0 z-0 bg-gradient-to-l from-black/75 via-black/45 to-black/10 sm:from-black/75 sm:via-black/40 sm:to-transparent"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 z-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
+          aria-hidden="true"
+        />
 
-        {/* Main Content Area - Left-aligned with max-width container */}
-        <div key={currentSlideIndex} className="travel-hero-content relative z-10 text-left flex flex-col items-start justify-center my-auto animate-fadeIn duration-500 max-w-2xl w-full">
-          
-          {/* Active Carousel Category Pill Label */}
-          <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-md border border-[#C9A66B]/60 rounded-full px-5 py-2 text-xs font-semibold text-[#C9A66B] tracking-wide uppercase shadow-sm transition-all duration-300">
-            {HERO_SLIDES[currentSlideIndex].badgeIcon}
-            <span className="text-white">{HERO_SLIDES[currentSlideIndex].titleTag}</span>
-          </div>
-
-          {/* Dynamic Headline - Left Aligned */}
-          <h1 className="travel-hero-title font-bold font-serif text-white leading-[1.12] tracking-tight drop-shadow-md">
-            {HERO_SLIDES[currentSlideIndex].headline}
+        {/* Main Hero Content Area - Right Positioned, Pushed Down, and Enlarged on Smaller Screens */}
+        <div className="travel-hero-content relative z-10 text-right flex flex-col items-end justify-end max-w-2xl sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl w-full space-y-3 sm:space-y-4 lg:space-y-5">
+          {/* Main Headline (H1) - Increased Size on Smaller Screens & Right Aligned */}
+          <h1 className="travel-hero-title font-serif font-bold text-white tracking-tight drop-shadow-md text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[9.5rem] leading-[1.03] sm:leading-[1.06]">
+            <span className="block">Victoria Falls</span>
+            <span className="block">Holidays</span>
           </h1>
 
-          {/* Dynamic Description - Left Aligned */}
-          <p className="travel-hero-description text-sm sm:text-base lg:text-lg text-white/95 font-normal leading-relaxed drop-shadow-sm max-w-2xl">
-            {HERO_SLIDES[currentSlideIndex].description}
+          {/* Supporting Tagline - Increased Size on Smaller Screens */}
+          <p className="travel-hero-tagline text-xl xs:text-2xl sm:text-2xl lg:text-3xl xl:text-4xl text-white/95 font-light tracking-wide drop-shadow-sm max-w-2xl leading-snug sm:leading-relaxed">
+            Planned by locals, tailored to you.
           </p>
 
-          {/* Left-aligned Action Buttons */}
-          <div className="travel-hero-actions flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-3 w-full sm:w-auto">
+          {/* Primary Call-to-Action - Matches Featured Experiences CTA */}
+          <div className="pt-2 sm:pt-3 w-auto flex justify-end">
             <button
+              type="button"
               onClick={onOpenPlanHoliday}
-              className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-9 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 group cursor-pointer"
+              className="travel-hero-cta group inline-flex items-center justify-center gap-2 bg-[#E67E22] hover:bg-[#d36e17] active:bg-[#c56814] text-white font-bold text-xs sm:text-base px-5 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#E67E22]"
+              aria-label="Plan Your Trip with Outbound Holidays"
             >
-              <span>{HERO_SLIDES[currentSlideIndex].primaryCtaText}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span>Plan Your Trip</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform motion-reduce:transition-none" />
             </button>
-            
-            <PageLink href={sectionPath('packages')}
-              onClick={onBrowsePackages}
-              className="w-full sm:w-auto bg-black/30 hover:bg-black/50 backdrop-blur-md border border-white/50 text-white font-semibold text-sm sm:text-base px-9 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {editorial("travel/TravelHero.text10")}</PageLink>
-          </div>
-
-          {/* Reassurance Line - Left Aligned */}
-          <div className="pt-2 flex flex-wrap items-center justify-start gap-3.5 text-xs sm:text-sm text-white/95 font-medium drop-shadow-xs">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-              {editorial("travel/TravelHero.text11")}</span>
-            <span className="hidden sm:inline text-white/40">•</span>
-            <span>{editorial("travel/TravelHero.text12")}</span>
-            <span className="hidden sm:inline text-white/40">•</span>
-            <span>{editorial("travel/TravelHero.text13")}</span>
-          </div>
-
-          {/* Carousel Slide Indicators / Dots - Left Aligned */}
-          <div className="flex items-center justify-start gap-2.5 z-20">
-            {HERO_SLIDES.map((slide, idx) => (
-              <button
-                key={slide.id}
-                onClick={() => setCurrentSlideIndex(idx)}
-                aria-label={`Go to slide ${idx + 1}: ${slide.titleTag}`}
-                className={`transition-all duration-300 cursor-pointer ${
-                  idx === currentSlideIndex
-                    ? 'w-8 h-2.5 bg-[#E67E22] rounded-full shadow-md'
-                    : 'w-2.5 h-2.5 bg-white/50 hover:bg-white/80 rounded-full'
-                }`}
-              />
-            ))}
           </div>
         </div>
-
-        {/* Carousel Arrow Navigation - Left */}
-        <button
-          onClick={handlePrevSlide}
-          aria-label="Previous slide"
-          className="absolute left-3 sm:left-6 bottom-4 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all duration-300 cursor-pointer shadow-md"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-
-        {/* Carousel Arrow Navigation - Right */}
-        <button
-          onClick={handleNextSlide}
-          aria-label="Next slide"
-          className="absolute left-16 sm:left-20 bottom-4 z-20 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all duration-300 cursor-pointer shadow-md"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-
-        {/* Floating Local Support Card - Bottom Badge */}
-        <div className="travel-hero-support relative z-10 bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-[0_16px_40px_rgba(47,58,68,0.18)] border border-white/60 max-w-xs text-[#2F3A44] flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0">
-            <MapPin className="w-5 h-5 text-[#0B5E8E]" />
-          </div>
-          <div className="text-left">
-            <span className="font-bold font-serif text-xs sm:text-sm block text-[#0B5E8E] leading-snug">
-              {editorial("travel/TravelHero.text14")}</span>
-            <span className="text-[11px] text-[#2F3A44]/80 leading-normal block mt-0.5">
-              {editorial("travel/TravelHero.text15")}</span>
-          </div>
-        </div>
-
       </div>
     </section>
   );

@@ -44,14 +44,12 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
   ];
 
   return (
-    <section className="bg-[#FAF9F6] py-10 sm:py-12 border-b border-gray-200/80">
+    <section className="bg-[#FAF9F6] py-8 sm:py-10 border-b border-gray-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="text-center max-w-xl mx-auto mb-8">
+        <div className="text-center max-w-xl mx-auto mb-5 sm:mb-6">
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
             {editorial("travel/QuickPlanningBar.text5")}</h2>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1">
-            {editorial("travel/QuickPlanningBar.text6")}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -68,7 +66,7 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors">
+                    <h3 className="font-bold text-sm text-[#C9A66B] group-hover:text-[#0B5E8E] transition-colors">
                       {card.title}
                     </h3>
                     <p className="text-xs text-gray-500 mt-0.5 leading-snug">

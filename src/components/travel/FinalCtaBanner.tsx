@@ -13,7 +13,7 @@ interface FinalCtaBannerProps {
 
 export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHoliday }) => {
   return (
-    <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-[#FAFAFA] border-b border-gray-100">
+    <section className="py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 bg-[#FAFAFA] border-b border-gray-100">
       <div className="max-w-[1280px] mx-auto">
         <div className="relative bg-[#0B5E8E] text-white rounded-[32px] p-8 sm:p-14 lg:p-16 text-center shadow-[0_20px_50px_rgba(11,94,142,0.2)] overflow-hidden">
           
@@ -37,10 +37,10 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
             <p className="text-sm sm:text-lg text-white/90 leading-relaxed max-w-xl mx-auto">
               {editorial("travel/FinalCtaBanner.text3")}</p>
 
-            <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4 max-w-md mx-auto">
+            <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 max-w-md mx-auto">
               <button
                 onClick={onOpenPlanHoliday}
-                className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm px-5 py-2.5 sm:px-8 sm:py-4 rounded-xl shadow-md hover:shadow-xl transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <CalendarCheck className="w-4 h-4" />
                 <span>{editorial("travel/FinalCtaBanner.text4")}</span>
@@ -51,7 +51,7 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({ onOpenPlanHolida
                 href={getWhatsAppSpecialistUrl("Planning Victoria Falls Trip")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm px-7 py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm px-5 py-2.5 sm:px-7 sm:py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <MessageCircle className="w-5 h-5 shrink-0" />
                 <span>{editorial("travel/FinalCtaBanner.text5")}</span>

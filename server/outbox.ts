@@ -2,7 +2,9 @@ import { randomUUID } from 'node:crypto';
 import type { Notification } from '@prisma/client';
 import { db } from './db';
 import { deliverNotification,syncSubscriber } from './providers';
+import { processScheduledCampaigns } from './newsletter/campaigns';
 export async function runOutbox(limit=10,deliver=deliverNotification,eligibleIds?:string[]){
+ await processScheduledCampaigns().catch(()=>{});
  await db.notification.updateMany({where:{status:"processing",attempts:{gte:8},leaseUntil:{lt:new Date()}},data:{status:"dead",leaseToken:null,leaseUntil:null,lastError:"Worker lease expired on final attempt; operator review required."}});
  const token=randomUUID();const jobs=await db.$queryRawUnsafe<Notification[]>(
   "UPDATE \"Notification\" SET \"status\"='processing',\"attempts\"=\"attempts\"+1,\"leaseUntil\"=NOW()+INTERVAL '3 minutes',\"leaseToken\"=$1 WHERE \"id\" IN (SELECT \"id\" FROM \"Notification\" WHERE ((\"status\" IN ('pending','failed') AND \"nextAttemptAt\"<=NOW()) OR (\"status\"='processing' AND \"leaseUntil\"<NOW())) AND \"attempts\"<8 AND ($3::jsonb IS NULL OR \"id\" IN (SELECT jsonb_array_elements_text($3::jsonb))) ORDER BY \"createdAt\" LIMIT $2 FOR UPDATE SKIP LOCKED) RETURNING *",token,limit,eligibleIds?JSON.stringify(eligibleIds):null);

@@ -17,6 +17,7 @@ MessageSquare,Plus,ChevronDown,
 ChevronUp
 } from 'lucide-react';
 import { DetailedAccommodation } from '../../data/accommodationsData';
+import { DetailedPackage } from '../../data/packagesData';
 
 // Public image paths for experiences
 let fallsTour1: any;
@@ -37,7 +38,7 @@ registerContent(() => { outboundLogo = editorialValue("travel/HolidayBuilderModa
 interface HolidayBuilderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  preselectedPackage?: TravelPackage | null;
+  preselectedPackage?: TravelPackage | DetailedPackage | null;
   preselectedActivity?: string | null;
   preselectedAccommodation?: DetailedAccommodation | null;
 }
@@ -78,6 +79,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   const [notes, setNotes] = useState<string>('');
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [mobileSummaryExpanded, setMobileSummaryExpanded] = useState<boolean>(false);
+  const [entryMode, setEntryMode] = useState<'quick' | 'guided'>('quick');
 
   // Load saved state or preload package on open
   useEffect(() => {
@@ -248,6 +250,61 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     if(saved)setSubmitted(true);
   };
 
+  const buildQuickWhatsAppLink = () => {
+    const message = `Hi Outbound Holidays! I'd like help planning a Victoria Falls holiday.\n\n` +
+      `*Name:* ${fullName || 'Guest'}\n` +
+      `*Travel Style:* ${tripIntent}\n` +
+      `*Party:* ${adultsCount} Adults (${partyType})\n` +
+      `*Preferred Season:* ${travelSeason}\n` +
+      (phone ? `*Phone/WhatsApp:* ${phone}\n` : '') +
+      (email ? `*Email:* ${email}\n` : '') +
+      (notes ? `*Notes:* ${notes}\n` : '') +
+      `\nPlease send me your recommendations and package options.`;
+    return getWhatsAppUrl(message);
+  };
+
+  const handleQuickEnquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const quickMessage = notes.trim()
+      ? notes
+      : `Quick enquiry: Interested in a ${tripIntent} Victoria Falls holiday for ${adultsCount} adult(s) (${partyType}) during ${travelSeason} season.`;
+
+    const saved = await submission.save({
+      name: fullName,
+      email,
+      phone,
+      message: quickMessage,
+      source: 'holiday-builder',
+      marketingConsent,
+      trip: {
+        preferredContact: phone ? 'whatsapp' : 'email',
+        displayedEstimate: {
+          minimumUSD: estimatedMinUSD,
+          maximumUSD: estimatedMaxUSD,
+          currency: 'USD',
+          clientUnverified: true,
+        },
+        intent: tripIntent,
+        partyType,
+        adults: adultsCount,
+        children: kidsCount,
+        nights: nightsCount,
+        travelDates: travelSeason,
+        stayTierId,
+        stayPreferences,
+        activityIds: selectedActivityIds,
+        experienceIds: preselectedActivity ? [preselectedActivity] : [],
+        transportType,
+        accommodationId: preselectedAccommodation?.id,
+        packageId: preselectedPackage?.id,
+      },
+    });
+    if (saved) {
+      setStep(8);
+      setSubmitted(true);
+    }
+  };
+
   // Dynamic Theme Background photo based on trip intent
   const getIntentHeroPhoto = () => {
     if (tripIntent === 'romantic')
@@ -318,65 +375,257 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         <div className="flex-1 p-4 sm:p-8 lg:p-10 max-w-4xl mx-auto w-full space-y-6 pb-28 lg:pb-12">
           {/* STEP 0: ENTRY MODE SELECTION */}
           {step === 0 && (
-            <div className="text-center my-auto py-8 sm:py-12 space-y-8 max-w-2xl mx-auto">
-              <div className="inline-flex items-center gap-2 bg-[#D97706]/10 text-[#D97706] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
-                <Sparkles className="w-4 h-4" />
-                <span>{editorial("travel/HolidayBuilderModal.text65")}</span>
+            <div className="my-auto py-4 sm:py-8 space-y-6 max-w-2xl mx-auto">
+              {/* Header Badge & Title */}
+              <div className="text-center space-y-3">
+                <div className="inline-flex items-center gap-2 bg-[#D97706]/10 text-[#D97706] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4" />
+                  <span>Victoria Falls Travel Specialist</span>
+                </div>
+
+                <h1 className="text-2xl sm:text-4xl font-bold font-serif text-[#0D5C75] leading-tight">
+                  Start Planning Your Holiday
+                </h1>
+
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
+                  Get a personalized quote in 60 seconds, or use our interactive builder to design your day-by-day itinerary.
+                </p>
+
+                {/* Mode Selector Tabs */}
+                <div className="inline-flex p-1 bg-gray-100 rounded-xl border border-gray-200 text-xs font-bold max-w-md w-full">
+                  <button
+                    type="button"
+                    onClick={() => setEntryMode('quick')}
+                    className={`flex-1 py-2.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      entryMode === 'quick'
+                        ? 'bg-white text-[#0D5C75] shadow-xs'
+                        : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                  >
+                    <span>⚡ Quick Enquiry</span>
+                    <span className="hidden sm:inline bg-[#D97706]/10 text-[#D97706] text-[10px] px-1.5 py-0.5 rounded-full">1 Min</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEntryMode('guided')}
+                    className={`flex-1 py-2.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      entryMode === 'guided'
+                        ? 'bg-white text-[#0D5C75] shadow-xs'
+                        : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                  >
+                    <span>🗺️ Interactive Builder</span>
+                    <span className="hidden sm:inline bg-gray-200 text-gray-700 text-[10px] px-1.5 py-0.5 rounded-full">8 Steps</span>
+                  </button>
+                </div>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-bold font-serif text-[#0D5C75] leading-tight">
-                {editorial("travel/HolidayBuilderModal.text66")}</h1>
+              {/* MODE 1: QUICK 1-STEP SPECIALIST ENQUIRY */}
+              {entryMode === 'quick' && (
+                <form onSubmit={handleQuickEnquirySubmit} className="bg-white p-5 sm:p-7 rounded-2xl border border-gray-200 shadow-sm space-y-4 text-left animate-fade-in">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Your Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Sarah Jenkins"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
+                      />
+                    </div>
 
-              <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
-                {editorial("travel/HolidayBuilderModal.text67")}</p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                <button
-                  onClick={() => {
-                    setStep(4); // Jump directly to Stay & Activities
-                  }}
-                  className="p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-[#0D5C75] hover:shadow-lg transition-all text-left group flex flex-col justify-between"
-                >
-                  <div>
-                    <span className="w-10 h-10 rounded-xl bg-[#0D5C75]/10 text-[#0D5C75] flex items-center justify-center font-bold text-lg mb-3 group-hover:bg-[#0D5C75] group-hover:text-white transition-colors">
-                      🎯
-                    </span>
-                    <h3 className="font-bold font-serif text-lg text-[#0D5C75] mb-1">
-                      {editorial("travel/HolidayBuilderModal.text68")}</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      {editorial("travel/HolidayBuilderModal.text69")}</p>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Email Address <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="e.g. sarah@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
+                      />
+                    </div>
                   </div>
-                  <span className="text-xs font-bold text-[#0D5C75] mt-4 flex items-center gap-1">
-                    <span>{editorial("travel/HolidayBuilderModal.text70")}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </button>
 
-                <button
-                  onClick={() => {
-                    setStep(1); // Full guided lifestyle questions
-                  }}
-                  className="p-6 rounded-2xl border-2 border-[#D97706] bg-[#D97706]/5 hover:bg-[#D97706]/10 hover:shadow-lg transition-all text-left group flex flex-col justify-between relative"
-                >
-                  <span className="absolute top-3 right-3 bg-[#D97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
-                    {editorial("travel/HolidayBuilderModal.text71")}</span>
-                  <div>
-                    <span className="w-10 h-10 rounded-xl bg-[#D97706] text-white flex items-center justify-center font-bold text-lg mb-3">
-                      ✨
-                    </span>
-                    <h3 className="font-bold font-serif text-lg text-[#0D5C75] mb-1">
-                      {editorial("travel/HolidayBuilderModal.text72")}</h3>
-                    <p className="text-xs text-gray-600 leading-relaxed">
-                      {editorial("travel/HolidayBuilderModal.text73")}</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        WhatsApp / Phone <span className="text-gray-400 font-normal">(recommended for fastest response)</span>
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="+263 ... or +44 ..."
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Approximate Travel Season
+                      </label>
+                      <select
+                        value={travelSeason}
+                        onChange={(e) => setTravelSeason(e.target.value)}
+                        className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none bg-white"
+                      >
+                        <option value="flexible">Flexible / Planning Ahead</option>
+                        <option value="high-water">Mar – May (Peak Waterfall Volume)</option>
+                        <option value="dry">Jun – Oct (Peak Wildlife & Devil&apos;s Pool)</option>
+                        <option value="green">Nov – Feb (Emerald Season / Quiet)</option>
+                      </select>
+                    </div>
                   </div>
-                  <span className="text-xs font-bold text-[#D97706] mt-4 flex items-center gap-1">
-                    <span>{editorial("travel/HolidayBuilderModal.text74")}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </button>
-              </div>
 
-              <div className="pt-6 border-t border-gray-200 text-xs text-gray-500 flex items-center justify-center gap-2">
+                  {/* Travel Style Selector */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                      Holiday Style
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[
+                        { id: 'first-time', label: 'First-Timer', icon: '🌟' },
+                        { id: 'romantic', label: 'Couple / Romance', icon: '🥂' },
+                        { id: 'family', label: 'Family Safari', icon: '🐘' },
+                        { id: 'adventure', label: 'Action & Thrills', icon: '🌊' },
+                      ].map((style) => (
+                        <button
+                          key={style.id}
+                          type="button"
+                          onClick={() => setTripIntent(style.id)}
+                          className={`p-2 sm:p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                            tripIntent === style.id
+                              ? 'border-[#0D5C75] bg-[#0D5C75]/10 text-[#0D5C75] font-bold ring-1 ring-[#0D5C75]'
+                              : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>{style.icon}</span>
+                          <span>{style.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Message / Special Requests */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Notes or Special Requests <span className="text-gray-400 font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 4 nights, interested in helicopter flight & Chobe day trip..."
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0D5C75] outline-none"
+                    />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-2 space-y-2.5">
+                    <button
+                      type="submit"
+                      disabled={submission.pending}
+                      className="w-full bg-[#D97706] hover:bg-[#b45309] text-white font-bold text-xs sm:text-sm py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>{submission.pending ? 'Sending Enquiry...' : 'Get Custom Specialist Proposal'}</span>
+                    </button>
+
+                    <a
+                      href={buildQuickWhatsAppLink()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm py-3 rounded-xl shadow-xs flex items-center justify-center gap-2 transition-all"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>Chat Directly on WhatsApp</span>
+                    </a>
+                  </div>
+
+                  <SubmissionSafety submission={submission} marketingConsent={marketingConsent} onConsent={setMarketingConsent} requireConsent={false} />
+
+                  <div className="pt-3 border-t border-gray-100 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setEntryMode('guided')}
+                      className="text-xs text-[#0D5C75] hover:underline font-semibold inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>Prefer to choose your own lodges & activities? Launch 8-step builder</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* MODE 2: GUIDED 8-STEP BUILDER CHOICES */}
+              {entryMode === 'guided' && (
+                <div className="space-y-4 animate-fade-in">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button
+                      onClick={() => {
+                        setStep(4); // Jump directly to Stay & Activities
+                      }}
+                      className="p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-[#0D5C75] hover:shadow-lg transition-all text-left group flex flex-col justify-between cursor-pointer"
+                    >
+                      <div>
+                        <span className="w-10 h-10 rounded-xl bg-[#0D5C75]/10 text-[#0D5C75] flex items-center justify-center font-bold text-lg mb-3 group-hover:bg-[#0D5C75] group-hover:text-white transition-colors">
+                          🎯
+                        </span>
+                        <h3 className="font-bold font-serif text-lg text-[#0D5C75] mb-1">
+                          {editorial("travel/HolidayBuilderModal.text68")}</h3>
+                        <p className="text-xs text-gray-500 leading-relaxed">
+                          {editorial("travel/HolidayBuilderModal.text69")}</p>
+                      </div>
+                      <span className="text-xs font-bold text-[#0D5C75] mt-4 flex items-center gap-1">
+                        <span>{editorial("travel/HolidayBuilderModal.text70")}</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setStep(1); // Full guided lifestyle questions
+                      }}
+                      className="p-6 rounded-2xl border-2 border-[#D97706] bg-[#D97706]/5 hover:bg-[#D97706]/10 hover:shadow-lg transition-all text-left group flex flex-col justify-between relative cursor-pointer"
+                    >
+                      <span className="absolute top-3 right-3 bg-[#D97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
+                        {editorial("travel/HolidayBuilderModal.text71")}</span>
+                      <div>
+                        <span className="w-10 h-10 rounded-xl bg-[#D97706] text-white flex items-center justify-center font-bold text-lg mb-3">
+                          ✨
+                        </span>
+                        <h3 className="font-bold font-serif text-lg text-[#0D5C75] mb-1">
+                          {editorial("travel/HolidayBuilderModal.text72")}</h3>
+                        <p className="text-xs text-gray-600 leading-relaxed">
+                          {editorial("travel/HolidayBuilderModal.text73")}</p>
+                      </div>
+                      <span className="text-xs font-bold text-[#D97706] mt-4 flex items-center gap-1">
+                        <span>{editorial("travel/HolidayBuilderModal.text74")}</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="text-center pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setEntryMode('quick')}
+                      className="text-xs text-gray-500 hover:text-[#0D5C75] font-semibold cursor-pointer"
+                    >
+                      ← Back to 1-Minute Quick Enquiry
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-4 border-t border-gray-200 text-xs text-gray-500 flex items-center justify-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#D97706]" />
                 <span>{editorial("travel/HolidayBuilderModal.text75")}</span>
               </div>

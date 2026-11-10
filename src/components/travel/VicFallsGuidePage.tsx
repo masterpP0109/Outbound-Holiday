@@ -1,6 +1,4 @@
 import type { GuideArticle } from '../../types/guide';
-import { PageLink as GuideLink } from '../common/PageLink';
-import { ALL_GUIDE_ARTICLES } from '../../runtime/catalog';
 import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
 import React from 'react';
@@ -45,7 +43,6 @@ export const VicFallsGuidePage: React.FC<VicFallsGuidePageProps> = ({
         </div>
       </div>
 
-      <nav aria-label="Travel guide articles" className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap gap-3">{Object.values(ALL_GUIDE_ARTICLES).map(g=><GuideLink key={g.id} className="text-sm text-[#0B5E8E] underline" href={g.slug==='first-time-visitor-guide'?'/victoria-falls-guide':'/victoria-falls-guide/'+g.slug}>{g.title}</GuideLink>)}</nav>
       {/* Render Master Long-Form Editorial Guide */}
       <GuideArticleTemplate
         article={article}

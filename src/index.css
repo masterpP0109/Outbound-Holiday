@@ -4,43 +4,25 @@
   scroll-margin-top: calc(var(--header-height, 116px) + 16px);
 }
 
-/* Use the actual navigation height, including changes at each breakpoint. */
+/* Static cinematic hero section matching Micato-inspired calm layout */
 .travel-hero {
-  /* Keep the carousel slightly below the sticky navigation and inside the viewport. */
-  margin-top: 16px;
-  min-height: calc(100svh - var(--header-height, 116px) - 16px);
-  padding: clamp(16px, 3vh, 40px) clamp(24px, 5vw, 80px) 76px;
-  gap: clamp(12px, 2vh, 24px);
+  margin-top: 0;
+  min-height: calc(85svh - var(--header-height, 64px));
+  padding: clamp(32px, 5vh, 64px) clamp(20px, 5vw, 80px);
 }
 
-.travel-hero-content {
-  gap: clamp(12px, 2.5vh, 24px);
-}
-
-.travel-hero-title {
-  font-size: clamp(28px, min(4.5vw, 7vh), 60px);
-}
-
-.travel-hero-actions button {
-  padding: clamp(10px, 2vh, 16px) 24px;
+@media (max-width: 640px) {
+  .travel-hero {
+    min-height: clamp(480px, 80svh, 600px);
+    padding: 36px 20px 32px;
+  }
 }
 
 @media (min-width: 1024px) {
   .travel-hero {
-    padding-bottom: 120px;
+    min-height: calc(86svh - var(--header-height, 64px));
+    padding: 56px clamp(36px, 5vw, 88px);
   }
-
-  .travel-hero-support {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-  }
-}
-
-@media (max-height: 700px) {
-  .travel-hero-content { gap: 10px; }
-  .travel-hero-description { font-size: 14px; }
-  .travel-hero-support { padding: 8px 12px; }
 }
 
 @layer base {
@@ -51,6 +33,11 @@
     --sunset-orange: #E67E22;
     --clean-white: #FFFFFF;
     --charcoal-grey: #2F3A44;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   body {
