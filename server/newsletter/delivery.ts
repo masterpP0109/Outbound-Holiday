@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { createHash } from 'node:crypto';
 import type { Notification } from '@prisma/client';
 import { db } from '../db';
-import { renderEmail, htmlToPlainText, escapeHtml } from './templates';
+import { renderEmail } from './templates';
 import { emailRecipient as recipient } from '../email-recipient';
 
 const required = (key: string) => {

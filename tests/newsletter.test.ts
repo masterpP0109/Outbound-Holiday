@@ -3,17 +3,13 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { db } from '../server/db';
 import {
-  TEMPLATES,
   renderEmail,
-  htmlToPlainText,
-  getTemplate
+  htmlToPlainText
 } from '../server/newsletter/templates';
 import {
   CreateCampaignSchema,
-  UpdateCampaignSchema,
   ScheduleCampaignSchema,
-  SendTestEmailSchema,
-  SubscriberQuerySchema
+  SendTestEmailSchema
 } from '../shared/newsletter-schema';
 import {
   listSubscribers,
@@ -25,12 +21,9 @@ import {
   createCampaign,
   getCampaign,
   updateCampaign,
-  listCampaigns,
   scheduleCampaign,
   dispatchCampaign,
-  sendTestEmail,
-  cancelCampaign,
-  deleteCampaign
+  sendTestEmail
 } from '../server/newsletter/campaigns';
 import { deliverNotification } from '../server/providers';
 import handler from '../server/handler';
@@ -166,7 +159,7 @@ test('newsletter admin endpoints require valid bearer authorization', async () =
 
 test('subscriber management supports listing, stats, status transitions and CSV/JSON export', async () => {
   // Create two test subscriptions
-  const sub1 = await db.subscription.create({
+  await db.subscription.create({
     data: {
       email: testEmail1,
       status: 'subscribed',
