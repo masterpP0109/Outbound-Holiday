@@ -67,17 +67,17 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header ref={headerRef} className="sticky top-0 z-50 bg-white border-b border-gray-200/80 shadow-xs">
       {/* Top Banner Bar */}
-      <div className="bg-[#0B5E8E] text-white text-[11px] px-4 py-2 border-b border-white/10">
+      <div className="bg-[#0B5E8E] text-white text-[11px] px-3 sm:px-4 py-1 sm:py-2 border-b border-white/10">
         <div className="max-w-[1280px] mx-auto flex items-center justify-between gap-2">
           {/* Tagline */}
-          <div className="flex items-center gap-2 text-[11px] font-medium text-white/90">
+          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-medium text-white/90">
             <span className="hidden sm:inline bg-[#E67E22] text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               {editorial("common/Header.text1")}</span>
-            <span className="truncate">{editorial("common/Header.text2")}</span>
+            <span className="truncate max-w-[210px] sm:max-w-none">{editorial("common/Header.text2")}</span>
           </div>
 
           {/* Quick Info & Currency Switcher */}
-          <div className="flex items-center gap-4 text-white/90 text-[11px]">
+          <div className="flex items-center gap-2 sm:gap-4 text-white/90 text-[10px] sm:text-[11px]">
             <a 
               href={getWhatsAppUrl("Hello Outbound Holidays, I'd like to enquire about Victoria Falls travel.")}
               target="_blank"
@@ -92,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
-                className="flex items-center gap-1.5 font-medium text-white bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md transition-colors text-[11px] cursor-pointer"
+                className="flex items-center gap-1.5 font-medium text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md transition-colors text-[10px] sm:text-[11px] cursor-pointer"
               >
                 <span>{currency} ({CURRENCY_RATES[currency].symbol})</span>
                 <ChevronDown className="w-3 h-3 text-[#C9A66B]" />
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-2 lg:gap-4">
+      <div className="max-w-[1280px] mx-auto px-3 sm:px-6 lg:px-8 py-1.5 sm:py-2 flex items-center justify-between gap-2 lg:gap-4">
         {/* Brand Logo */}
         <PageLink href="/"
           onClick={() => onNavigateSection('hero')}
@@ -132,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
           <img 
             src={outboundLogo} 
             alt={editorial("common/Header.text4")}
-            className="h-20 sm:h-24 max-w-[140px] sm:max-w-[180px] w-auto object-contain"
+            className="h-10 sm:h-14 lg:h-16 max-w-[110px] sm:max-w-[150px] lg:max-w-[180px] w-auto object-contain transition-all"
             onError={() => {
               console.error('Header logo failed to load from:', outboundLogo);
             }}
@@ -252,16 +252,17 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Primary Call To Action in Sunset Orange */}
           <button
             onClick={onOpenPlanHoliday}
-            className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-1.5 sm:gap-2 cursor-pointer"
+            className="bg-[#E67E22] hover:bg-[#d36e17] active:bg-[#c25f10] text-white font-bold text-xs px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-1.5 sm:gap-2 cursor-pointer"
           >
             <CalendarCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span>{editorial("common/Header.text13")}</span>
+            <span className="hidden sm:inline">{editorial("common/Header.text13")}</span>
+            <span className="inline sm:hidden">Plan</span>
           </button>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - 40px min touch target */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-[#0B5E8E]"
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-[#0B5E8E] hover:bg-gray-100 active:bg-gray-200 transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

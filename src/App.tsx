@@ -388,6 +388,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
 
       {/* Mobile Sticky CTA Bar */}
       <MobileStickyCta
+        isModalOpen={planHolidayOpen}
         onOpenPlanHoliday={() => {
           setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
           setPlanHolidayOpen(true);

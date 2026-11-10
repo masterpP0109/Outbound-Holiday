@@ -25,6 +25,15 @@
   padding: clamp(10px, 2vh, 16px) 24px;
 }
 
+@media (max-width: 640px) {
+  .travel-hero {
+    margin-top: 0;
+    min-height: clamp(520px, 85svh, 680px);
+    padding: 24px 16px 48px;
+    gap: 16px;
+  }
+}
+
 @media (min-width: 1024px) {
   .travel-hero {
     padding-bottom: 120px;
