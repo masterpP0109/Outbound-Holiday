@@ -6,7 +6,7 @@ import type {
 } from '../../shared/newsletter-schema';
 import { HttpError } from '../security';
 import { renderEmail, htmlToPlainText, getTemplate } from './templates';
-import { sendSmtpEmail, getPublicBaseUrl, getApiBaseUrl } from './delivery';
+import { sendSmtpEmail, getPublicBaseUrl } from './delivery';
 
 export async function listCampaigns(query: {
   page?: number;

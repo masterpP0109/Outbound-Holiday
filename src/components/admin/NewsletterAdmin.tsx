@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Mail, Send, Users, CheckCircle, Clock, AlertTriangle, X,
   Search, Download, Plus, FileText, Settings, RefreshCw,
-  Trash2, Eye, Calendar, ShieldCheck, Check, ChevronRight, Lock
+  Trash2, Eye, ShieldCheck, ChevronRight, Lock
 } from 'lucide-react';
 
 interface Subscriber {

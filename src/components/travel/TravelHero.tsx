@@ -25,13 +25,13 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
             loading="eager"
             fetchPriority="high"
             decoding="async"
-            className="w-full h-full object-cover object-[center_35%] block"
+            className="w-full h-full object-cover object-[center_62%] block"
           />
         </div>
 
-        {/* Subtle Dark Gradient Overlay for Maximum Text Legibility on the Right */}
+        {/* Dark Gradient Overlay calibrated so the entire falls remain visible while maintaining text contrast */}
         <div
-          className="absolute inset-0 z-0 bg-gradient-to-l from-black/85 via-black/60 to-black/25 sm:from-black/85 sm:via-black/55 sm:to-black/20"
+          className="absolute inset-0 z-0 bg-gradient-to-l from-black/75 via-black/45 to-black/10 sm:from-black/75 sm:via-black/40 sm:to-transparent"
           aria-hidden="true"
         />
         <div
