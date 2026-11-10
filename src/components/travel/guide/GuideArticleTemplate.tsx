@@ -36,8 +36,29 @@ interface GuideArticleTemplateProps {
   onNavigateHome?: () => void;
 }
 
-let FAQ_FILTER_TABS: any;
-registerContent(() => { FAQ_FILTER_TABS = editorialValue("travel/guide/GuideArticleTemplate.FAQ_FILTER_TABS", {}); });
+export interface FaqFilterTab {
+  id: string;
+  label: string;
+  category?: string;
+}
+
+const DEFAULT_FAQ_FILTER_TABS: FaqFilterTab[] = [
+  { id: 'All', label: 'All' },
+  { id: 'Planning', label: 'Planning', category: 'Planning Your Trip' },
+  { id: 'Money', label: 'Money', category: 'Money & Payments' },
+  { id: 'Activities', label: 'Activities', category: 'Activities' },
+  { id: 'Safety', label: 'Safety', category: 'Health & Safety' },
+  { id: 'Weather', label: 'Weather', category: 'Weather' },
+  { id: 'Wildlife', label: 'Wildlife', category: 'Wildlife' },
+  { id: 'Accommodation', label: 'Accommodation', category: 'Accommodation' },
+  { id: 'Booking', label: 'Booking', category: 'Booking with Outbound Holidays' },
+];
+
+let FAQ_FILTER_TABS: FaqFilterTab[] = DEFAULT_FAQ_FILTER_TABS;
+registerContent(() => {
+  const custom = editorialValue<FaqFilterTab[] | undefined>("travel/guide/GuideArticleTemplate.FAQ_FILTER_TABS", undefined);
+  FAQ_FILTER_TABS = Array.isArray(custom) ? custom : DEFAULT_FAQ_FILTER_TABS;
+});
 
 export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
   article,
@@ -209,7 +230,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
   const filteredFaqs = articleFaqs.filter((faq) => {
     let categoryMatch = true;
     if (activeFaqFilter !== 'All') {
-      const tabObj = FAQ_FILTER_TABS.find((t) => t.id === activeFaqFilter);
+      const tabObj = FAQ_FILTER_TABS.find((t: FaqFilterTab) => t.id === activeFaqFilter);
       if (tabObj && tabObj.category) {
         categoryMatch = faq.category === tabObj.category || faq.category === tabObj.id;
       } else {
@@ -929,7 +950,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
 
             {/* Category Filter Buttons */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none">
-              {FAQ_FILTER_TABS.map((tab) => {
+              {FAQ_FILTER_TABS.map((tab: FaqFilterTab) => {
                 const isActive = activeFaqFilter === tab.id;
                 return (
                   <button

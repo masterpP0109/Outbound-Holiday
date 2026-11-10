@@ -17,6 +17,7 @@ MessageSquare,Plus,ChevronDown,
 ChevronUp
 } from 'lucide-react';
 import { DetailedAccommodation } from '../../data/accommodationsData';
+import { DetailedPackage } from '../../data/packagesData';
 
 // Public image paths for experiences
 let fallsTour1: any;
@@ -37,7 +38,7 @@ registerContent(() => { outboundLogo = editorialValue("travel/HolidayBuilderModa
 interface HolidayBuilderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  preselectedPackage?: TravelPackage | null;
+  preselectedPackage?: TravelPackage | DetailedPackage | null;
   preselectedActivity?: string | null;
   preselectedAccommodation?: DetailedAccommodation | null;
 }

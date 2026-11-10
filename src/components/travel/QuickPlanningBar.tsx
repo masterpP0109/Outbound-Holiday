@@ -66,7 +66,7 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors">
+                    <h3 className="font-bold text-sm text-[#C9A66B] group-hover:text-[#0B5E8E] transition-colors">
                       {card.title}
                     </h3>
                     <p className="text-xs text-gray-500 mt-0.5 leading-snug">

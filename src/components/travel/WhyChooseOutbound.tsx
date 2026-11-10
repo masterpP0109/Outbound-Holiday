@@ -40,7 +40,7 @@ export const WhyChooseOutbound: React.FC<WhyChooseOutboundProps> = ({
                     <Icon className="w-6 h-6" />
                   </div>
 
-                  <h3 className="font-serif font-bold text-lg text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors">
+                  <h3 className="font-serif font-bold text-lg text-[#C9A66B] group-hover:text-[#0B5E8E] transition-colors">
                     {card.title}
                   </h3>
 

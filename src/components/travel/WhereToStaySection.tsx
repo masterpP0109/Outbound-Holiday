@@ -55,7 +55,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
 
               {/* Card Content & Action */}
               <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3">
-                <h3 className="font-serif font-bold text-base sm:text-lg text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors line-clamp-2 leading-snug">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-[#C9A66B] group-hover:text-[#0B5E8E] transition-colors line-clamp-2 leading-snug">
                   {property.name}
                 </h3>
 
@@ -64,10 +64,10 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
                     e.stopPropagation();
                     onSelectProperty(property);
                   }}
-                  className="w-full bg-[#FAF9F6] hover:bg-[#0B5E8E] text-[#0B5E8E] hover:text-white border border-gray-200 hover:border-[#0B5E8E] text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-2xs mt-auto"
+                  className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-[#C9A66B] text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
                 >
-                  <span>{editorial("travel/WhereToStaySection.text7")}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span className="text-[#C9A66B]">{editorial("travel/WhereToStaySection.text7")}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                 </PageLink>
               </div>
 

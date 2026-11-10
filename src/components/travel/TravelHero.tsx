@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
 interface TravelHeroProps {
@@ -6,16 +6,11 @@ interface TravelHeroProps {
   onBrowsePackages?: () => void;
 }
 
-const FALLS_HERO_IMAGE =
-  'https://br-icy-darkness-b4agzqde.storage.c-6.us-east-2.aws.neon.tech/experiences-imgs/experiences/Guided%20Tour%20Of%20the%20Falls/Tour-of-the-Falls-1-scaled-5695c66e57b3f90e.webp';
-const FALLS_HERO_FALLBACK =
-  '/convertedImages/Experiences/Guided Tour Of the Falls/Tour-of-the-Falls-1-scaled.webp';
+const FALLS_HERO_IMAGE = '/Experiences/Guided Tour of the Falls_/5-4.jpg';
 
 export const TravelHero: React.FC<TravelHeroProps> = ({
   onOpenPlanHoliday,
 }) => {
-  const [imageSrc, setImageSrc] = useState(FALLS_HERO_IMAGE);
-
   return (
     <section className="w-full relative overflow-hidden bg-[#0B5E8E]">
       {/* Full-bleed Static Hero Container - justify-end pushes content down */}
@@ -23,7 +18,7 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
         {/* Single Static High-Resolution Victoria Falls Photograph */}
         <div className="absolute inset-0 z-0">
           <img
-            src={imageSrc}
+            src={FALLS_HERO_IMAGE}
             width={1920}
             height={1244}
             alt="Majestic panoramic view of Victoria Falls with mist rising from the Zambezi gorge"
@@ -31,11 +26,6 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
             fetchPriority="high"
             decoding="async"
             className="w-full h-full object-cover object-[center_35%] block"
-            onError={() => {
-              if (imageSrc !== FALLS_HERO_FALLBACK) {
-                setImageSrc(FALLS_HERO_FALLBACK);
-              }
-            }}
           />
         </div>
 

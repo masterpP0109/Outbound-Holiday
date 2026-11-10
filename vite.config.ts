@@ -14,7 +14,20 @@ export default defineConfig(({ command }) => {
       },
     },
     server: {
-      proxy: { '/api': 'http://127.0.0.1:' + (process.env.LOCAL_API_PORT ?? '3002') },
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:' + (process.env.LOCAL_API_PORT ?? '3002'),
+          changeOrigin: true,
+          configure: (proxy) => {
+            proxy.on('error', (_err, _req, res) => {
+              if (res && 'writeHead' in res && !res.headersSent) {
+                res.writeHead(503, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'Local backend server not running' }));
+              }
+            });
+          },
+        },
+      },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',

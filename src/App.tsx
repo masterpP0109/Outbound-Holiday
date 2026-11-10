@@ -32,6 +32,7 @@ import { BungeeExperiencePage } from './components/travel/BungeeExperiencePage';
 import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
 import { MobileStickyCta } from './components/common/MobileStickyCta';
 import { Newsletter } from './components/common/Newsletter';
+import { NewsletterAdmin } from './components/admin/NewsletterAdmin';
 import { Footer } from './components/common/Footer';
 
 export default function App({ initialPath,contentVersion }: { initialPath?: string;contentVersion?:string } = {}) {
@@ -73,7 +74,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
   // Modals & Drawers
   const [preselectedActivity,setPreselectedActivity]=useState<string|null>(null);
   const [planHolidayOpen, setPlanHolidayOpen] = useState(false);
-  const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | null>(null);
+  const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | DetailedPackage | null>(null);
   const [preselectedAccommodation, setPreselectedAccommodation] = useState<DetailedAccommodation | null>(null);
 
   const handleSelectAccommodationDetail = (property: DetailedAccommodation) => navigate(accommodationPath(property));
@@ -118,6 +119,8 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
             <p>The page you’re looking for is unavailable. Explore our Victoria Falls holidays and experiences.</p>
             <PageLink href="/" onClick={() => navigate('/')} className="inline-block rounded-xl bg-[#0B5E8E] px-6 py-3 text-white">Back to home</PageLink>
           </section>
+        ) : activeView === 'admin-newsletter' ? (
+          <NewsletterAdmin onNavigateHome={() => navigate('/')} />
         ) : activeView === 'newsletter-confirmed' ? (
           <section className="max-w-3xl mx-auto p-12 text-center space-y-5"><h1 className="text-3xl font-serif text-[#0B5E8E]">Travel updates confirmation</h1><p>Use the confirmation link sent to your email to confirm your request. Visiting this page alone does not confirm a subscription.</p><PageLink href="/" onClick={()=>navigate('/')}>Explore Outbound Holidays</PageLink></section>
         ) : activeView === 'contact' ? (
@@ -202,7 +205,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               setPlanHolidayOpen(true);
             }}
           />
-        ) : activeView === 'experience-category' ? (
+        ) : activeView === 'experience-category' && selectedCategory ? (
           <ExperienceCategoryPage
             categoryId={selectedCategory}
             onSelectExperience={handleSelectExperience}
@@ -369,7 +372,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
         )}
 
         {/* Global Travel Newsletter Section */}
-        <Newsletter />
+        {activeView !== 'admin-newsletter' && <Newsletter />}
       </main>
 
       <PageMetadata route={route} />

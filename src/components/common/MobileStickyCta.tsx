@@ -1,9 +1,8 @@
 import { editorial } from "../../runtime/catalog";
-import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
+import { getWhatsAppEnquiryUrl, getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 import React from 'react';
 import { CalendarCheck } from 'lucide-react';
 import { WhatsAppIcon } from './WhatsAppButton';
-import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
 interface MobileStickyCtaProps {
   onOpenPlanHoliday: () => void;

@@ -95,7 +95,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
 
                 {/* Card Body & Action */}
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3">
-                  <h3 className="font-serif font-bold text-base sm:text-lg text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors leading-snug line-clamp-2">
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-[#C9A66B] group-hover:text-[#0B5E8E] transition-colors leading-snug line-clamp-2">
                     {title}
                   </h3>
 
@@ -104,9 +104,9 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                       e.stopPropagation();
                       onSelectPackage(pkg);
                     }}
-                    className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
+                    className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-[#C9A66B] text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
                   >
-                    <span>View Holiday Details</span>
+                    <span className="text-[#C9A66B]">View Holiday Details</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
                   </PageLink>
                 </div>

@@ -3,7 +3,7 @@ import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER, getWhatsAppUrl } from '../../ut
 import { PageLink } from './PageLink';
 import { sectionPath } from '../../routes';
 import React from 'react';
-import { MapPin,PhoneCall,Mail } from 'lucide-react';
+import { MapPin,PhoneCall,Mail,Star } from 'lucide-react';
 
 let outboundLogo: any;
 registerContent(() => { outboundLogo = editorialValue("common/Footer.outboundLogo", {}); });
@@ -117,6 +117,19 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <PageLink href={sectionPath('faqs')} onClick={() => onNavigateSection('faqs')} className="hover:text-white transition-colors cursor-pointer">
                   {editorial("common/Footer.text15")}</PageLink>
+              </li>
+              <li>
+                <a
+                  href="https://g.page/r/CW8xeS7qssHkECE/review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5"
+                >
+                  <span>Google Reviews</span>
+                  <span className="inline-flex items-center gap-0.5 text-[#FBBC05] text-[10px] font-bold">
+                    <Star className="w-3 h-3 fill-[#FBBC05] text-[#FBBC05]" /> 5.0
+                  </span>
+                </a>
               </li>
               <li>
                 <span className="text-white/60">{editorial("common/Footer.text16")}</span>

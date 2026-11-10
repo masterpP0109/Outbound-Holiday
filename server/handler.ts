@@ -7,6 +7,7 @@ import { saveEnquiry,saveNewsletter,unsubscribe,confirmSubscription } from './su
 import { assertOrigin,authenticated,HttpError,rateLimit,spamCheck } from './security';
 import { runOutbox,syncPendingSubscribers } from './outbox';
 import { syncSubscriber,syncEmailDeliveries } from './providers';
+import { handleNewsletterAdmin } from './newsletter/admin-handler';
 import { db } from './db';
 const querySchema=z.object({q:z.string().max(200).optional(),category:z.string().max(100).optional(),tag:z.string().max(100).optional(),sort:z.enum(['recommended','price-asc','price-desc','name']).default('recommended'),page:z.coerce.number().int().min(1).max(10000).default(1),limit:z.coerce.number().int().min(1).max(100).default(24),featured:z.enum(['true','false']).optional(),minPrice:z.coerce.number().nonnegative().optional(),maxPrice:z.coerce.number().nonnegative().optional()}).strict();
 export default async function handler(req:Request,res:Response){
@@ -34,6 +35,10 @@ export default async function handler(req:Request,res:Response){
   if(path==='cron/outbox'){
    if(!['GET','POST'].includes(method))throw new HttpError(405,'Method not allowed.');if(!process.env.CRON_SECRET||!authenticated(req.headers.authorization,'Bearer '+process.env.CRON_SECRET))throw new HttpError(401,'Unauthorized');
    const result=await runOutbox(5);await syncPendingSubscribers(2);await syncEmailDeliveries(2);await db.rateLimit.deleteMany({where:{expiresAt:{lt:new Date()}}});return res.status(200).json(result);
+  }
+  if(path.startsWith('admin/newsletter')){
+   const subpath=path.replace(/^admin\/newsletter\/?/,'');
+   return await handleNewsletterAdmin(req,res,subpath);
   }
   const kinds={accommodation:'accommodations',experiences:'experiences',packages:'packages',guides:'guides',gallery:'albums'};
   const [section,slug,extra]=path.split('/');

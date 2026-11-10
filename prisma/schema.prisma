@@ -107,6 +107,25 @@ model Subscription {
   updatedAt DateTime @updatedAt
   notifications Notification[]
 }
+model Campaign {
+  id String @id @default(uuid())
+  title String
+  subject String
+  previewText String?
+  templateId String @default("victoria-falls-editorial")
+  contentHtml String
+  contentText String
+  status String @default("draft")
+  scheduledAt DateTime?
+  sentAt DateTime?
+  totalRecipients Int @default(0)
+  sentCount Int @default(0)
+  failedCount Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notifications Notification[]
+  @@index([status, scheduledAt])
+}
 model SubmissionKey {
   key String @id
   hash String
@@ -120,6 +139,8 @@ model Notification {
   enquiry Enquiry? @relation(fields: [enquiryId], references: [id], onDelete: Restrict)
   subscriptionId String?
   subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
+  campaignId String?
+  campaign Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
   kind String
   payload Json
   status String @default("pending")
@@ -133,6 +154,7 @@ model Notification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([status, nextAttemptAt, leaseUntil])
+  @@index([campaignId])
 }
 model RateLimit {
   key String @id
