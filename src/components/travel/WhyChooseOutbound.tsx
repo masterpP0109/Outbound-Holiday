@@ -12,11 +12,11 @@ export const WhyChooseOutbound: React.FC<WhyChooseOutboundProps> = ({
   const cards = editorialValue("travel/WhyChooseOutbound.section1", {ShieldCheck,MapPin,Sparkles,Headset});
 
   return (
-    <section className="py-16 sm:py-20 bg-white border-b border-gray-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+    <section id="why-choose" className="py-10 sm:py-14 lg:py-16 bg-white border-b border-gray-200/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-3">
+        <div className="text-center max-w-2xl mx-auto space-y-2 mb-5 sm:mb-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
             <span>{editorial("travel/WhyChooseOutbound.text13")}</span>
@@ -24,9 +24,6 @@ export const WhyChooseOutbound: React.FC<WhyChooseOutboundProps> = ({
 
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E] tracking-tight">
             {editorial("travel/WhyChooseOutbound.text14")}</h2>
-
-          <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed">
-            {editorial("travel/WhyChooseOutbound.text15")}</p>
         </div>
 
         {/* 4 Premium Cards Grid */}

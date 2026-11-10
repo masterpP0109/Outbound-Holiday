@@ -23,7 +23,6 @@ import { DetailedPackage } from './data/packagesData';
 import { TravellerStories } from './components/travel/TravellerStories';
 import { AboutPage } from './components/travel/AboutPage';
 import { ClientGallery } from './components/travel/ClientGallery';
-import { HowWeHelp } from './components/travel/HowWeHelp';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
 import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
@@ -90,7 +89,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#1A2E35] flex flex-col font-sans pb-16 md:pb-0">
+    <div className="min-h-screen bg-white text-[#1A2E35] flex flex-col font-sans pb-20 md:pb-0">
       {/* Navigation Header */}
       <Header
         currency={currency}
@@ -302,7 +301,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               onBrowsePackages={() => handleNavigateSection('travel-packages')}
             />
 
-            {/* 2. Quick Planning Bar */}
+            {/* 2. Simple Holiday Discovery / Quick Planning Bar */}
             <QuickPlanningBar
               onOpenGuide={() => {
                 navigate(sectionPath('guide'));
@@ -314,21 +313,20 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               }}
             />
 
-            {/* 3. Why Plan With Outbound Holidays */}
-            <WhyChooseOutbound
-              onOpenPlanHoliday={() => {
-                setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
-                setPlanHolidayOpen(true);
-              }}
-            />
-
-            {/* 4. Featured Experiences */}
+            {/* 3. Featured Victoria Falls Experiences */}
             <FeaturedExperiences
               onSelectExperience={handleSelectExperience}
               onExploreAll={() => {
                 navigate(sectionPath('experiences'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+            />
+
+            {/* 4. Recommended Victoria Falls Holidays */}
+            <FeaturedPackages
+              currency={currency}
+              onSelectPackage={handleSelectPackageDetail}
+              onExploreAllPackages={handleExploreAllPackages}
             />
 
             {/* 5. Where to Stay in Victoria Falls */}
@@ -338,7 +336,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               onExploreAllProperties={handleExploreAllAccommodations}
             />
 
-            {/* 6. Victoria Falls Guide Preview */}
+            {/* 6. Victoria Falls Travel Guide / Local Insight */}
             <VicFallsGuide
               onOpenFullGuide={() => {
                 navigate(sectionPath('guide'));
@@ -346,22 +344,21 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               }}
             />
 
-            {/* 7. Recommended Victoria Falls Holidays */}
-            <FeaturedPackages
-              currency={currency}
-              onSelectPackage={handleSelectPackageDetail}
-              onExploreAllPackages={handleExploreAllPackages}
+            {/* 7. Why Choose Outbound Holidays */}
+            <WhyChooseOutbound
+              onOpenPlanHoliday={() => {
+                setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
+                setPlanHolidayOpen(true);
+              }}
             />
 
-            {/* 8. Genuine Testimonials */}
+            {/* 8. Traveller Stories / Testimonials */}
             <TravellerStories />
 
+            {/* Client Gallery Preview */}
             <ClientGallery preview onSeeGallery={() => handleNavigateSection('client-gallery')} />
 
-            {/* 9. How We Help */}
-            <HowWeHelp />
-
-            {/* 10. Final Call To Action */}
+            {/* 9. Final Call To Action */}
             <FinalCtaBanner
               onOpenPlanHoliday={() => {
                 setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);

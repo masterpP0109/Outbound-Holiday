@@ -4,8 +4,7 @@ import { packagePath,sectionPath } from '../../routes';
 import React from 'react';
 import { DetailedPackage,getHomepageFeaturedPackages } from '../../data/packagesData';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
-import { Clock,ArrowRight,Sparkles,Star } from 'lucide-react';
+import { ArrowRight,Sparkles } from 'lucide-react';
 
 interface FeaturedPackagesProps {
   currency: Currency;
@@ -13,25 +12,57 @@ interface FeaturedPackagesProps {
   onExploreAllPackages: () => void;
 }
 
+const PACKAGE_DISPLAY: Record<string, { title?: string; description: string }> = {
+  'pkg-essential': {
+    title: 'Victoria Falls Essentials',
+    description: 'The ideal gateway package for first-time visitors seeking the iconic wonders of Mosi-oa-Tunya.',
+  },
+  'pkg-family': {
+    title: 'Family Adventure',
+    description: 'Unforgettable, safe and exhilarating experiences tailored for all ages.',
+  },
+  'pkg-romantic': {
+    title: 'Romantic Escape',
+    description: "An intimate, ultra-luxurious retreat crafted to celebrate life's most memorable moments.",
+  },
+  'pkg-hwange-combo': {
+    title: 'Victoria Falls & Chobe Explorer',
+    description: "Combine the majesty of Victoria Falls with Botswana's world-famous Chobe elephant kingdom.",
+  },
+  'Victoria Falls Essentials': {
+    title: 'Victoria Falls Essentials',
+    description: 'The ideal gateway package for first-time visitors seeking the iconic wonders of Mosi-oa-Tunya.',
+  },
+  'Family Adventure': {
+    title: 'Family Adventure',
+    description: 'Unforgettable, safe and exhilarating experiences tailored for all ages.',
+  },
+  'Romantic Escape': {
+    title: 'Romantic Escape',
+    description: "An intimate, ultra-luxurious retreat crafted to celebrate life's most memorable moments.",
+  },
+  'Victoria Falls & Chobe Explorer': {
+    title: 'Victoria Falls & Chobe Explorer',
+    description: "Combine the majesty of Victoria Falls with Botswana's world-famous Chobe elephant kingdom.",
+  },
+  'Vic Falls & Hwange Safari Combo': {
+    title: 'Victoria Falls & Chobe Explorer',
+    description: "Combine the majesty of Victoria Falls with Botswana's world-famous Chobe elephant kingdom.",
+  },
+};
+
 export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
-  currency,
   onSelectPackage,
   onExploreAllPackages,
 }) => {
   const featured = getHomepageFeaturedPackages();
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
-
   return (
-    <section id="travel-packages" className="py-16 sm:py-20 lg:py-24 bg-white border-b border-gray-100">
+    <section id="travel-packages" className="py-10 sm:py-14 lg:py-16 bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
+        <div className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
             <span>{editorial("travel/FeaturedPackages.text1")}</span>
@@ -39,105 +70,56 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
             {editorial("travel/FeaturedPackages.text2")}</h2>
-
-          <p className="text-base sm:text-lg text-gray-600 leading-relaxed font-light">
-            {editorial("travel/FeaturedPackages.text3")}</p>
-
-          <p className="text-xs text-gray-400 italic pt-1">
-            {editorial("travel/FeaturedPackages.text4")}</p>
         </div>
 
         {/* 4 Featured Package Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {featured.map((pkg) => (
-            <div
-              key={pkg.id}
-              onClick={() => onSelectPackage(pkg)}
-              className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer transform hover:-translate-y-1"
-            >
-              <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {featured.map((pkg) => {
+            const pkgInfo = PACKAGE_DISPLAY[pkg.id] || PACKAGE_DISPLAY[pkg.title];
+            const title = pkgInfo?.title || pkg.title;
+
+            return (
+              <div
+                key={pkg.id}
+                onClick={() => onSelectPackage(pkg)}
+                className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer transform hover:-translate-y-1"
+              >
                 {/* Hero Image Container */}
-                <div className="relative h-56 w-full overflow-hidden bg-gray-100">
+                <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-gray-100 shrink-0">
                   <img
                     src={pkg.imageUrl}
-                    alt={pkg.title}
+                    alt={title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-90" />
-
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3 bg-[#E67E22] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
-                    {pkg.badge}
-                  </div>
-
-                  {/* Duration Badge */}
-                  <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full border border-white/20 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-[#C9A66B]" />
-                    <span>{pkg.duration}</span>
-                  </div>
-
-                  {/* Price Starting From */}
-                  <div className="absolute bottom-3 left-3 right-3 text-white flex items-end justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase font-semibold text-gray-200 block">{editorial("travel/FeaturedPackages.text5")}</span>
-                      <span className="text-lg sm:text-xl font-bold font-serif text-white leading-none">
-                        {formatPrice(pkg.priceUSD)} <span className="text-xs font-normal text-gray-300">{editorial("travel/FeaturedPackages.text6")}</span>
-                      </span>
-                    </div>
-                  </div>
                 </div>
 
-                {/* Card Body */}
-                <div className="p-5 space-y-3">
-                  <div>
-                    <h3 className="font-serif font-bold text-lg text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors leading-snug mb-1">
-                      {pkg.title}
-                    </h3>
+                {/* Card Body & Action */}
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3">
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-[#0B5E8E] group-hover:text-[#C9A66B] transition-colors leading-snug line-clamp-2">
+                    {title}
+                  </h3>
 
-                    <p className="text-xs font-semibold text-[#E67E22] mb-1.5 line-clamp-1">
-                      {pkg.tagline}
-                    </p>
-
-                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-2 font-normal">
-                      {pkg.description}
-                    </p>
-                  </div>
-
-                  {/* Highlights snippet */}
-                  <div className="p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200/80 space-y-1">
-                    <div className="flex items-center gap-1 text-[10px] font-bold text-[#C9A66B] uppercase tracking-wider">
-                      <Star className="w-3 h-3 text-[#C9A66B] fill-[#C9A66B]" />
-                      <span>{editorial("travel/FeaturedPackages.text7")}</span>
-                    </div>
-                    <p className="text-[11px] text-gray-700 italic line-clamp-2 leading-tight">
-                      "{pkg.highlights[0]}"
-                    </p>
-                  </div>
+                  <PageLink href={packagePath(pkg)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectPackage(pkg);
+                    }}
+                    className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
+                  >
+                    <span>View Holiday Details</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
+                  </PageLink>
                 </div>
               </div>
-
-              {/* View Holiday Action Button */}
-              <div className="p-5 pt-0">
-                <PageLink href={packagePath(pkg)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectPackage(pkg);
-                  }}
-                  className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                >
-                  <span>{editorial("travel/FeaturedPackages.text8")}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
-                </PageLink>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Centered CTA: Find Your Holiday → */}
-        <div className="mt-12 sm:mt-16 text-center">
+        <div className="mt-8 sm:mt-10 text-center">
           <PageLink href={sectionPath('packages')}
             onClick={onExploreAllPackages}
-            className="inline-flex items-center gap-2.5 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-base px-5 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
             <span>{editorial("travel/FeaturedPackages.text9")}</span>
           </PageLink>

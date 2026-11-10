@@ -18,8 +18,8 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
 
   return (
     <section className="w-full relative overflow-hidden bg-[#0B5E8E]">
-      {/* Full-bleed Static Hero Container */}
-      <div className="travel-hero relative w-full flex flex-col justify-center items-start text-white">
+      {/* Full-bleed Static Hero Container - justify-end pushes content down */}
+      <div className="travel-hero relative w-full flex flex-col justify-end items-end text-white">
         {/* Single Static High-Resolution Victoria Falls Photograph */}
         <div className="absolute inset-0 z-0">
           <img
@@ -39,39 +39,39 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
           />
         </div>
 
-        {/* Subtle Dark Gradient Overlay for Maximum Text Legibility */}
+        {/* Subtle Dark Gradient Overlay for Maximum Text Legibility on the Right */}
         <div
-          className="absolute inset-0 z-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20 sm:from-black/75 sm:via-black/45 sm:to-transparent"
+          className="absolute inset-0 z-0 bg-gradient-to-l from-black/85 via-black/60 to-black/25 sm:from-black/85 sm:via-black/55 sm:to-black/20"
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0 z-0 bg-gradient-to-t from-black/50 via-transparent to-black/25"
+          className="absolute inset-0 z-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
           aria-hidden="true"
         />
 
-        {/* Main Hero Content Area - Left Aligned */}
-        <div className="travel-hero-content relative z-10 text-left flex flex-col items-start justify-center max-w-2xl lg:max-w-3xl w-full space-y-4 sm:space-y-6 lg:space-y-7">
-          {/* Main Headline (H1) - Exact Copy */}
-          <h1 className="travel-hero-title font-serif font-bold text-white tracking-tight drop-shadow-md text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] sm:leading-[1.12]">
+        {/* Main Hero Content Area - Right Positioned, Pushed Down, and Enlarged on Smaller Screens */}
+        <div className="travel-hero-content relative z-10 text-right flex flex-col items-end justify-end max-w-2xl sm:max-w-3xl lg:max-w-4xl xl:max-w-5xl w-full space-y-3 sm:space-y-4 lg:space-y-5">
+          {/* Main Headline (H1) - Increased Size on Smaller Screens & Right Aligned */}
+          <h1 className="travel-hero-title font-serif font-bold text-white tracking-tight drop-shadow-md text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[9.5rem] leading-[1.03] sm:leading-[1.06]">
             <span className="block">Victoria Falls</span>
-            <span className="block sm:inline sm:ml-3">Holidays</span>
+            <span className="block">Holidays</span>
           </h1>
 
-          {/* Supporting Tagline - Exact Copy */}
-          <p className="travel-hero-tagline text-base sm:text-xl lg:text-2xl text-white/95 font-normal tracking-wide drop-shadow-sm max-w-xl leading-relaxed">
+          {/* Supporting Tagline - Increased Size on Smaller Screens */}
+          <p className="travel-hero-tagline text-xl xs:text-2xl sm:text-2xl lg:text-3xl xl:text-4xl text-white/95 font-light tracking-wide drop-shadow-sm max-w-2xl leading-snug sm:leading-relaxed">
             Planned by locals, tailored to you.
           </p>
 
-          {/* Primary Call-to-Action - Exact Copy */}
-          <div className="pt-2 sm:pt-4 w-full sm:w-auto">
+          {/* Primary Call-to-Action - Matches Featured Experiences CTA */}
+          <div className="pt-2 sm:pt-3 w-auto flex justify-end">
             <button
               type="button"
               onClick={onOpenPlanHoliday}
-              className="travel-hero-cta group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#0B5E8E] hover:bg-[#08486e] active:bg-[#063754] text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-200 cursor-pointer min-h-[48px] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#0B5E8E] active:scale-[0.98]"
+              className="travel-hero-cta group inline-flex items-center justify-center gap-2 bg-[#E67E22] hover:bg-[#d36e17] active:bg-[#c56814] text-white font-bold text-xs sm:text-base px-5 py-2.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#E67E22]"
               aria-label="Plan Your Trip with Outbound Holidays"
             >
               <span>Plan Your Trip</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform motion-reduce:transition-none" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform motion-reduce:transition-none" />
             </button>
           </div>
         </div>

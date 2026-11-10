@@ -231,8 +231,8 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
   return (
     <div className="bg-[#FAF9F6] text-[#1A2E35] min-h-screen selection:bg-[#C9A66B]/30 selection:text-[#0B5E8E]">
       
-      {/* 1. Breadcrumbs Navigation */}
-      <nav aria-label="Breadcrumb" className="bg-white border-b border-gray-200/80 py-3 px-4 sm:px-6 lg:px-8">
+      {/* 1. Breadcrumbs Navigation - Hidden on mobile to avoid duplicate header bars */}
+      <nav aria-label="Breadcrumb" className="bg-white border-b border-gray-200/80 py-2.5 px-4 sm:px-6 lg:px-8 hidden sm:block">
         <div className="max-w-7xl mx-auto flex items-center text-xs font-medium text-gray-500 overflow-x-auto whitespace-nowrap scrollbar-none">
           <PageLink href={'/'}
             onClick={onNavigateHome}
@@ -248,7 +248,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
       </nav>
 
       {/* 2. Editorial Article Hero */}
-      <section className="relative bg-[#0D2833] text-white overflow-hidden py-10 lg:py-16">
+      <section className="relative bg-[#0D2833] text-white overflow-hidden py-8 sm:py-12 lg:py-16">
         <div className="absolute inset-0 z-0">
           <img 
             src={article.heroImageUrl} 
@@ -259,10 +259,10 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="px-3 py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-wider border border-[#C9A66B]/40">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-[#C9A66B]/40">
                 {article.category}
               </span>
               <span className="text-xs text-gray-300 flex items-center gap-1">
@@ -275,27 +275,27 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               </span>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15]">
+            <h1 className="font-serif text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight sm:leading-[1.15]">
               {article.title}
             </h1>
 
-            <p className="text-base sm:text-lg text-gray-200 max-w-3xl leading-relaxed font-light">
+            <p className="text-xs sm:text-base text-gray-200 max-w-3xl leading-relaxed font-light">
               {article.subtitle}
             </p>
 
-            <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
+            <div className="pt-3 sm:pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+              <div className="flex items-center gap-2.5 sm:gap-3">
                 <img 
                   src={article.author.avatarUrl} 
                   alt={article.author.name}
-                  className="w-11 h-11 rounded-full object-cover border-2 border-[#C9A66B]"
+                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#C9A66B]"
                 />
                 <div>
                   <div className="text-xs font-bold text-white flex items-center gap-1.5">
                     <span>{article.author.name}</span>
                     <ShieldCheck className="w-3.5 h-3.5 text-[#C9A66B]" />
                   </div>
-                  <div className="text-[11px] text-gray-300">
+                  <div className="text-[10px] sm:text-[11px] text-gray-300">
                     {article.author.role} {editorial("travel/guide/GuideArticleTemplate.text3")}{article.lastUpdatedDate}
                   </div>
                 </div>
@@ -304,7 +304,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleShareClick}
-                  className="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-3.5 py-2 rounded-xl border border-white/20 transition-all flex items-center gap-2 cursor-pointer"
+                  className="bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] sm:text-xs px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border border-white/20 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Share2 className="w-3.5 h-3.5 text-[#C9A66B]" />
                   <span>{copiedLink ? 'Link Copied!' : 'Share Guide'}</span>
@@ -315,7 +315,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                     trackGuideEvent('cta_clicked', { articleSlug: article.slug, ctaName: 'hero_plan_trip' });
                     onOpenPlanHoliday();
                   }}
-                  className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-[11px] sm:text-xs px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <CalendarCheck className="w-3.5 h-3.5" />
                   <span>{editorial("travel/guide/GuideArticleTemplate.text4")}</span>
@@ -327,26 +327,26 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
         </div>
       </section>
 
-      {/* 3. Four Quick-Planning Facts Banner */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-5 relative z-20 mb-8">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200/80 p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 3. Four Quick-Planning Facts Banner - Compact 2-col on mobile */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-5 relative z-20 mb-6 sm:mb-8">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg border border-gray-200/80 p-3 sm:p-5 grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
           {(article.quickFacts || []).map((fact, index) => (
             <div 
               key={index} 
-              className="flex items-start gap-3 p-3 rounded-xl bg-[#FAF9F6] border border-gray-100 hover:border-[#C9A66B]/40 transition-all"
+              className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-[#FAF9F6] border border-gray-100"
             >
-              <div className="w-9 h-9 rounded-xl bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0">
-                {renderIconByName(fact.iconName, 'w-4 h-4 text-[#0B5E8E]')}
+              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-[#0B5E8E]/10 flex items-center justify-center text-[#0B5E8E] shrink-0">
+                {renderIconByName(fact.iconName, 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0B5E8E]')}
               </div>
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+              <div className="min-w-0">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400 block truncate">
                   {fact.label}
                 </span>
-                <span className="font-bold text-xs sm:text-sm text-[#0B5E8E] block mt-0.5">
+                <span className="font-bold text-[11px] sm:text-sm text-[#0B5E8E] block mt-0.5 truncate">
                   {fact.value}
                 </span>
                 {fact.subtext && (
-                  <span className="text-[10px] text-gray-500 block mt-0.5">
+                  <span className="text-[9px] sm:text-[10px] text-gray-500 hidden xs:block mt-0.5 line-clamp-1">
                     {fact.subtext}
                   </span>
                 )}
@@ -360,14 +360,14 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
       <div ref={mainContainerRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         
         {/* Main Section Navigation Bar */}
-        <div className="bg-white rounded-2xl border border-gray-200/90 shadow-sm p-3 mb-8">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200/90 shadow-2xs sm:shadow-sm p-2.5 sm:p-3 mb-6 sm:mb-8">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3">
             
             {/* View Mode Switcher Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
               <button
                 onClick={() => { setActiveMainTab('chapters'); setViewMode('single'); }}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
                   activeMainTab === 'chapters' && viewMode === 'single'
                     ? 'bg-[#0B5E8E] text-white shadow-xs'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -379,7 +379,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
 
               <button
                 onClick={() => setActiveMainTab('travellers')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
                   activeMainTab === 'travellers'
                     ? 'bg-[#0B5E8E] text-white shadow-xs'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -395,7 +395,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                   const elem = document.getElementById('faq-section');
                   if (elem) elem.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
                   activeMainTab === 'faqs'
                     ? 'bg-[#0B5E8E] text-white shadow-xs'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -410,7 +410,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
             {activeMainTab === 'chapters' && (
               <button
                 onClick={() => setViewMode(viewMode === 'single' ? 'all' : 'single')}
-                className="text-xs font-semibold text-[#0B5E8E] hover:text-[#08486e] px-3 py-1.5 rounded-lg bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                className="text-[11px] sm:text-xs font-semibold text-[#0B5E8E] hover:text-[#08486e] px-2.5 py-1.5 rounded-lg bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0"
               >
                 <Layers className="w-3.5 h-3.5 text-[#C9A66B]" />
                 <span>{viewMode === 'single' ? 'View All Chapters at Once' : 'Switch to Tabbed Chapters View'}</span>
@@ -420,13 +420,13 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
 
           {/* Chapter Quick Selector Row */}
           {activeMainTab === 'chapters' && (
-            <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-              <span className="text-[11px] font-bold text-gray-400 shrink-0 uppercase tracking-wider">{editorial("travel/guide/GuideArticleTemplate.text8")}</span>
+            <div className="mt-2.5 pt-2.5 border-t border-gray-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none pb-1">
+              <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 shrink-0 uppercase tracking-wider">{editorial("travel/guide/GuideArticleTemplate.text8")}</span>
               {article.sections.map((sec, idx) => (
                 <button
                   key={sec.id}
                   onClick={() => handleSelectSection(idx)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                  className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     activeSectionIndex === idx && viewMode === 'single'
                       ? 'bg-[#C9A66B] text-white shadow-xs'
                       : 'bg-gray-50 text-gray-700 hover:bg-gray-200/80 border border-gray-200/60'
@@ -435,7 +435,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                   <span className="w-4 h-4 rounded-full bg-white/20 text-[10px] flex items-center justify-center font-extrabold">
                     {idx + 1}
                   </span>
-                  <span className="truncate max-w-[140px] sm:max-w-none">{sec.tocTitle}</span>
+                  <span className="truncate max-w-[120px] sm:max-w-none">{sec.tocTitle}</span>
                 </button>
               ))}
             </div>
@@ -444,11 +444,11 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
 
         {/* 5. Content Layout Container */}
         {activeMainTab === 'chapters' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
-            {/* Left Column: Chapter List Index (4 Cols) */}
-            <aside className="lg:col-span-4 space-y-4">
-              <div className="bg-white rounded-2xl border border-gray-200/90 shadow-xs p-5 space-y-4">
+            {/* Left Column: Chapter List Index (Desktop Only - Hidden on Mobile to avoid blocking content) */}
+            <aside className="hidden lg:block lg:col-span-4 space-y-4">
+              <div className="bg-white rounded-2xl border border-gray-200/90 shadow-xs p-5 space-y-4 sticky top-24">
                 <div className="pb-3 border-b border-gray-100 flex items-center justify-between">
                   <h3 className="font-serif font-bold text-base text-[#0B5E8E]">
                     {editorial("travel/guide/GuideArticleTemplate.text9")}{article.sections.length} {editorial("travel/guide/GuideArticleTemplate.text10")}</h3>
@@ -508,12 +508,12 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               </div>
             </aside>
 
-            {/* Right Column: Active Chapter Content Panel (8 Cols) */}
-            <main className="lg:col-span-8 space-y-8">
+            {/* Right Column / Full Mobile Width: Active Chapter Content Panel */}
+            <main className="lg:col-span-8 space-y-6 sm:space-y-8">
               
               {/* Single Active Chapter View Mode */}
               {viewMode === 'single' ? (
-                <div className="bg-white rounded-2xl border border-gray-200/90 p-6 sm:p-8 shadow-xs space-y-6">
+                <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200/90 p-4 sm:p-8 shadow-xs space-y-5 sm:space-y-6">
                   
                   {/* Chapter Header */}
                   <div className="pb-4 border-b border-gray-100 flex items-center justify-between gap-4">

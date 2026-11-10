@@ -7,21 +7,21 @@
 /* Static cinematic hero section matching Micato-inspired calm layout */
 .travel-hero {
   margin-top: 0;
-  min-height: calc(88svh - var(--header-height, 64px));
-  padding: clamp(36px, 6vh, 80px) clamp(20px, 5vw, 80px);
+  min-height: calc(85svh - var(--header-height, 64px));
+  padding: clamp(32px, 5vh, 64px) clamp(20px, 5vw, 80px);
 }
 
 @media (max-width: 640px) {
   .travel-hero {
-    min-height: clamp(480px, 82svh, 620px);
-    padding: 36px 20px 48px;
+    min-height: clamp(480px, 80svh, 600px);
+    padding: 36px 20px 32px;
   }
 }
 
 @media (min-width: 1024px) {
   .travel-hero {
-    min-height: calc(90svh - var(--header-height, 64px));
-    padding: 80px clamp(40px, 6vw, 120px);
+    min-height: calc(86svh - var(--header-height, 64px));
+    padding: 56px clamp(36px, 5vw, 88px);
   }
 }
 
@@ -33,6 +33,11 @@
     --sunset-orange: #E67E22;
     --clean-white: #FFFFFF;
     --charcoal-grey: #2F3A44;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   body {
