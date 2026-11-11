@@ -58,9 +58,13 @@ interface SystemSettings {
   wordpressMigrationReady: boolean;
 }
 
+const getSessionKey = () => (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('outbound_admin_key') : null);
+const setSessionKey = (k: string) => { if (typeof sessionStorage !== 'undefined') sessionStorage.setItem('outbound_admin_key', k); };
+const removeSessionKey = () => { if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('outbound_admin_key'); };
+
 export const NewsletterAdmin: React.FC<{ onNavigateHome?: () => void }> = ({ onNavigateHome }) => {
   // Auth state
-  const [apiKey, setApiKey] = useState(() => sessionStorage.getItem('outbound_admin_key') || '');
+  const [apiKey, setApiKey] = useState(() => getSessionKey() || '');
   const [authenticated, setAuthenticated] = useState(false);
   const [authError, setAuthError] = useState('');
 
@@ -100,7 +104,7 @@ export const NewsletterAdmin: React.FC<{ onNavigateHome?: () => void }> = ({ onN
   const apiBase = (import.meta.env?.VITE_API_BASE_URL ?? '/api/v1').replace(/\/$/, '');
 
   const authFetch = useCallback(async (endpoint: string, options: RequestInit = {}) => {
-    const key = apiKey || sessionStorage.getItem('outbound_admin_key') || 'outbound-admin-dev-secret';
+    const key = apiKey || getSessionKey() || 'outbound-admin-dev-secret';
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${key}`,
@@ -126,7 +130,7 @@ export const NewsletterAdmin: React.FC<{ onNavigateHome?: () => void }> = ({ onN
       });
       if (res.ok) {
         setAuthenticated(true);
-        sessionStorage.setItem('outbound_admin_key', key);
+        setSessionKey(key);
         setApiKey(key);
         setAuthError('');
         const data = await res.json();
@@ -421,7 +425,7 @@ export const NewsletterAdmin: React.FC<{ onNavigateHome?: () => void }> = ({ onN
   };
 
   const handleExport = (format: 'csv' | 'json') => {
-    const key = apiKey || sessionStorage.getItem('outbound_admin_key') || 'outbound-admin-dev-secret';
+    const key = apiKey || getSessionKey() || 'outbound-admin-dev-secret';
     window.open(`${apiBase}/admin/newsletter/subscribers/export?format=${format}&status=${subscriberFilter}&token=${encodeURIComponent(key)}`, '_blank');
   };
 
@@ -500,7 +504,7 @@ export const NewsletterAdmin: React.FC<{ onNavigateHome?: () => void }> = ({ onN
 
           <div className="flex items-center gap-4">
             <button
-              onClick={() => { sessionStorage.removeItem('outbound_admin_key'); setAuthenticated(false); }}
+              onClick={() => { removeSessionKey(); setAuthenticated(false); }}
               className="text-xs text-white/80 hover:text-white transition px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10"
             >
               Log Out
