@@ -9,7 +9,8 @@ export interface DetailedAccommodation {
   id: string;
   slug: string;
   name: string;
-  category: 'Luxury Lodge' | 'Boutique Hotel' | 'Guest Lodge' | 'Safari Lodge' | 'Resort' | 'Self-Catering';
+  category: 'Luxury Lodge' | 'Boutique Hotel' | 'Guest Lodge' | 'Safari Lodge' | 'Resort' | 'Self-Catering' | 'Hotel' | 'Lodge' | 'Guest House' | 'Apartment';
+  accommodationCategory?: 'hotels' | 'lodges' | 'guest-houses' | 'apartments';
   badge?: 'Luxury' | 'Family Favourite' | 'Romantic' | 'Best Value' | 'Walking Distance' | 'Boutique';
   rating: number;
   reviewCount: number;
@@ -17,6 +18,13 @@ export interface DetailedAccommodation {
   distanceFromFalls: string;
   airportDistance: string;
   priceFromUSD: number;
+  currency?: string;
+  priceUnit?: string;
+  maxGuests?: number;
+  amenities?: string[];
+  checkInTime?: string;
+  checkOutTime?: string;
+  publicationStatus?: 'published' | 'draft' | 'archived';
   heroImage: string;
   galleryImages: string[];
   tagline: string;

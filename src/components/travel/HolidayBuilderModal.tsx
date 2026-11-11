@@ -234,8 +234,17 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   // WhatsApp Link Builder
   const buildWhatsAppLink = () => {
     const actNames = selectedActivitiesList.map((a) => a.title).join(', ');
+    const chosenProperty = typeof preselectedAccommodation !== 'undefined' ? preselectedAccommodation : null;
+    const chosenRoomPrefs = typeof stayPreferences !== 'undefined' ? stayPreferences : [];
+    const stayLine = chosenProperty
+      ? `*Property:* ${chosenProperty.name} (${selectedStayTierObj.name})\n`
+      : `*Trip Style:* ${selectedStayTierObj.name}\n`;
+    const roomPrefLine = chosenRoomPrefs.length > 0
+      ? `*Stay / Room Preferences:* ${chosenRoomPrefs.join(', ')}\n`
+      : '';
     const message = `Hi Outbound Holidays! I built my custom Victoria Falls holiday on your website:\n\n` +
-      `*Trip Style:* ${selectedStayTierObj.name}\n` +
+      stayLine +
+      roomPrefLine +
       `*Party:* ${adultsCount} Adults, ${kidsCount} Kids (${partyType})\n` +
       `*Duration:* ${nightsCount} Nights / ${nightsCount + 1} Days\n` +
       `*Experiences (${selectedActivitiesList.length}):* ${actNames || 'To be selected'}\n` +
@@ -252,10 +261,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
   const buildQuickWhatsAppLink = () => {
     const message = `Hi Outbound Holidays! I'd like help planning a Victoria Falls holiday.\n\n` +
+      (preselectedAccommodation ? `*Property:* ${preselectedAccommodation.name}\n` : '') +
       `*Name:* ${fullName || 'Guest'}\n` +
       `*Travel Style:* ${tripIntent}\n` +
-      `*Party:* ${adultsCount} Adults (${partyType})\n` +
-      `*Preferred Season:* ${travelSeason}\n` +
+      `*Party:* ${adultsCount} Adults, ${kidsCount} Kids (${partyType})\n` +
+      `*Preferred Dates / Season:* ${travelSeason}\n` +
+      (stayPreferences.length > 0 ? `*Room / Stay Preferences:* ${stayPreferences.join(', ')}\n` : '') +
       (phone ? `*Phone/WhatsApp:* ${phone}\n` : '') +
       (email ? `*Email:* ${email}\n` : '') +
       (notes ? `*Notes:* ${notes}\n` : '') +
@@ -318,6 +329,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-[#FDFBF7] flex flex-col overflow-hidden animate-fade-in text-[#1A2E35]">
+      {preselectedAccommodation && (
+        <p className="bg-[#0B5E8E]/10 text-[#0B5E8E] px-4 py-2 text-xs sm:text-sm border-b border-[#0B5E8E]/15">
+          Enquiring about: <strong>{preselectedAccommodation.name}</strong> ({preselectedAccommodation.category}) — your preference is pre-filled below so our Victoria Falls specialists can tailor your stay quote.
+        </p>
+      )}
       {preselectedActivity&&<p className="bg-blue-50 px-4 py-2 text-sm">Requested experience: {ALL_EXPERIENCES.find(e=>e.id===preselectedActivity)?.title??preselectedActivity}. Your specialist will include this request in the quote; additional catalogue experiences are priced separately from the builder estimate.</p>}
       {/* 1. IMMERSIVE TOP NAVIGATION BAR */}
       <header className="bg-[#0D5C75] text-white px-4 sm:px-8 py-3.5 flex items-center justify-between border-b border-white/10 shrink-0 shadow-md">

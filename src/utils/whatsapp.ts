@@ -55,3 +55,43 @@ export function getWhatsAppSpecialistUrl(topic?: string): string {
 
   return getWhatsAppUrl(message);
 }
+
+/**
+ * Generates a pre-filled WhatsApp enquiry URL for a specific accommodation property,
+ * carrying the selected property name, intended dates, party size, and room preference.
+ */
+export function getWhatsAppAccommodationEnquiryUrl(
+  propertyName: string,
+  options?: {
+    dates?: string;
+    guests?: string | number;
+    roomPreference?: string;
+    propertyUrl?: string;
+    notes?: string;
+  }
+): string {
+  const dates = options?.dates?.trim() || 'Flexible / To be confirmed';
+  const guests = options?.guests !== undefined && String(options.guests).trim() !== ''
+    ? String(options.guests).trim()
+    : 'To be confirmed';
+  const roomPreference = options?.roomPreference?.trim() || 'Best available / Please advise';
+
+  const lines = [
+    'Hello Outbound Holidays,',
+    '',
+    `I would like to enquire about staying at ${propertyName}:`,
+    `- Intended Dates: ${dates}`,
+    `- Party Size: ${guests}`,
+    `- Room / Unit Preference: ${roomPreference}`,
+  ];
+
+  if (options?.notes?.trim()) {
+    lines.push(`- Notes: ${options.notes.trim()}`);
+  }
+  if (options?.propertyUrl?.trim()) {
+    lines.push('', `Page Link: ${options.propertyUrl.trim()}`);
+  }
+
+  lines.push('', 'Please confirm availability and current rates. Thank you.');
+  return getWhatsAppUrl(lines.join('\n'));
+}

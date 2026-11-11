@@ -1,6 +1,11 @@
 import { editorialFormat } from "../../runtime/catalog";
 import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
-import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { getWhatsAppAccommodationEnquiryUrl } from '../../utils/whatsapp';
+import {
+  advisorAnswersToFilters,
+  isPublishedAccommodation,
+  type AccommodationFilters,
+} from '../../utils/accommodation';
 import { PageLink } from '../common/PageLink';
 import { accommodationPath } from '../../routes';
 import React,{ useState } from 'react';
@@ -18,13 +23,15 @@ Info,RotateCcw,Compass,
 Heart,
 Users,Home,
 CheckSquare,
-Square
+Square,
+SlidersHorizontal
 } from 'lucide-react';
 
 interface AccommodationAdvisorProps {
   currency: Currency;
   onSelectProperty: (property: DetailedAccommodation) => void;
   onIncludeInHoliday: (property: DetailedAccommodation) => void;
+  onApplyFiltersToDirectory?: (filters: Partial<AccommodationFilters>) => void;
 }
 
 export interface AdvisorAnswers {
@@ -62,6 +69,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
   currency,
   onSelectProperty,
   onIncludeInHoliday,
+  onApplyFiltersToDirectory,
 }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [answers, setAnswers] = useState<AdvisorAnswers>(DEFAULT_ANSWERS);
@@ -105,7 +113,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
 
   // RECOMMENDATION SCORING ENGINE
   const getRecommendations = (): ScoredRecommendation[] => {
-    const scoredList = ALL_ACCOMMODATIONS.map(property => {
+    const scoredList = ALL_ACCOMMODATIONS.filter(isPublishedAccommodation).map(property => {
       let score = 70; // baseline
       const whySuits: string[] = [];
 
@@ -532,13 +540,27 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </p>
             </div>
 
-            <button
-              onClick={resetAdvisor}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#0B5E8E] bg-gray-100 hover:bg-gray-200 px-4 py-2.5 rounded-xl transition-colors cursor-pointer shrink-0"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>{editorial("travel/AccommodationAdvisor.text64")}</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              {onApplyFiltersToDirectory && (
+                <button
+                  type="button"
+                  onClick={() => onApplyFiltersToDirectory(advisorAnswersToFilters(answers))}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-[#0B5E8E] hover:bg-[#08486e] px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-xs"
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#C9A66B]" />
+                  <span>Filter Directory by These Preferences</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={resetAdvisor}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#0B5E8E] bg-gray-100 hover:bg-gray-200 px-4 py-2.5 rounded-xl transition-colors cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>{editorial("travel/AccommodationAdvisor.text64")}</span>
+              </button>
+            </div>
           </div>
 
           {/* Recommended Property Cards List */}
@@ -644,9 +666,10 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                         </button>
 
                         <a
-                          href={getWhatsAppUrl(
-                            editorialFormat("travel/AccommodationAdvisor.copy15", [prop.name])
-                          )}
+                          href={getWhatsAppAccommodationEnquiryUrl(prop.name, {
+                            guests: answers.travellerGroup,
+                            roomPreference: prop.roomTypes[0]?.name,
+                          })}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"

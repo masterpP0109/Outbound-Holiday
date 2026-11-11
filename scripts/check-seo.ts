@@ -32,6 +32,7 @@ for (const route of PAGE_ROUTES) {
 assert.equal(resolveRoute('/things-to-do/does-not-exist').view, 'not-found');
 assert.equal(resolveRoute('/accommodation/does-not-exist').view, 'not-found');
 assert.equal(resolveRoute('/packages/does-not-exist').view, 'not-found');
+assert.equal(resolveRoute('/blog/does-not-exist').view, 'not-found');
 const notFound = await readFile('dist/404.html', 'utf8');
 assert.ok(notFound.includes('noindex, follow'));
 assert.ok((await readFile('dist/robots.txt', 'utf8')).includes(`${SITE_URL}/sitemap.xml`));

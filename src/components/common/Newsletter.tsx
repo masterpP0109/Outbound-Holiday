@@ -3,7 +3,15 @@ import { editorial } from "../../runtime/catalog";
 import React,{ useState } from 'react';
 import { Mail,Check,Compass } from 'lucide-react';
 
-export const Newsletter: React.FC = () => {
+interface NewsletterProps {
+  compact?: boolean;
+  headingOverride?: string;
+}
+
+export const Newsletter: React.FC<NewsletterProps> = ({
+  compact = false,
+  headingOverride,
+}) => {
   const submission = useSubmission('newsletter');
   const [marketingConsent,setMarketingConsent] = useState(false);
   const [email, setEmail] = useState('');
@@ -16,24 +24,42 @@ export const Newsletter: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0B5E8E] text-white py-14 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1280px] mx-auto bg-white/10 backdrop-blur-md rounded-[28px] p-8 sm:p-12 border border-white/15">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+    <section
+      className={
+        compact
+          ? 'bg-[#0B5E8E] text-white rounded-3xl p-6 sm:p-8 shadow-md border border-[#C9A66B]/30'
+          : 'bg-[#0B5E8E] text-white py-14 px-4 sm:px-6 lg:px-8'
+      }
+    >
+      <div
+        className={
+          compact
+            ? 'space-y-4'
+            : 'max-w-[1280px] mx-auto bg-white/10 backdrop-blur-md rounded-[28px] p-8 sm:p-12 border border-white/15'
+        }
+      >
+        <div
+          className={
+            compact
+              ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center'
+              : 'grid grid-cols-1 lg:grid-cols-12 gap-8 items-center'
+          }
+        >
           
           {/* Text Content (7 cols on desktop) */}
-          <div className="lg:col-span-7 space-y-3 text-left">
+          <div className={compact ? 'lg:col-span-6 space-y-2 text-left' : 'lg:col-span-7 space-y-3 text-left'}>
             <div className="inline-flex items-center gap-2 text-[#C9A66B] text-xs font-bold uppercase tracking-wider">
               <Compass className="w-4 h-4 text-[#E67E22]" />
               <span>{editorial("common/Newsletter.text1")}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-white">
-              {editorial("common/Newsletter.text2")}</h2>
+            <h2 className={compact ? 'text-xl sm:text-2xl font-bold font-serif text-white' : 'text-2xl sm:text-3xl font-bold font-serif text-white'}>
+              {headingOverride || editorial("common/Newsletter.text2")}</h2>
             <p className="text-white/85 text-xs sm:text-sm max-w-xl leading-relaxed">
               {editorial("common/Newsletter.text3")}</p>
           </div>
 
           {/* Form Content (5 cols on desktop) */}
-          <div className="lg:col-span-5">
+          <div className={compact ? 'lg:col-span-6' : 'lg:col-span-5'}>
             {subscribed ? (
               <div className="bg-white/15 border border-white/20 p-5 rounded-2xl space-y-2 text-center">
                 <div className="w-10 h-10 bg-[#3F6B3C] rounded-full flex items-center justify-center mx-auto text-white">

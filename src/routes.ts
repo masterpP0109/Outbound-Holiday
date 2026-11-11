@@ -1,12 +1,14 @@
 import { registerContent, ALL_GUIDE_ARTICLES,getSnapshot } from './runtime/catalog';
 import type { GuideArticle } from './types/guide';
+import type { BlogPost } from './types/blog';
 import { ALL_EXPERIENCES,Experience } from './data/experiencesData';
 import { ALL_PACKAGES,DetailedPackage } from './data/packagesData';
 import { ALL_ACCOMMODATIONS,DetailedAccommodation } from './data/accommodationsData';
 import { FIRST_TIME_VISITOR_ARTICLE } from './data/guideArticles';
+import { getPublishedBlogPosts } from './data/blogData';
 
 export const SITE_URL = 'https://outbound-holiday.vercel.app';
-export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'boma' | 'bungee' | 'client-gallery' | 'about' | 'newsletter-confirmed' | 'contact' | 'admin-newsletter' | 'not-found';
+export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'blog' | 'blog-post' | 'boma' | 'bungee' | 'client-gallery' | 'about' | 'newsletter-confirmed' | 'contact' | 'admin-newsletter' | 'not-found';
 export interface PageRoute {
   path: string;
   view: View;
@@ -17,11 +19,27 @@ export interface PageRoute {
   accommodation?: DetailedAccommodation;
   category?: string;
   article?: GuideArticle;
+  blogPost?: BlogPost;
 }
 export const experiencePath = (experience: Pick<Experience, 'id' | 'slug'>) => `/things-to-do/${experience.id === 'boma-dinner-show' ? 'boma-dinner' : experience.slug}`;
 export const packagePath = (pkg: Pick<DetailedPackage, 'slug'>) => `/packages/${pkg.slug}`;
 export const accommodationPath = (property: Pick<DetailedAccommodation, 'slug'>) => `/accommodation/${property.slug}`;
 export const categoryPath = (id: string) => `/things-to-do/category/${id}`;
+export const blogPath = (postOrSlug: string | Pick<BlogPost, 'slug'>) => `/blog/${typeof postOrSlug === 'string' ? postOrSlug : postOrSlug.slug}`;
+
+export function getRouteOgImage(route: PageRoute): string | undefined {
+  const rawImage =
+    route.blogPost?.seo.ogImage ||
+    route.blogPost?.featuredImage.url ||
+    route.article?.heroImageUrl ||
+    route.experience?.featuredImage ||
+    route.package?.imageUrl ||
+    route.accommodation?.heroImage;
+  if (!rawImage) return undefined;
+  return /^https?:\/\//i.test(rawImage)
+    ? rawImage
+    : `${SITE_URL}${rawImage.startsWith('/') ? rawImage : `/${rawImage}`}`;
+}
 const categories = {
   'first-visit': 'First Visit Essentials', wildlife: 'Wildlife and Safari', adventure: 'Adventure',
   river: 'Zambezi River', culture: 'Culture and Dining', 'day-trips': 'Day Trips', wellness: 'Spa and Wellness',
@@ -43,6 +61,14 @@ registerContent(() => { PAGE_ROUTES = [
   { path:'/contact',view:'contact',title:'Contact Outbound Holidays',description:'Speak with our Victoria Falls travel specialists.' },
   { path:'/admin/newsletter',view:'admin-newsletter',title:'Newsletter Administration | Outbound Holidays',description:'Administer subscribers, campaigns and email delivery.' },
   ...Object.values(ALL_GUIDE_ARTICLES).filter(g=>g.slug!=='first-time-visitor-guide').map((article):PageRoute=>({path:'/victoria-falls-guide/'+article.slug,view:'guide',article,title:article.seo.metaTitle,description:article.seo.metaDescription})),
+  { path: '/blog', view: 'blog', title: 'Victoria Falls Travel Blog | Outbound Holidays', description: 'Local insights, travel inspiration and practical advice to help you plan your next Victoria Falls holiday with Outbound Holidays.' },
+  ...getPublishedBlogPosts().map((blogPost): PageRoute => ({
+    path: blogPath(blogPost),
+    view: 'blog-post',
+    blogPost,
+    title: blogPost.seo.metaTitle,
+    description: blogPost.seo.metaDescription,
+  })),
 ];for(const route of PAGE_ROUTES){const seo=getSnapshot().site.routeSeo[route.path];if(seo){route.title=seo.title;route.description=seo.description;}} });
 
 export function resolveRoute(pathname: string): PageRoute {
@@ -53,6 +79,7 @@ export function resolveRoute(pathname: string): PageRoute {
 export function sectionPath(section: string): string {
   const paths: Record<string, string> = {
     hero: '/', home: '/', contact: '/contact', 'contact-us': '/contact', about: '/about', 'about-us': '/about', 'client-gallery': '/client-gallery', 'travel-guide': '/victoria-falls-guide', guide: '/victoria-falls-guide',
+    blog: '/blog', 'travel-blog': '/blog',
     'travel-experiences': '/things-to-do-in-victoria-falls', experiences: '/things-to-do-in-victoria-falls',
     accommodation: '/victoria-falls-accommodation', accommodations: '/victoria-falls-accommodation', 'where-to-stay': '/victoria-falls-accommodation',
     'travel-packages': '/victoria-falls-packages', packages: '/victoria-falls-packages', boma: '/things-to-do/boma-dinner', 'boma-dinner': '/things-to-do/boma-dinner',

@@ -1,6 +1,10 @@
-import { editorialFormat } from "../../runtime/catalog";
 import { editorial } from "../../runtime/catalog";
-import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { getWhatsAppAccommodationEnquiryUrl } from '../../utils/whatsapp';
+import {
+  getAccommodationCategorySingular,
+  getMaxGuestCapacity,
+  getPriceUnitLabel,
+} from '../../utils/accommodation';
 import { PageLink } from '../common/PageLink';
 import { accommodationPath,sectionPath } from '../../routes';
 import React,{ useState } from 'react';
@@ -29,7 +33,8 @@ Maximize2,
 X,
 Compass,
 Check,
-Building
+Building,
+Clock
 } from 'lucide-react';
 
 interface AccommodationDetailPageProps {
@@ -52,6 +57,11 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
   onNavigateHome,
 }) => {
   const [selectedLightboxImage, setSelectedLightboxImage] = useState<string | null>(null);
+  const [intendedDates, setIntendedDates] = useState<string>('');
+  const [partySize, setPartySize] = useState<string>('2 Adults');
+  const [roomPreference, setRoomPreference] = useState<string>(
+    property.roomTypes[0]?.name ?? 'Best available / Please advise'
+  );
 
   const formatPrice = (priceUSD: number) => {
     const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
@@ -59,8 +69,15 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
     return `${rateObj.symbol}${converted.toLocaleString()}`;
   };
 
-  const whatsappMessage = editorialFormat("travel/AccommodationDetailPage.copy1", [property.name]);
-  const whatsappUrl = getWhatsAppUrl(whatsappMessage);
+  const whatsappUrl = getWhatsAppAccommodationEnquiryUrl(property.name, {
+    dates: intendedDates,
+    guests: partySize,
+    roomPreference,
+  });
+  const categoryBadge = getAccommodationCategorySingular(property);
+  const maxGuests = getMaxGuestCapacity(property);
+  const priceUnitLabel = getPriceUnitLabel(property);
+  const hasGuidePrice = typeof property.priceFromUSD === 'number' && property.priceFromUSD > 0;
 
   // Match nearby experiences
   const matchedExperiences = property.nearbyExperienceIds
@@ -127,13 +144,30 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
 
                 <span className="bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                   <Hotel className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>{property.category}</span>
+                  <span>{categoryBadge}</span>
                 </span>
+
+                {property.category && property.category !== categoryBadge && (
+                  <span className="bg-[#FAF9F6] text-gray-700 border border-gray-200 text-xs font-semibold px-3 py-1 rounded-full">
+                    {property.category}
+                  </span>
+                )}
 
                 <span className="bg-[#FAF9F6] text-gray-700 border border-gray-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-[#0B5E8E]" />
                   <span>{property.distanceFromFalls}</span>
                 </span>
+
+                {maxGuests !== null && (
+                  <span className="bg-[#FAF9F6] text-gray-700 border border-gray-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                    <Users className="w-3.5 h-3.5 text-[#0B5E8E]" />
+                    <span>
+                      {property.roomTypes.length > 1
+                        ? `Up to ${maxGuests} guests per unit (varies by room type)`
+                        : `Up to ${maxGuests} guests`}
+                    </span>
+                  </span>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -148,16 +182,31 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                 </p>
               </div>
 
-              {/* Price & Rating Callout */}
+              {/* Price & Qualification Callout */}
               <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-xs uppercase font-bold text-gray-500 block">{editorial("travel/AccommodationDetailPage.text4")}</span>
+                  <span className="text-xs uppercase font-bold text-gray-500 block">
+                    {hasGuidePrice ? editorial("travel/AccommodationDetailPage.text4") : 'Availability & Rates'}
+                  </span>
                   <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-3xl font-serif font-bold text-[#0B5E8E]">
-                      {editorial("travel/AccommodationDetailPage.text5")}{formatPrice(property.priceFromUSD)}
-                    </span>
-                    <span className="text-xs text-gray-500 font-normal">{editorial("travel/AccommodationDetailPage.text6")}</span>
+                    {hasGuidePrice ? (
+                      <>
+                        <span className="text-3xl font-serif font-bold text-[#0B5E8E]">
+                          {editorial("travel/AccommodationDetailPage.text5")}{formatPrice(property.priceFromUSD)}
+                        </span>
+                        <span className="text-xs text-gray-500 font-normal">
+                          {property.priceUnit ? priceUnitLabel : editorial("travel/AccommodationDetailPage.text6")}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-2xl font-serif font-bold text-[#0B5E8E]">
+                        Price on enquiry
+                      </span>
+                    )}
                   </div>
+                  <span className="text-[11px] text-gray-500 block mt-0.5">
+                    Guide rate · Rates confirmed before booking
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-200 text-xs">
@@ -167,14 +216,54 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                 </div>
               </div>
 
+              {/* Quick Enquiry Details (feeds WhatsApp message cleanly) */}
+              <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 space-y-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B5E8E] block">
+                  Quick Enquiry Details (Included on WhatsApp)
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <input
+                    type="text"
+                    placeholder="Intended dates (e.g. 12–16 Aug)"
+                    aria-label="Intended stay dates"
+                    value={intendedDates}
+                    onChange={(e) => setIntendedDates(e.target.value)}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Party size (e.g. 2 Adults)"
+                    aria-label="Party size"
+                    value={partySize}
+                    onChange={(e) => setPartySize(e.target.value)}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
+                  />
+                  <select
+                    aria-label="Preferred room or unit"
+                    value={roomPreference}
+                    onChange={(e) => setRoomPreference(e.target.value)}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
+                  >
+                    {property.roomTypes.map((room) => (
+                      <option key={room.name} value={room.name}>
+                        {room.name}
+                      </option>
+                    ))}
+                    <option value="Best available / Please advise">
+                      Best available / Please advise
+                    </option>
+                  </select>
+                </div>
+              </div>
+
               {/* Action CTAs */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-1">
                 <button
                   onClick={() => onOpenPlanHolidayWithProperty(property)}
                   className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
                   <CalendarCheck className="w-4 h-4" />
-                  <span>{editorial("travel/AccommodationDetailPage.text8")}</span>
+                  <span>Enquire About This Stay</span>
                 </button>
 
                 <a
@@ -413,13 +502,33 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between gap-3">
                     <span className="text-xs text-gray-500">{editorial("travel/AccommodationDetailPage.text34")}</span>
-                    <button
-                      onClick={() => onOpenPlanHolidayWithProperty(property)}
-                      className="text-xs font-bold text-[#E67E22] hover:underline cursor-pointer"
-                    >
-                      {editorial("travel/AccommodationDetailPage.text35")}</button>
+                    <div className="flex items-center gap-3">
+                      <a
+                        href={getWhatsAppAccommodationEnquiryUrl(property.name, {
+                          dates: intendedDates,
+                          guests: partySize,
+                          roomPreference: room.name,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setRoomPreference(room.name)}
+                        className="text-xs font-bold text-[#25D366] hover:underline"
+                      >
+                        WhatsApp Room Rate
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setRoomPreference(room.name);
+                          onOpenPlanHolidayWithProperty(property);
+                        }}
+                        className="text-xs font-bold text-[#E67E22] hover:underline cursor-pointer"
+                      >
+                        {editorial("travel/AccommodationDetailPage.text35")}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -488,6 +597,29 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                 <span className="font-bold text-[#0B5E8E] block mb-1">{editorial("travel/AccommodationDetailPage.text43")}</span>
                 <p className="font-light">{property.locationInfo.departurePoints}</p>
               </div>
+
+              {(property.checkInTime || property.checkOutTime) && (
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  {property.checkInTime && (
+                    <div className="bg-[#FAF9F6] p-3 rounded-xl border border-gray-200">
+                      <span className="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-[#0B5E8E]" />
+                        Check-in
+                      </span>
+                      <span className="font-bold text-[#0B5E8E]">{property.checkInTime}</span>
+                    </div>
+                  )}
+                  {property.checkOutTime && (
+                    <div className="bg-[#FAF9F6] p-3 rounded-xl border border-gray-200">
+                      <span className="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-[#0B5E8E]" />
+                        Check-out
+                      </span>
+                      <span className="font-bold text-[#0B5E8E]">{property.checkOutTime}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -659,7 +791,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <CalendarCheck className="w-4 h-4" />
-              <span>{editorial("travel/AccommodationDetailPage.text58")}</span>
+              <span>Enquire About This Stay</span>
             </button>
 
             <a

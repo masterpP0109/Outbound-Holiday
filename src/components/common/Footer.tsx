@@ -95,6 +95,11 @@ export const Footer: React.FC<FooterProps> = ({
                   {editorial("common/Footer.text10")}</PageLink>
               </li>
               <li>
+                <PageLink href={sectionPath('blog')} onClick={() => onNavigateSection('blog')} className="hover:text-white transition-colors cursor-pointer">
+                  Blog
+                </PageLink>
+              </li>
+              <li>
                 <button onClick={onOpenPlanHoliday} className="hover:text-[#C9A66B] font-bold transition-colors cursor-pointer">
                   {editorial("common/Footer.text11")}</button>
               </li>

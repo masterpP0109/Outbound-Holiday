@@ -1,6 +1,6 @@
 import { ContactUsView } from './components/travel/ContactUsView';
 import { useEffect,useState } from 'react';
-import { resolveRoute,sectionPath,experiencePath,packagePath,accommodationPath,categoryPath } from './routes';
+import { resolveRoute,sectionPath,experiencePath,packagePath,accommodationPath,categoryPath,blogPath } from './routes';
 import { PageMetadata } from './components/common/PageMetadata';
 import { PageLink } from './components/common/PageLink';
 import { Currency,TravelPackage } from './types';
@@ -26,6 +26,8 @@ import { ClientGallery } from './components/travel/ClientGallery';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
 import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
+import { BlogListingPage } from './components/blog/BlogListingPage';
+import { BlogArticlePage } from './components/blog/BlogArticlePage';
 import { ExperienceCategoryPage } from './components/travel/ExperienceCategoryPage';
 import { BomaExperiencePage } from './components/travel/BomaExperiencePage';
 import { BungeeExperiencePage } from './components/travel/BungeeExperiencePage';
@@ -109,6 +111,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
         isPackagesActive={activeView === 'packages' || activeView === 'package-detail'}
         isGalleryActive={activeView === 'client-gallery'}
         isAboutActive={activeView === 'about'}
+        isBlogActive={activeView === 'blog' || activeView === 'blog-post'}
       />
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}
@@ -293,6 +296,35 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
+        ) : activeView === 'blog' ? (
+          <BlogListingPage
+            onSelectPost={(post) => navigate(blogPath(post))}
+            onNavigateHome={() => {
+              navigate(sectionPath('home'));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
+              setPlanHolidayOpen(true);
+            }}
+          />
+        ) : activeView === 'blog-post' && route.blogPost ? (
+          <BlogArticlePage
+            post={route.blogPost}
+            onSelectPost={(post) => navigate(blogPath(post))}
+            onBackToBlog={() => {
+              navigate(sectionPath('blog'));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateHome={() => {
+              navigate(sectionPath('home'));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenPlanHoliday={() => {
+              setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
+              setPlanHolidayOpen(true);
+            }}
+          />
         ) : (
           <div className="space-y-0">
             {/* 1. Hero */}
@@ -371,8 +403,8 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
           </div>
         )}
 
-        {/* Global Travel Newsletter Section */}
-        {activeView !== 'admin-newsletter' && <Newsletter />}
+        {/* Global Travel Newsletter Section (omitted on blog views where compact Victoria Falls Travel Club sits in-page) */}
+        {activeView !== 'admin-newsletter' && activeView !== 'blog' && activeView !== 'blog-post' && <Newsletter />}
       </main>
 
       <PageMetadata route={route} />

@@ -4,7 +4,7 @@ import { renderToString } from 'react-dom/server';
 import { mkdir,readFile,writeFile } from 'node:fs/promises';
 import { dirname,join } from 'node:path';
 import App from '../src/App';
-import { PAGE_ROUTES,resolveRoute,SITE_URL,PageRoute } from '../src/routes';
+import { getRouteOgImage, PAGE_ROUTES, resolveRoute, SITE_URL, PageRoute } from '../src/routes';
 installContent(await loadPublishedContent());
 
 
@@ -14,10 +14,17 @@ const paths = new Set(PAGE_ROUTES.map((route) => route.path));
 if (paths.size !== PAGE_ROUTES.length) throw new Error('Duplicate page URLs in route registry');
 
 async function writePage(route: PageRoute, filename: string) {
+  const isArticle = route.view === 'blog-post' || route.view === 'guide';
+  const ogImage = getRouteOgImage(route);
+  const extraOgTags = [
+    `<meta property="og:type" content="${isArticle ? 'article' : 'website'}" />`,
+    ...(ogImage ? [`<meta property="og:image" content="${escape(ogImage)}" />`] : []),
+  ].join('\n');
+
   const html = template
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${escape(route.title)}</title>`)
     .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${escape(route.description)}" />`)
-    .replace('</head>', `<link rel="canonical" href="${SITE_URL}${route.path}" />\n<meta name="robots" content="${['not-found','newsletter-confirmed'].includes(route.view) ? 'noindex, follow' : 'index, follow'}" />\n<meta property="og:title" content="${escape(route.title)}" />\n<meta property="og:description" content="${escape(route.description)}" />\n<meta property="og:url" content="${SITE_URL}${route.path}" />\n</head>`)
+    .replace('</head>', `<link rel="canonical" href="${SITE_URL}${route.path}" />\n<meta name="robots" content="${['not-found','newsletter-confirmed'].includes(route.view) ? 'noindex, follow' : 'index, follow'}" />\n<meta property="og:title" content="${escape(route.title)}" />\n<meta property="og:description" content="${escape(route.description)}" />\n<meta property="og:url" content="${SITE_URL}${route.path}" />\n${extraOgTags}\n</head>`)
     .replace('</head>', () => '<script type="application/json" id="outbound-content">'+JSON.stringify(getSnapshot()).replaceAll('<','\\u003c')+'</script></head>')
     .replace('<div id="root"></div>', () => `<div id="root">${renderToString(<App initialPath={route.path} />)}</div>`);
   await mkdir(dirname(filename), { recursive: true });
