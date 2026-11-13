@@ -199,6 +199,7 @@ function outbound_get_active_promotions(bool $force_refresh = false): array {
                 'promotionalPriceUSD'     => $promo,
                 'priceBasis'              => (string) ($row->price_basis ?? 'per_person'),
                 'discountPercentage'      => $discount,
+                'discountBadgeOverride'   => !empty($row->discount_badge_override) ? (string) $row->discount_badge_override : null,
                 'validityStart'           => $row->validity_start,
                 'validityEnd'             => $row->validity_end,
                 'primaryCta'              => array(
@@ -411,6 +412,7 @@ function outbound_render_promotions_admin_page(): void {
                 $promo_price = ($promo_raw !== '' && is_numeric($promo_raw)) ? round((float) $promo_raw, 2) : null;
                 $price_basis = sanitize_key((string) ($_POST['price_basis'] ?? 'per_person'));
                 $discount_calc = outbound_calculate_promo_discount($orig_price, $promo_price);
+                $discount_badge_override = sanitize_text_field(wp_unslash((string) ($_POST['discount_badge_override'] ?? '')));
 
                 // CTAs
                 $p_label = sanitize_text_field(wp_unslash((string) ($_POST['primary_cta_label'] ?? 'Enquire About This Offer')));
@@ -476,6 +478,7 @@ function outbound_render_promotions_admin_page(): void {
                         'promotional_price_usd'       => $promo_price,
                         'price_basis'                 => $price_basis,
                         'discount_percentage'         => $discount_calc,
+                        'discount_badge_override'     => $discount_badge_override !== '' ? $discount_badge_override : null,
                         'validity_start'              => $val_start_utc,
                         'validity_end'                => $val_end_utc,
                         'primary_cta_label'           => $p_label,
@@ -807,6 +810,14 @@ function outbound_render_promotions_admin_page(): void {
                             <input type="number" step="0.01" name="promotional_price_usd" value="<?php echo esc_attr((string) ($edit_promo->promotional_price_usd ?? '')); ?>" class="widefat" placeholder="e.g. 1050" /></label>
                         </p>
                         <p>
+                            <label><strong>Custom Discount Badge (Optional)</strong><br>
+                            <input type="text" name="discount_badge_override" value="<?php echo esc_attr((string) ($edit_promo->discount_badge_override ?? '')); ?>" class="widefat" placeholder="e.g. 25% OFF or SAVE $100" />
+                            <span style="font-size:11px;color:#64748B;">Leave blank to auto-calculate from prices.</span></label>
+                        </p>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+                        <p>
                             <label><strong>Price Basis</strong><br>
                             <select name="price_basis" class="widefat">
                                 <?php
@@ -817,7 +828,6 @@ function outbound_render_promotions_admin_page(): void {
                                 <?php endforeach; ?>
                             </select></label>
                         </p>
-                    </div>
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
                         <p>

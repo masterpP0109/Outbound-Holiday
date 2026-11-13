@@ -227,9 +227,9 @@ export const PromotionEnquiryModal: React.FC<PromotionEnquiryModalProps> = ({
                     </span>
                   )}
                 </div>
-                {promotion.discountPercentage && (
+                {(promotion.discountBadgeOverride || promotion.discountPercentage) && (
                   <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs">
-                    Save {promotion.discountPercentage}%
+                    {promotion.discountBadgeOverride || `Save ${promotion.discountPercentage}%`}
                   </span>
                 )}
               </div>

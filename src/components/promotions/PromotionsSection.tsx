@@ -77,9 +77,9 @@ export const PromotionsSection: React.FC<PromotionsSectionProps> = ({
                         {promo.badgeText}
                       </span>
                     )}
-                    {promo.discountPercentage && (
+                    {(promo.discountBadgeOverride || promo.discountPercentage) && (
                       <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-wider shadow-sm">
-                        Save {promo.discountPercentage}%
+                        {promo.discountBadgeOverride || `Save ${promo.discountPercentage}%`}
                       </span>
                     )}
                   </div>

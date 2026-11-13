@@ -206,6 +206,7 @@ function outbound_maybe_install_schema(bool $force = false): void {
         promotional_price_usd decimal(10,2) DEFAULT NULL,
         price_basis varchar(32) NOT NULL DEFAULT 'per_person',
         discount_percentage int(11) DEFAULT NULL,
+        discount_badge_override varchar(64) DEFAULT NULL,
         validity_start datetime DEFAULT NULL,
         validity_end datetime DEFAULT NULL,
         primary_cta_label varchar(80) NOT NULL DEFAULT 'Enquire About This Offer',

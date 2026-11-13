@@ -38,6 +38,7 @@ export interface PromotionOffer {
   promotionalPriceUSD?: number | null;
   priceBasis: 'per_person' | 'per_couple' | 'per_family' | 'per_booking' | 'per_night' | string;
   discountPercentage?: number | null;
+  discountBadgeOverride?: string | null;
   validityStart?: string | null;
   validityEnd?: string | null;
   primaryCta: PromotionCta;

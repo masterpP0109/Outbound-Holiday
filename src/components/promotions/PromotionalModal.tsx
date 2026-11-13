@@ -152,10 +152,12 @@ export const PromotionalModal: React.FC<PromotionalModalProps> = ({
             </div>
           )}
 
-          {/* Discount Ribbon if accurately verified */}
-          {promotion.discountPercentage && promotion.discountPercentage > 0 && (
+          {/* Discount Ribbon if accurately verified or custom label */}
+          {(promotion.discountBadgeOverride || (promotion.discountPercentage && promotion.discountPercentage > 0)) && (
             <div className="absolute bottom-4 left-4 z-10 bg-white/95 backdrop-blur-xs text-[#0B5E8E] px-3.5 py-1.5 rounded-xl shadow-lg border border-white/40 flex items-center gap-1.5 text-xs font-bold">
-              <span className="text-[#3F6B3C] font-black text-sm">{promotion.discountPercentage}% OFF</span>
+              <span className="text-[#3F6B3C] font-black text-sm">
+                {promotion.discountBadgeOverride || `${promotion.discountPercentage}% OFF`}
+              </span>
               <span className="text-gray-500 uppercase text-[10px]">Verified Offer</span>
             </div>
           )}

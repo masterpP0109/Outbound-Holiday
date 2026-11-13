@@ -80,10 +80,10 @@ export const OfferDetailPage: React.FC<OfferDetailPageProps> = ({
                   <span>{offer.badgeText}</span>
                 </span>
               )}
-              {offer.discountPercentage && (
+              {(offer.discountBadgeOverride || offer.discountPercentage) && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-bold tracking-wider uppercase shadow-md">
                   <Tag className="w-3.5 h-3.5" />
-                  <span>Save {offer.discountPercentage}% Verified</span>
+                  <span>{offer.discountBadgeOverride || `Save ${offer.discountPercentage}% Verified`}</span>
                 </span>
               )}
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-medium">
