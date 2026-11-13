@@ -8,7 +8,7 @@ import { FIRST_TIME_VISITOR_ARTICLE } from './data/guideArticles';
 import { getPublishedBlogPosts } from './data/blogData';
 
 export const SITE_URL = 'https://outbound-holiday.vercel.app';
-export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'blog' | 'blog-post' | 'boma' | 'bungee' | 'client-gallery' | 'about' | 'newsletter-confirmed' | 'contact' | 'admin-newsletter' | 'not-found';
+export type View = 'home' | 'experiences' | 'experience-category' | 'experience-detail' | 'packages' | 'package-detail' | 'accommodation' | 'accommodation-detail' | 'guide' | 'blog' | 'blog-post' | 'boma' | 'bungee' | 'client-gallery' | 'about' | 'newsletter-confirmed' | 'contact' | 'admin-newsletter' | 'offer-detail' | 'not-found';
 export interface PageRoute {
   path: string;
   view: View;
@@ -20,12 +20,14 @@ export interface PageRoute {
   category?: string;
   article?: GuideArticle;
   blogPost?: BlogPost;
+  offerSlug?: string;
 }
 export const experiencePath = (experience: Pick<Experience, 'id' | 'slug'>) => `/things-to-do/${experience.id === 'boma-dinner-show' ? 'boma-dinner' : experience.slug}`;
 export const packagePath = (pkg: Pick<DetailedPackage, 'slug'>) => `/packages/${pkg.slug}`;
 export const accommodationPath = (property: Pick<DetailedAccommodation, 'slug'>) => `/accommodation/${property.slug}`;
 export const categoryPath = (id: string) => `/things-to-do/category/${id}`;
 export const blogPath = (postOrSlug: string | Pick<BlogPost, 'slug'>) => `/blog/${typeof postOrSlug === 'string' ? postOrSlug : postOrSlug.slug}`;
+export const offerPath = (slug: string) => `/offers/${slug}`;
 
 export function getRouteOgImage(route: PageRoute): string | undefined {
   const rawImage =
@@ -73,6 +75,16 @@ registerContent(() => { PAGE_ROUTES = [
 
 export function resolveRoute(pathname: string): PageRoute {
   const path = pathname.replace(/\/+$/, '') || '/';
+  if (path.startsWith('/offers/')) {
+    const offerSlug = path.replace(/^\/offers\//, '').replace(/\/+$/, '');
+    return {
+      path,
+      view: 'offer-detail',
+      title: 'Special Promotional Offer | Outbound Holidays Victoria Falls',
+      description: 'Exclusive limited-time promotional travel offer with Outbound Holidays Victoria Falls.',
+      offerSlug,
+    };
+  }
   return PAGE_ROUTES.find((route) => route.path === path) ?? { path, view: 'not-found', title: 'Page Not Found | Outbound Holidays', description: 'This page could not be found. Explore Victoria Falls holidays, activities and accommodation with Outbound Holidays.' };
 }
 

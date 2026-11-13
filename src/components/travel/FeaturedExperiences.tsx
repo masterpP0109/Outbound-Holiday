@@ -1,5 +1,6 @@
 import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
+import { RevealSection } from '../common/MotionPrimitives';
 import { experiencePath,sectionPath } from '../../routes';
 import React from 'react';
 import { getFeaturedExperiences,Experience } from '../../data/experiencesData';
@@ -21,7 +22,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
+        <RevealSection className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
             <span>{editorial("travel/FeaturedExperiences.text1")}</span>
@@ -29,25 +30,26 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
             {editorial("travel/FeaturedExperiences.text2")}</h2>
-        </div>
+        </RevealSection>
 
         {/* 4 Featured Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <RevealSection delayMs={60} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {featured.map((item) => (
             <div
               key={item.id}
               onClick={() => onSelectExperience(item)}
-              className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer transform hover:-translate-y-1"
+              className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-[box-shadow,transform] duration-300 flex flex-col justify-between group cursor-pointer hover:-translate-y-1 motion-reduce:transform-none"
             >
               {/* Image Container */}
               <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-gray-100 shrink-0">
                 <img
                   src={item.featuredImage}
                   alt={item.title}
-                  width="100%"
-                  height="208"
+                  width={400}
+                  height={208}
                   loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 block"
+                  decoding="async"
+                  className="w-full h-full object-cover outbound-card-media group-hover:scale-[1.03] block"
                   onError={(e) => {
                     console.error('Image failed to load:', item.featuredImage);
                     (e.target as HTMLImageElement).src = '';
@@ -69,12 +71,12 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                   className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-[#C9A66B] text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
                 >
                   <span className="text-[#C9A66B]">{editorial("travel/FeaturedExperiences.text5")}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B] outbound-arrow-shift group-hover:translate-x-1" />
                 </PageLink>
               </div>
             </div>
           ))}
-        </div>
+        </RevealSection>
 
         {/* Section Bottom CTA */}
         <div className="mt-8 sm:mt-10 text-center">

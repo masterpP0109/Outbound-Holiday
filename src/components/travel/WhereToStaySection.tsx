@@ -1,5 +1,6 @@
 import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
+import { RevealSection } from '../common/MotionPrimitives';
 import { accommodationPath,sectionPath } from '../../routes';
 import React from 'react';
 import { DetailedAccommodation,FEATURED_HOMEPAGE_ACCOMMODATIONS } from '../../data/accommodationsData';
@@ -26,7 +27,7 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6 sm:space-y-8">
         
         {/* Section Heading & Local Advisory Introduction */}
-        <div className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
+        <RevealSection className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B5E8E]/10 border border-[#0B5E8E]/20 text-[#0B5E8E] text-xs font-bold uppercase tracking-widest">
             <Compass className="w-3.5 h-3.5 text-[#C9A66B]" />
             <span>{editorial("travel/WhereToStaySection.text1")}</span>
@@ -34,22 +35,26 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
             {editorial("travel/WhereToStaySection.text2")}</h2>
-        </div>
+        </RevealSection>
 
         {/* 4 Featured Accommodation Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <RevealSection delayMs={60} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {FEATURED_HOMEPAGE_ACCOMMODATIONS.map((property) => (
             <div
               key={property.id}
               onClick={() => onSelectProperty(property)}
-              className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer transform hover:-translate-y-1"
+              className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-[box-shadow,transform] duration-300 flex flex-col justify-between group cursor-pointer hover:-translate-y-1 motion-reduce:transform-none"
             >
               {/* Image */}
               <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-gray-100 shrink-0">
                 <img
                   src={property.heroImage}
                   alt={property.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  width={400}
+                  height={208}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover outbound-card-media group-hover:scale-[1.03]"
                 />
               </div>
 
@@ -67,13 +72,13 @@ export const WhereToStaySection: React.FC<WhereToStaySectionProps> = ({
                   className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-[#C9A66B] text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
                 >
                   <span className="text-[#C9A66B]">{editorial("travel/WhereToStaySection.text7")}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B] outbound-arrow-shift group-hover:translate-x-1" />
                 </PageLink>
               </div>
 
             </div>
           ))}
-        </div>
+        </RevealSection>
 
         {/* Explore More Places to Stay Centred CTA */}
         <div className="text-center pt-2">

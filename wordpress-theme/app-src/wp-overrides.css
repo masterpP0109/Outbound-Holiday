@@ -1,0 +1,87 @@
+/* WordPress Admin Bar Compatibility + Scoped Gutenberg Content Support */
+.admin-bar header.sticky {
+  top: 32px;
+}
+
+@media (max-width: 782px) {
+  .admin-bar header.sticky {
+    top: 46px;
+  }
+}
+
+.outbound-wp-prose p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  color: #2F3A44;
+}
+
+.outbound-wp-prose h2,
+.outbound-wp-prose h3,
+.outbound-wp-prose h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: #0B5E8E;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.outbound-wp-prose ul,
+.outbound-wp-prose ol {
+  margin: 0.75rem 0 1.25rem 1.25rem;
+  list-style: disc;
+}
+
+.outbound-wp-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+}
+
+/*
+ * WordPress Core / Global-Styles / Plugin Typography Immunity
+ * Tailwind CSS v4 places `.text-white`, `.text-gray-100`, etc. inside `@layer utilities`,
+ * so any unlayered `h1, h2, p, a { color: ... }` rule in WordPress or third-party plugins
+ * beats `@layer utilities` unless reinforced unlayered here.
+ */
+#root .travel-hero .travel-hero-title,
+#root .travel-hero h1,
+#root .travel-hero .travel-hero-cta,
+#root :is(section, header)[class*="bg-[#0D2833]"] > * h1,
+#root :is(section, div)[class*="bg-[#0B5E8E]"][class*="text-white"] .text-white {
+  color: #ffffff;
+}
+
+#root .travel-hero .travel-hero-tagline {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+#root :is(section, header)[class*="bg-[#0D2833]"] p.text-gray-100,
+#root .text-gray-100 {
+  color: #f3f4f6;
+}
+
+#root :is(section, header)[class*="bg-[#0D2833]"] p.text-gray-200,
+#root .text-gray-200 {
+  color: #e5e7eb;
+}
+
+#root :is(section, header)[class*="bg-[#0D2833]"] .text-gray-300 {
+  color: #d1d5db;
+}
+
+#root .text-white\/95 {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+#root .text-white\/90 {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#root .text-white\/80 {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#root .text-white:not([class*="hover:text-"]),
+#root .text-white[class*="hover:text-"]:not(:hover) {
+  color: #ffffff;
+}

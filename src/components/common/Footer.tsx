@@ -1,4 +1,5 @@
-import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
+import { editorial, editorialOptional, editorialValue, registerContent } from "../../runtime/catalog";
+import { resolveAssetUrl } from "../../runtime/api";
 import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER, getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from './PageLink';
 import { sectionPath } from '../../routes';
@@ -20,6 +21,11 @@ export const Footer: React.FC<FooterProps> = ({
   onNavigateSection,
   onOpenPlanHoliday,
 }) => {
+  const isDefaultLogo = !outboundLogo || /outbound-holidays-logo/i.test(String(outboundLogo));
+  const footerLogoSrc = isDefaultLogo
+    ? resolveAssetUrl('/logo/outbound-holidays-logo-light.webp')
+    : String(outboundLogo);
+
   return (
     <footer className="bg-[#0B5E8E] text-white pt-16 pb-12 border-t border-white/10 relative overflow-hidden">
       {/* Subtle Panoramic Backdrop Image */}
@@ -37,14 +43,25 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Col 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center">
-              <img 
-                src={outboundLogo} 
-                alt={editorial("common/Footer.text2")}
-                className="h-14 sm:h-16 w-auto object-contain"
-                onError={() => {
-                  console.error('Logo failed to load from:', outboundLogo);
-                }}
-              />
+              <PageLink
+                href="/"
+                onClick={() => onNavigateSection('hero')}
+                aria-label="Outbound Holidays - Home"
+                className="inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 rounded-lg"
+              >
+                <img
+                  src={footerLogoSrc}
+                  width={1170}
+                  height={352}
+                  alt={editorial("common/Footer.text2")}
+                  className={`w-[210px] sm:w-[235px] lg:w-[250px] h-auto object-contain opacity-100 ${
+                    isDefaultLogo ? '' : 'brightness-0 invert'
+                  }`}
+                  onError={() => {
+                    console.error('Logo failed to load from:', footerLogoSrc);
+                  }}
+                />
+              </PageLink>
             </div>
 
             <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-sm">
@@ -125,14 +142,14 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <a
-                  href="https://g.page/r/CW8xeS7qssHkECE/review"
+                  href={editorialOptional("common/Footer.googleReviewsUrl", "https://g.page/r/CW8xeS7qssHkECE/review")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5"
                 >
-                  <span>Google Reviews</span>
+                  <span>{editorialOptional("common/Footer.googleReviewsLabel", "Google Reviews")}</span>
                   <span className="inline-flex items-center gap-0.5 text-[#FBBC05] text-[10px] font-bold">
-                    <Star className="w-3 h-3 fill-[#FBBC05] text-[#FBBC05]" /> 5.0
+                    <Star className="w-3 h-3 fill-[#FBBC05] text-[#FBBC05]" /> {editorialOptional("common/Footer.googleReviewsRating", "5.0")}
                   </span>
                 </a>
               </li>

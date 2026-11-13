@@ -72,6 +72,11 @@ model ContentRelation {
   @@id([fromId, toId, type])
   @@index([fromId, type, displayOrder])
 }
+model EnquirySequence {
+  seqDate   String   @id @db.Char(6)
+  lastSeq   Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
 model Enquiry {
   status String @default("new")
   updatedAt DateTime @updatedAt

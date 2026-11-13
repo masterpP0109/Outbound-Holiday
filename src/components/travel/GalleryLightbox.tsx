@@ -15,6 +15,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
   onClose,
 }) => {
   const [currentIndex, setCurrentIndex] = React.useState(initialIndex);
+  const touchStartX = React.useRef<number | null>(null);
 
   useEffect(() => {
     setCurrentIndex(initialIndex);
@@ -46,8 +47,23 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Image gallery lightbox"
+      className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center outbound-step-enter"
       onClick={onClose}
+      onTouchStart={(e) => {
+        touchStartX.current = e.touches[0]?.clientX ?? null;
+      }}
+      onTouchEnd={(e) => {
+        if (touchStartX.current === null || images.length <= 1) return;
+        const deltaX = (e.changedTouches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+        touchStartX.current = null;
+        if (Math.abs(deltaX) > 48) {
+          if (deltaX < 0) goToNext();
+          else goToPrev();
+        }
+      }}
     >
       {/* Close Button */}
       <button

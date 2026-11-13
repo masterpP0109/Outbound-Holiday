@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { getRouteOgImage, PageRoute, SITE_URL } from '../../routes';
+import { getWpConfig } from '../../runtime/api';
 
 export function PageMetadata({ route }: { route: PageRoute }) {
   useEffect(() => {
+    const activeSiteUrl = (getWpConfig()?.siteUrl || SITE_URL).replace(/\/+$/, '');
     document.title = route.title;
     const setMeta = (key: string, content: string, attribute = 'name') => {
       let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
@@ -21,7 +23,7 @@ export function PageMetadata({ route }: { route: PageRoute }) {
     setMeta('og:type', isArticle ? 'article' : 'website', 'property');
     setMeta('og:title', route.title, 'property');
     setMeta('og:description', route.description, 'property');
-    setMeta('og:url', SITE_URL + route.path, 'property');
+    setMeta('og:url', activeSiteUrl + route.path, 'property');
     if (ogImage) {
       setMeta('og:image', ogImage, 'property');
     }
@@ -31,7 +33,7 @@ export function PageMetadata({ route }: { route: PageRoute }) {
       canonical.rel = 'canonical';
       document.head.appendChild(canonical);
     }
-    canonical.href = SITE_URL + route.path;
+    canonical.href = activeSiteUrl + route.path;
   }, [route]);
   return null;
 }

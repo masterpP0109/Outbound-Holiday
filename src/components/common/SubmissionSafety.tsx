@@ -26,6 +26,6 @@ export function SubmissionSafety({submission,marketingConsent,onConsent,requireC
   <label className="flex items-start gap-2"><input type="checkbox" required={requireConsent} checked={marketingConsent} onChange={e=>onConsent(e.target.checked)}/><span>I agree to receive Outbound Holidays travel updates by email. I can unsubscribe at any time. {requireConsent?'':'This is optional and separate from my enquiry.'}</span></label>
   {key&&<div ref={widget}/>}
   {submission.pending&&<p role="status">Saving securely…</p>}
-  {submission.error&&<div role="alert"><p>{submission.error}</p>{Object.entries(submission.fields).map(([field,message])=><p key={field}>{field}: {message}</p>)}<p>Your inputs have been kept. Retry when ready.</p></div>}
+   {submission.error&&<div role="alert" className="rounded-lg bg-red-500/15 border border-red-300/40 px-3 py-2 text-xs leading-relaxed"><p className="font-medium">{submission.error}</p>{Object.entries(submission.fields).map(([field,message])=><p key={field}>{field}: {message}</p>)}<p className="opacity-90 mt-1">Your details are still here so you can try again.</p></div>}
  </div>;
 }

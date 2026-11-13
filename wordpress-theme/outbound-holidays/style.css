@@ -1,0 +1,16 @@
+/*
+Theme Name: Outbound Holidays
+Theme URI: https://www.outboundholidays.co.zw/
+Author: Outbound Holidays Engineering
+Author URI: https://www.outboundholidays.co.zw/
+Description: Standalone custom WordPress theme converting the Outbound Holidays Victoria Falls travel showcase, accommodation directory, experiences & packages catalogues, holiday builder, local travel blog, enquiry ledger, and double opt-in newsletter platform into a full WordPress CMS architecture with zero third-party plugin dependencies.
+Version: 1.0.0
+Requires at least: 6.4
+Tested up to: 6.7
+Requires PHP: 8.1
+License: Proprietary
+License URI: https://www.outboundholidays.co.zw/
+Text Domain: outbound-holidays
+*/
+
+/* Base custom styles live in assets/css/outbound-theme.css (compiled from Tailwind v4 + theme source rules). */

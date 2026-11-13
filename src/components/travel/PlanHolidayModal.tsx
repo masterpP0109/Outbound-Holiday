@@ -10,6 +10,7 @@ interface PlanHolidayModalProps {
   preselectedPackage?: TravelPackage | DetailedPackage | null;
   preselectedActivity?: string | null;
   preselectedAccommodation?: DetailedAccommodation | null;
+  preselectedPromotion?: { id: number; name: string } | null;
 }
 
 export const PlanHolidayModal: React.FC<PlanHolidayModalProps> = ({
@@ -18,6 +19,7 @@ export const PlanHolidayModal: React.FC<PlanHolidayModalProps> = ({
   preselectedPackage,
   preselectedActivity,
   preselectedAccommodation,
+  preselectedPromotion,
 }) => {
   return (
     <HolidayBuilderModal
@@ -26,6 +28,7 @@ export const PlanHolidayModal: React.FC<PlanHolidayModalProps> = ({
       preselectedPackage={preselectedPackage}
       preselectedActivity={preselectedActivity}
       preselectedAccommodation={preselectedAccommodation}
+      preselectedPromotion={preselectedPromotion}
     />
   );
 };

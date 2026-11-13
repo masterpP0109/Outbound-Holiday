@@ -7,7 +7,8 @@ import { Phone,Mail,MapPin,Clock,Send,Check } from 'lucide-react';
 import { WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 
-export const ContactUsView: React.FC = () => {
+export const ContactUsView: React.FC<{ headingLevel?: 'h1' | 'h2' }> = ({ headingLevel = 'h2' }) => {
+  const Heading = headingLevel;
   const submission = useSubmission('enquiries');
   const [marketingConsent,setMarketingConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -34,8 +35,8 @@ export const ContactUsView: React.FC = () => {
         <div className="text-center max-w-xl mx-auto space-y-2">
           <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
             {editorial("travel/ContactUsView.text2")}</span>
-          <h1 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">
-            {editorial("travel/ContactUsView.text3")}</h1>
+          <Heading className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">
+            {editorial("travel/ContactUsView.text3")}</Heading>
           <p className="text-xs sm:text-sm text-[#2F3A44]/80 leading-relaxed">
             {editorial("travel/ContactUsView.text4")}</p>
         </div>

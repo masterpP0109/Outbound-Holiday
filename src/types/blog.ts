@@ -123,6 +123,7 @@ export interface WordPressRestPost {
   content: { rendered: string };
   categories?: number[];
   tags?: number[];
+  sections?: GuideSection[];
   acf?: {
     reading_time?: string;
     location?: string;
@@ -140,6 +141,7 @@ export interface WordPressRestPost {
     author?: Array<{
       id: number;
       name: string;
+      role?: string;
       description?: string;
       link?: string;
       avatar_urls?: Record<string, string>;

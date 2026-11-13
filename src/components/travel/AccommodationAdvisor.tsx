@@ -300,7 +300,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {(editorialValue("travel/AccommodationAdvisor.section2", {})).map(item => (
+                {(editorialValue<Array<{ id: AdvisorAnswers['firstVisit']; label: string; sub: string }>>("travel/AccommodationAdvisor.section2", {})).map(item => (
                   <button
                     key={item.id}
                     onClick={() => setAnswers(prev => ({ ...prev, firstVisit: item.id }))}
@@ -331,7 +331,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-                {(editorialValue("travel/AccommodationAdvisor.section3", {Sparkles,Compass,Heart,Users,Home})).map(item => {
+                {(editorialValue<Array<{ id: AdvisorAnswers['travellerGroup']; label: string; icon: React.ComponentType<{ className?: string }> }>>("travel/AccommodationAdvisor.section3", {Sparkles,Compass,Heart,Users,Home})).map(item => {
                   const Icon = item.icon;
                   const isSel = answers.travellerGroup === item.id;
                   return (
@@ -368,7 +368,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="space-y-3">
-                {(editorialValue("travel/AccommodationAdvisor.section4", {})).map(item => {
+                {(editorialValue<Array<{ id: AdvisorAnswers['budgetLevel']; title: string; range: string; desc: string }>>("travel/AccommodationAdvisor.section4", {})).map(item => {
                   const isSel = answers.budgetLevel === item.id;
                   return (
                     <button
@@ -408,7 +408,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {PRIORITY_OPTIONS.map(opt => {
+                {(PRIORITY_OPTIONS as Array<{ id: string; label: string }>).map(opt => {
                   const isChecked = answers.priorities.includes(opt.id);
                   return (
                     <button
@@ -443,7 +443,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {(editorialValue("travel/AccommodationAdvisor.section5", {})).map(item => {
+                {(editorialValue<Array<{ id: AdvisorAnswers['style']; title: string; desc: string }>>("travel/AccommodationAdvisor.section5", {})).map(item => {
                   const isSel = answers.style === item.id;
                   return (
                     <button
@@ -477,7 +477,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
               </div>
 
               <div className="space-y-3">
-                {(editorialValue("travel/AccommodationAdvisor.section6", {})).map(item => {
+                {(editorialValue<Array<{ id: AdvisorAnswers['timeSpent']; title: string; desc: string }>>("travel/AccommodationAdvisor.section6", {})).map(item => {
                   const isSel = answers.timeSpent === item.id;
                   return (
                     <button

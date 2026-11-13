@@ -7,21 +7,135 @@
 /* Static cinematic hero section matching Micato-inspired calm layout */
 .travel-hero {
   margin-top: 0;
-  min-height: calc(85svh - var(--header-height, 64px));
-  padding: clamp(32px, 5vh, 64px) clamp(20px, 5vw, 80px);
+  min-height: 88svh;
+  padding: clamp(96px, 14vh, 132px) clamp(20px, 5vw, 80px) clamp(32px, 5vh, 64px);
 }
 
 @media (max-width: 640px) {
   .travel-hero {
-    min-height: clamp(480px, 80svh, 600px);
-    padding: 36px 20px 32px;
+    min-height: clamp(520px, 84svh, 660px);
+    padding: 96px 20px 32px;
   }
 }
 
 @media (min-width: 1024px) {
   .travel-hero {
-    min-height: calc(86svh - var(--header-height, 64px));
-    padding: 56px clamp(36px, 5vw, 88px);
+    min-height: 88svh;
+    padding: 120px clamp(36px, 5vw, 88px) 56px;
+  }
+}
+
+/* Graceful fallback where backdrop-filter is unsupported */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .outbound-glass-pill {
+    background-color: rgba(13, 40, 51, 0.92) !important;
+  }
+  .outbound-header-frosted {
+    background-color: rgba(255, 255, 255, 0.97) !important;
+  }
+}
+
+/* Subtle diagonal Deep Navy veil behind the header logo on the hero */
+.header-logo-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.header-logo-hero::before {
+  content: "";
+  position: absolute;
+  inset: -14px -22px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    125deg,
+    rgba(13, 40, 51, 0) 0%,
+    rgba(13, 40, 51, 0.10) 20%,
+    rgba(13, 40, 51, 0.30) 48%,
+    rgba(13, 40, 51, 0.18) 70%,
+    rgba(13, 40, 51, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    black 30%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse at center,
+    black 30%,
+    transparent 100%
+  );
+}
+
+/* Responsive Header & Logo Sizing */
+.site-header-inner {
+  min-height: 64px;
+  padding-inline: 16px;
+  gap: 12px;
+}
+
+.site-logo-img {
+  display: block;
+  width: clamp(220px, 19vw, 305px);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (min-width: 1280px) {
+  .site-header-inner {
+    padding-inline: 32px;
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .site-header-inner {
+    padding-inline: 40px;
+    gap: 36px;
+  }
+  .site-logo-img {
+    width: clamp(280px, 20vw, 310px);
+  }
+}
+
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .site-header-inner {
+    padding-inline: 28px;
+  }
+  .site-logo-img {
+    width: clamp(220px, 22vw, 255px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .site-header-inner {
+    padding-inline: 24px;
+  }
+  .site-logo-img {
+    width: clamp(165px, 22vw, 190px);
+  }
+}
+
+@media (max-width: 767px) {
+  .site-header-inner {
+    min-height: 64px;
+    padding-inline: 16px;
+    gap: 12px;
+  }
+  .site-logo-img {
+    width: 130px;
+  }
+}
+
+@media (max-width: 374px) {
+  .site-header-inner {
+    min-height: 60px;
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .site-logo-img {
+    width: 115px;
   }
 }
 
@@ -33,6 +147,13 @@
     --sunset-orange: #E67E22;
     --clean-white: #FFFFFF;
     --charcoal-grey: #2F3A44;
+
+    /* Unified Premium Motion Tokens */
+    --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --dur-fast: 180ms;
+    --dur-base: 320ms;
+    --dur-slow: 560ms;
   }
 
   html, body {
@@ -90,4 +211,79 @@
 
 .bg-charcoal-grey { background-color: #2F3A44; }
 .text-charcoal-grey { color: #2F3A44; }
+
+/* Unified Motion System (GPU transform + opacity only) */
+@keyframes outboundHeroEnter {
+  from {
+    opacity: 0.01;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes outboundStepFade {
+  from {
+    opacity: 0;
+    transform: translate3d(10px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.outbound-hero-stagger-1 {
+  animation: outboundHeroEnter var(--dur-slow) var(--ease-premium) 0ms both;
+}
+.outbound-hero-stagger-2 {
+  animation: outboundHeroEnter var(--dur-slow) var(--ease-premium) 80ms both;
+}
+.outbound-hero-stagger-3 {
+  animation: outboundHeroEnter var(--dur-slow) var(--ease-premium) 160ms both;
+}
+
+.outbound-reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition: opacity var(--dur-slow) var(--ease-premium), transform var(--dur-slow) var(--ease-premium);
+  will-change: opacity, transform;
+}
+.outbound-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.outbound-step-enter,
+.animate-fade-in {
+  animation: outboundStepFade var(--dur-base) var(--ease-premium) both;
+}
+
+.outbound-card-media {
+  transition: transform var(--dur-slow) var(--ease-premium);
+  will-change: transform;
+}
+
+.outbound-arrow-shift {
+  transition: transform var(--dur-fast) var(--ease-snappy);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outbound-hero-stagger-1,
+  .outbound-hero-stagger-2,
+  .outbound-hero-stagger-3,
+  .outbound-step-enter,
+  .animate-fade-in {
+    animation: none !important;
+  }
+  .outbound-reveal,
+  .outbound-card-media,
+  .outbound-arrow-shift {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
 

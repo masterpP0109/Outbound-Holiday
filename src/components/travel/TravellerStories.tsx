@@ -1,7 +1,20 @@
 import React from 'react';
 import { Star, Sparkles, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { editorialOptional } from '../../runtime/catalog';
 
 export const TravellerStories: React.FC = () => {
+  const badge = editorialOptional('travel/TravellerStories.badge', 'Google Verified Reviews');
+  const heading = editorialOptional('travel/TravellerStories.heading', 'What Our Guests Say');
+  const subheading = editorialOptional(
+    'travel/TravellerStories.subheading',
+    'Verified local Victoria Falls holiday experiences. Check our live reviews on Google or share your own journey with us.'
+  );
+  const ratingScore = editorialOptional('travel/TravellerStories.score', '5.0');
+  const cardTitle = editorialOptional('travel/TravellerStories.cardTitle', 'Google Verified Reviews');
+  const verifiedNote = editorialOptional('travel/TravellerStories.verifiedNote', 'Verified local Victoria Falls holiday experiences');
+  const ctaLabel = editorialOptional('travel/TravellerStories.ctaLabel', 'Read & Review on Google');
+  const reviewUrl = editorialOptional('travel/TravellerStories.reviewUrl', 'https://g.page/r/CW8xeS7qssHkECE/review');
+
   return (
     <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-[#FDFBF7] border-b border-gray-200/80">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -10,15 +23,15 @@ export const TravellerStories: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
-            <span>Google Verified Reviews</span>
+            <span>{badge}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E] leading-tight">
-            What Our Guests Say
+            {heading}
           </h2>
 
           <p className="text-xs sm:text-sm text-gray-600 max-w-xl mx-auto leading-relaxed">
-            Verified local Victoria Falls holiday experiences. Check our live reviews on Google or share your own journey with us.
+            {subheading}
           </p>
         </div>
 
@@ -51,7 +64,7 @@ export const TravellerStories: React.FC = () => {
             {/* Score & Stars */}
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2.5">
-                <span className="font-extrabold text-gray-900 text-4xl tracking-tight">5.0</span>
+                <span className="font-extrabold text-gray-900 text-4xl tracking-tight">{ratingScore}</span>
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-6 h-6 fill-[#FBBC05] text-[#FBBC05]" />
@@ -59,23 +72,23 @@ export const TravellerStories: React.FC = () => {
                 </div>
               </div>
               <h3 className="text-lg font-bold text-gray-900">
-                Google Verified Reviews
+                {cardTitle}
               </h3>
               <p className="text-xs sm:text-sm text-gray-500 flex items-center justify-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-[#34A853] shrink-0" />
-                <span>Verified local Victoria Falls holiday experiences</span>
+                <span>{verifiedNote}</span>
               </p>
             </div>
 
             {/* CTA Button */}
             <div className="pt-2">
               <a
-                href="https://g.page/r/CW8xeS7qssHkECE/review"
+                href={reviewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2.5 bg-[#0B5E8E] hover:bg-[#094c73] active:bg-[#073c5b] text-white font-bold text-sm px-8 py-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
               >
-                <span>Read & Review on Google</span>
+                <span>{ctaLabel}</span>
                 <ExternalLink className="w-4 h-4 text-[#C9A66B]" />
               </a>
             </div>

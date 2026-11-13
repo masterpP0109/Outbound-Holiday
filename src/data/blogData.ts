@@ -1,4 +1,5 @@
 import { ALL_GUIDE_ARTICLES, registerContent } from '../runtime/catalog';
+import { resolveAssetUrl } from '../runtime/api';
 import type { GuideArticle } from '../types/guide';
 import type {
   BlogCategory,
@@ -304,8 +305,9 @@ export function adaptWordPressPostToBlogPost(
     subtitle: wpPost.acf?.subtitle,
     excerpt,
     contentHtml: wpPost.content.rendered,
+    sections: wpPost.sections && wpPost.sections.length > 0 ? wpPost.sections : undefined,
     featuredImage: {
-      url: media?.source_url || '/Experiences/Guided Tour of the Falls_/5-4.jpg',
+      url: resolveAssetUrl(media?.source_url || '/Experiences/Guided Tour of the Falls_/5-4.jpg'),
       alt: media?.alt_text || `${title} — Victoria Falls`,
       width: media?.media_details?.width,
       height: media?.media_details?.height,
@@ -317,6 +319,7 @@ export function adaptWordPressPostToBlogPost(
       ? {
           id: wpAuthor.id,
           name: wpAuthor.name,
+          role: wpAuthor.role,
           bio: wpAuthor.description || undefined,
           avatarUrl:
             wpAuthor.avatar_urls?.['96'] ||
@@ -467,6 +470,21 @@ export let BLOG_POSTS: BlogPost[] = [];
 export let BLOG_DATA_ADAPTER: BlogDataSource = createBlogDataAdapter([]);
 
 registerContent(() => {
+  if (typeof document !== 'undefined') {
+    const wpEl = document.getElementById('outbound-wp-posts');
+    if (wpEl && wpEl.textContent) {
+      try {
+        const parsed = JSON.parse(wpEl.textContent) as WordPressRestPost[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          BLOG_POSTS = parsed.map(adaptWordPressPostToBlogPost);
+          BLOG_DATA_ADAPTER = createBlogDataAdapter(BLOG_POSTS, 'wordpress-rest');
+          return;
+        }
+      } catch {
+        /* Fallback cleanly to adapted travel guide posts below. */
+      }
+    }
+  }
   const articles = Object.values(ALL_GUIDE_ARTICLES);
   BLOG_POSTS = articles.map(adaptGuideArticleToBlogPost);
   BLOG_DATA_ADAPTER = createBlogDataAdapter(BLOG_POSTS, 'guide-adapter');

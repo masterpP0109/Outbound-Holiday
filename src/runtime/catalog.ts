@@ -38,6 +38,8 @@ export function installContent(next:ContentSnapshot){
 }
 export function getSnapshot(){if(!snapshot)throw new Error('Content has not been loaded');return snapshot;}
 export function editorial(key:string):string { const value=getSnapshot().site.editorial.strings[key];if(value===undefined)throw new Error('Missing editorial content: '+key);return value; }
+export function editorialOptional(key:string,fallback=''):string { if(!snapshot)return fallback; const value=snapshot.site.editorial.strings[key]; return typeof value==='string'&&value.length>0?value:fallback; }
+export function editorialValueOptional<T=any>(key:string,fallback:T):T { if(!snapshot)return fallback; const value=snapshot.site.editorial.structures[key]; return value!==undefined?(value as T):fallback; }
 export function editorialValue<T=any>(key:string,icons:Record<string,unknown>={}):T {
   const value=getSnapshot().site.editorial.structures[key];if(value===undefined)throw new Error('Missing editorial section: '+key);
   const hydrate=(v:any):any=>Array.isArray(v)?v.map(hydrate):v&&typeof v==='object'?v.$element?createElement(v.$element.name==='#fragment'?Fragment:v.$element.name==='br'?'br':icons[v.$element.name] as any,v.$element.props,...v.$element.children.map(hydrate)):v.$icon?(icons[v.$icon]??(()=>{throw new Error('Unsupported editorial icon: '+v.$icon);})):Object.fromEntries(Object.entries(v).map(([k,x])=>[k,hydrate(x)])):v;

@@ -1,4 +1,5 @@
 import { EnquiryConfirmation } from '../common/EnquiryConfirmation';
+import { resolveAssetUrl } from '../../runtime/api';
 import { editorialFormat } from "../../runtime/catalog";
 import { useSubmission, SubmissionSafety } from '../common/SubmissionSafety';
 import { ACTIVITIES_DATA, STAY_TIERS, ALL_EXPERIENCES } from '../../runtime/catalog';
@@ -41,6 +42,7 @@ interface HolidayBuilderModalProps {
   preselectedPackage?: TravelPackage | DetailedPackage | null;
   preselectedActivity?: string | null;
   preselectedAccommodation?: DetailedAccommodation | null;
+  preselectedPromotion?: { id: number; name: string } | null;
 }
 
 
@@ -51,6 +53,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   preselectedPackage,
   preselectedActivity,
   preselectedAccommodation,
+  preselectedPromotion,
 }) => {
   // Navigation & Step state
   const [step, setStep] = useState<number>(0); // 0 = Entry mode selection, 1 = Intent, 2 = Party, 3 = Timing, 4 = Stay, 5 = Activities, 6 = Logistics, 7 = Itinerary Review, 8 = Contact
@@ -255,7 +258,44 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const saved=await submission.save({name:fullName,email,phone,message:notes,source:'holiday-builder',marketingConsent,trip:{preferredContact:'email',displayedEstimate:{minimumUSD:estimatedMinUSD,maximumUSD:estimatedMaxUSD,currency:'USD',clientUnverified:true},itineraryDraft:[{day:editorial('travel/HolidayBuilderModal.text151'),title:editorial('travel/HolidayBuilderModal.text152'),description:editorial('travel/HolidayBuilderModal.text153')+selectedStayTierObj.name+editorial('travel/HolidayBuilderModal.text154')},{day:editorial('travel/HolidayBuilderModal.text155'),title:editorial('travel/HolidayBuilderModal.text156'),description:editorial('travel/HolidayBuilderModal.text157')},...(nightsCount>=3?[{day:editorial('travel/HolidayBuilderModal.text158'),title:editorial('travel/HolidayBuilderModal.text159'),description:editorial('travel/HolidayBuilderModal.text160')}]:[]),{day:editorial('travel/HolidayBuilderModal.text161'),title:editorial('travel/HolidayBuilderModal.text162'),description:editorial('travel/HolidayBuilderModal.text163')}],intent:tripIntent,partyType,adults:adultsCount,children:kidsCount,nights:nightsCount,travelDates:travelSeason,stayTierId,stayPreferences,activityIds:selectedActivityIds,experienceIds:preselectedActivity?[preselectedActivity]:[],transportType,accommodationId:preselectedAccommodation?.id,packageId:preselectedPackage?.id}});
+    const preselectedExperienceTitle = preselectedActivity
+      ? (ALL_EXPERIENCES.find((exp) => exp.id === preselectedActivity)?.title ?? preselectedActivity)
+      : undefined;
+    const saved=await submission.save({
+      name:fullName,
+      email,
+      phone,
+      message:notes,
+      source:'holiday-builder',
+      marketingConsent,
+      promotionId: preselectedPromotion?.id,
+      promotionName: preselectedPromotion?.name,
+      trip:{
+        entryMode:'guided',
+        preferredContact:'email',
+        displayedEstimate:{minimumUSD:estimatedMinUSD,maximumUSD:estimatedMaxUSD,currency:'USD',clientUnverified:true},
+        itineraryDraft:[{day:editorial('travel/HolidayBuilderModal.text151'),title:editorial('travel/HolidayBuilderModal.text152'),description:editorial('travel/HolidayBuilderModal.text153')+selectedStayTierObj.name+editorial('travel/HolidayBuilderModal.text154')},{day:editorial('travel/HolidayBuilderModal.text155'),title:editorial('travel/HolidayBuilderModal.text156'),description:editorial('travel/HolidayBuilderModal.text157')},...(nightsCount>=3?[{day:editorial('travel/HolidayBuilderModal.text158'),title:editorial('travel/HolidayBuilderModal.text159'),description:editorial('travel/HolidayBuilderModal.text160')}]:[]),{day:editorial('travel/HolidayBuilderModal.text161'),title:editorial('travel/HolidayBuilderModal.text162'),description:editorial('travel/HolidayBuilderModal.text163')}],
+        intent:tripIntent,
+        partyType,
+        adults:adultsCount,
+        children:kidsCount,
+        nights:nightsCount,
+        travelDates:travelSeason,
+        stayTierId,
+        stayTierName:selectedStayTierObj.name,
+        stayPreferences,
+        activityIds:selectedActivityIds,
+        selectedActivities:selectedActivitiesList.map((act)=>({id:act.id,title:act.title,duration:act.duration,unitPriceUSD:Number((act as any).priceAmount??(act as any).priceUSD??0)})),
+        experienceIds:preselectedActivity?[preselectedActivity]:[],
+        preselectedExperienceTitle,
+        transportType,
+        accommodationId:preselectedAccommodation?.id,
+        accommodationName:preselectedAccommodation?.name,
+        accommodationCategory:preselectedAccommodation?.category,
+        packageId:preselectedPackage?.id,
+        packageTitle:preselectedPackage?.title,
+      }
+    });
     if(saved)setSubmitted(true);
   };
 
@@ -280,6 +320,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       ? notes
       : `Quick enquiry: Interested in a ${tripIntent} Victoria Falls holiday for ${adultsCount} adult(s) (${partyType}) during ${travelSeason} season.`;
 
+    const preselectedExperienceTitle = preselectedActivity
+      ? (ALL_EXPERIENCES.find((exp) => exp.id === preselectedActivity)?.title ?? preselectedActivity)
+      : undefined;
+
     const saved = await submission.save({
       name: fullName,
       email,
@@ -287,7 +331,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       message: quickMessage,
       source: 'holiday-builder',
       marketingConsent,
+      promotionId: preselectedPromotion?.id,
+      promotionName: preselectedPromotion?.name,
       trip: {
+        entryMode: 'quick',
         preferredContact: phone ? 'whatsapp' : 'email',
         displayedEstimate: {
           minimumUSD: estimatedMinUSD,
@@ -302,12 +349,23 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         nights: nightsCount,
         travelDates: travelSeason,
         stayTierId,
+        stayTierName: selectedStayTierObj.name,
         stayPreferences,
         activityIds: selectedActivityIds,
+        selectedActivities: selectedActivitiesList.map((act) => ({
+          id: act.id,
+          title: act.title,
+          duration: act.duration,
+          unitPriceUSD: Number((act as any).priceAmount ?? (act as any).priceUSD ?? 0),
+        })),
         experienceIds: preselectedActivity ? [preselectedActivity] : [],
+        preselectedExperienceTitle,
         transportType,
         accommodationId: preselectedAccommodation?.id,
+        accommodationName: preselectedAccommodation?.name,
+        accommodationCategory: preselectedAccommodation?.category,
         packageId: preselectedPackage?.id,
+        packageTitle: preselectedPackage?.title,
       },
     });
     if (saved) {
@@ -336,9 +394,15 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       )}
       {preselectedActivity&&<p className="bg-blue-50 px-4 py-2 text-sm">Requested experience: {ALL_EXPERIENCES.find(e=>e.id===preselectedActivity)?.title??preselectedActivity}. Your specialist will include this request in the quote; additional catalogue experiences are priced separately from the builder estimate.</p>}
       {/* 1. IMMERSIVE TOP NAVIGATION BAR */}
-      <header className="bg-[#0D5C75] text-white px-4 sm:px-8 py-3.5 flex items-center justify-between border-b border-white/10 shrink-0 shadow-md">
+      <header className="bg-[#0D5C75] text-white px-4 sm:px-8 py-3 flex items-center justify-between border-b border-white/10 shrink-0 shadow-md">
           <div className="flex items-center">
-            <img src={outboundLogo} alt={editorial("travel/HolidayBuilderModal.text61")} className="h-12 sm:h-14 w-auto object-contain" />
+            <img
+              src={!outboundLogo || /outbound-holidays-logo/i.test(String(outboundLogo)) ? resolveAssetUrl('/logo/outbound-holidays-logo-light.webp') : String(outboundLogo)}
+              width={1170}
+              height={352}
+              alt={editorial("travel/HolidayBuilderModal.text61")}
+              className="w-[136px] sm:w-[170px] h-auto object-contain opacity-100"
+            />
           </div>
 
         {/* Step Indicator */}
@@ -368,20 +432,68 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
         <button
           onClick={onClose}
-          className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-white border border-white/20"
+          className="min-h-[40px] flex items-center gap-1.5 bg-white/12 hover:bg-white/22 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all text-white border border-white/20 cursor-pointer"
         >
           <span>{editorial("travel/HolidayBuilderModal.text64")}</span>
           <X className="w-4 h-4" />
         </button>
       </header>
 
-      {/* Top Progress Bar */}
+      {/* Top Progress Bar & Clickable Step Navigation */}
       {step > 0 && !submitted && (
-        <div className="bg-gray-200 h-1.5 w-full shrink-0">
-          <div
-            className="bg-[#D97706] h-1.5 transition-all duration-500"
-            style={{ width: `${progressPercent}%` }}
-          />
+        <div className="bg-white border-b border-gray-200 shrink-0">
+          <div className="bg-gray-200 h-1.5 w-full">
+            <div
+              className="bg-[#E67E22] h-1.5 transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <nav
+            aria-label="Holiday builder steps"
+            className="max-w-6xl mx-auto px-3 sm:px-6 py-2 flex items-center gap-1.5 overflow-x-auto"
+          >
+            {[
+              { n: 1, label: 'Vision' },
+              { n: 2, label: 'Party' },
+              { n: 3, label: 'Dates' },
+              { n: 4, label: 'Stay' },
+              { n: 5, label: 'Experiences' },
+              { n: 6, label: 'Logistics' },
+              { n: 7, label: 'Itinerary' },
+              { n: 8, label: 'Send Plan' },
+            ].map((s) => {
+              const isCurrent = step === s.n;
+              const isDone = step > s.n;
+              return (
+                <button
+                  key={s.n}
+                  type="button"
+                  onClick={() => setStep(s.n)}
+                  aria-current={isCurrent ? 'step' : undefined}
+                  className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    isCurrent
+                      ? 'bg-[#0D5C75] text-white shadow-xs'
+                      : isDone
+                        ? 'bg-[#3F6B3C]/12 text-[#3F6B3C] hover:bg-[#3F6B3C]/20'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center ${
+                      isCurrent
+                        ? 'bg-[#E67E22] text-white'
+                        : isDone
+                          ? 'bg-[#3F6B3C] text-white'
+                          : 'bg-white text-gray-600'
+                    }`}
+                  >
+                    {isDone ? '✓' : s.n}
+                  </span>
+                  <span>{s.label}</span>
+                </button>
+              );
+            })}
+          </nav>
         </div>
       )}
 
@@ -399,9 +511,9 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   <span>Victoria Falls Travel Specialist</span>
                 </div>
 
-                <h1 className="text-2xl sm:text-4xl font-bold font-serif text-[#0D5C75] leading-tight">
+                <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#0D5C75] leading-tight">
                   Start Planning Your Holiday
-                </h1>
+                </h2>
 
                 <p className="text-gray-600 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
                   Get a personalized quote in 60 seconds, or use our interactive builder to design your day-by-day itinerary.
@@ -676,7 +788,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {editorialValue("travel/HolidayBuilderModal.section1", {}).map((item) => (
+                {editorialValue<Array<{ id: string; icon: string; title: string; desc: string }>>("travel/HolidayBuilderModal.section1", {}).map((item) => (
                   <button
                     key={item.id}
                     onClick={() => setTripIntent(item.id)}
@@ -720,7 +832,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {(editorialValue("travel/HolidayBuilderModal.section2", {})).map((p) => (
+                {editorialValue<Array<{ id: 'family' | 'couple' | 'solo' | 'friends'; icon: string; label: string }>>("travel/HolidayBuilderModal.section2", {}).map((p) => (
                   <button
                     key={p.id}
                     onClick={() => {
@@ -808,7 +920,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                 <label className="block text-xs font-bold text-[#0D5C75] uppercase tracking-wider mb-2">
                   {editorial("travel/HolidayBuilderModal.text108")}</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {editorialValue("travel/HolidayBuilderModal.section3", {}).map((opt) => (
+                  {editorialValue<Array<{ nights: number; badge: string; label: string }>>("travel/HolidayBuilderModal.section3", {}).map((opt) => (
                     <button
                       key={opt.nights}
                       onClick={() => setNightsCount(opt.nights)}
@@ -831,7 +943,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                 <label className="block text-xs font-bold text-[#0D5C75] uppercase tracking-wider mb-2">
                   {editorial("travel/HolidayBuilderModal.text113")}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {editorialValue("travel/HolidayBuilderModal.section4", {}).map((season) => (
+                  {editorialValue<Array<{ id: string; title: string; desc: string }>>("travel/HolidayBuilderModal.section4", {}).map((season) => (
                     <button
                       key={season.id}
                       onClick={() => setTravelSeason(season.id)}
@@ -915,7 +1027,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                 <label className="block text-xs font-bold text-[#0D5C75] uppercase tracking-wider mb-2">
                   {editorial("travel/HolidayBuilderModal.text126")}</label>
                 <div className="flex flex-wrap gap-2">
-                  {editorialValue("travel/HolidayBuilderModal.section5", {}).map((pref) => {
+                  {editorialValue<string[]>("travel/HolidayBuilderModal.section5", {}).map((pref) => {
                     const isSelected = stayPreferences.includes(pref);
                     return (
                       <button
@@ -1040,7 +1152,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               </div>
 
               <div className="space-y-3">
-                {editorialValue("travel/HolidayBuilderModal.section6", {}).map((opt) => (
+                {editorialValue<Array<{ id: string; title: string; desc: string; badge: string }>>("travel/HolidayBuilderModal.section6", {}).map((opt) => (
                   <button
                     key={opt.id}
                     onClick={() => setTransportType(opt.id)}
@@ -1185,8 +1297,20 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     {editorial("travel/HolidayBuilderModal.text180")}<strong className="text-[#0D5C75]">{fullName || 'Valued Guest'}</strong>{editorial("travel/HolidayBuilderModal.text181")}</p>
 
                   <div className="p-4 bg-[#FDFBF7] rounded-xl border border-gray-200 text-left text-xs space-y-1.5">
+                    <p><strong>Vision:</strong> {tripIntent.replaceAll('-', ' ')}</p>
                     <p><strong>{editorial("travel/HolidayBuilderModal.text182")}</strong> {adultsCount} {editorial("travel/HolidayBuilderModal.text183")}{kidsCount} {editorial("travel/HolidayBuilderModal.text184")}{partyType})</p>
+                    <p><strong>Travel Window:</strong> {travelSeason.replaceAll('-', ' ')}</p>
                     <p><strong>{editorial("travel/HolidayBuilderModal.text185")}</strong> {nightsCount} {editorial("travel/HolidayBuilderModal.text186")}{selectedStayTierObj.name})</p>
+                    {stayPreferences.length > 0 && (
+                      <p><strong>Stay Preferences:</strong> {stayPreferences.join(', ')}</p>
+                    )}
+                    {preselectedPackage && (
+                      <p><strong>Selected Package:</strong> {preselectedPackage.title}</p>
+                    )}
+                    {preselectedAccommodation && (
+                      <p><strong>Preferred Property:</strong> {preselectedAccommodation.name}</p>
+                    )}
+                    <p><strong>Transfers:</strong> {transportType.replaceAll('-', ' ')}</p>
                     <p><strong>{editorial("travel/HolidayBuilderModal.text187")}{selectedActivitiesList.length}):</strong> {selectedActivitiesList.map(a => a.title).join(', ')}</p>
                     <p><strong>{editorial("travel/HolidayBuilderModal.text188")}</strong> ${estimatedMinUSD} - ${estimatedMaxUSD} {editorial("travel/HolidayBuilderModal.text189")}</p>
                   </div>
@@ -1299,26 +1423,28 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             </div>
           )}
 
-          {/* BACK & NEXT NAVIGATION BUTTONS BAR */}
+          {/* DESKTOP STICKY BACK & NEXT NAVIGATION BUTTONS BAR */}
           {step > 0 && !submitted && (
-            <div className="pt-6 border-t border-gray-200 flex items-center justify-between">
+            <div className="hidden lg:flex sticky bottom-0 z-20 -mx-10 px-10 py-4 bg-[#FDFBF7]/95 backdrop-blur-md border-t border-gray-200 items-center justify-between gap-4">
               <button
                 type="button"
                 onClick={() => setStep(Math.max(1, step - 1))}
-                className="px-4 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 flex items-center gap-1.5 transition-colors"
+                className="min-h-[44px] px-5 py-2.5 rounded-full border border-gray-300 bg-white text-xs font-bold text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>{editorial("travel/HolidayBuilderModal.text205")}</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => setStep(Math.min(8, step + 1))}
-                className="px-8 py-3 rounded-xl bg-[#0D5C75] hover:bg-[#0A485C] text-white text-xs font-bold shadow-md flex items-center gap-2 transition-all"
-              >
-                <span>{step === 7 ? 'Continue to Send Plan' : 'Continue'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {step < 8 && (
+                <button
+                  type="button"
+                  onClick={() => setStep(Math.min(8, step + 1))}
+                  className="min-h-[48px] px-8 py-3 rounded-full bg-[#E67E22] hover:bg-[#d36e17] active:bg-[#c25f10] text-white text-sm font-bold shadow-[0_6px_20px_rgba(230,126,34,0.35)] hover:shadow-[0_8px_24px_rgba(230,126,34,0.45)] flex items-center gap-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <span>{step === 7 ? 'Continue to Send Plan' : 'Continue'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -1412,19 +1538,24 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         )}
       </div>
 
-      {/* MOBILE BOTTOM COLLAPSIBLE SUMMARY BAR */}
+      {/* MOBILE BOTTOM COLLAPSIBLE SUMMARY + PROMINENT ACTION DOCK */}
       {step > 0 && !submitted && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-2xl">
+        <div
+          className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-8px_30px_rgba(13,40,51,0.14)]"
+          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        >
           <button
+            type="button"
             onClick={() => setMobileSummaryExpanded(!mobileSummaryExpanded)}
-            className="w-full p-3 bg-[#0D5C75] text-white flex items-center justify-between text-xs font-bold"
+            className="w-full px-4 py-2.5 bg-[#0D5C75] text-white flex items-center justify-between text-xs font-bold"
           >
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#D97706]" />
+              <Sparkles className="w-4 h-4 text-[#C9A66B]" />
               <span>
-                {editorial("travel/HolidayBuilderModal.text222")}{estimatedMinUSD} – ${estimatedMaxUSD} {editorial("travel/HolidayBuilderModal.text223")}</span>
+                {editorial("travel/HolidayBuilderModal.text222")}{estimatedMinUSD} – ${estimatedMaxUSD} {editorial("travel/HolidayBuilderModal.text223")}
+              </span>
             </div>
-            <div className="flex items-center gap-1 text-[#D97706]">
+            <div className="flex items-center gap-1 text-[#C9A66B]">
               <span>{selectedActivitiesList.length} {editorial("travel/HolidayBuilderModal.text224")}</span>
               {mobileSummaryExpanded ? (
                 <ChevronDown className="w-4 h-4" />
@@ -1435,17 +1566,41 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           </button>
 
           {mobileSummaryExpanded && (
-            <div className="p-4 space-y-2 bg-gray-50 text-xs max-h-48 overflow-y-auto">
+            <div className="p-4 space-y-2 bg-gray-50 text-xs max-h-44 overflow-y-auto border-b border-gray-200">
               <p>
-                <strong>{editorial("travel/HolidayBuilderModal.text225")}</strong> {adultsCount} {editorial("travel/HolidayBuilderModal.text226")}{kidsCount} {editorial("travel/HolidayBuilderModal.text227")}</p>
+                <strong>{editorial("travel/HolidayBuilderModal.text225")}</strong> {adultsCount} {editorial("travel/HolidayBuilderModal.text226")}{kidsCount} {editorial("travel/HolidayBuilderModal.text227")}
+              </p>
               <p>
-                <strong>{editorial("travel/HolidayBuilderModal.text228")}</strong> {selectedStayTierObj.name} ({nightsCount} {editorial("travel/HolidayBuilderModal.text229")}</p>
+                <strong>{editorial("travel/HolidayBuilderModal.text228")}</strong> {selectedStayTierObj.name} ({nightsCount} {editorial("travel/HolidayBuilderModal.text229")}
+              </p>
               <p>
                 <strong>{editorial("travel/HolidayBuilderModal.text230")}</strong>{' '}
                 {selectedActivitiesList.map((a) => a.title).join(', ')}
               </p>
             </div>
           )}
+
+          <div className="px-3 py-2.5 flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setStep(Math.max(1, step - 1))}
+              className="min-h-[46px] px-4 rounded-full border border-gray-300 bg-white text-xs font-bold text-gray-700 active:bg-gray-100 flex items-center gap-1.5 shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{editorial("travel/HolidayBuilderModal.text205")}</span>
+            </button>
+
+            {step < 8 && (
+              <button
+                type="button"
+                onClick={() => setStep(Math.min(8, step + 1))}
+                className="flex-1 min-h-[46px] px-5 rounded-full bg-[#E67E22] hover:bg-[#d36e17] active:bg-[#c25f10] text-white text-xs sm:text-sm font-bold shadow-[0_4px_14px_rgba(230,126,34,0.38)] flex items-center justify-center gap-2"
+              >
+                <span>{step === 7 ? 'Continue to Send Plan' : 'Continue'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,6 @@
 import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
+import { RevealSection } from '../common/MotionPrimitives';
 import { packagePath,sectionPath } from '../../routes';
 import React from 'react';
 import { DetailedPackage,getHomepageFeaturedPackages } from '../../data/packagesData';
@@ -62,7 +63,7 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
+        <RevealSection className="text-center max-w-3xl mx-auto space-y-2 mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/10 text-[#C9A66B] text-xs font-bold uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A66B]" />
             <span>{editorial("travel/FeaturedPackages.text1")}</span>
@@ -70,26 +71,30 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B5E8E] tracking-tight">
             {editorial("travel/FeaturedPackages.text2")}</h2>
-        </div>
+        </RevealSection>
 
         {/* 4 Featured Package Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <RevealSection delayMs={60} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {featured.map((pkg) => {
             const pkgInfo = PACKAGE_DISPLAY[pkg.id] || PACKAGE_DISPLAY[pkg.title];
-            const title = pkgInfo?.title || pkg.title;
+            const title = pkg.title || pkgInfo?.title || 'Tailor-Made Package';
 
             return (
               <div
                 key={pkg.id}
                 onClick={() => onSelectPackage(pkg)}
-                className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer transform hover:-translate-y-1"
+                className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-[box-shadow,transform] duration-300 flex flex-col justify-between group cursor-pointer hover:-translate-y-1 motion-reduce:transform-none"
               >
                 {/* Hero Image Container */}
                 <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-gray-100 shrink-0">
                   <img
                     src={pkg.imageUrl}
                     alt={title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    width={400}
+                    height={208}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover outbound-card-media group-hover:scale-[1.03]"
                   />
                 </div>
 
@@ -107,13 +112,13 @@ export const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({
                     className="w-full bg-[#0B5E8E] hover:bg-[#08486e] text-[#C9A66B] text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs mt-auto"
                   >
                     <span className="text-[#C9A66B]">View Holiday Details</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B]" />
+                    <ArrowRight className="w-3.5 h-3.5 text-[#C9A66B] outbound-arrow-shift group-hover:translate-x-1" />
                   </PageLink>
                 </div>
               </div>
             );
           })}
-        </div>
+        </RevealSection>
 
         {/* Centered CTA: Find Your Holiday → */}
         <div className="mt-8 sm:mt-10 text-center">

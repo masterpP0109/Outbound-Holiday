@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@source "../outbound-holidays/**/*.php";
+@source "../outbound-holidays/assets/js/*.js";
+@source "./builder-island.tsx";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@layer base {
+  :root {
+    --vf-blue: #0B5E8E;
+    --zambezi-green: #3F6B3C;
+    --golden-savannah: #C9A66B;
+    --sunset-orange: #E67E22;
+    --charcoal-grey: #2F3A44;
+    --deep-navy: #0D2833;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FAF9F6;
+    color: #2F3A44;
+  }
+}
+
+.travel-hero {
+  position: relative;
+}
+
+.hero-scrim {
+  pointer-events: none;
+}
+
+/* Clean WordPress paginate_links styling */
+ul.page-numbers {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.page-numbers li a,
+ul.page-numbers li span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #0D2833;
+  text-decoration: none;
+}
+
+ul.page-numbers li span.current {
+  background-color: #0B5E8E;
+  border-color: #0B5E8E;
+  color: #ffffff;
+}

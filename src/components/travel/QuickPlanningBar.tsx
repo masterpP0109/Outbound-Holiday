@@ -1,5 +1,4 @@
-import { editorialFormat } from "../../runtime/catalog";
-import { editorial } from "../../runtime/catalog";
+import { editorial, editorialFormat, editorialOptional } from "../../runtime/catalog";
 import React from 'react';
 import { Calendar,FileText,Plane,Star,ArrowRight } from 'lucide-react';
 
@@ -38,7 +37,7 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
       id: 'top-experiences',
       icon: Star,
       title: editorial("travel/QuickPlanningBar.text4"),
-      subtitle: 'Helicopter, safaris & cruises',
+      subtitle: editorialOptional("travel/QuickPlanningBar.topExperiencesSubtitle", "Helicopter, safaris & cruises"),
       action: onOpenExperiences,
     },
   ];
