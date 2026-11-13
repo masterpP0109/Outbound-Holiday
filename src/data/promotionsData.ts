@@ -99,27 +99,6 @@ export function canShowPromotionPopup(promotion: PromotionOffer, currentPath: st
     if (!matches) return false;
   }
 
-  // 3. Frequency capping per visitor
-  try {
-    const raw = localStorage.getItem(IMPRESSIONS_STORAGE_KEY);
-    const store: Record<string, { count: number; lastShown: number }> = raw ? JSON.parse(raw) : {};
-    const record = store[String(promotion.id)];
-    if (record) {
-      const hoursSince = (Date.now() - record.lastShown) / (1000 * 60 * 60);
-      if (hoursSince < promotion.trigger.frequencyHours) {
-        if (record.count >= promotion.trigger.maxImpressions) {
-          return false;
-        }
-      } else {
-        // Reset window
-        store[String(promotion.id)] = { count: 0, lastShown: Date.now() };
-        localStorage.setItem(IMPRESSIONS_STORAGE_KEY, JSON.stringify(store));
-      }
-    }
-  } catch {
-    // continue
-  }
-
   return true;
 }
 

@@ -912,9 +912,9 @@ function outbound_render_promotions_admin_page(): void {
 
                     <div style="background:#fff;padding:20px;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
                         <h3 style="margin-top:0;font-size:16px;">Placements &amp; Visibility</h3>
-                        <p><label><input type="checkbox" name="show_on_homepage" value="1" <?php checked(!empty($edit_promo->show_on_homepage) || !$edit_promo); ?> /> Show on Homepage</label></p>
                         <p><label><input type="checkbox" name="show_as_popup" value="1" <?php checked(!empty($edit_promo->show_as_popup) || !$edit_promo); ?> /> Show as Pop-up Modal</label></p>
-                        <p><label><input type="checkbox" name="show_as_card" value="1" <?php checked(!empty($edit_promo->show_as_card) || !$edit_promo); ?> /> Show as Promotion Card in Section</label></p>
+                        <p><label><input type="checkbox" name="show_as_card" value="1" <?php checked(!empty($edit_promo->show_as_card)); ?> /> Show as Promotion Card on Homepage</label></p>
+                        <p><label><input type="checkbox" name="show_on_homepage" value="1" <?php checked(!empty($edit_promo->show_on_homepage) || !$edit_promo); ?> /> Allow on Homepage</label></p>
                         <p>
                             <label><strong>Target Pages (CSV, optional)</strong><br>
                             <?php

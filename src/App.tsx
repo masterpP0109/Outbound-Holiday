@@ -132,7 +132,8 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
     }
 
     const mode = eligiblePopupPromo.trigger.mode || 'delay';
-    const delayMs = (eligiblePopupPromo.trigger.delaySeconds || 8) * 1000;
+    const delaySec = typeof eligiblePopupPromo.trigger.delaySeconds === 'number' ? eligiblePopupPromo.trigger.delaySeconds : 3;
+    const delayMs = Math.max(500, delaySec * 1000);
     const scrollTarget = eligiblePopupPromo.trigger.scrollPercentage || 40;
 
     let timer: NodeJS.Timeout | null = null;
@@ -587,11 +588,13 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
             )}
 
             {/* Optional CMS-Enabled Promotional Cards */}
-            <PromotionsSection
-              promotions={promotions}
-              onSelectOffer={(promo) => setPromoEnquiryTarget(promo)}
-              onOpenOfferDetails={(promo) => navigate(offerPath(promo.slug))}
-            />
+            {showHomepageSection('showPromotionCards') && (
+              <PromotionsSection
+                promotions={promotions}
+                onSelectOffer={(promo) => setPromoEnquiryTarget(promo)}
+                onOpenOfferDetails={(promo) => navigate(offerPath(promo.slug))}
+              />
+            )}
 
             {/* 5. Where to Stay in Victoria Falls */}
             {showHomepageSection('showWhereToStay') && (
