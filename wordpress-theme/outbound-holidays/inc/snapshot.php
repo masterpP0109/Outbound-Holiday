@@ -888,6 +888,12 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
                 $strings[$ek] = $val;
             }
         }
+        if (!empty($strings['travel/FinalCtaBanner.backgroundImage'])) {
+            $strings['travel/FinalCtaBanner.fallsTour1'] = $strings['travel/FinalCtaBanner.backgroundImage'];
+            $structures['travel/FinalCtaBanner.fallsTour1'] = $strings['travel/FinalCtaBanner.backgroundImage'];
+        } elseif (!empty($strings['travel/FinalCtaBanner.fallsTour1'])) {
+            $structures['travel/FinalCtaBanner.fallsTour1'] = $strings['travel/FinalCtaBanner.fallsTour1'];
+        }
 
         // Apply unified Outbound CMS editorial structures (homepage section visibility, design tokens, repeaters).
         foreach ((array) ($bundle['editorial_structures'] ?? array()) as $sk => $sval) {

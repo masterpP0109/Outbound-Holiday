@@ -82,8 +82,9 @@ function outbound_render_site_cms_page(): void {
                 'trustStrip'       => $trust_clean,
             ),
             'homepageSections' => array(
-                'showQuickPlanning' => !empty($raw['showQuickPlanning']),
-                'showExperiences'   => !empty($raw['showExperiences']),
+                'showPlanYourHoliday' => !empty($raw['showPlanYourHoliday']),
+                'showQuickPlanning'   => !empty($raw['showQuickPlanning']),
+                'showExperiences'     => !empty($raw['showExperiences']),
                 'showPackages'      => !empty($raw['showPackages']),
                 'showWhereToStay'   => !empty($raw['showWhereToStay']),
                 'showGuides'        => !empty($raw['showGuides']),
@@ -162,8 +163,9 @@ function outbound_render_site_cms_page(): void {
                 <p>
                     <?php
                     $toggles = array(
-                        'showQuickPlanning' => 'Quick Planning Bar',
-                        'showExperiences'   => 'Featured Things to Do',
+                        'showPlanYourHoliday' => 'Plan Your Holiday Section',
+                        'showQuickPlanning'   => 'Quick Planning Bar',
+                        'showExperiences'     => 'Featured Things to Do',
                         'showPackages'      => 'Featured Packages',
                         'showWhereToStay'   => 'Where to Stay Showcase',
                         'showGuides'        => 'Victoria Falls Guides',

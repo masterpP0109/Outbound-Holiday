@@ -8,6 +8,7 @@ import { PageLink } from './components/common/PageLink';
 import { Currency,TravelPackage } from './types';
 import { Header } from './components/common/Header';
 import { TravelHero } from './components/travel/TravelHero';
+import { PlanYourHolidaySection } from './components/travel/PlanYourHolidaySection';
 import { QuickPlanningBar } from './components/travel/QuickPlanningBar';
 import { WhyChooseOutbound } from './components/travel/WhyChooseOutbound';
 import { FeaturedExperiences } from './components/travel/FeaturedExperiences';
@@ -553,7 +554,12 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               onBrowsePackages={() => handleNavigateSection('travel-packages')}
             />
 
-            {/* 2. Simple Holiday Discovery / Quick Planning Bar */}
+            {/* 2. You Dream It. We'll Help You Plan It. */}
+            {showHomepageSection('showPlanYourHoliday') && (
+              <PlanYourHolidaySection />
+            )}
+
+            {/* 3. Victoria Falls Travel Guide (4-card Quick Planning Bar) */}
             {showHomepageSection('showQuickPlanning') && (
               <QuickPlanningBar
                 onOpenGuide={() => {

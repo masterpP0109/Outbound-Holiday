@@ -1,5 +1,4 @@
-import { getClientImage } from '../../runtime/catalog';
-import { editorial } from "../../runtime/catalog";
+import { getClientImage, editorialOptional } from '../../runtime/catalog';
 import { PageLink } from '../common/PageLink';
 import { sectionPath } from '../../routes';
 import React,{ useState } from 'react';
@@ -43,14 +42,14 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ preview = false, o
       <div className="max-w-7xl mx-auto">
         {!preview && (
           <PageLink href={'/'} onClick={onNavigateHome} className="mb-6 text-sm font-semibold text-[#0B5E8E] hover:underline cursor-pointer">
-            {editorial("travel/ClientGallery.text1")}</PageLink>
+            {editorialOptional("travel/ClientGallery.text1", "← Back to home")}</PageLink>
         )}
         <div className="text-center max-w-2xl mx-auto mb-6 space-y-2">
           <span className="inline-flex items-center gap-2 rounded-full bg-[#C9A66B]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-[#0B5E8E]">
             <Camera className="w-4 h-4" aria-hidden="true" />
-            {editorial("travel/ClientGallery.text2")}</span>
-          <Heading id="client-gallery-title" className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">{editorial("travel/ClientGallery.text3")}</Heading>
-          {!preview && <p className="text-sm sm:text-base text-gray-600">{editorial("travel/ClientGallery.text4")}</p>}
+            {editorialOptional("travel/ClientGallery.text2", "Holiday memories")}</span>
+          <Heading id="client-gallery-title" className="text-3xl sm:text-4xl font-bold font-serif text-[#0B5E8E]">{editorialOptional("travel/ClientGallery.text3", "Client Gallery")}</Heading>
+          <p className="text-sm sm:text-base text-gray-600">{editorialOptional("travel/ClientGallery.text4", "A glimpse of the holidays and experiences our clients have enjoyed with Outbound Holidays.")}</p>
         </div>
 
         {images.length===0&&<p role="status" className="text-center">No published gallery photos are available yet.</p>}
@@ -67,7 +66,7 @@ export const ClientGallery: React.FC<ClientGalleryProps> = ({ preview = false, o
         {preview && (
           <div className="mt-8 text-center">
             <PageLink href={sectionPath('client-gallery')} onClick={onSeeGallery} className="rounded-xl bg-[#0B5E8E] hover:bg-[#094c73] px-6 py-3 font-semibold text-sm text-white transition-colors cursor-pointer">
-              {editorial("travel/ClientGallery.text5")}</PageLink>
+              {editorialOptional("travel/ClientGallery.text5", "See Gallery")}</PageLink>
           </div>
         )}
 

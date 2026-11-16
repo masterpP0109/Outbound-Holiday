@@ -365,8 +365,9 @@ function outbound_get_default_site_options(): array {
             ),
         ),
         'homepageSections' => array(
-            'showQuickPlanning' => true,
-            'showExperiences'   => true,
+            'showPlanYourHoliday' => true,
+            'showQuickPlanning'   => true,
+            'showExperiences'     => true,
             'showPackages'      => true,
             'showWhereToStay'   => true,
             'showGuides'        => true,
@@ -794,6 +795,7 @@ function outbound_get_effective_cms_bundle(bool $include_draft = false): array {
     $hp = (array) ($bundle['site_options']['homepageSections'] ?? array());
     $visibility = array();
     foreach (array(
+        'showPlanYourHoliday',
         'showQuickPlanning',
         'showExperiences',
         'showPackages',

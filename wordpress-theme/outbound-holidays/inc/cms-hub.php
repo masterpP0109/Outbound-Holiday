@@ -184,13 +184,16 @@ function outbound_cms_sanitize_section_patch(string $section, array $raw): array
                 continue;
             }
             $str = is_string($v) ? $v : '';
-            if (str_contains(strtolower($k), 'image') || str_contains(strtolower($k), 'logo') || str_contains(strtolower($k), 'url')) {
+            if (str_contains(strtolower($k), 'image') || str_contains(strtolower($k), 'logo') || str_contains(strtolower($k), 'url') || str_contains(strtolower($k), 'fallstour1')) {
                 $ed_strings[$k] = outbound_cms_sanitize_url($str);
             } elseif (strlen($str) > 140 || str_contains($str, "\n")) {
                 $ed_strings[$k] = outbound_cms_sanitize_textarea($str);
             } else {
                 $ed_strings[$k] = outbound_cms_sanitize_text($str);
             }
+        }
+        if (!empty($ed_strings['travel/FinalCtaBanner.backgroundImage'])) {
+            $ed_strings['travel/FinalCtaBanner.fallsTour1'] = $ed_strings['travel/FinalCtaBanner.backgroundImage'];
         }
     }
     if (!empty($ed_strings)) {
@@ -199,6 +202,7 @@ function outbound_cms_sanitize_section_patch(string $section, array $raw): array
 
     if ($section === 'homepage') {
         $toggle_keys = array(
+            'showPlanYourHoliday',
             'showQuickPlanning',
             'showExperiences',
             'showPackages',
@@ -980,6 +984,7 @@ function outbound_cms_render_section_homepage(array $snapshot, array $bundle, ar
     $hero_h2      = outbound_cms_get_ed($snapshot, 'travel/TravelHero.headlineLine2', '');
     $hero_sub     = outbound_cms_get_ed($snapshot, 'travel/TravelHero.subtitle', '');
     $hero_cta     = outbound_cms_get_ed($snapshot, 'travel/TravelHero.ctaLabel', outbound_cms_get_ed($snapshot, 'common/Header.text13', 'Plan My Holiday'));
+    $hero_dest    = outbound_cms_get_ed($snapshot, 'travel/TravelHero.ctaDestination', 'modal');
     $hero_browse  = outbound_cms_get_ed($snapshot, 'travel/TravelHero.text10', 'Browse Packages');
     $hero_img     = outbound_cms_get_ed($snapshot, 'travel/TravelHero.heroImage', outbound_get_media_fallback('hero'));
     $hero_alt     = outbound_cms_get_ed($snapshot, 'travel/TravelHero.heroImageAlt', 'Victoria Falls panoramic spray over the canyon and rainforest');
@@ -1013,6 +1018,18 @@ function outbound_cms_render_section_homepage(array $snapshot, array $bundle, ar
                     <td>
                         <input type="text" id="ed_hero_cta" name="cms[ed][travel/TravelHero.ctaLabel]" value="<?php echo outbound_cms_esc_attr($hero_cta); ?>" class="regular-text outbound-live-hero-input" data-hero-target="#preview_hero_cta" />
                         <input type="text" name="cms[ed][travel/TravelHero.text10]" value="<?php echo outbound_cms_esc_attr($hero_browse); ?>" class="regular-text" />
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="ed_hero_dest">Primary CTA Action</label></th>
+                    <td>
+                        <select id="ed_hero_dest" name="cms[ed][travel/TravelHero.ctaDestination]">
+                            <option value="modal" <?php selected($hero_dest, 'modal'); ?>>Open Plan My Holiday Builder Modal (Default)</option>
+                            <option value="packages" <?php selected($hero_dest, 'packages'); ?>>Browse Holiday Packages</option>
+                            <option value="/experiences" <?php selected($hero_dest, '/experiences'); ?>>Go to Experiences Page (/experiences)</option>
+                            <option value="/accommodation" <?php selected($hero_dest, '/accommodation'); ?>>Go to Accommodation Page (/accommodation)</option>
+                            <option value="/contact" <?php selected($hero_dest, '/contact'); ?>>Go to Contact Page (/contact)</option>
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -1073,8 +1090,9 @@ function outbound_cms_render_section_homepage(array $snapshot, array $bundle, ar
         <div class="outbound-toggle-grid">
             <?php
             $toggles = array(
-                'showQuickPlanning' => 'Quick Planning Bar',
-                'showExperiences'   => 'Featured Experiences',
+                'showPlanYourHoliday' => 'Plan Your Holiday Section',
+                'showQuickPlanning'   => 'Victoria Falls Travel Guide (4 Cards)',
+                'showExperiences'     => 'Featured Experiences',
                 'showPackages'      => 'Recommended Packages',
                 'showWhereToStay'   => 'Where to Stay',
                 'showGuides'        => 'Victoria Falls Travel Guide',
@@ -1096,28 +1114,227 @@ function outbound_cms_render_section_homepage(array $snapshot, array $bundle, ar
     </div>
 
     <details class="outbound-admin-card outbound-collapsible" open>
-        <summary>Quick Planning Bar & Final Call-to-Action Banner</summary>
+        <summary>Plan Your Holiday Section ("You Dream It. We'll Help You Plan It.")</summary>
         <div class="outbound-collapsible-body">
             <table class="form-table">
-                <tr><th>Quick Planning Section Title</th><td><input type="text" name="cms[ed][travel/QuickPlanningBar.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text5')); ?>" class="large-text" /></td></tr>
-                <tr><th>Card 1–3 Titles & Subtitles</th><td>
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text1')); ?>" class="regular-text" />
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.copy1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.copy1')); ?>" class="regular-text" /><br>
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text2')); ?>" class="regular-text" />
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.copy2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.copy2')); ?>" class="regular-text" /><br>
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text3]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text3')); ?>" class="regular-text" />
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.copy3]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.copy3')); ?>" class="regular-text" /><br>
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text4]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text4')); ?>" class="regular-text" />
-                    <input type="text" name="cms[ed][travel/QuickPlanningBar.topExperiencesSubtitle]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.topExperiencesSubtitle', 'Helicopter, safaris & cruises')); ?>" class="regular-text" />
+                <tr><th>Eyebrow Text</th><td><input type="text" name="cms[ed][travel/PlanYourHoliday.eyebrow]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.eyebrow', 'YOUR HOLIDAY, MADE EASIER')); ?>" class="regular-text" /></td></tr>
+                <tr><th>Main Heading</th><td><input type="text" name="cms[ed][travel/PlanYourHoliday.heading]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.heading', "You Dream It. We'll Help You Plan It.")); ?>" class="large-text" /></td></tr>
+                <tr><th>Supporting Description (Optional)</th><td><textarea rows="2" name="cms[ed][travel/PlanYourHoliday.description]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.description', '')); ?></textarea></td></tr>
+                <tr><th>Step 1 — Title &amp; Description</th><td>
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.step1Title]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.step1Title', 'Tell Us Your Plans')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.step1Desc]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.step1Desc', 'Share your travel dates, group size and budget.')); ?>" class="large-text" />
                 </td></tr>
-                <tr><th>Final CTA Eyebrow & Title</th><td>
-                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text1')); ?>" class="regular-text" />
-                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text2')); ?>" class="large-text" />
+                <tr><th>Step 2 — Title &amp; Description</th><td>
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.step2Title]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.step2Title', 'Get Local Advice')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.step2Desc]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.step2Desc', "We'll recommend stays and experiences that fit your needs.")); ?>" class="large-text" />
                 </td></tr>
-                <tr><th>Final CTA Description & Buttons</th><td>
-                    <textarea rows="2" name="cms[ed][travel/FinalCtaBanner.text3]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text3')); ?></textarea><br>
-                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text4]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text4')); ?>" class="regular-text" />
-                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text5')); ?>" class="regular-text" />
+                <tr><th>Step 3 — Title &amp; Description</th><td>
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.step3Title]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.step3Title', 'We Handle the Details')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.step3Desc]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.step3Desc', "We'll help arrange your bookings and itinerary.")); ?>" class="large-text" />
+                </td></tr>
+                <tr><th>CTA Button &amp; Supporting Text</th><td>
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.ctaText]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.ctaText', 'Start Planning With Us')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/PlanYourHoliday.ctaSubtext]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.ctaSubtext', 'Talk to our local Victoria Falls team')); ?>" class="regular-text" />
+                </td></tr>
+                <tr><th>WhatsApp Destination URL</th><td><input type="url" name="cms[ed][travel/PlanYourHoliday.whatsappUrl]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/PlanYourHoliday.whatsappUrl', 'https://wa.me/263714701721?text=Hello%20Outbound%20Holidays%21%20I%27d%20like%20help%20planning%20a%20Victoria%20Falls%20holiday.')); ?>" class="large-text" /></td></tr>
+            </table>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible" open>
+        <summary>Quick Planning Bar (4 Planning Cards)</summary>
+        <div class="outbound-collapsible-body">
+            <table class="form-table">
+                <tr><th>Section Heading</th><td><input type="text" name="cms[ed][travel/QuickPlanningBar.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text5', 'Start Planning Your Victoria Falls Holiday')); ?>" class="large-text" /></td></tr>
+                <tr><th>Section Subheading</th><td><input type="text" name="cms[ed][travel/QuickPlanningBar.text6]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text6', 'Find practical answers on when to visit, entry requirements, getting here and what to experience.')); ?>" class="large-text" /></td></tr>
+            </table>
+            <div class="outbound-meta-grid">
+                <p><label><strong>Card 1 — Title &amp; Subtitle (Calendar)</strong><br>
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text1', 'Best Time to Visit')); ?>" class="widefat" placeholder="Card 1 Title" />
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.copy1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.copy1', 'Water levels, weather & seasons')); ?>" class="widefat" style="margin-top:4px;" placeholder="Card 1 Subtitle" />
+                </label></p>
+                <p><label><strong>Card 2 — Title &amp; Subtitle (Visa)</strong><br>
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text2', 'Visa & Entry Requirements')); ?>" class="widefat" placeholder="Card 2 Title" />
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.copy2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.copy2', 'Kaza Univisa, Zimbabwe & Zambia')); ?>" class="widefat" style="margin-top:4px;" placeholder="Card 2 Subtitle" />
+                </label></p>
+                <p><label><strong>Card 3 — Title &amp; Subtitle (Getting Here)</strong><br>
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text3]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text3', 'Getting Here')); ?>" class="widefat" placeholder="Card 3 Title" />
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.copy3]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.copy3', 'Flights, airport transfers & border crossings')); ?>" class="widefat" style="margin-top:4px;" placeholder="Card 3 Subtitle" />
+                </label></p>
+                <p><label><strong>Card 4 — Title &amp; Subtitle (Top Experiences)</strong><br>
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.text4]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.text4', 'Top Experiences')); ?>" class="widefat" placeholder="Card 4 Title" />
+                    <input type="text" name="cms[ed][travel/QuickPlanningBar.topExperiencesSubtitle]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/QuickPlanningBar.topExperiencesSubtitle', 'Helicopter, safaris & cruises')); ?>" class="widefat" style="margin-top:4px;" placeholder="Card 4 Subtitle" />
+                </label></p>
+            </div>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Featured Experiences Section (Headings &amp; Button Labels)</summary>
+        <div class="outbound-collapsible-body">
+            <p class="description">Edit the text shown for the Featured Experiences section on the homepage. To edit individual experience photos, prices, or descriptions, visit <a href="<?php echo outbound_cms_esc_url(admin_url('admin.php?page=outbound-cms&section=experiences')); ?>">Section 3: Experiences</a>.</p>
+            <table class="form-table">
+                <tr><th>Eyebrow / Kicker</th><td><input type="text" name="cms[ed][travel/FeaturedExperiences.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedExperiences.text1')); ?>" class="regular-text" /></td></tr>
+                <tr><th>Section Heading</th><td><input type="text" name="cms[ed][travel/FeaturedExperiences.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedExperiences.text2')); ?>" class="large-text" /></td></tr>
+                <tr><th>Section Subtitle</th><td><textarea rows="2" name="cms[ed][travel/FeaturedExperiences.text3]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/FeaturedExperiences.text3')); ?></textarea></td></tr>
+                <tr><th>Card Button &amp; Bottom CTA</th><td>
+                    <input type="text" name="cms[ed][travel/FeaturedExperiences.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedExperiences.text5')); ?>" class="regular-text" placeholder="View Experience" />
+                    <input type="text" name="cms[ed][travel/FeaturedExperiences.text6]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedExperiences.text6')); ?>" class="regular-text" placeholder="Explore All Experiences" />
+                </td></tr>
+            </table>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Recommended Packages Section (Headings &amp; Button Labels)</summary>
+        <div class="outbound-collapsible-body">
+            <p class="description">Edit the text shown for the Recommended Packages section on the homepage. To edit package photos, itineraries, or pricing, visit <a href="<?php echo outbound_cms_esc_url(admin_url('admin.php?page=outbound-cms&section=packages')); ?>">Section 5: Packages</a>.</p>
+            <table class="form-table">
+                <tr><th>Eyebrow / Kicker</th><td><input type="text" name="cms[ed][travel/FeaturedPackages.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedPackages.text1')); ?>" class="regular-text" /></td></tr>
+                <tr><th>Section Heading</th><td><input type="text" name="cms[ed][travel/FeaturedPackages.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedPackages.text2')); ?>" class="large-text" /></td></tr>
+                <tr><th>Section Subtitle</th><td><textarea rows="2" name="cms[ed][travel/FeaturedPackages.text3]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/FeaturedPackages.text3')); ?></textarea></td></tr>
+                <tr><th>Pricing Estimate Note</th><td><textarea rows="2" name="cms[ed][travel/FeaturedPackages.text4]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/FeaturedPackages.text4')); ?></textarea></td></tr>
+                <tr><th>Card Button &amp; Bottom CTA</th><td>
+                    <input type="text" name="cms[ed][travel/FeaturedPackages.text8]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedPackages.text8')); ?>" class="regular-text" placeholder="View Holiday Details" />
+                    <input type="text" name="cms[ed][travel/FeaturedPackages.text9]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FeaturedPackages.text9')); ?>" class="regular-text" placeholder="Explore All Packages" />
+                </td></tr>
+            </table>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Where to Stay Section (Headings &amp; Button Labels)</summary>
+        <div class="outbound-collapsible-body">
+            <p class="description">Edit the text shown for the Where to Stay section on the homepage. To edit lodge photos, rooms, or amenities, visit <a href="<?php echo outbound_cms_esc_url(admin_url('admin.php?page=outbound-cms&section=accommodation')); ?>">Section 4: Accommodation</a>.</p>
+            <table class="form-table">
+                <tr><th>Eyebrow / Kicker</th><td><input type="text" name="cms[ed][travel/WhereToStaySection.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/WhereToStaySection.text1')); ?>" class="regular-text" /></td></tr>
+                <tr><th>Section Heading</th><td><input type="text" name="cms[ed][travel/WhereToStaySection.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/WhereToStaySection.text2')); ?>" class="large-text" /></td></tr>
+                <tr><th>Section Subtitle</th><td><textarea rows="2" name="cms[ed][travel/WhereToStaySection.text3]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/WhereToStaySection.text3')); ?></textarea></td></tr>
+                <tr><th>Card Button &amp; Bottom CTA</th><td>
+                    <input type="text" name="cms[ed][travel/WhereToStaySection.text7]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/WhereToStaySection.text7')); ?>" class="regular-text" placeholder="View Property Details" />
+                    <input type="text" name="cms[ed][travel/WhereToStaySection.text8]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/WhereToStaySection.text8')); ?>" class="regular-text" placeholder="Explore All Lodges & Hotels" />
+                </td></tr>
+            </table>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Victoria Falls Travel Guide Section (Headings &amp; 4 Preview Cards)</summary>
+        <div class="outbound-collapsible-body">
+            <p class="description">Edit the Victoria Falls Travel Guide preview section on the homepage. Manage full articles in <a href="<?php echo outbound_cms_esc_url(admin_url('admin.php?page=outbound-cms&section=guides')); ?>">Section 6: Guides &amp; Articles</a>.</p>
+            <table class="form-table">
+                <tr><th>Badge &amp; Section Heading</th><td>
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text9]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text9')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text10]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text10')); ?>" class="large-text" />
+                </td></tr>
+                <tr><th>Section Subtitle</th><td><textarea rows="2" name="cms[ed][travel/VicFallsGuide.text11]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text11')); ?></textarea></td></tr>
+                <tr><th>Card Link &amp; Bottom Button</th><td>
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text12]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text12')); ?>" class="regular-text" placeholder="Explore in Travel Guide" />
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text13]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text13')); ?>" class="regular-text" placeholder="Read the Complete Travel Guide" />
+                </td></tr>
+            </table>
+            <div class="outbound-meta-grid">
+                <p><label><strong>Guide Card 1 Title &amp; Summary</strong><br>
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text1')); ?>" class="widefat" />
+                    <textarea rows="2" name="cms[ed][travel/VicFallsGuide.text2]" class="widefat" style="margin-top:4px;"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text2')); ?></textarea>
+                </label></p>
+                <p><label><strong>Guide Card 2 Title &amp; Summary</strong><br>
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text3]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text3')); ?>" class="widefat" />
+                    <textarea rows="2" name="cms[ed][travel/VicFallsGuide.text4]" class="widefat" style="margin-top:4px;"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text4')); ?></textarea>
+                </label></p>
+                <p><label><strong>Guide Card 3 Title &amp; Summary</strong><br>
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text5')); ?>" class="widefat" />
+                    <textarea rows="2" name="cms[ed][travel/VicFallsGuide.text6]" class="widefat" style="margin-top:4px;"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text6')); ?></textarea>
+                </label></p>
+                <p><label><strong>Guide Card 4 Title &amp; Summary</strong><br>
+                    <input type="text" name="cms[ed][travel/VicFallsGuide.text7]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text7')); ?>" class="widefat" />
+                    <textarea rows="2" name="cms[ed][travel/VicFallsGuide.text8]" class="widefat" style="margin-top:4px;"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/VicFallsGuide.text8')); ?></textarea>
+                </label></p>
+            </div>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Traveller Stories &amp; Google Reviews (Homepage Headings)</summary>
+        <div class="outbound-collapsible-body">
+            <p class="description">Edit the Traveller Stories section headings and Google rating card. To add, edit, or reorder individual guest testimonials and avatars, visit <a href="<?php echo outbound_cms_esc_url(admin_url('admin.php?page=outbound-cms&section=testimonials')); ?>">Section 8: Testimonials &amp; Reviews</a>.</p>
+            <table class="form-table">
+                <tr><th>Badge &amp; Heading</th><td>
+                    <input type="text" name="cms[ed][travel/TravellerStories.badge]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/TravellerStories.badge', outbound_cms_get_ed($snapshot, 'travel/TravellerStories.text4'))); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/TravellerStories.heading]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/TravellerStories.heading', outbound_cms_get_ed($snapshot, 'travel/TravellerStories.text5'))); ?>" class="large-text" />
+                </td></tr>
+                <tr><th>Subheading</th><td><textarea rows="2" name="cms[ed][travel/TravellerStories.subheading]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/TravellerStories.subheading', outbound_cms_get_ed($snapshot, 'travel/TravellerStories.text6'))); ?></textarea></td></tr>
+                <tr><th>Google Score &amp; Review Card</th><td>
+                    <input type="text" name="cms[ed][travel/TravellerStories.score]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/TravellerStories.score', '5.0')); ?>" class="small-text" />
+                    <input type="text" name="cms[ed][travel/TravellerStories.cardTitle]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/TravellerStories.cardTitle', '5.0 Google Rating · Outbound Holidays')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/TravellerStories.ctaLabel]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/TravellerStories.ctaLabel', 'Read Google Reviews')); ?>" class="regular-text" />
+                </td></tr>
+                <tr><th>Google Reviews URL</th><td><input type="url" name="cms[ed][travel/TravellerStories.reviewUrl]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/TravellerStories.reviewUrl', 'https://g.page/r/CW8xeS7qssHkECE/review')); ?>" class="large-text code" /></td></tr>
+            </table>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Client Gallery Preview (Homepage Headings &amp; Media)</summary>
+        <div class="outbound-collapsible-body">
+            <p class="description">Edit the Client Gallery preview section on the homepage. To upload or manage client photos and albums, visit <a href="<?php echo outbound_cms_esc_url(admin_url('admin.php?page=outbound-cms&section=galleries')); ?>">Section 7: Galleries</a>.</p>
+            <table class="form-table">
+                <tr><th>Eyebrow Badge &amp; Heading</th><td>
+                    <input type="text" name="cms[ed][travel/ClientGallery.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/ClientGallery.text2', 'Holiday memories')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/ClientGallery.text3]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/ClientGallery.text3', 'Client Gallery')); ?>" class="large-text" />
+                </td></tr>
+                <tr><th>Section Subtitle</th><td><textarea rows="2" name="cms[ed][travel/ClientGallery.text4]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/ClientGallery.text4', 'A glimpse of the holidays and experiences our clients have enjoyed with Outbound Holidays.')); ?></textarea></td></tr>
+                <tr><th>Explore Button Label</th><td><input type="text" name="cms[ed][travel/ClientGallery.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/ClientGallery.text5', 'See Gallery')); ?>" class="regular-text" /></td></tr>
+            </table>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Final Call-to-Action Banner (Text, Buttons &amp; Background Image)</summary>
+        <div class="outbound-collapsible-body">
+            <?php
+            $final_cta_bg = outbound_cms_get_ed(
+                $snapshot,
+                'travel/FinalCtaBanner.backgroundImage',
+                (string) ($snapshot['site']['editorial']['structures']['travel/FinalCtaBanner.fallsTour1'] ?? outbound_get_media_fallback('falls'))
+            );
+            ?>
+            <table class="form-table">
+                <tr><th>Eyebrow &amp; Heading</th><td>
+                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text1', 'START YOUR JOURNEY')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text2', 'Ready to Plan Your Victoria Falls Holiday?')); ?>" class="large-text" />
+                </td></tr>
+                <tr><th>Description</th><td>
+                    <textarea rows="2" name="cms[ed][travel/FinalCtaBanner.text3]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text3')); ?></textarea>
+                </td></tr>
+                <tr><th>Primary &amp; WhatsApp Buttons</th><td>
+                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text4]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text4', 'Plan My Holiday')); ?>" class="regular-text" placeholder="Plan My Holiday" />
+                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text5', 'Chat on WhatsApp')); ?>" class="regular-text" placeholder="Chat on WhatsApp" />
+                </td></tr>
+                <tr><th>Trust Guarantee Line</th><td>
+                    <input type="text" name="cms[ed][travel/FinalCtaBanner.text6]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'travel/FinalCtaBanner.text6', 'Free initial consultation • Honest guidance • No obligation to book')); ?>" class="large-text" />
+                </td></tr>
+                <tr><th>Banner Background Image</th><td>
+                    <?php outbound_cms_render_media_input('cms[ed][travel/FinalCtaBanner.backgroundImage]', $final_cta_bg, 'outbound_final_cta_bg_picker', outbound_get_media_fallback('falls')); ?>
+                </td></tr>
+            </table>
+        </div>
+    </details>
+
+    <details class="outbound-admin-card outbound-collapsible">
+        <summary>Victoria Falls Travel Club Newsletter (Homepage Section)</summary>
+        <div class="outbound-collapsible-body">
+            <table class="form-table">
+                <tr><th>Kicker &amp; Heading</th><td>
+                    <input type="text" name="cms[ed][common/Newsletter.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Newsletter.text1', 'Victoria Falls Travel Club')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][common/Newsletter.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Newsletter.text2', 'Stay Connected With Victoria Falls')); ?>" class="large-text" />
+                </td></tr>
+                <tr><th>Section Subtitle</th><td>
+                    <textarea rows="2" name="cms[ed][common/Newsletter.text3]" class="large-text"><?php echo outbound_cms_esc_html(outbound_cms_get_ed($snapshot, 'common/Newsletter.text3')); ?></textarea>
+                </td></tr>
+                <tr><th>Email Placeholder &amp; Button</th><td>
+                    <input type="text" name="cms[ed][common/Newsletter.text6]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Newsletter.text6', 'Enter your email address...')); ?>" class="regular-text" />
+                    <input type="text" name="cms[ed][common/Newsletter.text7]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Newsletter.text7', 'Subscribe')); ?>" class="regular-text" />
                 </td></tr>
             </table>
         </div>

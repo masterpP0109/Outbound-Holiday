@@ -37,7 +37,7 @@ export const QuickPlanningBar: React.FC<QuickPlanningBarProps> = ({
       id: 'top-experiences',
       icon: Star,
       title: editorial("travel/QuickPlanningBar.text4"),
-      subtitle: editorialOptional("travel/QuickPlanningBar.topExperiencesSubtitle", "Helicopter, safaris & cruises"),
+      subtitle: editorialOptional("travel/QuickPlanningBar.topExperiencesSubtitle", "Discover the must-see attractions and unforgettable activities."),
       action: onOpenExperiences,
     },
   ];
