@@ -11,31 +11,37 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Default currency exchange multipliers matching src/data/travelData.ts.
+ * Return active currency exchange multipliers from the centralized live rate service.
  *
  * @return array<string, array{code:string,symbol:string,rate:float,label:string}>
  */
 function outbound_get_currency_rates(): array {
-    $defaults = array(
-        'USD' => array('code' => 'USD', 'symbol' => '$',    'rate' => 1.00, 'label' => 'USD ($)'),
-        'ZAR' => array('code' => 'ZAR', 'symbol' => 'R',    'rate' => 18.2, 'label' => 'ZAR (R)'),
-        'GBP' => array('code' => 'GBP', 'symbol' => '£',    'rate' => 0.79, 'label' => 'GBP (£)'),
-        'EUR' => array('code' => 'EUR', 'symbol' => '€',    'rate' => 0.92, 'label' => 'EUR (€)'),
-        'AUD' => array('code' => 'AUD', 'symbol' => 'A$',   'rate' => 1.54, 'label' => 'AUD (A$)'),
-    );
+    if (function_exists('outbound_get_currency_rates_payload')) {
+        $payload = outbound_get_currency_rates_payload(false);
+        $rates   = isset($payload['rates']) && is_array($payload['rates']) ? $payload['rates'] : array();
+    } else {
+        $rates = array(
+            'USD' => array('code' => 'USD', 'symbol' => '$', 'rate' => 1.00, 'label' => 'USD ($)'),
+        );
+    }
 
     if (function_exists('apply_filters')) {
-        return apply_filters('outbound_currency_rates', $defaults);
+        return apply_filters('outbound_currency_rates', $rates);
     }
-    return $defaults;
+    return $rates;
 }
 
 /**
- * Format a USD price in a target currency.
+ * Format a USD price in a target currency (falls back to USD if no valid rate exists).
  */
 function outbound_format_price(float $usd_amount, string $currency = 'USD'): string {
     $rates = outbound_get_currency_rates();
-    $rate_info = $rates[$currency] ?? $rates['USD'];
+    $code  = strtoupper(trim($currency));
+    if (!isset($rates[$code]) || empty($rates[$code]['rate']) || (float) $rates[$code]['rate'] <= 0) {
+        $rate_info = $rates['USD'] ?? array('symbol' => '$', 'rate' => 1.0);
+    } else {
+        $rate_info = $rates[$code];
+    }
     $converted = (int) round($usd_amount * (float) $rate_info['rate']);
     return $rate_info['symbol'] . number_format($converted);
 }
@@ -333,6 +339,13 @@ function outbound_filter_and_sort_accommodations(array $properties, array $filte
     return $filtered;
 }
 
+if (!defined('OUTBOUND_DEFAULT_DELIVERY_EMAIL')) {
+    define('OUTBOUND_DEFAULT_DELIVERY_EMAIL', 'fungai@outboundholiday.com');
+}
+if (!defined('OUTBOUND_DEFAULT_FROM_NAME')) {
+    define('OUTBOUND_DEFAULT_FROM_NAME', 'Outbound Holidays');
+}
+
 /**
  * Default CMS Site & Homepage configuration (all editable in Outbound Holidays -> Site & Homepage CMS).
  *
@@ -347,7 +360,7 @@ function outbound_get_default_site_options(): array {
         'contact' => array(
             'whatsappNumber' => '263714701721',
             'displayNumber'  => '+263 714 701 721',
-            'email'          => 'travel@outboundholidays.co.zw',
+            'email'          => OUTBOUND_DEFAULT_DELIVERY_EMAIL,
             'address'        => 'Suite 4, Mosi-oa-Tunya Commercial Centre, Victoria Falls, Zimbabwe',
             'hours'          => 'Mon - Sun: 7:30 AM - 7:00 PM (CAT)',
         ),
@@ -417,7 +430,12 @@ function outbound_get_site_options(): array {
         return $defaults;
     }
 
-    return array_replace_recursive($defaults, $stored);
+    $merged = array_replace_recursive($defaults, $stored);
+    $cur_email = strtolower(trim((string) ($merged['contact']['email'] ?? '')));
+    if ($cur_email === '' || $cur_email === 'travel@outboundholidays.co.zw' || $cur_email === 'travel@outboundholiday.com') {
+        $merged['contact']['email'] = OUTBOUND_DEFAULT_DELIVERY_EMAIL;
+    }
+    return $merged;
 }
 
 /**
@@ -750,6 +768,7 @@ function outbound_get_published_cms_bundle(): array {
         'editorial_strings'    => $editorial_strings,
         'editorial_structures' => $get('outbound_editorial_struct_overrides', array()),
         'featured'             => $get('outbound_featured_overrides', array()),
+        'featured_overrides'   => $get('outbound_featured_item_overrides', array()),
         'route_seo'            => $get('outbound_route_seo_overrides', array()),
         'currency_rates'       => $get('outbound_currency_rates_override', array()),
         'reviews'              => $get('outbound_reviews_override', array()),
@@ -783,6 +802,10 @@ function outbound_get_effective_cms_bundle(bool $include_draft = false): array {
                     $bundle['featured'][$fk] = array_values($draft['featured'][$fk]);
                 }
             }
+        }
+        if (isset($draft['featured_overrides']) && is_array($draft['featured_overrides'])) {
+            $existing_fo = isset($bundle['featured_overrides']) && is_array($bundle['featured_overrides']) ? $bundle['featured_overrides'] : array();
+            $bundle['featured_overrides'] = array_replace_recursive($existing_fo, $draft['featured_overrides']);
         }
         foreach (array('reviews', 'builder_stay_tiers', 'builder_activities') as $list_key) {
             if (array_key_exists($list_key, $draft) && is_array($draft[$list_key])) {
@@ -852,6 +875,10 @@ function outbound_save_cms_draft_patch(array $patch, string $section_id = ''): a
         }
         $draft['featured'] = $existing_feat;
     }
+    if (isset($patch['featured_overrides']) && is_array($patch['featured_overrides'])) {
+        $existing_fo = isset($draft['featured_overrides']) && is_array($draft['featured_overrides']) ? $draft['featured_overrides'] : array();
+        $draft['featured_overrides'] = array_replace_recursive($existing_fo, $patch['featured_overrides']);
+    }
     foreach (array('reviews', 'builder_stay_tiers', 'builder_activities') as $list_key) {
         if (array_key_exists($list_key, $patch) && is_array($patch[$list_key])) {
             $draft[$list_key] = array_values($patch[$list_key]);
@@ -887,6 +914,7 @@ function outbound_publish_cms_changes(array $patch = array(), string $section_id
         update_option('outbound_editorial_overrides', $effective['editorial_strings'], false);
         update_option('outbound_editorial_struct_overrides', $effective['editorial_structures'], false);
         update_option('outbound_featured_overrides', $effective['featured'], false);
+        update_option('outbound_featured_item_overrides', $effective['featured_overrides'] ?? array(), false);
         update_option('outbound_route_seo_overrides', $effective['route_seo'], false);
         update_option('outbound_currency_rates_override', $effective['currency_rates'], false);
         update_option('outbound_reviews_override', $effective['reviews'], false);
@@ -913,4 +941,1238 @@ function outbound_discard_cms_draft(): void {
     if (function_exists('delete_option')) {
         delete_option('outbound_cms_draft_state');
     }
+}
+
+/**
+ * Flexible preset room/unit amenity definitions with icon hints.
+ * Administrators may also enter arbitrary custom amenities per room.
+ *
+ * @return array<string, array{id:string,label:string,icon:string}>
+ */
+function outbound_get_room_amenity_definitions(): array {
+    return array(
+        'air-conditioning' => array('id' => 'air-conditioning', 'label' => 'Air conditioning', 'icon' => 'dashicons-cloud'),
+        'wifi'             => array('id' => 'wifi',             'label' => 'Wi-Fi',            'icon' => 'dashicons-networking'),
+        'television'       => array('id' => 'television',       'label' => 'Television',       'icon' => 'dashicons-desktop'),
+        'private-bathroom' => array('id' => 'private-bathroom', 'label' => 'Private bathroom', 'icon' => 'dashicons-admin-home'),
+        'bathtub'          => array('id' => 'bathtub',          'label' => 'Bathtub',          'icon' => 'dashicons-admin-appearance'),
+        'shower'           => array('id' => 'shower',           'label' => 'Shower',           'icon' => 'dashicons-umbrella'),
+        'balcony'          => array('id' => 'balcony',          'label' => 'Balcony / Patio',  'icon' => 'dashicons-palmtree'),
+        'river-view'       => array('id' => 'river-view',       'label' => 'River view',       'icon' => 'dashicons-location-alt'),
+        'garden-view'      => array('id' => 'garden-view',      'label' => 'Garden view',      'icon' => 'dashicons-carrot'),
+        'minibar'          => array('id' => 'minibar',          'label' => 'Minibar',          'icon' => 'dashicons-store'),
+        'kitchenette'      => array('id' => 'kitchenette',      'label' => 'Kitchenette / Full Kitchen', 'icon' => 'dashicons-food'),
+        'private-pool'     => array('id' => 'private-pool',     'label' => 'Private pool',     'icon' => 'dashicons-awards'),
+        'tea-coffee'       => array('id' => 'tea-coffee',       'label' => 'Tea and coffee facilities', 'icon' => 'dashicons-coffee'),
+        'safe'             => array('id' => 'safe',             'label' => 'Safe',             'icon' => 'dashicons-lock'),
+        'workspace'        => array('id' => 'workspace',        'label' => 'Workspace',        'icon' => 'dashicons-laptop'),
+    );
+}
+
+/**
+ * Common room-specific extras & inclusion presets (administrators can also add custom inclusions).
+ *
+ * @return array<int, string>
+ */
+function outbound_get_room_inclusion_presets(): array {
+    return array(
+        'Breakfast included',
+        'Half-board meals',
+        'Full-board meals',
+        'Romantic room setup',
+        'Private dining',
+        'Airport transfers',
+        'Complimentary activities',
+        'Honeymoon extras',
+        'Special family arrangements',
+    );
+}
+
+/**
+ * Generate a stable, name-independent unique unit type identifier.
+ */
+function outbound_generate_unit_id(): string {
+    try {
+        return 'unit_' . bin2hex(random_bytes(6));
+    } catch (Throwable $e) {
+        return 'unit_' . substr(md5(uniqid((string) mt_rand(), true)), 0, 12);
+    }
+}
+
+/**
+ * Ensure a room/unit ID is safe, stable, and never derived from mutable room names unless migrating legacy data deterministically.
+ */
+function outbound_sanitize_unit_id(string $raw_id, int $fallback_idx = 0): string {
+    $clean = preg_replace('/[^a-zA-Z0-9_-]/', '', trim($raw_id));
+    if ($clean !== '') {
+        return $clean;
+    }
+    return $fallback_idx > 0 ? 'unit_legacy_' . $fallback_idx : outbound_generate_unit_id();
+}
+
+/**
+ * Sanitize and normalize an array of accommodation unit types, separating admin-only internal supplier data.
+ *
+ * @param array<int, mixed> $raw_rooms
+ * @param array<string, array{internalSupplierRate:string,internalNotes:string}> $existing_internal
+ * @return array{public_rooms:array<int, array<string, mixed>>, internal_map:array<string, array{internalSupplierRate:string,internalNotes:string}>}
+ */
+function outbound_sanitize_room_types_payload(
+    array $raw_rooms,
+    array $existing_internal = array(),
+    bool $allow_internal_write = true
+): array {
+    $san_text = static function ($v): string {
+        $s = (string) $v;
+        return function_exists('sanitize_text_field') ? (string) sanitize_text_field($s) : trim(strip_tags($s));
+    };
+    $san_area = static function ($v): string {
+        $s = (string) $v;
+        return function_exists('sanitize_textarea_field') ? (string) sanitize_textarea_field($s) : trim(strip_tags($s));
+    };
+    $san_url = static function ($v): string {
+        $s = trim((string) $v);
+        if ($s === '') {
+            return '';
+        }
+        return function_exists('esc_url_raw') ? (string) esc_url_raw($s) : (filter_var($s, FILTER_SANITIZE_URL) ?: '');
+    };
+    $san_date = static function ($v): string {
+        $s = trim((string) $v);
+        return preg_match('/^\d{4}-\d{2}-\d{2}$/', $s) ? $s : '';
+    };
+    $san_num = static function ($v, bool $allow_zero = true): ?float {
+        if ($v === '' || $v === null || !is_numeric($v)) {
+            return null;
+        }
+        $f = (float) $v;
+        if (!is_finite($f) || $f < 0 || (!$allow_zero && $f <= 0)) {
+            return null;
+        }
+        return round($f, 2);
+    };
+    $san_int = static function ($v, int $min = 0): ?int {
+        if ($v === '' || $v === null || !is_numeric($v)) {
+            return null;
+        }
+        $i = (int) $v;
+        return $i >= $min ? $i : null;
+    };
+    $san_list = static function ($arr) use ($san_text): array {
+        if (!is_array($arr)) {
+            return array();
+        }
+        $seen = array();
+        $out = array();
+        foreach ($arr as $item) {
+            $clean = $san_text($item);
+            if ($clean === '') {
+                continue;
+            }
+            $k = strtolower($clean);
+            if (isset($seen[$k])) {
+                continue;
+            }
+            $seen[$k] = true;
+            $out[] = $clean;
+        }
+        return $out;
+    };
+
+    $public_rooms = array();
+    $internal_map = array();
+    $used_ids     = array();
+
+    foreach (array_values($raw_rooms) as $idx => $raw) {
+        if (!is_array($raw)) {
+            continue;
+        }
+        $name = $san_text($raw['name'] ?? '');
+        if ($name === '') {
+            continue;
+        }
+
+        $unit_id = outbound_sanitize_unit_id((string) ($raw['id'] ?? ''), 0);
+        while (isset($used_ids[$unit_id])) {
+            $unit_id = outbound_generate_unit_id();
+        }
+        $used_ids[$unit_id] = true;
+
+        $status_raw = (string) ($raw['status'] ?? 'published');
+        $status     = in_array($status_raw, array('published', 'draft', 'archived', 'trashed'), true) ? $status_raw : 'published';
+
+        $short_desc = $san_area($raw['shortDescription'] ?? '');
+        $full_desc  = $san_area($raw['description'] ?? '');
+        $unit_cat   = $san_text($raw['unitCategory'] ?? '');
+        $wing       = $san_text($raw['wing'] ?? '');
+        $is_entire  = !empty($raw['isEntireProperty']);
+        $avail_raw  = (string) ($raw['availabilityStatus'] ?? 'available');
+        $avail_stat = in_array($avail_raw, array('available', 'on_request', 'temporarily_unavailable'), true) ? $avail_raw : 'available';
+        $custom_cta = $san_text($raw['customCtaLabel'] ?? '');
+        $size_sqm   = $san_num($raw['sizeSqm'] ?? null, false);
+        $unit_count = $san_int($raw['unitCount'] ?? null, 1);
+        $featured   = !empty($raw['featured']);
+
+        // Occupancy Configuration
+        $occ_raw = isset($raw['occupancyConfig']) && is_array($raw['occupancyConfig']) ? $raw['occupancyConfig'] : array();
+        $max_adults   = $san_int($occ_raw['maxAdults'] ?? null, 1);
+        $max_children = $san_int($occ_raw['maxChildren'] ?? null, 0);
+        $max_total    = $san_int($occ_raw['maxTotalGuests'] ?? null, 1);
+        $bedrooms     = $san_int($occ_raw['bedrooms'] ?? null, 0);
+        $bathrooms    = $san_num($occ_raw['bathrooms'] ?? null, true);
+
+        $beds = array();
+        if (!empty($occ_raw['beds']) && is_array($occ_raw['beds'])) {
+            foreach ($occ_raw['beds'] as $brow) {
+                if (!is_array($brow)) {
+                    continue;
+                }
+                $btype = $san_text($brow['type'] ?? '');
+                $bqty  = max(1, (int) ($brow['quantity'] ?? 1));
+                if ($btype !== '') {
+                    $beds[] = array('type' => $btype, 'quantity' => $bqty);
+                }
+            }
+        }
+
+        $occ_cfg = array();
+        if ($max_adults !== null) { $occ_cfg['maxAdults'] = $max_adults; }
+        if ($max_children !== null) { $occ_cfg['maxChildren'] = $max_children; }
+        if ($max_total !== null) { $occ_cfg['maxTotalGuests'] = $max_total; }
+        if ($bedrooms !== null) { $occ_cfg['bedrooms'] = $bedrooms; }
+        if ($bathrooms !== null) { $occ_cfg['bathrooms'] = $bathrooms; }
+        if (!empty($beds)) { $occ_cfg['beds'] = $beds; }
+        if (!empty($occ_raw['extraBedAvailable'])) { $occ_cfg['extraBedAvailable'] = true; }
+        $eb_notes = $san_text($occ_raw['extraBedNotes'] ?? '');
+        if ($eb_notes !== '') { $occ_cfg['extraBedNotes'] = $eb_notes; }
+        $child_pol = $san_text($occ_raw['childAgePolicy'] ?? '');
+        if ($child_pol !== '') { $occ_cfg['childAgePolicy'] = $child_pol; }
+        $add_note = $san_text($occ_raw['additionalGuestChargeNote'] ?? '');
+        if ($add_note !== '') { $occ_cfg['additionalGuestChargeNote'] = $add_note; }
+        $inter_info = $san_text($occ_raw['interleadingInfo'] ?? '');
+        if ($inter_info !== '') { $occ_cfg['interleadingInfo'] = $inter_info; }
+
+        $occ_str = $san_text($raw['occupancy'] ?? '');
+        if ($occ_str === '') {
+            $parts = array();
+            if ($max_adults !== null) {
+                $parts[] = $max_adults . ($max_adults === 1 ? ' Adult' : ' Adults');
+            }
+            if ($max_children !== null && $max_children > 0) {
+                $parts[] = $max_children . ($max_children === 1 ? ' Child' : ' Children');
+            }
+            if (!empty($parts)) {
+                $occ_str = implode(' + ', $parts);
+            } elseif ($max_total !== null) {
+                $occ_str = $max_total . ($max_total === 1 ? ' Guest' : ' Guests');
+            } else {
+                $occ_str = '2 Guests';
+            }
+        }
+
+        // Pricing Configuration (strictly isolated to this unit)
+        $pr_raw = isset($raw['pricing']) && is_array($raw['pricing']) ? $raw['pricing'] : array();
+        $pricing = array();
+        $base_rate = $san_num($pr_raw['baseNightlyRateUSD'] ?? null, false);
+        $start_rate = $san_num($pr_raw['startingFromPriceUSD'] ?? null, false);
+        $wknd_rate = $san_num($pr_raw['weekendRateUSD'] ?? null, false);
+        $base_occ  = $san_int($pr_raw['baseOccupancyAdults'] ?? null, 1);
+        $add_guest = $san_num($pr_raw['additionalGuestRateUSD'] ?? null, true);
+        $child_r   = $san_num($pr_raw['childRateUSD'] ?? null, true);
+        $child_11  = $san_num($pr_raw['childRate11PlusUSD'] ?? null, true);
+        $min_stay  = $san_int($pr_raw['minStayNights'] ?? null, 1);
+
+        if ($base_rate !== null) { $pricing['baseNightlyRateUSD'] = $base_rate; }
+        if ($start_rate !== null) { $pricing['startingFromPriceUSD'] = $start_rate; }
+        if ($wknd_rate !== null) { $pricing['weekendRateUSD'] = $wknd_rate; }
+        if (!empty($pr_raw['weekendDays']) && is_array($pr_raw['weekendDays'])) {
+            $wk_days = array_values(array_intersect(array_map('strval', $pr_raw['weekendDays']), array('fri', 'sat', 'sun')));
+            if (!empty($wk_days)) { $pricing['weekendDays'] = $wk_days; }
+        }
+        if ($base_occ !== null) { $pricing['baseOccupancyAdults'] = $base_occ; }
+        if ($add_guest !== null) { $pricing['additionalGuestRateUSD'] = $add_guest; }
+        if ($child_r !== null) { $pricing['childRateUSD'] = $child_r; }
+        if ($child_11 !== null) { $pricing['childRate11PlusUSD'] = $child_11; }
+        if ($min_stay !== null) { $pricing['minStayNights'] = $min_stay; }
+
+        $v_from = $san_date($pr_raw['rateValidFrom'] ?? '');
+        $v_to   = $san_date($pr_raw['rateValidTo'] ?? '');
+        if ($v_from !== '') { $pricing['rateValidFrom'] = $v_from; }
+        if ($v_to !== '') { $pricing['rateValidTo'] = $v_to; }
+
+        $r_status = (string) ($pr_raw['rateStatus'] ?? 'provisional');
+        $pricing['rateStatus'] = in_array($r_status, array('provisional', 'confirmed'), true) ? $r_status : 'provisional';
+
+        $p_basis = (string) ($pr_raw['priceBasis'] ?? 'per_room');
+        $pricing['priceBasis'] = in_array($p_basis, array('per_room', 'per_unit', 'per_person', 'per_person_sharing', 'per_person_single'), true) ? $p_basis : 'per_room';
+
+        $seasonal = array();
+        if (!empty($pr_raw['seasonalRates']) && is_array($pr_raw['seasonalRates'])) {
+            foreach ($pr_raw['seasonalRates'] as $sidx => $srow) {
+                if (!is_array($srow)) { continue; }
+                $s_rate = $san_num($srow['nightlyRateUSD'] ?? null, false);
+                $s_from = $san_date($srow['startDate'] ?? '');
+                $s_to   = $san_date($srow['endDate'] ?? '');
+                if ($s_rate === null || $s_from === '' || $s_to === '') { continue; }
+                $item = array(
+                    'id'             => outbound_sanitize_unit_id((string) ($srow['id'] ?? ''), $sidx + 1),
+                    'label'          => $san_text($srow['label'] ?? 'Seasonal Rate') ?: 'Seasonal Rate',
+                    'startDate'      => $s_from,
+                    'endDate'        => $s_to,
+                    'nightlyRateUSD' => $s_rate,
+                );
+                if (array_key_exists('isActive', $srow) && !$srow['isActive']) {
+                    $item['isActive'] = false;
+                }
+                $sw = $san_num($srow['weekendRateUSD'] ?? null, false);
+                if ($sw !== null) { $item['weekendRateUSD'] = $sw; }
+                $sm = $san_int($srow['minStayNights'] ?? null, 1);
+                if ($sm !== null) { $item['minStayNights'] = $sm; }
+                $seasonal[] = $item;
+            }
+        }
+        if (!empty($seasonal)) { $pricing['seasonalRates'] = $seasonal; }
+
+        $date_rates = array();
+        if (!empty($pr_raw['dateSpecificRates']) && is_array($pr_raw['dateSpecificRates'])) {
+            foreach ($pr_raw['dateSpecificRates'] as $didx => $drow) {
+                if (!is_array($drow)) { continue; }
+                $d_dt   = $san_date($drow['date'] ?? '');
+                $d_rate = $san_num($drow['nightlyRateUSD'] ?? null, false);
+                if ($d_dt === '' || $d_rate === null) { continue; }
+                $d_item = array(
+                    'id'             => outbound_sanitize_unit_id((string) ($drow['id'] ?? ''), $didx + 1),
+                    'date'           => $d_dt,
+                    'nightlyRateUSD' => $d_rate,
+                );
+                if (array_key_exists('isActive', $drow) && !$drow['isActive']) {
+                    $d_item['isActive'] = false;
+                }
+                $d_lbl = $san_text($drow['label'] ?? '');
+                if ($d_lbl !== '') { $d_item['label'] = $d_lbl; }
+                $date_rates[] = $d_item;
+            }
+        }
+        if (!empty($date_rates)) { $pricing['dateSpecificRates'] = $date_rates; }
+
+        $meal_plans = array();
+        if (!empty($pr_raw['mealPlanRates']) && is_array($pr_raw['mealPlanRates'])) {
+            foreach ($pr_raw['mealPlanRates'] as $midx => $mrow) {
+                if (!is_array($mrow)) { continue; }
+                $m_name = $san_text($mrow['name'] ?? '');
+                if ($m_name === '') { continue; }
+                $m_supp = $san_num($mrow['supplementPerPersonPerNightUSD'] ?? 0, true) ?? 0.0;
+                $m_type = (string) ($mrow['pricingType'] ?? 'per_person_per_night');
+                $mp = array(
+                    'id'                             => outbound_sanitize_unit_id((string) ($mrow['id'] ?? ''), $midx + 1),
+                    'name'                           => $m_name,
+                    'supplementPerPersonPerNightUSD' => $m_supp,
+                    'pricingType'                    => in_array($m_type, array('per_person_per_night', 'per_unit_per_night'), true) ? $m_type : 'per_person_per_night',
+                );
+                if (array_key_exists('isActive', $mrow) && !$mrow['isActive']) {
+                    $mp['isActive'] = false;
+                }
+                $m_desc = $san_text($mrow['description'] ?? '');
+                if ($m_desc !== '') { $mp['description'] = $m_desc; }
+                $meal_plans[] = $mp;
+            }
+        }
+        if (!empty($meal_plans)) { $pricing['mealPlanRates'] = $meal_plans; }
+
+        $p_inc = $san_list($pr_raw['inclusions'] ?? array());
+        if (!empty($p_inc)) { $pricing['inclusions'] = $p_inc; }
+        $p_exc = $san_list($pr_raw['exclusions'] ?? array());
+        if (!empty($p_exc)) { $pricing['exclusions'] = $p_exc; }
+        if (!empty($pr_raw['ratePlans']) && is_array($pr_raw['ratePlans'])) {
+            $inline_rps = outbound_sanitize_rate_plans_payload($pr_raw['ratePlans'], array(), false);
+            if (!empty($inline_rps['public_plans'])) {
+                $pricing['ratePlans'] = $inline_rps['public_plans'];
+            }
+        }
+
+        // Independent Gallery
+        $main_img = $san_url($raw['imageUrl'] ?? '');
+        $gallery  = array();
+        $gal_urls = array();
+        if (!empty($raw['gallery']) && is_array($raw['gallery'])) {
+            foreach ($raw['gallery'] as $gidx => $gitem) {
+                if (is_string($gitem)) {
+                    $gu = $san_url($gitem);
+                    if ($gu === '') { continue; }
+                    $gallery[] = array('id' => 'img-' . ($gidx + 1), 'url' => $gu, 'alt' => $name, 'caption' => '');
+                    $gal_urls[] = $gu;
+                } elseif (is_array($gitem)) {
+                    $gu = $san_url($gitem['url'] ?? '');
+                    if ($gu === '') { continue; }
+                    $g_entry = array(
+                        'id'  => outbound_sanitize_unit_id((string) ($gitem['id'] ?? ''), $gidx + 1),
+                        'url' => $gu,
+                    );
+                    $g_alt = $san_text($gitem['alt'] ?? '');
+                    $g_cap = $san_text($gitem['caption'] ?? '');
+                    if ($g_alt !== '') { $g_entry['alt'] = $g_alt; }
+                    if ($g_cap !== '') { $g_entry['caption'] = $g_cap; }
+                    $gallery[] = $g_entry;
+                    $gal_urls[] = $gu;
+                }
+            }
+        }
+        if ($main_img === '' && !empty($gal_urls)) {
+            $main_img = $gal_urls[0];
+        }
+
+        // Amenities & Custom Amenities (strictly per-unit)
+        $amenities        = $san_list($raw['amenities'] ?? array());
+        $custom_amenities = $san_list($raw['customAmenities'] ?? array());
+        $access_feats     = $san_list($raw['accessibilityFeatures'] ?? array());
+        $inclusions       = $san_list($raw['inclusions'] ?? array());
+        $rate_plan_ids    = array_values(array_unique(array_filter(array_map(
+            static fn($rpid) => outbound_sanitize_unit_id((string) $rpid, 0),
+            is_array($raw['ratePlanIds'] ?? null) ? $raw['ratePlanIds'] : array()
+        ))));
+
+        $features = array();
+        if (isset($raw['features_text']) && is_string($raw['features_text']) && trim($raw['features_text']) !== '') {
+            $ft_lines = preg_split('/\r\n|\r|\n/', $raw['features_text']) ?: array();
+            $features = $san_list($ft_lines);
+        } elseif (!empty($amenities) || !empty($custom_amenities)) {
+            $def_map = outbound_get_room_amenity_definitions();
+            foreach ($amenities as $aid) {
+                $features[] = $def_map[$aid]['label'] ?? $aid;
+            }
+            foreach ($custom_amenities as $ca) {
+                $features[] = $ca;
+            }
+        } elseif (!empty($raw['features']) && is_array($raw['features'])) {
+            $features = $san_list($raw['features']);
+        }
+
+        // Policies
+        $pol_raw  = isset($raw['policies']) && is_array($raw['policies']) ? $raw['policies'] : array();
+        $policies = array();
+        $pol_min  = $san_int($pol_raw['minStayNights'] ?? null, 1);
+        if ($pol_min !== null) { $policies['minStayNights'] = $pol_min; }
+        foreach (array('checkInRestrictions', 'cancellationPolicy', 'extraPersonPolicy', 'accessibilityInfo', 'otherRestrictions') as $pk) {
+            $pv = $san_area($pol_raw[$pk] ?? '');
+            if ($pv !== '') {
+                $policies[$pk] = $pv;
+            }
+        }
+
+        $unit = array(
+            'id'          => $unit_id,
+            'name'        => $name,
+            'occupancy'   => $occ_str,
+            'description' => $full_desc,
+            'imageUrl'    => $main_img,
+            'features'    => array_values(array_unique($features)),
+            'status'      => $status,
+        );
+        if ($short_desc !== '') { $unit['shortDescription'] = $short_desc; }
+        if ($unit_cat !== '') { $unit['unitCategory'] = $unit_cat; }
+        if ($wing !== '') { $unit['wing'] = $wing; }
+        if ($is_entire) { $unit['isEntireProperty'] = true; }
+        if ($avail_stat !== 'available') { $unit['availabilityStatus'] = $avail_stat; }
+        if ($custom_cta !== '') { $unit['customCtaLabel'] = $custom_cta; }
+        if ($size_sqm !== null) { $unit['sizeSqm'] = $size_sqm; }
+        if ($unit_count !== null) { $unit['unitCount'] = $unit_count; }
+        if ($featured) { $unit['featured'] = true; }
+        if (!empty($gallery)) {
+            $unit['gallery'] = $gallery;
+            $unit['galleryImages'] = array_values(array_unique($gal_urls));
+        }
+        if (!empty($amenities)) { $unit['amenities'] = $amenities; }
+        if (!empty($custom_amenities)) { $unit['customAmenities'] = $custom_amenities; }
+        if (!empty($access_feats)) { $unit['accessibilityFeatures'] = $access_feats; }
+        if (!empty($inclusions)) { $unit['inclusions'] = $inclusions; }
+        if (!empty($rate_plan_ids)) { $unit['ratePlanIds'] = $rate_plan_ids; }
+        if (!empty($occ_cfg)) { $unit['occupancyConfig'] = $occ_cfg; }
+        if (!empty($pricing)) { $unit['pricing'] = $pricing; }
+        if (!empty($policies)) { $unit['policies'] = $policies; }
+
+        $public_rooms[] = $unit;
+
+        // Admin-only internal supplier rate & notes (NEVER returned inside $public_rooms)
+        if ($allow_internal_write) {
+            $int_rate  = $san_text($raw['internalSupplierRate'] ?? '');
+            $int_notes = $san_area($raw['internalNotes'] ?? '');
+            if ($int_rate !== '' || $int_notes !== '') {
+                $internal_map[$unit_id] = array(
+                    'internalSupplierRate' => $int_rate,
+                    'internalNotes'        => $int_notes,
+                );
+            }
+        } elseif (isset($existing_internal[$unit_id])) {
+            $internal_map[$unit_id] = $existing_internal[$unit_id];
+        }
+    }
+
+    return array(
+        'public_rooms' => $public_rooms,
+        'internal_map' => $internal_map,
+    );
+}
+
+/**
+ * Normalize a single stored room record into strict public RoomTypeSchema format for frontend snapshots.
+ * Defensively removes any admin-only internal fields and resolves theme asset URLs.
+ *
+ * @param array<string, mixed> $rm
+ * @return array<string, mixed>
+ */
+function outbound_build_public_room_type(array $rm, string $fallback_hero = '', int $index = 0): array {
+    $san = outbound_sanitize_room_types_payload(array($rm), array(), false);
+    if (empty($san['public_rooms'])) {
+        return array();
+    }
+    $unit = $san['public_rooms'][0];
+    if (($unit['status'] ?? 'published') === 'trashed') {
+        return array();
+    }
+    if (empty($unit['id'])) {
+        $unit['id'] = 'unit_legacy_' . ($index + 1);
+    }
+
+    if (!empty($unit['pricing']) && is_array($unit['pricing'])) {
+        foreach (array('seasonalRates', 'dateSpecificRates', 'mealPlanRates', 'ratePlans') as $rk) {
+            if (!empty($unit['pricing'][$rk]) && is_array($unit['pricing'][$rk])) {
+                $unit['pricing'][$rk] = array_values(array_filter(
+                    $unit['pricing'][$rk],
+                    static fn($r) => is_array($r) && (!array_key_exists('isActive', $r) || $r['isActive'] !== false)
+                ));
+                if (empty($unit['pricing'][$rk])) {
+                    unset($unit['pricing'][$rk]);
+                }
+            }
+        }
+    }
+
+    $unit['imageUrl'] = outbound_resolve_theme_asset_url((string) ($unit['imageUrl'] ?? $fallback_hero), 'hero');
+    if (!empty($unit['gallery']) && is_array($unit['gallery'])) {
+        foreach ($unit['gallery'] as $gidx => $gitem) {
+            $unit['gallery'][$gidx]['url'] = outbound_resolve_theme_asset_url((string) ($gitem['url'] ?? ''), 'hero');
+        }
+    }
+    if (!empty($unit['galleryImages']) && is_array($unit['galleryImages'])) {
+        $unit['galleryImages'] = array_values(array_map(
+            static fn($u) => outbound_resolve_theme_asset_url((string) $u, 'hero'),
+            $unit['galleryImages']
+        ));
+    }
+
+    unset($unit['internalSupplierRate'], $unit['internalNotes']);
+    return $unit;
+}
+
+/**
+ * Sanitize reusable property/unit Rate Plans, separating supplier costs & margins from public JSON.
+ *
+ * @param array<int, mixed> $raw_plans
+ * @param array<string, array{supplierCostUSD:?float,internalNotes:string}> $existing_internal
+ * @return array{public_plans:array<int, array<string, mixed>>, internal_map:array<string, array{supplierCostUSD:?float,internalNotes:string}>}
+ */
+function outbound_sanitize_rate_plans_payload(
+    array $raw_plans,
+    array $existing_internal = array(),
+    bool $allow_internal_write = true
+): array {
+    $san_text = static function ($v): string {
+        $s = (string) $v;
+        return function_exists('sanitize_text_field') ? (string) sanitize_text_field($s) : trim(strip_tags($s));
+    };
+    $san_area = static function ($v): string {
+        $s = (string) $v;
+        return function_exists('sanitize_textarea_field') ? (string) sanitize_textarea_field($s) : trim(strip_tags($s));
+    };
+    $san_date = static function ($v): string {
+        $s = trim((string) $v);
+        return preg_match('/^\d{4}-\d{2}-\d{2}$/', $s) ? $s : '';
+    };
+    $san_num = static function ($v, bool $allow_zero = true): ?float {
+        if ($v === '' || $v === null || !is_numeric($v)) {
+            return null;
+        }
+        $f = (float) $v;
+        if (!is_finite($f) || $f < 0 || (!$allow_zero && $f <= 0)) {
+            return null;
+        }
+        return round($f, 2);
+    };
+    $san_int = static function ($v, int $min = 1): ?int {
+        if ($v === '' || $v === null || !is_numeric($v)) {
+            return null;
+        }
+        $i = (int) $v;
+        return $i >= $min ? $i : null;
+    };
+    $san_list = static function ($arr) use ($san_text): array {
+        if (!is_array($arr)) {
+            return array();
+        }
+        $out = array();
+        foreach ($arr as $item) {
+            $c = $san_text($item);
+            if ($c !== '' && !in_array($c, $out, true)) {
+                $out[] = $c;
+            }
+        }
+        return $out;
+    };
+
+    $public_plans = array();
+    $internal_map = array();
+    $used_ids     = array();
+
+    foreach (array_values($raw_plans) as $idx => $raw) {
+        if (!is_array($raw)) {
+            continue;
+        }
+        $rate_name = $san_text($raw['internalRateName'] ?? ($raw['name'] ?? ''));
+        if ($rate_name === '') {
+            continue;
+        }
+        $rp_id = outbound_sanitize_unit_id((string) ($raw['id'] ?? ''), 0);
+        if ($rp_id === '' || isset($used_ids[$rp_id])) {
+            $rp_id = 'rp_' . substr(outbound_generate_unit_id(), 5);
+        }
+        $used_ids[$rp_id] = true;
+
+        $v_from   = $san_date($raw['validFrom'] ?? '');
+        $v_to     = $san_date($raw['validTo'] ?? '');
+        $last_cnf = $san_date($raw['lastConfirmedDate'] ?? '');
+        $amount   = $san_num($raw['amountUSD'] ?? ($raw['publicSellingPriceUSD'] ?? null), false);
+
+        $basis_raw  = $san_text($raw['priceBasis'] ?? 'per_room');
+        $cust_basis = $san_text($raw['customBasisLabel'] ?? '');
+        $market_raw = (string) ($raw['visitorMarket'] ?? 'international');
+        $market     = in_array($market_raw, array('international', 'zimbabwe_resident', 'sadc_resident', 'custom'), true) ? $market_raw : 'international';
+        $cust_mkt   = $san_text($raw['customMarketLabel'] ?? '');
+        $age_raw    = (string) ($raw['adultOrChildCategory'] ?? 'all');
+        $age_cat    = in_array($age_raw, array('adult', 'child', 'all'), true) ? $age_raw : 'all';
+        $board_raw  = (string) ($raw['boardBasis'] ?? '');
+        $board      = in_array($board_raw, array('room_only', 'self_catering', 'bed_and_breakfast', 'half_board', 'full_board', 'all_inclusive'), true) ? $board_raw : '';
+        $max_occ    = $san_int($raw['maxOccupancy'] ?? null, 1);
+        $min_stay   = $san_int($raw['minStayNights'] ?? null, 1);
+        $r_stat     = in_array((string) ($raw['rateStatus'] ?? 'provisional'), array('provisional', 'confirmed'), true)
+            ? (string) $raw['rateStatus']
+            : 'provisional';
+        $inclusions = $san_list($raw['inclusions'] ?? array());
+        $exclusions = $san_list($raw['exclusions'] ?? array());
+        $unit_ids   = array_values(array_unique(array_filter(array_map(
+            static fn($uid) => preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $uid),
+            is_array($raw['applicableUnitIds'] ?? null) ? $raw['applicableUnitIds'] : array()
+        ))));
+
+        $plan = array(
+            'id'               => $rp_id,
+            'internalRateName' => $rate_name,
+            'priceBasis'       => $basis_raw !== '' ? $basis_raw : 'per_room',
+            'visitorMarket'    => $market,
+            'rateStatus'       => $r_stat,
+        );
+        if ($v_from !== '') { $plan['validFrom'] = $v_from; }
+        if ($v_to !== '') { $plan['validTo'] = $v_to; }
+        if ($amount !== null) { $plan['amountUSD'] = $amount; }
+        if ($cust_basis !== '') { $plan['customBasisLabel'] = $cust_basis; }
+        if ($cust_mkt !== '') { $plan['customMarketLabel'] = $cust_mkt; }
+        if ($age_cat !== 'all') { $plan['adultOrChildCategory'] = $age_cat; }
+        if ($board !== '') { $plan['boardBasis'] = $board; }
+        if ($max_occ !== null) { $plan['maxOccupancy'] = $max_occ; }
+        if ($min_stay !== null) { $plan['minStayNights'] = $min_stay; }
+        if (!empty($inclusions)) { $plan['inclusions'] = $inclusions; }
+        if (!empty($exclusions)) { $plan['exclusions'] = $exclusions; }
+        if ($last_cnf !== '') { $plan['lastConfirmedDate'] = $last_cnf; }
+        if (!empty($unit_ids)) { $plan['applicableUnitIds'] = $unit_ids; }
+        if (array_key_exists('isActive', $raw) && !$raw['isActive']) {
+            $plan['isActive'] = false;
+        }
+
+        $public_plans[] = $plan;
+
+        if ($allow_internal_write) {
+            $sup_cost  = $san_num($raw['supplierCostUSD'] ?? ($raw['supplierCost'] ?? null), true);
+            $int_notes = $san_area($raw['internalNotes'] ?? '');
+            if ($sup_cost !== null || $int_notes !== '') {
+                $internal_map[$rp_id] = array(
+                    'supplierCostUSD' => $sup_cost,
+                    'internalNotes'   => $int_notes,
+                );
+            }
+        } elseif (isset($existing_internal[$rp_id])) {
+            $internal_map[$rp_id] = $existing_internal[$rp_id];
+        }
+    }
+
+    return array(
+        'public_plans' => $public_plans,
+        'internal_map' => $internal_map,
+    );
+}
+
+/**
+ * Normalize a single public Rate Plan defensively (guarantees supplier cost / internal notes stripped).
+ *
+ * @param array<string, mixed> $rp
+ * @return array<string, mixed>
+ */
+function outbound_build_public_rate_plan(array $rp): array {
+    $san = outbound_sanitize_rate_plans_payload(array($rp), array(), false);
+    if (empty($san['public_plans'])) {
+        return array();
+    }
+    $clean = $san['public_plans'][0];
+    if (array_key_exists('isActive', $clean) && $clean['isActive'] === false) {
+        return array();
+    }
+    unset($clean['supplierCostUSD'], $clean['supplierCost'], $clean['internalNotes']);
+    return $clean;
+}
+
+/**
+ * Sanitize Accommodation Special Offers & Promotional Packages (strictly separate from physical unit records).
+ *
+ * @param array<int, mixed> $raw_offers
+ * @return array<int, array<string, mixed>>
+ */
+function outbound_sanitize_accommodation_offers_payload(array $raw_offers): array {
+    $san_text = static function ($v): string {
+        $s = (string) $v;
+        return function_exists('sanitize_text_field') ? (string) sanitize_text_field($s) : trim(strip_tags($s));
+    };
+    $san_area = static function ($v): string {
+        $s = (string) $v;
+        return function_exists('sanitize_textarea_field') ? (string) sanitize_textarea_field($s) : trim(strip_tags($s));
+    };
+    $san_url = static function ($v): string {
+        $s = trim((string) $v);
+        if ($s === '') { return ''; }
+        return function_exists('esc_url_raw') ? (string) esc_url_raw($s) : (filter_var($s, FILTER_SANITIZE_URL) ?: '');
+    };
+    $san_date = static function ($v): string {
+        $s = trim((string) $v);
+        return preg_match('/^\d{4}-\d{2}-\d{2}$/', $s) ? $s : '';
+    };
+    $san_num = static function ($v): ?float {
+        if ($v === '' || $v === null || !is_numeric($v)) { return null; }
+        $f = (float) $v;
+        return is_finite($f) && $f >= 0 ? round($f, 2) : null;
+    };
+    $san_list = static function ($arr) use ($san_text): array {
+        if (!is_array($arr)) { return array(); }
+        $out = array();
+        foreach ($arr as $item) {
+            $c = $san_text($item);
+            if ($c !== '' && !in_array($c, $out, true)) { $out[] = $c; }
+        }
+        return $out;
+    };
+
+    $out      = array();
+    $used_ids = array();
+    foreach (array_values($raw_offers) as $raw) {
+        if (!is_array($raw)) { continue; }
+        $title = $san_text($raw['title'] ?? ($raw['name'] ?? ''));
+        if ($title === '') { continue; }
+
+        $oid = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($raw['id'] ?? ''));
+        if ($oid === '' || isset($used_ids[$oid])) {
+            $oid = 'offer_' . substr(outbound_generate_unit_id(), 5);
+        }
+        $used_ids[$oid] = true;
+
+        $ptype = (string) ($raw['priceType'] ?? 'added_value');
+        if (!in_array($ptype, array('fixed_offer', 'percentage_discount', 'fixed_discount', 'added_value'), true)) {
+            $ptype = 'added_value';
+        }
+        $cat = (string) ($raw['offerCategory'] ?? '');
+        if (!in_array($cat, array('special_offer', 'honeymoon_package', 'seasonal_promotion', 'meal_plan', 'added_value'), true)) {
+            $cat = '';
+        }
+        $status = (string) ($raw['status'] ?? 'published');
+        if (!in_array($status, array('published', 'draft', 'archived', 'trashed'), true)) {
+            $status = 'published';
+        }
+
+        $unit_ids = array_values(array_unique(array_filter(array_map(
+            static fn($u) => preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $u),
+            is_array($raw['applicableUnitIds'] ?? null) ? $raw['applicableUnitIds'] : array()
+        ))));
+        $rp_ids = array_values(array_unique(array_filter(array_map(
+            static fn($r) => preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $r),
+            is_array($raw['applicableRatePlanIds'] ?? null) ? $raw['applicableRatePlanIds'] : array()
+        ))));
+        $gallery = array_values(array_filter(array_map(
+            static fn($u) => $san_url($u),
+            is_array($raw['galleryImages'] ?? null) ? $raw['galleryImages'] : array()
+        )));
+
+        $item = array(
+            'id'        => $oid,
+            'title'     => $title,
+            'priceType' => $ptype,
+            'status'    => $status,
+        );
+        if ($cat !== '') { $item['offerCategory'] = $cat; }
+        $desc = $san_area($raw['description'] ?? '');
+        if ($desc !== '') { $item['description'] = $desc; }
+        if (!empty($gallery)) { $item['galleryImages'] = $gallery; }
+        $inc = $san_list($raw['includedServices'] ?? array());
+        if (!empty($inc)) { $item['includedServices'] = $inc; }
+        if (!empty($unit_ids)) { $item['applicableUnitIds'] = $unit_ids; }
+        if (!empty($raw['applyToEntireProperty'])) { $item['applyToEntireProperty'] = true; }
+        if (!empty($rp_ids)) { $item['applicableRatePlanIds'] = $rp_ids; }
+        $vf = $san_date($raw['validFrom'] ?? '');
+        $vt = $san_date($raw['validTo'] ?? '');
+        if ($vf !== '') { $item['validFrom'] = $vf; }
+        if ($vt !== '') { $item['validTo'] = $vt; }
+        $op = $san_num($raw['offerPriceUSD'] ?? null);
+        $dp = $san_num($raw['discountPercent'] ?? null);
+        $da = $san_num($raw['discountAmountUSD'] ?? null);
+        if ($op !== null) { $item['offerPriceUSD'] = $op; }
+        if ($dp !== null) { $item['discountPercent'] = $dp; }
+        if ($da !== null) { $item['discountAmountUSD'] = $da; }
+        $greq = $san_text($raw['guestRequirements'] ?? '');
+        $cond = $san_area($raw['conditions'] ?? '');
+        $cta  = $san_text($raw['ctaLabel'] ?? '');
+        if ($greq !== '') { $item['guestRequirements'] = $greq; }
+        if ($cond !== '') { $item['conditions'] = $cond; }
+        if ($cta !== '') { $item['ctaLabel'] = $cta; }
+        if (!empty($raw['featured'])) { $item['featured'] = true; }
+
+        $out[] = $item;
+    }
+    return $out;
+}
+
+
+/**
+ * Retrieve shared property amenities (presets + admin-managed custom shared amenities).
+ *
+ * @return array<string, array{id:string,label:string,isPreset:bool}>
+ */
+function outbound_get_shared_property_amenities(): array {
+    $defaults = array();
+    foreach (outbound_get_amenity_definitions() as $aid => $def) {
+        $defaults[$aid] = array(
+            'id'       => $aid,
+            'label'    => (string) $def['label'],
+            'isPreset' => true,
+        );
+    }
+    if (!function_exists('get_option')) {
+        return $defaults;
+    }
+    $stored = get_option('outbound_shared_property_amenities', null);
+    if (!is_array($stored)) {
+        return $defaults;
+    }
+    $out = array();
+    foreach ($stored as $row) {
+        if (!is_array($row)) { continue; }
+        $id  = sanitize_title((string) ($row['id'] ?? ''));
+        $lbl = function_exists('sanitize_text_field') ? (string) sanitize_text_field((string) ($row['label'] ?? '')) : trim(strip_tags((string) ($row['label'] ?? '')));
+        if ($id === '' && $lbl !== '') { $id = sanitize_title($lbl); }
+        if ($id === '' || $lbl === '') { continue; }
+        $out[$id] = array(
+            'id'       => $id,
+            'label'    => $lbl,
+            'isPreset' => isset($defaults[$id]) || !empty($row['isPreset']),
+        );
+    }
+    return $out;
+}
+
+/**
+ * Save shared property amenities list cleanly.
+ *
+ * @param array<int, mixed> $items
+ * @return array<string, array{id:string,label:string,isPreset:bool}>
+ */
+function outbound_save_shared_property_amenities(array $items): array {
+    $defaults = outbound_get_amenity_definitions();
+    $clean    = array();
+    foreach ($items as $row) {
+        if (!is_array($row)) { continue; }
+        $lbl = function_exists('sanitize_text_field') ? (string) sanitize_text_field((string) ($row['label'] ?? '')) : trim(strip_tags((string) ($row['label'] ?? '')));
+        if ($lbl === '') { continue; }
+        $id = sanitize_title((string) ($row['id'] ?? $lbl));
+        if ($id === '') { continue; }
+        $clean[$id] = array(
+            'id'       => $id,
+            'label'    => $lbl,
+            'isPreset' => isset($defaults[$id]) || !empty($row['isPreset']),
+        );
+    }
+    if (function_exists('update_option')) {
+        update_option('outbound_shared_property_amenities', array_values($clean), false);
+    }
+    if (function_exists('outbound_invalidate_snapshot_cache')) {
+        outbound_invalidate_snapshot_cache();
+    }
+    return $clean;
+}
+
+/**
+ * Retrieve shared room/unit amenities (presets + admin-managed shared room amenities).
+ *
+ * @return array<string, array{id:string,label:string,icon:string,isPreset:bool}>
+ */
+function outbound_get_shared_room_amenities(): array {
+    $defaults = array();
+    foreach (outbound_get_room_amenity_definitions() as $aid => $def) {
+        $defaults[$aid] = array(
+            'id'       => $aid,
+            'label'    => (string) $def['label'],
+            'icon'     => (string) ($def['icon'] ?? 'dashicons-yes'),
+            'isPreset' => true,
+        );
+    }
+    if (!function_exists('get_option')) {
+        return $defaults;
+    }
+    $stored = get_option('outbound_shared_room_amenities', null);
+    if (!is_array($stored)) {
+        return $defaults;
+    }
+    $out = array();
+    foreach ($stored as $row) {
+        if (!is_array($row)) { continue; }
+        $lbl = function_exists('sanitize_text_field') ? (string) sanitize_text_field((string) ($row['label'] ?? '')) : trim(strip_tags((string) ($row['label'] ?? '')));
+        $id  = sanitize_title((string) ($row['id'] ?? $lbl));
+        if ($id === '' || $lbl === '') { continue; }
+        $icon = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($row['icon'] ?? 'dashicons-yes'));
+        $out[$id] = array(
+            'id'       => $id,
+            'label'    => $lbl,
+            'icon'     => $icon !== '' ? $icon : 'dashicons-yes',
+            'isPreset' => isset($defaults[$id]) || !empty($row['isPreset']),
+        );
+    }
+    return $out;
+}
+
+/**
+ * Save shared room/unit amenities list cleanly.
+ *
+ * @param array<int, mixed> $items
+ * @return array<string, array{id:string,label:string,icon:string,isPreset:bool}>
+ */
+function outbound_save_shared_room_amenities(array $items): array {
+    $defaults = outbound_get_room_amenity_definitions();
+    $clean    = array();
+    foreach ($items as $row) {
+        if (!is_array($row)) { continue; }
+        $lbl = function_exists('sanitize_text_field') ? (string) sanitize_text_field((string) ($row['label'] ?? '')) : trim(strip_tags((string) ($row['label'] ?? '')));
+        if ($lbl === '') { continue; }
+        $id = sanitize_title((string) ($row['id'] ?? $lbl));
+        if ($id === '') { continue; }
+        $icon = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($row['icon'] ?? ($defaults[$id]['icon'] ?? 'dashicons-yes')));
+        $clean[$id] = array(
+            'id'       => $id,
+            'label'    => $lbl,
+            'icon'     => $icon !== '' ? $icon : 'dashicons-yes',
+            'isPreset' => isset($defaults[$id]) || !empty($row['isPreset']),
+        );
+    }
+    if (function_exists('update_option')) {
+        update_option('outbound_shared_room_amenities', array_values($clean), false);
+    }
+    if (function_exists('outbound_invalidate_snapshot_cache')) {
+        outbound_invalidate_snapshot_cache();
+    }
+    return $clean;
+}
+
+/**
+ * Retrieve shared reusable Rate Plan templates across properties.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function outbound_get_shared_rate_templates(): array {
+    if (!function_exists('get_option')) {
+        return array();
+    }
+    $stored = get_option('outbound_shared_rate_templates', array());
+    return is_array($stored) ? array_values(array_filter($stored, 'is_array')) : array();
+}
+
+/**
+ * Save shared reusable Rate Plan templates cleanly.
+ *
+ * @param array<int, mixed> $items
+ * @return array<int, array<string, mixed>>
+ */
+function outbound_save_shared_rate_templates(array $items): array {
+    $san = outbound_sanitize_rate_plans_payload($items, array(), true);
+    $out = $san['public_plans'];
+    foreach ($out as $idx => $rp) {
+        $rpid = $rp['id'] ?? '';
+        if ($rpid !== '' && isset($san['internal_map'][$rpid])) {
+            $out[$idx]['supplierCostUSD'] = $san['internal_map'][$rpid]['supplierCostUSD'];
+            $out[$idx]['internalNotes']   = $san['internal_map'][$rpid]['internalNotes'];
+        }
+        $raw_src = $items[$idx] ?? array();
+        if (is_array($raw_src) && !empty($raw_src['templateSourceId'])) {
+            $out[$idx]['templateSourceId'] = outbound_sanitize_unit_id((string) $raw_src['templateSourceId']);
+        }
+    }
+    if (function_exists('update_option')) {
+        update_option('outbound_shared_rate_templates', $out, false);
+    }
+    return $out;
+}
+
+/**
+ * Retrieve shared reusable Special Offer / Package templates across properties.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function outbound_get_shared_offer_templates(): array {
+    if (!function_exists('get_option')) {
+        return array();
+    }
+    $stored = get_option('outbound_shared_offer_templates', array());
+    return is_array($stored) ? array_values(array_filter($stored, 'is_array')) : array();
+}
+
+/**
+ * Save shared reusable Special Offer / Package templates cleanly.
+ *
+ * @param array<int, mixed> $items
+ * @return array<int, array<string, mixed>>
+ */
+function outbound_save_shared_offer_templates(array $items): array {
+    $out = outbound_sanitize_accommodation_offers_payload($items);
+    if (function_exists('update_option')) {
+        update_option('outbound_shared_offer_templates', $out, false);
+    }
+    return $out;
+}
+
+/**
+ * Scan accommodation posts to find all properties and units referencing a shared library record.
+ * Used to warn administrators before permanently deleting shared amenities, rates, or offers.
+ *
+ * @return array{count:int, properties:array<int, array{id:int,title:string,slug:string}>, units:array<int, array{propertyId:int,propertyTitle:string,unitId:string,unitName:string}>}
+ */
+function outbound_find_shared_record_dependencies(string $kind, string $record_id, string $record_label = ''): array {
+    $kind = match ($kind) {
+        'property_amenities' => 'property_amenity',
+        'room_amenities'     => 'room_amenity',
+        'rate_templates'     => 'rate_template',
+        'offer_templates'    => 'offer_template',
+        default              => $kind,
+    };
+    $deps = array('count' => 0, 'properties' => array(), 'units' => array());
+    if (!function_exists('get_posts')) {
+        return $deps;
+    }
+
+    $posts = get_posts(array(
+        'post_type'              => 'accommodation',
+        'posts_per_page'         => -1,
+        'post_status'            => array('publish', 'draft', 'pending', 'private', 'archived'),
+        'no_found_rows'          => true,
+        'update_post_meta_cache' => true,
+    ));
+
+    $needle_id  = strtolower(trim($record_id));
+    $needle_lbl = strtolower(trim($record_label));
+
+    foreach ($posts as $p) {
+        $pid   = (int) $p->ID;
+        $ptitle = (string) $p->post_title;
+        $pslug  = (string) $p->post_name;
+        $prop_matched = false;
+
+        if ($kind === 'property_amenity') {
+            $raw = function_exists('get_post_meta') ? (string) get_post_meta($pid, '_outbound_amenities_json', true) : '';
+            $arr = json_decode($raw, true);
+            if (is_array($arr)) {
+                foreach ($arr as $val) {
+                    $v = strtolower(trim((string) $val));
+                    if ($v !== '' && ($v === $needle_id || ($needle_lbl !== '' && $v === $needle_lbl))) {
+                        $prop_matched = true;
+                        break;
+                    }
+                }
+            }
+        } elseif ($kind === 'room_amenity') {
+            $raw = function_exists('get_post_meta') ? (string) get_post_meta($pid, '_outbound_room_types_json', true) : '';
+            $rooms = json_decode($raw, true);
+            if (is_array($rooms)) {
+                foreach ($rooms as $rm) {
+                    if (!is_array($rm)) { continue; }
+                    $pool = array_merge((array) ($rm['amenities'] ?? array()), (array) ($rm['customAmenities'] ?? array()));
+                    foreach ($pool as $val) {
+                        $v = strtolower(trim((string) $val));
+                        if ($v !== '' && ($v === $needle_id || ($needle_lbl !== '' && $v === $needle_lbl))) {
+                            $prop_matched = true;
+                            $deps['units'][] = array(
+                                'propertyId'    => $pid,
+                                'propertyTitle' => $ptitle,
+                                'unitId'        => (string) ($rm['id'] ?? ''),
+                                'unitName'      => (string) ($rm['name'] ?? ''),
+                            );
+                            break;
+                        }
+                    }
+                }
+            }
+        } elseif ($kind === 'rate_template') {
+            $raw = function_exists('get_post_meta') ? (string) get_post_meta($pid, '_outbound_rate_plans_json', true) : '';
+            $plans = json_decode($raw, true);
+            if (is_array($plans)) {
+                foreach ($plans as $rp) {
+                    if (!is_array($rp)) { continue; }
+                    $rpid = strtolower(trim((string) ($rp['id'] ?? '')));
+                    $rsrc = strtolower(trim((string) ($rp['templateSourceId'] ?? '')));
+                    $rname = strtolower(trim((string) ($rp['internalRateName'] ?? '')));
+                    if ($rpid === $needle_id || $rsrc === $needle_id || ($needle_lbl !== '' && $rname === $needle_lbl)) {
+                        $prop_matched = true;
+                        break;
+                    }
+                }
+            }
+        } elseif ($kind === 'offer_template') {
+            $raw = function_exists('get_post_meta') ? (string) get_post_meta($pid, '_outbound_property_offers_json', true) : '';
+            $offs = json_decode($raw, true);
+            if (is_array($offs)) {
+                foreach ($offs as $off) {
+                    if (!is_array($off)) { continue; }
+                    $oid = strtolower(trim((string) ($off['id'] ?? '')));
+                    $osrc = strtolower(trim((string) ($off['templateSourceId'] ?? '')));
+                    $otitle = strtolower(trim((string) ($off['title'] ?? '')));
+                    if ($oid === $needle_id || $osrc === $needle_id || ($needle_lbl !== '' && $otitle === $needle_lbl)) {
+                        $prop_matched = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($prop_matched) {
+            $deps['properties'][] = array(
+                'id'    => $pid,
+                'title' => $ptitle,
+                'slug'  => $pslug,
+            );
+        }
+    }
+
+    $deps['count'] = count($deps['properties']);
+    return $deps;
+}
+
+/**
+ * Safely delete a shared library record after checking dependencies and requiring explicit confirmation
+ * when the record is referenced by one or more properties or units.
+ *
+ * @return array{ok:bool,requires_confirmation?:bool,dependencies?:array,error?:string}
+ */
+function outbound_delete_shared_library_record(
+    string $kind,
+    string $record_id,
+    bool $confirmed = false,
+    bool $detach_from_properties = false
+): array {
+    $kind = match ($kind) {
+        'property_amenities' => 'property_amenity',
+        'room_amenities'     => 'room_amenity',
+        'rate_templates'     => 'rate_template',
+        'offer_templates'    => 'offer_template',
+        default              => $kind,
+    };
+    $record_id = trim($record_id);
+    if ($record_id === '') {
+        return array('ok' => false, 'error' => 'Missing shared record identifier.');
+    }
+
+    $label = '';
+    if ($kind === 'property_amenity') {
+        $items = outbound_get_shared_property_amenities();
+        $label = (string) ($items[$record_id]['label'] ?? '');
+    } elseif ($kind === 'room_amenity') {
+        $items = outbound_get_shared_room_amenities();
+        $label = (string) ($items[$record_id]['label'] ?? '');
+    } elseif ($kind === 'rate_template') {
+        $items = outbound_get_shared_rate_templates();
+        foreach ($items as $it) {
+            if (($it['id'] ?? '') === $record_id) {
+                $label = (string) ($it['internalRateName'] ?? '');
+                break;
+            }
+        }
+    } elseif ($kind === 'offer_template') {
+        $items = outbound_get_shared_offer_templates();
+        foreach ($items as $it) {
+            if (($it['id'] ?? '') === $record_id) {
+                $label = (string) ($it['title'] ?? '');
+                break;
+            }
+        }
+    } else {
+        return array('ok' => false, 'error' => 'Unsupported shared library kind.');
+    }
+
+    $deps = outbound_find_shared_record_dependencies($kind, $record_id, $label);
+    if ($deps['count'] > 0 && !$confirmed) {
+        return array(
+            'ok'                    => false,
+            'requires_confirmation' => true,
+            'dependencies'          => $deps,
+            'error'                 => sprintf(
+                'Warning: "%s" is referenced by %d accommodation property(ies). Explicit confirmation is required to permanently delete this shared record.',
+                $label ?: $record_id,
+                $deps['count']
+            ),
+        );
+    }
+
+    if ($kind === 'property_amenity') {
+        $items = outbound_get_shared_property_amenities();
+        unset($items[$record_id]);
+        outbound_save_shared_property_amenities(array_values($items));
+    } elseif ($kind === 'room_amenity') {
+        $items = outbound_get_shared_room_amenities();
+        unset($items[$record_id]);
+        outbound_save_shared_room_amenities(array_values($items));
+    } elseif ($kind === 'rate_template') {
+        $items = array_values(array_filter(outbound_get_shared_rate_templates(), static fn($r) => ($r['id'] ?? '') !== $record_id));
+        outbound_save_shared_rate_templates($items);
+    } elseif ($kind === 'offer_template') {
+        $items = array_values(array_filter(outbound_get_shared_offer_templates(), static fn($o) => ($o['id'] ?? '') !== $record_id));
+        outbound_save_shared_offer_templates($items);
+    }
+
+    // Optionally detach dangling IDs from referencing properties when explicitly requested
+    if ($detach_from_properties && $deps['count'] > 0 && function_exists('update_post_meta')) {
+        $needle_id = strtolower($record_id);
+        foreach ($deps['properties'] as $prop_ref) {
+            $pid = (int) $prop_ref['id'];
+            if ($kind === 'property_amenity') {
+                $arr = json_decode((string) get_post_meta($pid, '_outbound_amenities_json', true), true);
+                if (is_array($arr)) {
+                    $filtered = array_values(array_filter($arr, static fn($v) => strtolower((string) $v) !== $needle_id));
+                    update_post_meta($pid, '_outbound_amenities_json', wp_json_encode($filtered));
+                }
+            } elseif ($kind === 'room_amenity') {
+                $rooms = json_decode((string) get_post_meta($pid, '_outbound_room_types_json', true), true);
+                if (is_array($rooms)) {
+                    foreach ($rooms as $ridx => $rm) {
+                        if (!is_array($rm)) { continue; }
+                        if (!empty($rm['amenities']) && is_array($rm['amenities'])) {
+                            $rooms[$ridx]['amenities'] = array_values(array_filter($rm['amenities'], static fn($v) => strtolower((string) $v) !== $needle_id));
+                        }
+                    }
+                    update_post_meta($pid, '_outbound_room_types_json', wp_json_encode($rooms));
+                }
+            }
+        }
+        if (function_exists('outbound_invalidate_snapshot_cache')) {
+            outbound_invalidate_snapshot_cache();
+        }
+    }
+
+    return array('ok' => true, 'dependencies' => $deps);
 }

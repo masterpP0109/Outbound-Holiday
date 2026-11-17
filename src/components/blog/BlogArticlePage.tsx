@@ -19,6 +19,7 @@ import type { BlogPost } from '../../types/blog';
 import { getWhatsAppSpecialistUrl } from '../../utils/whatsapp';
 import { Newsletter } from '../common/Newsletter';
 import { PageLink } from '../common/PageLink';
+import { ShareButton } from '../common/ShareButton';
 import { WhatsAppIcon } from '../common/WhatsAppButton';
 import { BlogContentRenderer } from './BlogContentRenderer';
 
@@ -164,16 +165,19 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({
       </nav>
 
       <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
-        {/* Back to Blog & Categories */}
+        {/* Back to Blog & Share */}
         <div className="space-y-4">
-          <PageLink
-            href={sectionPath('blog')}
-            onClick={onBackToBlog}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B5E8E] hover:text-[#E67E22] transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to All Articles</span>
-          </PageLink>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <PageLink
+              href={sectionPath('blog')}
+              onClick={onBackToBlog}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B5E8E] hover:text-[#E67E22] transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to All Articles</span>
+            </PageLink>
+            <ShareButton title={post.title} label="Share Article" />
+          </div>
 
           <div className="flex flex-wrap items-center gap-2">
             {post.categories.map((cat) => (
@@ -206,6 +210,8 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({
                       src={post.author.avatarUrl}
                       alt={post.author.name}
                       className="w-9 h-9 rounded-full object-cover border-2 border-[#C9A66B]"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   <div>
@@ -268,6 +274,8 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({
             src={post.featuredImage.url}
             alt={post.featuredImage.alt}
             className="w-full h-[260px] sm:h-[400px] lg:h-[460px] object-cover"
+            loading="lazy"
+            decoding="async"
           />
           {post.featuredImage.caption && (
             <figcaption className="px-5 py-3 text-xs text-gray-500 border-t border-gray-100">
@@ -412,6 +420,7 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({
                         alt={rel.featuredImage.alt}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        decoding="async"
                       />
                     </PageLink>
                     <div className="p-5 space-y-2">

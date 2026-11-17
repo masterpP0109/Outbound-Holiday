@@ -6,7 +6,12 @@ import { enquiryEmail, escapeHtml } from './enquiry-email';
 import { emailRecipient as recipient } from './email-recipient';
 import { deliverCampaignNotification } from './newsletter/delivery';
 export { escapeHtml } from './enquiry-email';
+const DEFAULT_TEAM_ENQUIRY_TO='fungai@outboundholiday.com';
+const DEFAULT_EMAIL_FROM='Outbound Holidays <fungai@outboundholiday.com>';
+const DEFAULT_MESSAGE_ID_DOMAIN='outboundholiday.com';
 const required=(key:string)=>{const v=process.env[key];if(!v)throw new Error('Missing server configuration: '+key);return v;};
+const teamEnquiryTo=()=>process.env.TEAM_ENQUIRY_TO||DEFAULT_TEAM_ENQUIRY_TO;
+const emailFrom=()=>process.env.EMAIL_FROM||DEFAULT_EMAIL_FROM;
 export async function brevo(path:string,method='GET',body?:unknown){const response=await fetch('https://api.brevo.com/v3/'+path,{method,headers:{'api-key':required('BREVO_API_KEY'),'content-type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(10000)});if(!response.ok){if(response.status===404)return null;throw new Error('Brevo request failed ('+response.status+').');}return response.status===204?{}:response.json();}
 export async function deliverNotification(job:Notification,options:{testPreview?:boolean}={}){
  const p=job.payload as any;
@@ -27,7 +32,7 @@ export async function deliverNotification(job:Notification,options:{testPreview?
  if(job.kind==='newsletter-unsubscribe'){const current=job.subscriptionId?await db.subscription.findUnique({where:{id:job.subscriptionId}}):null;if(!current||current.status!=='unsubscribed')return 'cancelled';if(process.env.NEWSLETTER_PROVIDER!=='brevo')return 'local-preference-saved';await brevo('contacts/'+encodeURIComponent(recipient(p.email)),'PUT',{emailBlacklisted:true});return 'brevo-unsubscribed';}
  const team=job.kind==='team-enquiry';
  const { subject, text, html }=enquiryEmail(p,team);
- return sendMail(job,team?required('TEAM_ENQUIRY_TO'):p.email,subject,text,html,team?p.email:required('TEAM_ENQUIRY_TO'),options.testPreview);
+ return sendMail(job,team?teamEnquiryTo():p.email,subject,text,html,team?p.email:teamEnquiryTo(),options.testPreview);
 }
 export async function syncSubscriber(email:string){
  if(process.env.NEWSLETTER_PROVIDER!=='brevo')return;
@@ -56,9 +61,9 @@ async function sendMail(job:Notification,to:string,subject:string,text:string,ht
  if(provider==='smtp'){
   const port=Number(required('SMTP_PORT'));if(![465,587].includes(port))throw new Error('SMTP must use TLS port 465 or STARTTLS port 587.');
   const transport=nodemailer.createTransport({host:required('SMTP_HOST'),port,secure:port===465,requireTLS:port===587,auth:{user:required('SMTP_USER'),pass:required('SMTP_PASSWORD')},tls:{rejectUnauthorized:true},connectionTimeout:10000,socketTimeout:20000});
-  try{const info=await transport.sendMail({from:required('EMAIL_FROM'),to:target,replyTo,subject,text,html,messageId:'<'+createHash('sha256').update(job.dedupeKey).digest('hex')+'@'+required('EMAIL_MESSAGE_ID_DOMAIN')+'>'});if(!info.accepted?.length)throw new Error('SMTP did not accept the recipient.');return 'smtp:'+String(info.messageId);}finally{transport.close();}
+  try{const info=await transport.sendMail({from:emailFrom(),to:target,replyTo,subject,text,html,messageId:'<'+createHash('sha256').update(job.dedupeKey).digest('hex')+'@'+(process.env.EMAIL_MESSAGE_ID_DOMAIN||DEFAULT_MESSAGE_ID_DOMAIN)+'>'});if(!info.accepted?.length)throw new Error('SMTP did not accept the recipient.');return 'smtp:'+String(info.messageId);}finally{transport.close();}
  }
  if(provider!=='resend')throw new Error('Email delivery awaits an approved provider configuration.');
- const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{authorization:'Bearer '+required('RESEND_API_KEY'),'content-type':'application/json','Idempotency-Key':job.dedupeKey},body:JSON.stringify({from:required('EMAIL_FROM'),to:[target],subject,html,text,reply_to:replyTo}),signal:AbortSignal.timeout(10000)});
+ const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{authorization:'Bearer '+required('RESEND_API_KEY'),'content-type':'application/json','Idempotency-Key':job.dedupeKey},body:JSON.stringify({from:emailFrom(),to:[target],subject,html,text,reply_to:replyTo}),signal:AbortSignal.timeout(10000)});
  if(!response.ok)throw new Error('Email provider request failed ('+response.status+').');const result=await response.json();if(!result.id)throw new Error('Email provider returned no delivery ID.');return String(result.id);
 }

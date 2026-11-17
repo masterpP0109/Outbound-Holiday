@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArtProduct,Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { X,ShoppingBag,Heart,ShieldCheck,Star,Truck,MapPin } from 'lucide-react';
 
 interface ProductDetailModalProps {
@@ -22,11 +22,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 }) => {
   if (!product) return null;
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
@@ -59,6 +55,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 src={product.imageUrl}
                 alt={product.name}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
               <button
                 onClick={() => onToggleWishlist(product.id)}

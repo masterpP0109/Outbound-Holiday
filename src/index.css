@@ -157,7 +157,7 @@
   }
 
   html, body {
-    overflow-x: hidden;
+    overflow-x: clip;
     max-width: 100%;
   }
 
@@ -263,7 +263,22 @@
 
 .outbound-card-media {
   transition: transform var(--dur-slow) var(--ease-premium);
+}
+
+.group:hover .outbound-card-media {
   will-change: transform;
+}
+
+/* Defer offscreen layout and paint work on lower homepage sections until scrolled near */
+#travel-experiences,
+#where-to-stay,
+#travel-packages,
+#why-choose,
+#traveller-stories,
+#vic-falls-guide,
+#newsletter {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 560px;
 }
 
 .outbound-arrow-shift {

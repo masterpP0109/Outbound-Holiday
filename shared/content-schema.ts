@@ -7,7 +7,8 @@ export const AlbumSchema = z.object({id:z.string(),slug:z.string(),title:z.strin
 const JsonSchema:z.ZodType<PrismaJson>=z.lazy(()=>z.union([z.string(),z.number().finite(),z.boolean(),z.null(),z.array(JsonSchema),z.record(JsonSchema)]));
 type PrismaJson=string|number|boolean|null|PrismaJson[]|{[key:string]:PrismaJson};
 export const EditorialSchema = z.object({strings:z.record(z.string()),structures:z.record(JsonSchema)}).strict();
-export const SiteSchema = z.object({routeSeo:z.record(z.object({title:z.string(),description:z.string()})),editorial:EditorialSchema,contact:z.object({whatsappNumber:z.string().regex(/^\d{8,15}$/),displayNumber:z.string(),email:z.string().email(),address:z.string(),hours:z.string()}),currencyRates:z.record(z.object({symbol:z.string(),rate:z.number().positive()})),guideCategories:z.array(z.object({title:z.string(),subtitle:z.string(),articles:z.array(z.object({slug:z.string(),title:z.string(),category:z.string(),readTime:z.string(),summary:z.string(),imageUrl:z.string(),featured:z.boolean().optional()}))}).strict()),featured:z.object({accommodationIds:z.array(z.string()),experienceIds:z.array(z.string()),packageIds:z.array(z.string())}),legacy:z.record(JsonSchema)}).strict();
+export const CurrencyMetaSchema = z.object({mode:z.enum(['automatic','manual']),status:z.enum(['live','cached','manual','unavailable']),provider:z.string(),effectiveDate:z.string().nullable().optional(),fetchedAt:z.string().nullable().optional()}).strict();
+export const SiteSchema = z.object({routeSeo:z.record(z.object({title:z.string(),description:z.string()})),editorial:EditorialSchema,contact:z.object({whatsappNumber:z.string().regex(/^\d{8,15}$/),displayNumber:z.string(),email:z.string().email(),address:z.string(),hours:z.string()}),currencyRates:z.record(z.object({symbol:z.string(),rate:z.number().positive()})),currencyMeta:CurrencyMetaSchema.optional(),guideCategories:z.array(z.object({title:z.string(),subtitle:z.string(),articles:z.array(z.object({slug:z.string(),title:z.string(),category:z.string(),readTime:z.string(),summary:z.string(),imageUrl:z.string(),featured:z.boolean().optional()}))}).strict()),featured:z.object({accommodationIds:z.array(z.string()),experienceIds:z.array(z.string()),packageIds:z.array(z.string())}),legacy:z.record(JsonSchema)}).strict();
 export const SnapshotSchema = z.object({version:z.string(),accommodations:z.array(DetailedAccommodationSchema),experiences:z.array(ExperienceSchema),packages:z.array(DetailedPackageSchema),guides:z.array(GuideArticleSchema),albums:z.array(AlbumSchema),builderActivities:z.array(ActivityItemSchema),stayTiers:z.array(StayTierSchema),site:SiteSchema});
 export type ContentSnapshot = z.infer<typeof SnapshotSchema>;
 export function validatePayload(kind:string, payload:unknown) {
@@ -17,8 +18,9 @@ export function validatePayload(kind:string, payload:unknown) {
 }
 // Ensure varied guide blocks have the content required by their renderer.
 export function validateGuideBlocks(guide: z.infer<typeof GuideArticleSchema>) {
+  const requiredMap: Record<string, string> = {text:'content',heading:'subheading',image:'imageUrl',callout:'callout',pullquote:'pullQuote',practical_info:'practicalPanel',bullet_list:'items',timeline:'timeline',table:'table',pricing_cards:'pricingCards'};
   for(const section of guide.sections)for(const block of section.blocks){
-    const required={text:'content',heading:'subheading',image:'imageUrl',callout:'callout',pullquote:'pullQuote',practical_info:'practicalPanel',bullet_list:'items',timeline:'timeline',table:'table',pricing_cards:'pricingCards'}[block.type];
-    if(required&&!block[required])throw new Error('Incomplete guide block '+guide.slug+'/'+section.id+'/'+block.type);
+    const required=requiredMap[block.type];
+    if(required&&!(block as Record<string, unknown>)[required])throw new Error('Incomplete guide block '+guide.slug+'/'+section.id+'/'+block.type);
   }
 }

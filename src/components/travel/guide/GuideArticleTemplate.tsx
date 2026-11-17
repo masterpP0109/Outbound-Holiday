@@ -1,7 +1,8 @@
 import { editorialFormat } from "../../../runtime/catalog";
-import { editorial, editorialValue, registerContent } from "../../../runtime/catalog";
+import { editorial, editorialOptional, editorialValue, editorialValueOptional, registerContent } from "../../../runtime/catalog";
 import { PHONE_URL } from '../../../utils/whatsapp';
 import { PageLink } from '../../common/PageLink';
+import { ShareButton } from '../../common/ShareButton';
 import React,{ useState,useEffect,useRef } from 'react';
 import { motion,AnimatePresence } from 'motion/react';
 import {
@@ -10,7 +11,7 @@ GuideArticle
 import { trackGuideEvent } from '../../../utils/analytics';
 import {
 Compass,Clock,
-MapPin,Share2,ChevronRight,
+MapPin,ChevronRight,
 ChevronLeft,
 ChevronDown,Sparkles,
 ShieldCheck,
@@ -74,7 +75,6 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
   const [faqSearchQuery, setFaqSearchQuery] = useState('');
   const [activeFaqFilter, setActiveFaqFilter] = useState('All');
-  const [copiedLink, setCopiedLink] = useState(false);
 
   const mainContainerRef = useRef<HTMLDivElement>(null);
 
@@ -187,18 +187,6 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
     }
   };
 
-  const handleShareClick = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-      trackGuideEvent('share_clicked', {
-        articleSlug: article.slug,
-        sharePlatform: 'clipboard_copy',
-      });
-    }
-  };
-
   const toggleFaqIndex = (idx: number) => {
     setOpenFaqIndices((prev) =>
       prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
@@ -272,11 +260,18 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
       <section className="relative bg-[#0D2833] text-white overflow-hidden py-8 sm:py-12 lg:py-16">
         <div className="absolute inset-0 z-0">
           <img 
-            src={article.heroImageUrl} 
+            src={
+              (article.slug === 'first-time-visitor-guide'
+                ? editorialOptional("travel/guide/GuideArticleTemplate.heroImageUrl", "") ||
+                  editorialValueOptional<string>("travel/guide/GuideHubView.elephantExperienceImg", "")
+                : "") || article.heroImageUrl
+            } 
             alt={article.heroImageAlt}
-            className="w-full h-full object-cover object-center opacity-30 transform scale-105 filter contrast-105"
+            className="w-full h-full object-cover object-center opacity-70 transform scale-105 filter contrast-105"
+            loading="lazy"
+            decoding="async"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833]/80 via-[#0D2833]/45 to-[#0D2833]/25" />
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -307,9 +302,11 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
             <div className="pt-3 sm:pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-2.5 sm:gap-3">
                 <img 
-                  src={article.author.avatarUrl} 
+                  src={editorialOptional("travel/guide/GuideArticleTemplate.authorAvatarUrl", "") || article.author.avatarUrl} 
                   alt={article.author.name}
                   className="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#C9A66B]"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <div className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -323,13 +320,10 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <button
-                  onClick={handleShareClick}
-                  className="bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] sm:text-xs px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border border-white/20 transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Share2 className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>{copiedLink ? 'Link Copied!' : 'Share Guide'}</span>
-                </button>
+                <ShareButton
+                  title={article.title}
+                  label="Share Guide"
+                />
 
                 <button
                   onClick={() => {
@@ -582,6 +576,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                               alt={block.imageAlt || 'Victoria Falls travel photo'}
                               loading="lazy"
                               className="w-full h-auto max-h-[460px] object-cover"
+                              decoding="async"
                             />
                             {(block.imageCaption || block.imageCredit) && (
                               <figcaption className="p-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-500 flex flex-wrap justify-between gap-2">
@@ -728,6 +723,7 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                                   alt={block.imageAlt || 'Victoria Falls travel photo'}
                                   loading="lazy"
                                   className="w-full h-auto max-h-[460px] object-cover"
+                                  decoding="async"
                                 />
                                 {(block.imageCaption || block.imageCredit) && (
                                   <figcaption className="p-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-500 flex flex-wrap justify-between gap-2">
@@ -881,6 +877,8 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
                         src={card.imageUrl} 
                         alt={card.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute bottom-2 right-2 bg-[#0D2833]/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md">
                         {card.recommendedDuration}

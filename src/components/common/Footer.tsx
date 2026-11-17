@@ -1,5 +1,6 @@
 import { editorial, editorialOptional, editorialValue, registerContent } from "../../runtime/catalog";
 import { resolveAssetUrl } from "../../runtime/api";
+import { CURRENCY_DISCLAIMER, CURRENCY_RATE_NOTE, getCurrencyStatusSummary } from "../../utils/currency";
 import { CONTACT_EMAIL, WHATSAPP_DISPLAY_NUMBER, getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from './PageLink';
 import { sectionPath } from '../../routes';
@@ -28,21 +29,23 @@ export const Footer: React.FC<FooterProps> = ({
 
   return (
     <footer className="bg-[#0B5E8E] text-white pt-16 pb-12 border-t border-white/10 relative overflow-hidden">
-      {/* Subtle Panoramic Backdrop Image */}
-      <div className="absolute inset-0 pointer-events-none opacity-15">
+      {/* Panoramic Sunset Backdrop Image */}
+      <div className="absolute inset-0 pointer-events-none">
         <img
           src={cruise1}
           alt={editorial("common/Footer.text1")}
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-[center_20%] opacity-90"
+          loading="lazy"
+          decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B5E8E] via-transparent to-[#0B5E8E]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B5E8E]/15 via-[#0B5E8E]/20 to-[#0B5E8E]/35" />
       </div>
 
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/15">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/15 text-center md:text-left">
           {/* Col 1: Brand Info */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center">
+          <div className="lg:col-span-2 space-y-4 flex flex-col items-center md:items-start">
+            <div className="flex items-center justify-center md:justify-start">
               <PageLink
                 href="/"
                 onClick={() => onNavigateSection('hero')}
@@ -60,19 +63,21 @@ export const Footer: React.FC<FooterProps> = ({
                   onError={() => {
                     console.error('Logo failed to load from:', footerLogoSrc);
                   }}
+                  loading="lazy"
+                  decoding="async"
                 />
               </PageLink>
             </div>
 
-            <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-sm">
+            <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-sm mx-auto md:mx-0">
               {editorial("common/Footer.text3")}</p>
 
-            <div className="pt-2 space-y-2 text-xs text-white/80">
-              <div className="flex items-center gap-2.5">
+            <div className="pt-2 space-y-2 text-xs text-white/80 w-full">
+              <div className="flex items-center justify-center md:justify-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#C9A66B] shrink-0" />
                 <span>{editorial("common/Footer.text4")}</span>
               </div>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-center md:justify-start gap-2.5">
                 <PhoneCall className="w-4 h-4 text-[#C9A66B] shrink-0" />
                 <a 
                   href={getWhatsAppUrl("Hello Outbound Holidays, I'd like to enquire about Victoria Falls travel.")}
@@ -83,7 +88,7 @@ export const Footer: React.FC<FooterProps> = ({
                   {editorial("common/Footer.text5")}{WHATSAPP_DISPLAY_NUMBER}
                 </a>
               </div>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-center md:justify-start gap-2.5">
                 <Mail className="w-4 h-4 text-[#C9A66B] shrink-0" />
                 <span>{CONTACT_EMAIL}</span>
               </div>
@@ -145,7 +150,7 @@ export const Footer: React.FC<FooterProps> = ({
                   href={editorialOptional("common/Footer.googleReviewsUrl", "https://g.page/r/CW8xeS7qssHkECE/review")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#C9A66B] transition-colors flex items-center gap-1.5"
+                  className="hover:text-[#C9A66B] transition-colors flex items-center justify-center md:justify-start gap-1.5"
                 >
                   <span>{editorialOptional("common/Footer.googleReviewsLabel", "Google Reviews")}</span>
                   <span className="inline-flex items-center gap-0.5 text-[#FBBC05] text-[10px] font-bold">
@@ -172,13 +177,18 @@ export const Footer: React.FC<FooterProps> = ({
           </p>
 
           {/* Payment Badges */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <span className="text-[10px] text-white/60 font-semibold uppercase">{editorial("common/Footer.text19")}</span>
             <span className="bg-white/10 text-white px-2.5 py-1 rounded-md text-[10px] font-bold border border-white/15">{editorial("common/Footer.text20")}</span>
             <span className="bg-white/10 text-white px-2.5 py-1 rounded-md text-[10px] font-bold border border-white/15">{editorial("common/Footer.text21")}</span>
             <span className="bg-white/10 text-white px-2.5 py-1 rounded-md text-[10px] font-bold border border-white/15">{editorial("common/Footer.text22")}</span>
           </div>
         </div>
+
+        {/* Discreet Currency Conversion Disclaimer */}
+        <p className="mt-4 text-center sm:text-left text-[11px] text-white/55">
+          {CURRENCY_DISCLAIMER} {CURRENCY_RATE_NOTE} ({getCurrencyStatusSummary()})
+        </p>
       </div>
     </footer>
   );

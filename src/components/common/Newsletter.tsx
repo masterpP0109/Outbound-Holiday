@@ -14,11 +14,17 @@ export const Newsletter: React.FC<NewsletterProps> = ({
 }) => {
   const submission = useSubmission('newsletter');
   const [marketingConsent,setMarketingConsent] = useState(false);
+  const [consentPromptError, setConsentPromptError] = useState(false);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!marketingConsent) {
+      setConsentPromptError(true);
+      return;
+    }
+    setConsentPromptError(false);
     const saved=await submission.save({email,marketingConsent});
     if(saved)setSubscribed(true);
   };
@@ -84,11 +90,11 @@ export const Newsletter: React.FC<NewsletterProps> = ({
                 </div>
 
                 <button
-                  type="submit" disabled={submission.pending || !marketingConsent} aria-busy={submission.pending}
+                  type="submit" disabled={submission.pending} aria-busy={submission.pending}
                   className="bg-[#E67E22] hover:bg-[#d67118] text-white font-bold text-xs sm:text-sm px-7 py-3.5 rounded-xl transition-colors shadow-md whitespace-nowrap cursor-pointer"
                 >
                   {editorial("common/Newsletter.text7")}</button>
-              <div className="w-full"><SubmissionSafety submission={submission} marketingConsent={marketingConsent} onConsent={setMarketingConsent} requireConsent={true} /></div></form>
+              <div className="w-full"><SubmissionSafety submission={submission} marketingConsent={marketingConsent} onConsent={(val) => { setMarketingConsent(val); if (val) setConsentPromptError(false); }} requireConsent={true} consentPromptError={consentPromptError} /></div></form>
             )}
           </div>
 

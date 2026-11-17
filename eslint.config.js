@@ -4,12 +4,12 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
 export default tseslint.config(
-  { ignores: ['node_modules/**', 'dist/**', '.kilo/**', 'assets/**', 'public/**'] },
+  { ignores: ['node_modules/**', 'dist/**', '.kilo/**', 'assets/**', 'public/**', 'wordpress-theme/**/assets/app/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.{ts,tsx,mjs}', 'server/**/*.ts', 'api/**/*.ts', 'shared/**/*.ts', 'prisma/**/*.ts', 'tests/**/*.{ts,tsx}', 'vite.config.ts', 'eslint.config.js'],
-    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.{ts,tsx,mjs}', 'server/**/*.ts', 'api/**/*.ts', 'shared/**/*.ts', 'prisma/**/*.ts', 'tests/**/*.{ts,tsx}', 'wordpress-theme/**/*.{js,ts,tsx}', 'vite.config.ts', 'eslint.config.js'],
+    languageOptions: { globals: { ...globals.browser, ...globals.node, wp: 'readonly', jQuery: 'readonly' } },
     plugins: { 'react-hooks': reactHooks },
     rules: {
       'no-undef': 'off', // TypeScript checks identifier resolution.

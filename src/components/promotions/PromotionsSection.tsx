@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Tag, Calendar, ArrowRight, MessageSquare } from 'lucide-react';
+import { Sparkles, Calendar, ArrowRight } from 'lucide-react';
 import type { PromotionOffer } from '../../types/promotion';
 import { resolveAssetUrl } from '../../runtime/api';
 import { trackPromotionEvent } from '../../data/promotionsData';
@@ -67,6 +67,8 @@ export const PromotionsSection: React.FC<PromotionsSectionProps> = ({
                     src={resolveAssetUrl(promo.imageUrl)}
                     alt={promo.headline}
                     className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 

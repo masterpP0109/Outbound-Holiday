@@ -29,8 +29,22 @@ function outbound_register_post_types_and_taxonomies(): void {
         'rewrite'       => array('slug' => 'accommodation', 'with_front' => false),
         'menu_icon'     => 'dashicons-building',
         'menu_position' => 21,
-        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions'),
+        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'page-attributes'),
     ));
+
+    // Register 'archived' status so properties can be archived without moving to Trash.
+    if (function_exists('register_post_status')) {
+        register_post_status('archived', array(
+            'label'                     => _x('Archived', 'post', 'outbound-holidays'),
+            'public'                    => false,
+            'internal'                  => false,
+            'exclude_from_search'       => true,
+            'show_in_admin_all_list'    => true,
+            'show_in_admin_status_list' => true,
+            /* translators: %s: count */
+            'label_count'               => _n_noop('Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', 'outbound-holidays'),
+        ));
+    }
 
     register_taxonomy('accommodation_category', array('accommodation'), array(
         'labels' => array(
@@ -57,7 +71,7 @@ function outbound_register_post_types_and_taxonomies(): void {
         'rewrite'       => array('slug' => 'things-to-do', 'with_front' => false),
         'menu_icon'     => 'dashicons-compass',
         'menu_position' => 22,
-        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions'),
+        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'page-attributes'),
     ));
 
     register_taxonomy('experience_category', array('experience'), array(
@@ -85,7 +99,7 @@ function outbound_register_post_types_and_taxonomies(): void {
         'rewrite'       => array('slug' => 'packages', 'with_front' => false),
         'menu_icon'     => 'dashicons-palmtree',
         'menu_position' => 23,
-        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions'),
+        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'page-attributes'),
     ));
 
     // 4. Local Planning Guide Article -> /victoria-falls-guide/{slug}/
@@ -103,7 +117,7 @@ function outbound_register_post_types_and_taxonomies(): void {
         'rewrite'       => array('slug' => 'victoria-falls-guide', 'with_front' => false),
         'menu_icon'     => 'dashicons-book-alt',
         'menu_position' => 24,
-        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions'),
+        'supports'      => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'page-attributes'),
     ));
 
     // 5. Client Gallery Album -> /client-gallery/
@@ -254,4 +268,23 @@ function outbound_ensure_core_pages(): array {
     }
 
     return $created_ids;
+}
+
+/**
+ * Allow authenticated admins using ?outbound_preview=1 to preview draft or archived accommodations.
+ */
+if (function_exists('add_action')) {
+    add_action('pre_get_posts', static function ($query): void {
+        if (!is_object($query) || !method_exists($query, 'is_main_query') || !$query->is_main_query()) {
+            return;
+        }
+        if (function_exists('is_admin') && is_admin()) {
+            return;
+        }
+        if (function_exists('outbound_is_preview_request') && outbound_is_preview_request()) {
+            if ($query->get('post_type') === 'accommodation' || $query->get('accommodation')) {
+                $query->set('post_status', array('publish', 'draft', 'archived', 'pending', 'private'));
+            }
+        }
+    });
 }

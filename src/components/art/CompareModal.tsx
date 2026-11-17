@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArtProduct,Currency } from '../../types';
 import { ART_PRODUCTS } from '../../data/artData';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { X,Scale,ShoppingBag,Trash2 } from 'lucide-react';
 
 interface CompareModalProps {
@@ -21,11 +21,7 @@ export const CompareModal: React.FC<CompareModalProps> = ({
 }) => {
   const products = ART_PRODUCTS.filter((p) => compareIds.includes(p.id));
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   if (compareIds.length === 0) return null;
 
@@ -50,7 +46,7 @@ export const CompareModal: React.FC<CompareModalProps> = ({
               <div key={p.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 flex flex-col justify-between space-y-4">
                 <div>
                   <div className="relative h-48 rounded-lg overflow-hidden mb-3">
-                    <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
+                    <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     <button
                       onClick={() => onRemoveFromCompare(p.id)}
                       className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-full shadow-md hover:bg-red-700"

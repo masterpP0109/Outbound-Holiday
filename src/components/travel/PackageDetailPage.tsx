@@ -1,12 +1,15 @@
 import { editorialFormat } from "../../runtime/catalog";
 import { editorial } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
+import type { DirectEnquiryContext } from '../../utils/enquiry';
+import { ShareButton } from '../common/ShareButton';
+import { UnifiedEnquiryPanel } from './UnifiedEnquiryPanel';
 import { PageLink } from '../common/PageLink';
 import { experiencePath,packagePath,sectionPath } from '../../routes';
 import React,{ useState } from 'react';
 import { DetailedPackage,ALL_PACKAGES,getPackageById } from '../../data/packagesData';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { Experience,ALL_EXPERIENCES,getExperienceById } from '../../data/experiencesData';
 import {
 Home,
@@ -39,6 +42,7 @@ interface PackageDetailPageProps {
   packageData: DetailedPackage;
   currency: Currency;
   onPlanHoliday: (pkg: DetailedPackage) => void;
+  onDirectEnquiry?: (context: DirectEnquiryContext) => void;
   onSelectExperience: (exp: Experience) => void;
   onSelectRelatedPackage: (pkg: DetailedPackage) => void;
   onNavigateBackToPackages: () => void;
@@ -49,6 +53,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
   packageData,
   currency,
   onPlanHoliday,
+  onDirectEnquiry,
   onSelectExperience,
   onSelectRelatedPackage,
   onNavigateBackToPackages,
@@ -57,11 +62,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
   const [openItineraryDay, setOpenItineraryDay] = useState<number | null>(0); // open first day by default
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(0);
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   const whatsappMessage = editorialFormat("travel/PackageDetailPage.copy1", [packageData.title,packageData.duration]);
   const whatsappUrl = getWhatsAppUrl(whatsappMessage);
@@ -108,13 +109,19 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
             </span>
           </nav>
 
-          <PageLink href={sectionPath('packages')}
-            onClick={onNavigateBackToPackages}
-            className="flex items-center gap-1.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{editorial("travel/PackageDetailPage.text3")}</span>
-          </PageLink>
+          <div className="flex items-center gap-2">
+            <ShareButton
+              title={packageData.title}
+              canonicalPath={packagePath(packageData)}
+            />
+            <PageLink href={sectionPath('packages')}
+              onClick={onNavigateBackToPackages}
+              className="flex items-center gap-1.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{editorial("travel/PackageDetailPage.text3")}</span>
+            </PageLink>
+          </div>
         </div>
       </div>
 
@@ -175,22 +182,32 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
               {/* Primary Call to Actions */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
                 <button
-                  onClick={() => onPlanHoliday(packageData)}
+                  type="button"
+                  onClick={() => {
+                    if (onDirectEnquiry) {
+                      onDirectEnquiry({
+                        category: 'package',
+                        packageName: packageData.title,
+                        sourceUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+                      });
+                    } else {
+                      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
                   className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
-                  <CalendarCheck className="w-4 h-4" />
-                  <span>{editorial("travel/PackageDetailPage.text8")}</span>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Enquire About This Package</span>
                 </button>
 
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                <button
+                  type="button"
+                  onClick={() => onPlanHoliday(packageData)}
+                  className="bg-[#0B5E8E]/10 hover:bg-[#0B5E8E]/15 text-[#0B5E8E] font-bold text-sm py-4 px-6 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>{editorial("travel/PackageDetailPage.text9")}</span>
-                </a>
+                  <CalendarCheck className="w-4 h-4" />
+                  <span>Build My Holiday</span>
+                </button>
               </div>
             </div>
 
@@ -201,6 +218,8 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                   src={packageData.imageUrl}
                   alt={packageData.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 
@@ -220,9 +239,43 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
       </section>
 
       {/* Main Details Body */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-10">
         
-        {/* At a Glance Specs Grid */}
+        {/* Package Main Two-Column Content + Sticky Enquiry Panel */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          <div className="lg:col-span-8 space-y-8">
+            <section className="space-y-6">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
+                <Sparkles className="w-4 h-4 text-[#C9A66B]" />
+                <span>Package Overview</span>
+              </div>
+
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
+                {packageData.title}
+              </h2>
+
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                {packageData.description || packageData.tagline}
+              </p>
+
+              {packageData.included && packageData.included.length > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-200/80 p-6 space-y-3">
+                  <h3 className="font-serif text-lg font-bold text-[#0B5E8E]">
+                    What’s Included
+                  </h3>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {packageData.included.map((inc, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs sm:text-sm text-gray-700">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <span>{inc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+
+            {/* At a Glance Specs Grid */}
         <section className="space-y-6">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
             <Sparkles className="w-4 h-4 text-[#C9A66B]" />
@@ -454,7 +507,7 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                           {item.title}
                         </h3>
                         <p className="text-xs text-gray-500 line-clamp-1">
-                          {detailed ? `${detailed.morning}` : item.description}
+                          {detailed ? `${detailed.morning}` : (item as any).description}
                         </p>
                       </div>
                     </div>
@@ -516,12 +569,12 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                       ) : (
                         <div className="space-y-3 pt-4">
                           <p className="text-sm text-gray-700 leading-relaxed font-light">
-                            {item.description}
+                            {(item as any).description}
                           </p>
-                          {item.highlights && item.highlights.length > 0 && (
+                          {(item as any).highlights && (item as any).highlights.length > 0 && (
                             <div className="pt-2 flex flex-wrap items-center gap-2">
                               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{editorial("travel/PackageDetailPage.text42")}</span>
-                              {item.highlights.map((h, i) => (
+                              {(item as any).highlights.map((h: string, i: number) => (
                                 <span key={i} className="bg-white border border-gray-200 text-[#0B5E8E] text-xs font-semibold px-2.5 py-1 rounded-full">
                                   {h}
                                 </span>
@@ -567,6 +620,8 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                         src={exp.featuredImage}
                         alt={exp.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
                       
@@ -645,6 +700,8 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                     src={hotel.imageUrl}
                     alt={hotel.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
 
@@ -887,6 +944,30 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
             </div>
           </section>
         )}
+          </div>
+
+          <aside id="package-enquiry-panel" className="lg:col-span-4 lg:sticky lg:top-28">
+            <UnifiedEnquiryPanel
+              mode="package"
+              currency={currency}
+              itemTitle={packageData.title}
+              itemSlug={packageData.slug || packageData.id}
+              basePriceUSD={packageData.priceUSD || null}
+              priceLabelPrefix="Indicative Package Rate"
+              priceSuffix="per adult sharing"
+              durationLabel={packageData.duration}
+              fixedDurationNights={
+                (() => {
+                  const m = /(\d+)\s*night/i.exec(packageData.duration || '');
+                  return m ? Number(m[1]) : null;
+                })()
+              }
+              whatsappButtonLabel="Enquire About This Package"
+              emailButtonLabel="Request a Quote by Email"
+              onBuildHoliday={() => onPlanHoliday(packageData)}
+            />
+          </aside>
+        </div>
 
         {/* Related Packages */}
         {relatedPackages.length > 0 && (
@@ -911,6 +992,8 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
                         src={rel.imageUrl}
                         alt={rel.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80" />
                       
@@ -966,22 +1049,32 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10 pt-2">
             <button
-              onClick={() => onPlanHoliday(packageData)}
+              type="button"
+              onClick={() => {
+                if (onDirectEnquiry) {
+                  onDirectEnquiry({
+                    category: 'package',
+                    packageName: packageData.title,
+                    sourceUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+                  });
+                } else {
+                  window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+                }
+              }}
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <CalendarCheck className="w-4 h-4" />
-              <span>{editorial("travel/PackageDetailPage.text77")}</span>
+              <MessageCircle className="w-4 h-4" />
+              <span>Enquire About This Package</span>
             </button>
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+            <button
+              type="button"
+              onClick={() => onPlanHoliday(packageData)}
+              className="w-full sm:w-auto bg-white/15 hover:bg-white/25 text-white border border-white/30 font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span>{editorial("travel/PackageDetailPage.text78")}</span>
-            </a>
+              <CalendarCheck className="w-4 h-4" />
+              <span>Build My Holiday</span>
+            </button>
           </div>
         </section>
 
@@ -1004,11 +1097,22 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
             </div>
 
             <button
-              onClick={() => onPlanHoliday(packageData)}
+              type="button"
+              onClick={() => {
+                if (onDirectEnquiry) {
+                  onDirectEnquiry({
+                    category: 'package',
+                    packageName: packageData.title,
+                    sourceUrl: typeof window !== 'undefined' ? window.location.href : undefined,
+                  });
+                } else {
+                  window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+                }
+              }}
               className="flex-1 sm:flex-initial bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs sm:text-sm py-3 px-6 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <CalendarCheck className="w-4 h-4" />
-              <span>{editorial("travel/PackageDetailPage.text83")}</span>
+              <MessageCircle className="w-4 h-4" />
+              <span>Enquire Now</span>
             </button>
           </div>
         </div>

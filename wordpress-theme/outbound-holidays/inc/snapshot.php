@@ -131,6 +131,24 @@ function outbound_constrain_enum(string $value, array $allowed, string $fallback
  * @param array<int, array<string, mixed>> $baseline
  * @return array<int, array<string, mixed>>
  */
+function outbound_should_return_empty_cpt_list(string $post_type): bool {
+    if (!function_exists('get_posts')) {
+        return false;
+    }
+    $any_wp_posts = get_posts(array(
+        'post_type'      => $post_type,
+        'posts_per_page' => 1,
+        'post_status'    => array('publish', 'draft', 'pending', 'private', 'archived', 'trash'),
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+    ));
+    if (!empty($any_wp_posts)) {
+        return true;
+    }
+    $migrated = function_exists('get_option') && get_option('outbound_initial_migration_done', '') !== '';
+    return $migrated;
+}
+
 function outbound_merge_wp_accommodations(array $baseline, bool $include_drafts = false): array {
     if (!function_exists('get_posts')) {
         return $baseline;
@@ -138,14 +156,14 @@ function outbound_merge_wp_accommodations(array $baseline, bool $include_drafts 
     $wp_posts = get_posts(array(
         'post_type'              => 'accommodation',
         'posts_per_page'         => -1,
-        'post_status'            => $include_drafts ? array('publish', 'draft') : 'publish',
+        'post_status'            => $include_drafts ? array('publish', 'draft', 'archived') : 'publish',
         'orderby'                => array('menu_order' => 'ASC', 'ID' => 'ASC'),
         'no_found_rows'          => true,
         'update_post_meta_cache' => true,
         'update_post_term_cache' => true,
     ));
     if (empty($wp_posts)) {
-        return $baseline;
+        return outbound_should_return_empty_cpt_list('accommodation') ? array() : $baseline;
     }
 
     $indexed = outbound_index_snapshot_records($baseline);
@@ -170,8 +188,8 @@ function outbound_merge_wp_accommodations(array $baseline, bool $include_drafts 
             }
         }
         $cat_label_meta = (string) get_post_meta($pid, '_outbound_category_label', true);
-        $raw_cat_label  = $cat_label_meta !== '' ? $cat_label_meta : ($base['category'] ?? ($cat_label_map[$cat_id] ?? 'Luxury Lodge'));
-        $resolved_cat   = outbound_constrain_enum($raw_cat_label, $allowed_cats, 'Luxury Lodge');
+        $raw_cat_label  = trim($cat_label_meta) !== '' ? trim($cat_label_meta) : (string) ($base['category'] ?? ($cat_label_map[$cat_id] ?? 'Luxury Lodge'));
+        $resolved_cat   = $raw_cat_label !== '' ? $raw_cat_label : 'Luxury Lodge';
 
         $badge_meta  = (string) get_post_meta($pid, '_outbound_badge', true);
         $raw_badge   = $badge_meta !== '' ? $badge_meta : (string) ($base['badge'] ?? '');
@@ -220,15 +238,21 @@ function outbound_merge_wp_accommodations(array $baseline, bool $include_drafts 
 
         $raw_rooms = outbound_decode_json_meta($pid, '_outbound_room_types_json', (array) ($base['roomTypes'] ?? array()));
         $rooms_out = array();
-        foreach ($raw_rooms as $rm) {
-            if (!is_array($rm) || empty($rm['name'])) { continue; }
-            $rooms_out[] = array(
-                'name'        => (string) $rm['name'],
-                'occupancy'   => (string) ($rm['occupancy'] ?? '2 Guests'),
-                'description' => (string) ($rm['description'] ?? ''),
-                'imageUrl'    => outbound_resolve_theme_asset_url((string) ($rm['imageUrl'] ?? $hero_image), 'hero'),
-                'features'    => array_values(array_map('strval', (array) ($rm['features'] ?? array()))),
-            );
+        foreach ($raw_rooms as $ridx => $rm) {
+            if (!is_array($rm) || empty($rm['name'])) {
+                continue;
+            }
+            $r_stat = (string) ($rm['status'] ?? 'published');
+            if ($r_stat === 'trashed') {
+                continue;
+            }
+            if (!$include_drafts && ($r_stat === 'draft' || $r_stat === 'archived')) {
+                continue;
+            }
+            $built_room = outbound_build_public_room_type($rm, $hero_image, (int) $ridx);
+            if (!empty($built_room)) {
+                $rooms_out[] = $built_room;
+            }
         }
 
         $raw_facs = outbound_decode_json_meta($pid, '_outbound_facilities_json', (array) ($base['facilities'] ?? array()));
@@ -298,6 +322,82 @@ function outbound_merge_wp_accommodations(array $baseline, bool $include_drafts 
         if ($cat_id !== '' && in_array($cat_id, array('hotels', 'lodges', 'guest-houses', 'apartments'), true)) {
             $record['accommodationCategory'] = $cat_id;
         }
+        $room_sec_heading = (string) get_post_meta($pid, '_outbound_room_section_heading', true);
+        if ($room_sec_heading !== '') {
+            $record['roomSectionHeading'] = $room_sec_heading;
+        }
+        $room_sec_sub = (string) get_post_meta($pid, '_outbound_room_section_subtitle', true);
+        if ($room_sec_sub !== '') {
+            $record['roomSectionSubtitle'] = $room_sec_sub;
+        }
+        $prop_policies = outbound_decode_json_meta($pid, '_outbound_property_policies_json', array());
+        if (!empty($prop_policies)) {
+            $clean_pol = array();
+            foreach (array('checkInPolicy', 'checkOutPolicy', 'cancellationPolicy', 'childPolicy', 'petPolicy', 'generalNotes') as $pk) {
+                if (!empty($prop_policies[$pk]) && is_string($prop_policies[$pk])) {
+                    $clean_pol[$pk] = $prop_policies[$pk];
+                }
+            }
+            if (!empty($clean_pol)) {
+                $record['policies'] = $clean_pol;
+            }
+        }
+        $prop_enq = outbound_decode_json_meta($pid, '_outbound_enquiry_settings_json', array());
+        if (!empty($prop_enq)) {
+            $clean_enq = array();
+            if (array_key_exists('enableWhatsApp', $prop_enq)) {
+                $clean_enq['enableWhatsApp'] = (bool) $prop_enq['enableWhatsApp'];
+            }
+            if (array_key_exists('enableEmail', $prop_enq)) {
+                $clean_enq['enableEmail'] = (bool) $prop_enq['enableEmail'];
+            }
+            foreach (array('customEnquiryNote', 'contactEmail', 'whatsappNumber', 'contactPhone') as $ek) {
+                if (!empty($prop_enq[$ek]) && is_string($prop_enq[$ek])) {
+                    $clean_enq[$ek] = $prop_enq[$ek];
+                }
+            }
+            if (!empty($clean_enq)) {
+                $record['enquirySettings'] = $clean_enq;
+            }
+        }
+
+        $raw_rate_plans = outbound_decode_json_meta($pid, '_outbound_rate_plans_json', (array) ($base['ratePlans'] ?? array()));
+        if (!empty($raw_rate_plans) && is_array($raw_rate_plans) && function_exists('outbound_build_public_rate_plan')) {
+            $plans_out = array();
+            foreach ($raw_rate_plans as $rp) {
+                if (!is_array($rp)) { continue; }
+                $clean_rp = outbound_build_public_rate_plan($rp);
+                if (!empty($clean_rp)) { $plans_out[] = $clean_rp; }
+            }
+            if (!empty($plans_out)) {
+                $record['ratePlans'] = $plans_out;
+            }
+        }
+
+        $raw_offers = outbound_decode_json_meta($pid, '_outbound_property_offers_json', (array) ($base['offers'] ?? array()));
+        if (!empty($raw_offers) && is_array($raw_offers) && function_exists('outbound_sanitize_accommodation_offers_payload')) {
+            $offers_san = outbound_sanitize_accommodation_offers_payload($raw_offers);
+            $offers_out = array();
+            foreach ($offers_san as $off) {
+                $ostat = (string) ($off['status'] ?? 'published');
+                if ($ostat === 'trashed') {
+                    continue;
+                }
+                if (!$include_drafts && ($ostat === 'draft' || $ostat === 'archived')) {
+                    continue;
+                }
+                if (!empty($off['galleryImages']) && is_array($off['galleryImages'])) {
+                    $off['galleryImages'] = array_values(array_map(
+                        static fn($u) => outbound_resolve_theme_asset_url((string) $u, 'hero'),
+                        $off['galleryImages']
+                    ));
+                }
+                $offers_out[] = $off;
+            }
+            if (!empty($offers_out)) {
+                $record['offers'] = $offers_out;
+            }
+        }
 
         $result[] = $record;
     }
@@ -318,14 +418,14 @@ function outbound_merge_wp_experiences(array $baseline, bool $include_drafts = f
     $wp_posts = get_posts(array(
         'post_type'              => 'experience',
         'posts_per_page'         => -1,
-        'post_status'            => $include_drafts ? array('publish', 'draft') : 'publish',
+        'post_status'            => $include_drafts ? array('publish', 'draft', 'archived') : 'publish',
         'orderby'                => array('menu_order' => 'ASC', 'ID' => 'ASC'),
         'no_found_rows'          => true,
         'update_post_meta_cache' => true,
         'update_post_term_cache' => true,
     ));
     if (empty($wp_posts)) {
-        return $baseline;
+        return outbound_should_return_empty_cpt_list('experience') ? array() : $baseline;
     }
 
     $indexed      = outbound_index_snapshot_records($baseline);
@@ -425,14 +525,14 @@ function outbound_merge_wp_packages(array $baseline, bool $include_drafts = fals
     $wp_posts = get_posts(array(
         'post_type'              => 'package',
         'posts_per_page'         => -1,
-        'post_status'            => $include_drafts ? array('publish', 'draft') : 'publish',
+        'post_status'            => $include_drafts ? array('publish', 'draft', 'archived') : 'publish',
         'orderby'                => array('menu_order' => 'ASC', 'ID' => 'ASC'),
         'no_found_rows'          => true,
         'update_post_meta_cache' => true,
         'update_post_term_cache' => false,
     ));
     if (empty($wp_posts)) {
-        return $baseline;
+        return outbound_should_return_empty_cpt_list('package') ? array() : $baseline;
     }
 
     $indexed         = outbound_index_snapshot_records($baseline);
@@ -579,14 +679,14 @@ function outbound_merge_wp_guides(array $baseline, bool $include_drafts = false)
     $wp_posts = get_posts(array(
         'post_type'              => 'guide_article',
         'posts_per_page'         => -1,
-        'post_status'            => $include_drafts ? array('publish', 'draft') : 'publish',
+        'post_status'            => $include_drafts ? array('publish', 'draft', 'archived') : 'publish',
         'orderby'                => array('menu_order' => 'ASC', 'ID' => 'ASC'),
         'no_found_rows'          => true,
         'update_post_meta_cache' => true,
         'update_post_term_cache' => false,
     ));
     if (empty($wp_posts)) {
-        return $baseline;
+        return outbound_should_return_empty_cpt_list('guide_article') ? array() : $baseline;
     }
 
     $indexed = outbound_index_snapshot_records($baseline);
@@ -697,14 +797,14 @@ function outbound_merge_wp_albums(array $baseline, bool $include_drafts = false)
     $wp_posts = get_posts(array(
         'post_type'              => 'client_album',
         'posts_per_page'         => -1,
-        'post_status'            => $include_drafts ? array('publish', 'draft') : 'publish',
+        'post_status'            => $include_drafts ? array('publish', 'draft', 'archived') : 'publish',
         'orderby'                => array('menu_order' => 'ASC', 'ID' => 'ASC'),
         'no_found_rows'          => true,
         'update_post_meta_cache' => true,
         'update_post_term_cache' => false,
     ));
     if (empty($wp_posts)) {
-        return $baseline;
+        return outbound_should_return_empty_cpt_list('client_album') ? array() : $baseline;
     }
 
     $indexed = outbound_index_snapshot_records($baseline);
@@ -762,6 +862,30 @@ function outbound_invalidate_snapshot_cache(): void {
         delete_transient('outbound_live_snapshot_v1');
         delete_transient('outbound_wp_blog_posts_v1_30');
     }
+    if (function_exists('wp_cache_delete')) {
+        wp_cache_delete('outbound_live_snapshot_v1', 'transient');
+        wp_cache_delete('outbound_wp_blog_posts_v1_30', 'transient');
+    }
+    if (function_exists('update_option')) {
+        $rand_suffix = function_exists('wp_rand') ? wp_rand(1000, 9999) : random_int(1000, 9999);
+        update_option('outbound_cms_snapshot_version', gmdate('YmdHis') . '-' . $rand_suffix, false);
+    }
+    if (function_exists('outbound_invalidate_search_index_cache')) {
+        outbound_invalidate_search_index_cache();
+    }
+    if (function_exists('do_action')) {
+        do_action('litespeed_purge_all');
+        do_action('outbound_after_snapshot_invalidated');
+    }
+    if (function_exists('rocket_clean_domain')) {
+        rocket_clean_domain();
+    }
+    if (function_exists('wp_cache_clear_cache')) {
+        wp_cache_clear_cache();
+    }
+    if (function_exists('w3tc_flush_all')) {
+        w3tc_flush_all();
+    }
 }
 if (function_exists('add_action')) {
     add_action('save_post', static function (int $post_id): void {
@@ -771,6 +895,15 @@ if (function_exists('add_action')) {
         outbound_invalidate_snapshot_cache();
     });
     add_action('delete_post', 'outbound_invalidate_snapshot_cache');
+    add_action('deleted_post', 'outbound_invalidate_snapshot_cache');
+    add_action('before_delete_post', 'outbound_invalidate_snapshot_cache');
+    add_action('trashed_post', 'outbound_invalidate_snapshot_cache');
+    add_action('untrashed_post', 'outbound_invalidate_snapshot_cache');
+    add_action('transition_post_status', static function ($new_status, $old_status): void {
+        if ($new_status !== $old_status) {
+            outbound_invalidate_snapshot_cache();
+        }
+    }, 10, 2);
     add_action('edited_term', 'outbound_invalidate_snapshot_cache');
     add_action('created_term', 'outbound_invalidate_snapshot_cache');
     add_action('delete_term', 'outbound_invalidate_snapshot_cache');
@@ -780,8 +913,11 @@ if (function_exists('add_action')) {
         'outbound_editorial_overrides',
         'outbound_editorial_struct_overrides',
         'outbound_featured_overrides',
+        'outbound_featured_item_overrides',
         'outbound_route_seo_overrides',
         'outbound_currency_rates_override',
+        'outbound_currency_rates_mode',
+        'outbound_currency_rates_last_good',
         'outbound_reviews_override',
         'outbound_design_tokens',
         'outbound_builder_stay_tiers',
@@ -789,6 +925,37 @@ if (function_exists('add_action')) {
     ) as $opt_key) {
         add_action('update_option_' . $opt_key, 'outbound_invalidate_snapshot_cache');
     }
+    foreach (array('accommodation', 'experience', 'package', 'guide_article', 'client_album', 'post') as $rest_cpt) {
+        add_action('rest_after_insert_' . $rest_cpt, static function (): void {
+            outbound_invalidate_snapshot_cache();
+        });
+    }
+    $sync_thumb_meta = static function ($meta_id, int $object_id, string $meta_key, $meta_value = null): void {
+        if ($meta_key !== '_thumbnail_id') {
+            return;
+        }
+        $ptype = function_exists('get_post_type') ? (string) get_post_type($object_id) : '';
+        if (!in_array($ptype, array('accommodation', 'experience', 'package', 'guide_article', 'client_album', 'post'), true)) {
+            return;
+        }
+        if (!isset($_POST['outbound_hero_image_url']) && function_exists('update_post_meta')) {
+            $att_id = is_numeric($meta_value) ? (int) $meta_value : (function_exists('get_post_thumbnail_id') ? (int) get_post_thumbnail_id($object_id) : 0);
+            if ($att_id > 0 && function_exists('wp_get_attachment_image_url')) {
+                $new_url = (string) (wp_get_attachment_image_url($att_id, 'outbound-hero') ?: wp_get_attachment_image_url($att_id, 'full'));
+                if ($new_url !== '') {
+                    update_post_meta($object_id, '_outbound_hero_image_url', $new_url);
+                }
+            } elseif (function_exists('delete_post_meta')) {
+                delete_post_meta($object_id, '_outbound_hero_image_url');
+            }
+        }
+        outbound_invalidate_snapshot_cache();
+    };
+    add_action('added_post_meta', $sync_thumb_meta, 10, 4);
+    add_action('updated_post_meta', $sync_thumb_meta, 10, 4);
+    add_action('deleted_post_meta', static function ($meta_ids, int $object_id, string $meta_key) use ($sync_thumb_meta): void {
+        $sync_thumb_meta(0, $object_id, $meta_key, 0);
+    }, 10, 3);
 }
 
 /**
@@ -799,15 +966,21 @@ if (function_exists('add_action')) {
  * @return array<string, mixed>
  */
 function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_preview = false): array {
-    $is_preview = $force_preview || outbound_is_preview_request();
+    $is_preview   = $force_preview || outbound_is_preview_request();
+    $is_logged_in = function_exists('is_user_logged_in') && is_user_logged_in();
 
-    if (!$is_preview && !$bypass_cache && !empty($GLOBALS['__outbound_snapshot_req_cache']) && is_array($GLOBALS['__outbound_snapshot_req_cache'])) {
+    if (!$is_preview && !$is_logged_in && !$bypass_cache && !empty($GLOBALS['__outbound_snapshot_req_cache']) && is_array($GLOBALS['__outbound_snapshot_req_cache'])) {
         return $GLOBALS['__outbound_snapshot_req_cache'];
     }
 
-    if (!$is_preview && !$bypass_cache && function_exists('get_transient') && function_exists('set_transient')) {
+    if (!$is_preview && !$is_logged_in && !$bypass_cache && function_exists('get_transient') && function_exists('set_transient')) {
         $transient_cached = get_transient('outbound_live_snapshot_v1');
-        if (is_array($transient_cached) && !empty($transient_cached['accommodations'])) {
+        if (is_array($transient_cached) && array_key_exists('accommodations', $transient_cached)) {
+            if (function_exists('outbound_get_currency_snapshot_data') && isset($transient_cached['site']) && is_array($transient_cached['site'])) {
+                $curr_data = outbound_get_currency_snapshot_data();
+                $transient_cached['site']['currencyRates'] = $curr_data['currencyRates'];
+                $transient_cached['site']['currencyMeta']  = $curr_data['currencyMeta'];
+            }
             $GLOBALS['__outbound_snapshot_req_cache'] = $transient_cached;
             return $transient_cached;
         }
@@ -817,15 +990,26 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
     $bundle   = outbound_get_effective_cms_bundle($is_preview);
     $cms      = (array) ($bundle['site_options'] ?? outbound_get_site_options());
 
-    // Sync CMS Site contact & rates cleanly.
+    // Sync CMS Site contact & rates cleanly (enforcing strict SiteSchema formats).
     if (isset($snapshot['site']) && is_array($snapshot['site'])) {
+        $wa_digits  = preg_replace('/\D+/', '', (string) ($cms['contact']['whatsappNumber'] ?? '263714701721')) ?: '263714701721';
+        $wa_clean   = (strlen($wa_digits) >= 8 && strlen($wa_digits) <= 15) ? $wa_digits : '263714701721';
+        $raw_email  = trim((string) ($cms['contact']['email'] ?? 'fungai@outboundholiday.com'));
+        $email_ok   = (function_exists('is_email') ? is_email($raw_email) : filter_var($raw_email, FILTER_VALIDATE_EMAIL))
+            ? $raw_email
+            : 'fungai@outboundholiday.com';
         $snapshot['site']['contact'] = array(
-            'whatsappNumber' => (string) ($cms['contact']['whatsappNumber'] ?? '263714701721'),
+            'whatsappNumber' => $wa_clean,
             'displayNumber'  => (string) ($cms['contact']['displayNumber'] ?? '+263 714 701 721'),
-            'email'          => (string) ($cms['contact']['email'] ?? 'travel@outboundholidays.co.zw'),
+            'email'          => $email_ok,
             'address'        => (string) ($cms['contact']['address'] ?? 'Suite 4, Mosi-oa-Tunya Commercial Centre, Victoria Falls, Zimbabwe'),
             'hours'          => (string) ($cms['contact']['hours'] ?? 'Mon - Sun: 7:30 AM - 7:00 PM (CAT)'),
         );
+        if (function_exists('outbound_get_currency_snapshot_data')) {
+            $curr_data = outbound_get_currency_snapshot_data();
+            $snapshot['site']['currencyRates'] = $curr_data['currencyRates'];
+            $snapshot['site']['currencyMeta']  = $curr_data['currencyMeta'];
+        }
 
         // Sync editable WP CMS strings cleanly while preserving baseline keys.
         $defaults = outbound_get_default_site_options();
@@ -894,6 +1078,11 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
         } elseif (!empty($strings['travel/FinalCtaBanner.fallsTour1'])) {
             $structures['travel/FinalCtaBanner.fallsTour1'] = $strings['travel/FinalCtaBanner.fallsTour1'];
         }
+        foreach (array('common/Header.outboundLogo', 'common/Footer.outboundLogo', 'common/Footer.cruise1') as $logo_or_bg_key) {
+            if (!empty($strings[$logo_or_bg_key])) {
+                $structures[$logo_or_bg_key] = $strings[$logo_or_bg_key];
+            }
+        }
 
         // Apply unified Outbound CMS editorial structures (homepage section visibility, design tokens, repeaters).
         foreach ((array) ($bundle['editorial_structures'] ?? array()) as $sk => $sval) {
@@ -955,21 +1144,29 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
             }
         }
 
-        // Apply Currency Rates overrides if configured.
+        // Apply Manual Currency Rates overrides only when Manual Override mode is active (obsolete ZWL excluded).
         $rates = (array) ($bundle['currency_rates'] ?? array());
-        if (!empty($rates)) {
+        if (!empty($rates) && function_exists('outbound_get_currency_mode') && outbound_get_currency_mode() === 'manual') {
+            $manual_map = array('USD' => array('symbol' => '$', 'rate' => 1.0));
             foreach ($rates as $code => $cfg_rate) {
                 if (!is_string($code) || !is_array($cfg_rate)) {
                     continue;
                 }
+                $c = strtoupper(trim($code));
+                if ($c === 'ZWL' || $c === 'USD') {
+                    continue;
+                }
                 $num_rate = isset($cfg_rate['rate']) ? (float) $cfg_rate['rate'] : 0.0;
-                $sym = (string) ($cfg_rate['symbol'] ?? $code);
-                if ($num_rate > 0) {
-                    $snapshot['site']['currencyRates'][$code] = array(
+                $sym = (string) ($cfg_rate['symbol'] ?? $c);
+                if ($num_rate > 0 && is_finite($num_rate)) {
+                    $manual_map[$c] = array(
                         'symbol' => $sym,
                         'rate'   => $num_rate,
                     );
                 }
+            }
+            if (count($manual_map) > 1) {
+                $snapshot['site']['currencyRates'] = $manual_map;
             }
         }
 
@@ -985,7 +1182,124 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
     $snapshot['experiences']    = outbound_merge_wp_experiences((array) ($snapshot['experiences'] ?? array()), $is_preview);
     $snapshot['packages']       = outbound_merge_wp_packages((array) ($snapshot['packages'] ?? array()), $is_preview);
     $snapshot['guides']         = outbound_merge_wp_guides((array) ($snapshot['guides'] ?? array()), $is_preview);
+    $guide_hero_override = (string) ($snapshot['site']['editorial']['strings']['travel/guide/GuideArticleTemplate.heroImageUrl'] ?? ($snapshot['site']['editorial']['structures']['travel/guide/GuideHubView.elephantExperienceImg'] ?? ''));
+    $guide_avatar_override = (string) ($snapshot['site']['editorial']['strings']['travel/guide/GuideArticleTemplate.authorAvatarUrl'] ?? '');
+    if (($guide_hero_override !== '' || $guide_avatar_override !== '') && !empty($snapshot['guides']) && is_array($snapshot['guides'])) {
+        foreach ($snapshot['guides'] as $g_idx => $g_rec) {
+            if (!is_array($g_rec)) {
+                continue;
+            }
+            if ($guide_hero_override !== '' && (($g_rec['slug'] ?? '') === 'first-time-visitor-guide')) {
+                $snapshot['guides'][$g_idx]['heroImageUrl'] = $guide_hero_override;
+            }
+            if ($guide_avatar_override !== '' && isset($snapshot['guides'][$g_idx]['author']) && is_array($snapshot['guides'][$g_idx]['author'])) {
+                $snapshot['guides'][$g_idx]['author']['avatarUrl'] = $guide_avatar_override;
+            }
+        }
+    }
     $snapshot['albums']         = outbound_merge_wp_albums((array) ($snapshot['albums'] ?? array()), $is_preview);
+
+    // Apply Featured item image/title/detail overrides from Outbound CMS on top of baseline & CPT data.
+    $feat_over = (array) ($bundle['featured_overrides'] ?? array());
+    if (!empty($feat_over['experiences']) && is_array($feat_over['experiences']) && !empty($snapshot['experiences'])) {
+        foreach ($snapshot['experiences'] as $idx => $exp) {
+            $slug_k = (string) ($exp['slug'] ?? '');
+            $id_k   = (string) ($exp['id'] ?? '');
+            $ov     = $feat_over['experiences'][$slug_k] ?? ($feat_over['experiences'][$id_k] ?? null);
+            if (!is_array($ov)) {
+                continue;
+            }
+            if (!empty($ov['image'])) {
+                $snapshot['experiences'][$idx]['featuredImage'] = (string) $ov['image'];
+                if (!empty($snapshot['experiences'][$idx]['galleryImages']) && is_array($snapshot['experiences'][$idx]['galleryImages'])) {
+                    $snapshot['experiences'][$idx]['galleryImages'][0] = (string) $ov['image'];
+                }
+            }
+            if (!empty($ov['title'])) {
+                $snapshot['experiences'][$idx]['title'] = (string) $ov['title'];
+            }
+            if (array_key_exists('badge', $ov)) {
+                $b = trim((string) $ov['badge']);
+                if ($b !== '') {
+                    $snapshot['experiences'][$idx]['badge'] = $b;
+                }
+            }
+            if (!empty($ov['duration'])) {
+                $snapshot['experiences'][$idx]['duration'] = (string) $ov['duration'];
+            }
+            if (isset($ov['price']) && is_numeric($ov['price'])) {
+                $p_num = (float) $ov['price'];
+                $snapshot['experiences'][$idx]['priceAmount'] = $p_num;
+                $snapshot['experiences'][$idx]['fromPrice']   = '$' . number_format((int) round($p_num));
+            }
+            if (!empty($ov['description'])) {
+                $snapshot['experiences'][$idx]['shortDescription'] = (string) $ov['description'];
+            }
+        }
+    }
+    if (!empty($feat_over['accommodations']) && is_array($feat_over['accommodations']) && !empty($snapshot['accommodations'])) {
+        $allowed_acc_badges = array('Luxury', 'Family Favourite', 'Romantic', 'Best Value', 'Walking Distance', 'Boutique');
+        foreach ($snapshot['accommodations'] as $idx => $acc) {
+            $slug_k = (string) ($acc['slug'] ?? '');
+            $id_k   = (string) ($acc['id'] ?? '');
+            $ov     = $feat_over['accommodations'][$slug_k] ?? ($feat_over['accommodations'][$id_k] ?? null);
+            if (!is_array($ov)) {
+                continue;
+            }
+            if (!empty($ov['image'])) {
+                $snapshot['accommodations'][$idx]['heroImage'] = (string) $ov['image'];
+            }
+            if (!empty($ov['title'])) {
+                $snapshot['accommodations'][$idx]['name'] = (string) $ov['title'];
+            }
+            if (array_key_exists('badge', $ov)) {
+                $b = trim((string) $ov['badge']);
+                if ($b !== '' && in_array($b, $allowed_acc_badges, true)) {
+                    $snapshot['accommodations'][$idx]['badge'] = $b;
+                } elseif ($b === '') {
+                    unset($snapshot['accommodations'][$idx]['badge']);
+                }
+            }
+            if (isset($ov['price']) && is_numeric($ov['price'])) {
+                $snapshot['accommodations'][$idx]['priceFromUSD'] = (float) $ov['price'];
+            }
+            if (!empty($ov['description'])) {
+                $snapshot['accommodations'][$idx]['shortDescription'] = (string) $ov['description'];
+            }
+        }
+    }
+    if (!empty($feat_over['packages']) && is_array($feat_over['packages']) && !empty($snapshot['packages'])) {
+        $allowed_pkg_badges = array('Best Value', 'Luxury', 'Family Favourites', 'Adventure', 'Signature', 'Popular');
+        foreach ($snapshot['packages'] as $idx => $pkg) {
+            $id_k   = (string) ($pkg['id'] ?? '');
+            $slug_k = (string) ($pkg['slug'] ?? '');
+            $ov     = $feat_over['packages'][$id_k] ?? ($feat_over['packages'][$slug_k] ?? null);
+            if (!is_array($ov)) {
+                continue;
+            }
+            if (!empty($ov['image'])) {
+                $snapshot['packages'][$idx]['imageUrl'] = (string) $ov['image'];
+            }
+            if (!empty($ov['title'])) {
+                $snapshot['packages'][$idx]['title'] = (string) $ov['title'];
+            }
+            if (array_key_exists('badge', $ov)) {
+                $b = trim((string) $ov['badge']);
+                if ($b !== '' && in_array($b, $allowed_pkg_badges, true)) {
+                    $snapshot['packages'][$idx]['badge'] = $b;
+                }
+            }
+            if (!empty($ov['duration'])) {
+                $snapshot['packages'][$idx]['duration'] = (string) $ov['duration'];
+            }
+            if (isset($ov['price']) && is_numeric($ov['price'])) {
+                $snapshot['packages'][$idx]['priceUSD'] = (float) $ov['price'];
+            }
+            if (!empty($ov['description'])) {
+                $snapshot['packages'][$idx]['tagline'] = (string) $ov['description'];
+            }
+        }
+    }
 
     // Apply Holiday Builder tiers & activities from effective CMS bundle cleanly matching strict StayTierSchema & ActivityItemSchema.
     if (!empty($bundle['builder_stay_tiers']) && is_array($bundle['builder_stay_tiers'])) {
@@ -1046,6 +1360,92 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
         }
     }
 
+    // Sync Holiday Builder activities with live CMS Experiences (mirroring mergeLiveBuilderActivities in holidayCalculator.ts).
+    if (!empty($snapshot['experiences']) && is_array($snapshot['experiences'])) {
+        $legacy_map = array(
+            'act-guided-falls'  => 'guided-tour-falls',
+            'act-sunset-cruise' => 'upper-zambezi-sunset-cruise',
+            'act-boma-dinner'   => 'boma-dinner-show',
+            'act-helicopter'    => 'flight-of-angels',
+            'act-chobe-safari'  => 'chobe-day-safari',
+            'act-gorge-swing'   => 'gorge-swing',
+        );
+        $normalize_key = static fn(string $v): string => trim(preg_replace('/[^a-z0-9]+/', ' ', strtolower($v)) ?: '');
+        $by_id_slug = array();
+        $by_title   = array();
+        foreach ($snapshot['experiences'] as $exp) {
+            if (!is_array($exp) || empty($exp['id'])) {
+                continue;
+            }
+            $by_id_slug[(string) $exp['id']] = $exp;
+            if (!empty($exp['slug'])) {
+                $by_id_slug[(string) $exp['slug']] = $exp;
+            }
+            $tk = $normalize_key((string) ($exp['title'] ?? ''));
+            if ($tk !== '') {
+                $by_title[$tk] = $exp;
+            }
+        }
+        $matched_exp_ids = array();
+        $synced_acts     = array();
+        foreach ((array) ($snapshot['builderActivities'] ?? array()) as $act) {
+            if (!is_array($act) || empty($act['id'])) {
+                continue;
+            }
+            $aid        = (string) $act['id'];
+            $mapped     = $legacy_map[$aid] ?? '';
+            $matched    = ($mapped !== '' && isset($by_id_slug[$mapped]))
+                ? $by_id_slug[$mapped]
+                : ($by_id_slug[$aid] ?? ($by_title[$normalize_key((string) ($act['title'] ?? ''))] ?? null));
+            if (is_array($matched)) {
+                $matched_exp_ids[(string) $matched['id']] = true;
+                $live_price = isset($matched['priceAmount']) && is_numeric($matched['priceAmount']) && (float) $matched['priceAmount'] > 0
+                    ? (float) $matched['priceAmount']
+                    : (float) ($act['priceUSD'] ?? 0);
+                $act['title']        = (string) ($matched['title'] ?? ($act['title'] ?? $aid));
+                $act['duration']     = (string) ($matched['duration'] ?? ($act['duration'] ?? 'Half Day'));
+                $act['priceUSD']     = $live_price;
+                if (!empty($matched['featuredImage'])) {
+                    $act['imageUrl'] = (string) $matched['featuredImage'];
+                }
+                if (!empty($matched['badge'])) {
+                    $act['badge'] = (string) $matched['badge'];
+                }
+                if (!empty($matched['shortDescription'])) {
+                    $act['shortDesc'] = (string) $matched['shortDescription'];
+                }
+                if (!empty($matched['whyWeRecommend'])) {
+                    $act['whyRecommend'] = (string) $matched['whyWeRecommend'];
+                }
+            }
+            $synced_acts[] = $act;
+        }
+        foreach ($snapshot['experiences'] as $exp) {
+            if (!is_array($exp) || empty($exp['id']) || isset($matched_exp_ids[(string) $exp['id']])) {
+                continue;
+            }
+            $pamt = isset($exp['priceAmount']) && is_numeric($exp['priceAmount']) ? (float) $exp['priceAmount'] : 0.0;
+            if ($pamt <= 0) {
+                continue;
+            }
+            $cats = !empty($exp['categories']) && is_array($exp['categories']) ? array_values(array_map('strval', $exp['categories'])) : array('first-visit');
+            $synced_acts[] = array(
+                'id'           => (string) $exp['id'],
+                'title'        => (string) ($exp['title'] ?? $exp['id']),
+                'duration'     => (string) ($exp['duration'] ?? 'Half Day'),
+                'priceUSD'     => $pamt,
+                'imageUrl'     => (string) ($exp['featuredImage'] ?? outbound_get_media_fallback('falls')),
+                'badge'        => (string) ($exp['badge'] ?? 'Experience'),
+                'shortDesc'    => (string) ($exp['shortDescription'] ?? ''),
+                'whyRecommend' => (string) ($exp['whyWeRecommend'] ?? ($exp['shortDescription'] ?? '')),
+                'idealFor'     => $cats,
+            );
+        }
+        if (!empty($synced_acts)) {
+            $snapshot['builderActivities'] = $synced_acts;
+        }
+    }
+
     // Normalize relative asset paths across the snapshot when running inside WordPress.
     if (defined('OUTBOUND_THEME_URI')) {
         array_walk_recursive($snapshot, static function (&$val): void {
@@ -1055,6 +1455,15 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
                 }
             }
         });
+    }
+
+    if (function_exists('get_option')) {
+        $live_ver = (string) get_option('outbound_cms_snapshot_version', '');
+        if ($live_ver !== '') {
+            $snapshot['version'] = $is_preview ? ($live_ver . '-preview-' . time()) : $live_ver;
+        } elseif ($is_preview) {
+            $snapshot['version'] = (string) ($snapshot['version'] ?? '1') . '-preview-' . time();
+        }
     }
 
     if (!$is_preview && !$bypass_cache) {
@@ -1199,11 +1608,14 @@ if (function_exists('add_action')) {
             try {
                 $snapshot = outbound_build_live_snapshot();
                 $response = new WP_REST_Response($snapshot, 200);
-                if (outbound_is_preview_request() && method_exists($response, 'header')) {
-                    $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-                } else {
-                    $response->header('Cache-Control', 'public, max-age=180, stale-while-revalidate=300');
-                    $response->header('ETag', '"' . md5(OUTBOUND_THEME_VERSION . '_' . (string) ($snapshot['version'] ?? '')) . '"');
+                if (method_exists($response, 'header')) {
+                    if (outbound_is_preview_request() || (function_exists('is_user_logged_in') && is_user_logged_in())) {
+                        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+                        $response->header('X-LiteSpeed-Cache-Control', 'no-cache');
+                    } else {
+                        $response->header('Cache-Control', 'public, no-cache, must-revalidate');
+                        $response->header('ETag', '"' . md5(OUTBOUND_THEME_VERSION . '_' . (string) ($snapshot['version'] ?? '')) . '"');
+                    }
                 }
                 return $response;
             } catch (Throwable $e) {
@@ -1224,6 +1636,32 @@ if (function_exists('add_action')) {
             'methods'             => 'GET',
             'permission_callback' => '__return_true',
             'callback'            => $snapshot_handler,
+        ));
+
+        // Public read-only endpoint for live currency rates & metadata.
+        register_rest_route('outbound/v1', '/currency-rates', array(
+            'methods'             => 'GET',
+            'permission_callback' => '__return_true',
+            'callback'            => static function () {
+                try {
+                    if (!function_exists('outbound_get_currency_rates_payload')) {
+                        return new WP_REST_Response(array('error' => 'Currency service unavailable'), 503);
+                    }
+                    $payload  = outbound_get_currency_rates_payload(false);
+                    $response = new WP_REST_Response($payload, 200);
+                    if (method_exists($response, 'header')) {
+                        $response->header('Cache-Control', 'public, max-age=300, must-revalidate');
+                    }
+                    return $response;
+                } catch (Throwable $e) {
+                    error_log('[Outbound Currency REST Error] ' . $e->getMessage());
+                    return new WP_REST_Response(array(
+                        'base'   => 'USD',
+                        'status' => 'unavailable',
+                        'rates'  => array('USD' => array('code' => 'USD', 'symbol' => '$', 'rate' => 1.0)),
+                    ), 200);
+                }
+            },
         ));
 
         register_rest_route('outbound/v1', '/posts', array(

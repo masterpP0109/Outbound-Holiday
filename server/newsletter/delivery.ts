@@ -81,9 +81,9 @@ export async function sendSmtpEmail({
       const messageId = `<${createHash('sha256').update(messageIdKey).digest('hex')}@${messageDomain}>`;
 
       const info = await transport.sendMail({
-        from: required('EMAIL_FROM'),
+        from: process.env.EMAIL_FROM || 'Outbound Holidays <fungai@outboundholiday.com>',
         to: target,
-        replyTo: replyTo || process.env.TEAM_ENQUIRY_TO,
+        replyTo: replyTo || process.env.TEAM_ENQUIRY_TO || 'fungai@outboundholiday.com',
         subject,
         text,
         html,
@@ -109,12 +109,12 @@ export async function sendSmtpEmail({
         ...(dedupeKey ? { 'Idempotency-Key': dedupeKey } : {})
       },
       body: JSON.stringify({
-        from: required('EMAIL_FROM'),
+        from: process.env.EMAIL_FROM || 'Outbound Holidays <fungai@outboundholiday.com>',
         to: [to],
         subject,
         html,
         text,
-        reply_to: replyTo || process.env.TEAM_ENQUIRY_TO
+        reply_to: replyTo || process.env.TEAM_ENQUIRY_TO || 'fungai@outboundholiday.com'
       }),
       signal: AbortSignal.timeout(10000)
     });

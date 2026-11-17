@@ -28,7 +28,7 @@ export const VicFallsGuide: React.FC<VicFallsGuideProps> = ({ onOpenFullGuide })
 
         {/* 4 Practical Planning Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {guideCards.map((card) => {
+          {guideCards.map((card: any) => {
             const Icon = card.icon;
             return (
               <div

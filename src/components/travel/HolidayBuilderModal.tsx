@@ -1,10 +1,16 @@
 import { EnquiryConfirmation } from '../common/EnquiryConfirmation';
-import { resolveAssetUrl } from '../../runtime/api';
+import { getWpConfig, resolveAssetUrl } from '../../runtime/api';
 import { editorialFormat } from "../../runtime/catalog";
 import { useSubmission, SubmissionSafety } from '../common/SubmissionSafety';
-import { ACTIVITIES_DATA, STAY_TIERS, ALL_EXPERIENCES } from '../../runtime/catalog';
+import { ACTIVITIES_DATA, STAY_TIERS, ALL_EXPERIENCES, ALL_ACCOMMODATIONS } from '../../runtime/catalog';
 import { editorial, editorialValue, registerContent } from "../../runtime/catalog";
 import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { getPropertyDisplayPriceUSD } from '../../utils/accommodation';
+import {
+  calculateHolidayEstimate,
+  resolveBuilderAccommodations,
+  resolveMatchingActivityId,
+} from '../../utils/holidayCalculator';
 import React,{ useState,useEffect } from 'react';
 import { TravelPackage } from '../../types';
 import {
@@ -66,11 +72,13 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   const [nightsCount, setNightsCount] = useState<number>(3);
   const [travelSeason, setTravelSeason] = useState<string>('flexible');
   const [stayTierId, setStayTierId] = useState<string>('comfort-plus');
+  const [selectedAccommodationId, setSelectedAccommodationId] = useState<string>('');
   const [stayPreferences, setStayPreferences] = useState<string[]>(['Breakfast included', 'Swimming pool']);
   const [selectedActivityIds, setSelectedActivityIds] = useState<string[]>([
     'act-guided-falls',
     'act-sunset-cruise',
   ]);
+  const [activityFilter, setActivityFilter] = useState<'popular' | 'all'>('all');
   const [transportType, setTransportType] = useState<string>('private-transfers');
 
   const submission = useSubmission('enquiries');
@@ -89,6 +97,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     if (isOpen) {
       if (preselectedPackage) {
         setStep(1);
+        setSelectedAccommodationId('');
         if (preselectedPackage.category === 'luxury') {
           setStayTierId('premium-escape');
         } else if (preselectedPackage.category === 'family') {
@@ -107,9 +116,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         }
       } else if (preselectedAccommodation) {
         setStep(4);
-        if (preselectedAccommodation.priceFromUSD > 400) {
+        setSelectedAccommodationId(preselectedAccommodation.id || preselectedAccommodation.slug);
+        const effRate = getPropertyDisplayPriceUSD(preselectedAccommodation) ?? 0;
+        if (effRate > 400) {
           setStayTierId('premium-escape');
-        } else if (preselectedAccommodation.priceFromUSD > 250) {
+        } else if (effRate > 250) {
           setStayTierId('comfort-plus');
         } else {
           setStayTierId('smart-value');
@@ -117,11 +128,9 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
         setStayPreferences(prev => Array.from(new Set([...prev, `Preselected Property: ${preselectedAccommodation.name}`])));
       } else if (preselectedActivity) {
         setStep(5);
-        const match = ACTIVITIES_DATA.find(
-          (a) => a.title.toLowerCase().includes(preselectedActivity.toLowerCase()) || a.id === preselectedActivity
-        );
-        if (match) {
-          setSelectedActivityIds((ids) => ids.includes(match.id) ? ids : [...ids, match.id]);
+        const matchedId = resolveMatchingActivityId(ACTIVITIES_DATA, preselectedActivity);
+        if (matchedId) {
+          setSelectedActivityIds((ids) => ids.includes(matchedId) ? ids : [...ids, matchedId]);
         }
       }
     }
@@ -148,25 +157,45 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     }
   };
 
-  // Calculations
-  const selectedStayTierObj = STAY_TIERS.find((s) => s.id === stayTierId) || STAY_TIERS[1];
+  // Calculations synced directly with live CMS stay tiers, Where to Stay property rates, and Experience prices
+  const stayAccommodations = resolveBuilderAccommodations(ALL_ACCOMMODATIONS);
+  const activeAccommodation = selectedAccommodationId
+    ? (stayAccommodations.find((opt) => opt.id === selectedAccommodationId || opt.slug === selectedAccommodationId)?.property
+      ?? (preselectedAccommodation && (preselectedAccommodation.id === selectedAccommodationId || preselectedAccommodation.slug === selectedAccommodationId)
+        ? preselectedAccommodation
+        : undefined))
+    : undefined;
+  const selectedStayTierObj = STAY_TIERS.find((s) => s.id === stayTierId) || STAY_TIERS[1] || STAY_TIERS[0];
   const selectedActivitiesList = ACTIVITIES_DATA.filter((a) => selectedActivityIds.includes(a.id));
 
-  // Planning assumptions: two guests per room; room allocation must be confirmed.
+  const activeAccommodationRateUSD = activeAccommodation ? getPropertyDisplayPriceUSD(activeAccommodation) : null;
+  const fallbackTierRate = Number(selectedStayTierObj?.pricePerNightUSD ?? (selectedStayTierObj as any)?.startingPrice ?? 235);
+  const safeFallbackTierRate = Number.isFinite(fallbackTierRate) && fallbackTierRate > 0 ? fallbackTierRate : 235;
+  const effectiveStayNightRateUSD =
+    typeof activeAccommodationRateUSD === 'number' && Number.isFinite(activeAccommodationRateUSD) && activeAccommodationRateUSD > 0
+      ? activeAccommodationRateUSD
+      : safeFallbackTierRate;
+  const activeStayLabel = activeAccommodation
+    ? `${activeAccommodation.name} ($${effectiveStayNightRateUSD}/night)`
+    : `${selectedStayTierObj.name} ($${effectiveStayNightRateUSD}/night)`;
+
   const totalGuests = adultsCount + kidsCount;
-  const roomFactor = Math.ceil(totalGuests / 2);
-  const accommodationCostMin = (preselectedAccommodation?.priceFromUSD ?? selectedStayTierObj.pricePerNightUSD) * nightsCount * roomFactor;
-
-  const activitiesCost = selectedActivitiesList.reduce((acc, act) => {
-    const adultTotal = act.priceUSD * adultsCount;
-    const kidsTotal = act.priceUSD * 0.8 * kidsCount; // Estimate only: assumed 20% child discount; supplier age/rate rules vary.
-    return acc + adultTotal + kidsTotal;
-  }, 0);
-
-  const transferCost = transportType === 'private-transfers' ? 120 : transportType === 'shared-shuttle' ? 60 : 0;
-
-  const estimatedMinUSD = Math.round(accommodationCostMin + activitiesCost + transferCost);
-  const estimatedMaxUSD = Math.round(estimatedMinUSD * 1.18); // 18% cushion range
+  const estimateBreakdown = calculateHolidayEstimate({
+    nights: nightsCount,
+    adults: adultsCount,
+    children: kidsCount,
+    stayNightRateUSD: effectiveStayNightRateUSD,
+    activityRatesUSD: selectedActivitiesList.map((act) => {
+      const rate = Number((act as any).priceUSD ?? (act as any).priceAmount ?? 0);
+      return Number.isFinite(rate) && rate >= 0 ? rate : 0;
+    }),
+    transportType,
+  });
+  const accommodationCostMin = Number.isFinite(estimateBreakdown.stayCost) ? estimateBreakdown.stayCost : 0;
+  const activitiesCost = Number.isFinite(estimateBreakdown.activitiesCost) ? estimateBreakdown.activitiesCost : 0;
+  const transferCost = Number.isFinite(estimateBreakdown.transportCost) ? estimateBreakdown.transportCost : 0;
+  const estimatedMinUSD = Number.isFinite(estimateBreakdown.minimumUSD) ? Math.max(0, estimateBreakdown.minimumUSD) : 0;
+  const estimatedMaxUSD = Number.isFinite(estimateBreakdown.maximumUSD) ? Math.max(estimatedMinUSD, estimateBreakdown.maximumUSD) : estimatedMinUSD;
 
   // Progress Percentage
   const progressPercent = Math.min(100, Math.round((step / 8) * 100));
@@ -236,12 +265,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
   // WhatsApp Link Builder
   const buildWhatsAppLink = () => {
-    const actNames = selectedActivitiesList.map((a) => a.title).join(', ');
-    const chosenProperty = typeof preselectedAccommodation !== 'undefined' ? preselectedAccommodation : null;
+    const actNames = selectedActivitiesList.map((a) => `${a.title} ($${a.priceUSD})`).join(', ');
     const chosenRoomPrefs = typeof stayPreferences !== 'undefined' ? stayPreferences : [];
-    const stayLine = chosenProperty
-      ? `*Property:* ${chosenProperty.name} (${selectedStayTierObj.name})\n`
-      : `*Trip Style:* ${selectedStayTierObj.name}\n`;
+    const stayLine = activeAccommodation
+      ? `*Property:* ${activeAccommodation.name} ($${effectiveStayNightRateUSD}/night)\n`
+      : `*Stay Style:* ${selectedStayTierObj.name} ($${effectiveStayNightRateUSD}/night)\n`;
     const roomPrefLine = chosenRoomPrefs.length > 0
       ? `*Stay / Room Preferences:* ${chosenRoomPrefs.join(', ')}\n`
       : '';
@@ -249,59 +277,124 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       stayLine +
       roomPrefLine +
       `*Party:* ${adultsCount} Adults, ${kidsCount} Kids (${partyType})\n` +
-      `*Duration:* ${nightsCount} Nights / ${nightsCount + 1} Days\n` +
+      `*Duration:* ${nightsCount} Nights / ${nightsCount + 1} Days (${estimateBreakdown.rooms} room${estimateBreakdown.rooms > 1 ? 's' : ''})\n` +
       `*Experiences (${selectedActivitiesList.length}):* ${actNames || 'To be selected'}\n` +
+      `*Transfers:* ${transportType.replaceAll('-', ' ')} ($${transferCost})\n` +
       `*Estimated Range:* $${estimatedMinUSD} - $${estimatedMaxUSD} USD\n\n` +
       editorialFormat("travel/HolidayBuilderModal.copy6", [travelSeason,fullName || 'Guest']);
     return getWhatsAppUrl(message);
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const buildTripSubmissionPayload = (mode: 'quick' | 'guided') => {
+    const isWp = Boolean(getWpConfig()?.isWordPress);
+    const validTransport = (['private-transfers', 'shared-shuttle', 'self-drive', 'undecided', 'VIP-helicopter', 'none'].includes(transportType)
+      ? transportType
+      : 'private-transfers') as 'private-transfers' | 'shared-shuttle' | 'self-drive' | 'undecided' | 'VIP-helicopter' | 'none';
     const preselectedExperienceTitle = preselectedActivity
       ? (ALL_EXPERIENCES.find((exp) => exp.id === preselectedActivity)?.title ?? preselectedActivity)
       : undefined;
-    const saved=await submission.save({
-      name:fullName,
-      email,
-      phone,
-      message:notes,
-      source:'holiday-builder',
-      marketingConsent,
+    const activeTierId = selectedStayTierObj?.id || stayTierId || 'comfort-plus';
+    const safeDay = (dayVal: unknown, titleVal: unknown, descVal: unknown) => ({
+      day: String(dayVal || 'Day').trim().slice(0, 100),
+      title: String(titleVal || 'Planned Activity').trim().slice(0, 150),
+      description: String(descVal || '').trim().slice(0, 1000),
+    });
+
+    const baseTrip: Record<string, unknown> = {
       promotionId: preselectedPromotion?.id,
       promotionName: preselectedPromotion?.name,
-      trip:{
-        entryMode:'guided',
-        preferredContact:'email',
-        displayedEstimate:{minimumUSD:estimatedMinUSD,maximumUSD:estimatedMaxUSD,currency:'USD',clientUnverified:true},
-        itineraryDraft:[{day:editorial('travel/HolidayBuilderModal.text151'),title:editorial('travel/HolidayBuilderModal.text152'),description:editorial('travel/HolidayBuilderModal.text153')+selectedStayTierObj.name+editorial('travel/HolidayBuilderModal.text154')},{day:editorial('travel/HolidayBuilderModal.text155'),title:editorial('travel/HolidayBuilderModal.text156'),description:editorial('travel/HolidayBuilderModal.text157')},...(nightsCount>=3?[{day:editorial('travel/HolidayBuilderModal.text158'),title:editorial('travel/HolidayBuilderModal.text159'),description:editorial('travel/HolidayBuilderModal.text160')}]:[]),{day:editorial('travel/HolidayBuilderModal.text161'),title:editorial('travel/HolidayBuilderModal.text162'),description:editorial('travel/HolidayBuilderModal.text163')}],
-        intent:tripIntent,
-        partyType,
-        adults:adultsCount,
-        children:kidsCount,
-        nights:nightsCount,
-        travelDates:travelSeason,
-        stayTierId,
-        stayTierName:selectedStayTierObj.name,
-        stayPreferences,
-        activityIds:selectedActivityIds,
-        selectedActivities:selectedActivitiesList.map((act)=>({id:act.id,title:act.title,duration:act.duration,unitPriceUSD:Number((act as any).priceAmount??(act as any).priceUSD??0)})),
-        experienceIds:preselectedActivity?[preselectedActivity]:[],
-        preselectedExperienceTitle,
-        transportType,
-        accommodationId:preselectedAccommodation?.id,
-        accommodationName:preselectedAccommodation?.name,
-        accommodationCategory:preselectedAccommodation?.category,
-        packageId:preselectedPackage?.id,
-        packageTitle:preselectedPackage?.title,
-      }
+      preferredContact: mode === 'quick' ? (phone.trim() ? 'whatsapp' : 'email') : 'email',
+      displayedEstimate: {
+        minimumUSD: estimatedMinUSD,
+        maximumUSD: estimatedMaxUSD,
+        currency: 'USD' as const,
+        clientUnverified: true as const,
+      },
+      intent: tripIntent,
+      partyType,
+      adults: adultsCount,
+      children: kidsCount,
+      nights: nightsCount,
+      travelDates: travelSeason,
+      stayTierId: activeTierId,
+      stayPreferences,
+      activityIds: selectedActivityIds,
+      experienceIds: preselectedActivity ? [preselectedActivity] : [],
+      accommodationId: activeAccommodation?.id,
+      packageId: preselectedPackage?.id,
+      transportType: validTransport,
+    };
+
+    if (mode === 'guided') {
+      baseTrip.itineraryDraft = [
+        safeDay(
+          editorial('travel/HolidayBuilderModal.text151'),
+          editorial('travel/HolidayBuilderModal.text152'),
+          editorial('travel/HolidayBuilderModal.text153') + activeStayLabel + editorial('travel/HolidayBuilderModal.text154')
+        ),
+        safeDay(
+          editorial('travel/HolidayBuilderModal.text155'),
+          editorial('travel/HolidayBuilderModal.text156'),
+          editorial('travel/HolidayBuilderModal.text157')
+        ),
+        ...(nightsCount >= 3
+          ? [
+              safeDay(
+                editorial('travel/HolidayBuilderModal.text158'),
+                editorial('travel/HolidayBuilderModal.text159'),
+                editorial('travel/HolidayBuilderModal.text160')
+              ),
+            ]
+          : []),
+        safeDay(
+          editorial('travel/HolidayBuilderModal.text161'),
+          editorial('travel/HolidayBuilderModal.text162'),
+          editorial('travel/HolidayBuilderModal.text163')
+        ),
+      ];
+    }
+
+    if (isWp) {
+      baseTrip.entryMode = mode;
+      baseTrip.stayTierName = selectedStayTierObj.name;
+      baseTrip.stayNightRateUSD = effectiveStayNightRateUSD;
+      baseTrip.selectedActivities = selectedActivitiesList.map((act) => {
+        const unitPrice = Number((act as any).priceUSD ?? (act as any).priceAmount ?? 0);
+        return {
+          id: act.id,
+          title: act.title,
+          duration: act.duration || '',
+          unitPriceUSD: Number.isFinite(unitPrice) && unitPrice >= 0 ? unitPrice : 0,
+        };
+      });
+      baseTrip.preselectedExperienceTitle = preselectedExperienceTitle;
+      baseTrip.accommodationName = activeAccommodation?.name;
+      baseTrip.accommodationCategory = activeAccommodation?.category;
+      baseTrip.packageTitle = preselectedPackage?.title;
+    }
+
+    return baseTrip;
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const saved = await submission.save({
+      name: fullName.trim(),
+      email: email.trim(),
+      phone: phone.trim() || undefined,
+      message: notes.trim(),
+      source: 'holiday-builder',
+      promotionId: preselectedPromotion?.id,
+      promotionName: preselectedPromotion?.name,
+      marketingConsent,
+      trip: buildTripSubmissionPayload('guided'),
     });
-    if(saved)setSubmitted(true);
+    if (saved) setSubmitted(true);
   };
 
   const buildQuickWhatsAppLink = () => {
     const message = `Hi Outbound Holidays! I'd like help planning a Victoria Falls holiday.\n\n` +
-      (preselectedAccommodation ? `*Property:* ${preselectedAccommodation.name}\n` : '') +
+      (activeAccommodation ? `*Property:* ${activeAccommodation.name} ($${effectiveStayNightRateUSD}/night)\n` : '') +
       `*Name:* ${fullName || 'Guest'}\n` +
       `*Travel Style:* ${tripIntent}\n` +
       `*Party:* ${adultsCount} Adults, ${kidsCount} Kids (${partyType})\n` +
@@ -320,53 +413,16 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       ? notes
       : `Quick enquiry: Interested in a ${tripIntent} Victoria Falls holiday for ${adultsCount} adult(s) (${partyType}) during ${travelSeason} season.`;
 
-    const preselectedExperienceTitle = preselectedActivity
-      ? (ALL_EXPERIENCES.find((exp) => exp.id === preselectedActivity)?.title ?? preselectedActivity)
-      : undefined;
-
     const saved = await submission.save({
-      name: fullName,
-      email,
-      phone,
+      name: fullName.trim(),
+      email: email.trim(),
+      phone: phone.trim() || undefined,
       message: quickMessage,
       source: 'holiday-builder',
-      marketingConsent,
       promotionId: preselectedPromotion?.id,
       promotionName: preselectedPromotion?.name,
-      trip: {
-        entryMode: 'quick',
-        preferredContact: phone ? 'whatsapp' : 'email',
-        displayedEstimate: {
-          minimumUSD: estimatedMinUSD,
-          maximumUSD: estimatedMaxUSD,
-          currency: 'USD',
-          clientUnverified: true,
-        },
-        intent: tripIntent,
-        partyType,
-        adults: adultsCount,
-        children: kidsCount,
-        nights: nightsCount,
-        travelDates: travelSeason,
-        stayTierId,
-        stayTierName: selectedStayTierObj.name,
-        stayPreferences,
-        activityIds: selectedActivityIds,
-        selectedActivities: selectedActivitiesList.map((act) => ({
-          id: act.id,
-          title: act.title,
-          duration: act.duration,
-          unitPriceUSD: Number((act as any).priceAmount ?? (act as any).priceUSD ?? 0),
-        })),
-        experienceIds: preselectedActivity ? [preselectedActivity] : [],
-        preselectedExperienceTitle,
-        transportType,
-        accommodationId: preselectedAccommodation?.id,
-        accommodationName: preselectedAccommodation?.name,
-        accommodationCategory: preselectedAccommodation?.category,
-        packageId: preselectedPackage?.id,
-        packageTitle: preselectedPackage?.title,
-      },
+      marketingConsent,
+      trip: buildTripSubmissionPayload('quick'),
     });
     if (saved) {
       setStep(8);
@@ -402,6 +458,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               height={352}
               alt={editorial("travel/HolidayBuilderModal.text61")}
               className="w-[136px] sm:w-[170px] h-auto object-contain opacity-100"
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
@@ -559,6 +617,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       <input
                         type="text"
                         required
+                        minLength={2}
                         placeholder="e.g. Sarah Jenkins"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
@@ -978,14 +1037,66 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   {editorial("travel/HolidayBuilderModal.text124")}</p>
               </div>
 
+              {/* Specific Where to Stay Property Selector (Live CMS Indicative & Room Rates) */}
+              {stayAccommodations.length > 0 && (
+                <div className="bg-white p-4 rounded-2xl border border-[#0D5C75]/25 space-y-3 shadow-2xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D5C75] block">
+                        Or Choose a Specific Property (Live CMS Rates)
+                      </span>
+                      <span className="text-[11px] text-gray-500">
+                        Select an exact Where to Stay hotel, lodge, or apartment to calculate using its real nightly rate.
+                      </span>
+                    </div>
+                    {activeAccommodation && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedAccommodationId('')}
+                        className="text-xs font-bold text-[#D97706] hover:underline cursor-pointer"
+                      >
+                        Clear Property ({activeAccommodation.name})
+                      </button>
+                    )}
+                  </div>
+                  <select
+                    aria-label="Choose a specific Where to Stay property"
+                    value={selectedAccommodationId}
+                    onChange={(e) => {
+                      const chosenId = e.target.value;
+                      setSelectedAccommodationId(chosenId);
+                      const chosen = stayAccommodations.find((opt) => opt.id === chosenId || opt.slug === chosenId);
+                      if (chosen) {
+                        if (chosen.pricePerNightUSD > 400) setStayTierId('premium-escape');
+                        else if (chosen.pricePerNightUSD > 250) setStayTierId('comfort-plus');
+                        else setStayTierId('smart-value');
+                      }
+                    }}
+                    className="w-full p-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-[#1A2E35] focus:ring-2 focus:ring-[#0D5C75] outline-none"
+                  >
+                    <option value="">Use a general Stay Style Tier below (~${selectedStayTierObj.pricePerNightUSD}/night)</option>
+                    {stayAccommodations.map((acc) => (
+                      <option key={acc.id} value={acc.id}>
+                        {acc.name} ({acc.category}) — ${acc.pricePerNightUSD} {acc.priceUnit}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               {/* 4 Rich Visual Stay Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {STAY_TIERS.map((tier) => (
+                {STAY_TIERS.map((tier) => {
+                  const isTierSelected = !activeAccommodation && stayTierId === tier.id;
+                  return (
                   <div
                     key={tier.id}
-                    onClick={() => setStayTierId(tier.id)}
+                    onClick={() => {
+                      setSelectedAccommodationId('');
+                      setStayTierId(tier.id);
+                    }}
                     className={`rounded-2xl border-2 overflow-hidden bg-white cursor-pointer transition-all ${
-                      stayTierId === tier.id
+                      isTierSelected
                         ? 'border-[#0D5C75] ring-2 ring-[#0D5C75] shadow-md'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
@@ -995,6 +1106,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         src={tier.imageUrl}
                         alt={tier.name}
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                       <div className="absolute bottom-3 left-3 text-white">
@@ -1019,7 +1132,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* What matters most filter tags */}
@@ -1052,17 +1166,39 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           {/* STEP 5: VISUAL ACTIVITY CARDS */}
           {step === 5 && (
             <div className="space-y-6 animate-fade-in">
-              <div>
-                <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
-                  {editorial("travel/HolidayBuilderModal.text127")}</span>
-                <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                  {editorial("travel/HolidayBuilderModal.text128")}</h2>
-                <p className="text-gray-600 text-xs sm:text-sm mt-1">
-                  {editorial("travel/HolidayBuilderModal.text129")}</p>
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-widest block mb-1">
+                    {editorial("travel/HolidayBuilderModal.text127")}</span>
+                  <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
+                    {editorial("travel/HolidayBuilderModal.text128")}</h2>
+                  <p className="text-gray-600 text-xs sm:text-sm mt-1">
+                    {editorial("travel/HolidayBuilderModal.text129")}</p>
+                </div>
+                <div className="inline-flex p-1 bg-gray-100 rounded-xl border border-gray-200 text-xs font-bold shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setActivityFilter('all')}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                      activityFilter === 'all' ? 'bg-white text-[#0D5C75] shadow-2xs' : 'text-gray-600'
+                    }`}
+                  >
+                    All Experiences ({ACTIVITIES_DATA.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActivityFilter('popular')}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                      activityFilter === 'popular' ? 'bg-white text-[#0D5C75] shadow-2xs' : 'text-gray-600'
+                    }`}
+                  >
+                    Top Picks
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {ACTIVITIES_DATA.map((act) => {
+                {(activityFilter === 'popular' ? ACTIVITIES_DATA.slice(0, 8) : ACTIVITIES_DATA).map((act) => {
                   const isSelected = selectedActivityIds.includes(act.id);
                   return (
                     <div
@@ -1079,6 +1215,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                             src={act.imageUrl}
                             alt={act.title}
                             className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                           <div className="absolute top-3 left-3 bg-[#D97706] text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase">
@@ -1300,15 +1438,15 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     <p><strong>Vision:</strong> {tripIntent.replaceAll('-', ' ')}</p>
                     <p><strong>{editorial("travel/HolidayBuilderModal.text182")}</strong> {adultsCount} {editorial("travel/HolidayBuilderModal.text183")}{kidsCount} {editorial("travel/HolidayBuilderModal.text184")}{partyType})</p>
                     <p><strong>Travel Window:</strong> {travelSeason.replaceAll('-', ' ')}</p>
-                    <p><strong>{editorial("travel/HolidayBuilderModal.text185")}</strong> {nightsCount} {editorial("travel/HolidayBuilderModal.text186")}{selectedStayTierObj.name})</p>
+                    <p><strong>{editorial("travel/HolidayBuilderModal.text185")}</strong> {nightsCount} {editorial("travel/HolidayBuilderModal.text186")}{activeStayLabel})</p>
                     {stayPreferences.length > 0 && (
                       <p><strong>Stay Preferences:</strong> {stayPreferences.join(', ')}</p>
                     )}
                     {preselectedPackage && (
                       <p><strong>Selected Package:</strong> {preselectedPackage.title}</p>
                     )}
-                    {preselectedAccommodation && (
-                      <p><strong>Preferred Property:</strong> {preselectedAccommodation.name}</p>
+                    {activeAccommodation && (
+                      <p><strong>Selected Property:</strong> {activeAccommodation.name} (${effectiveStayNightRateUSD}/night)</p>
                     )}
                     <p><strong>Transfers:</strong> {transportType.replaceAll('-', ' ')}</p>
                     <p><strong>{editorial("travel/HolidayBuilderModal.text187")}{selectedActivitiesList.length}):</strong> {selectedActivitiesList.map(a => a.title).join(', ')}</p>
@@ -1351,6 +1489,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       <input
                         type="text"
                         required
+                        minLength={2}
                         placeholder={editorial("travel/HolidayBuilderModal.text196")}
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
@@ -1465,10 +1604,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                 src={getIntentHeroPhoto()}
                 alt={editorial("travel/HolidayBuilderModal.text208")}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute bottom-2 left-3 right-3 text-white text-xs font-bold">
-                {nightsCount} {editorial("travel/HolidayBuilderModal.text209")}{selectedStayTierObj.name}
+                {nightsCount} {editorial("travel/HolidayBuilderModal.text209")}{activeStayLabel}
               </div>
             </div>
 
@@ -1499,7 +1640,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
               <div>
                 <strong className="block text-[#0D5C75] text-[11px] uppercase tracking-wider mb-0.5">
                   {editorial("travel/HolidayBuilderModal.text215")}</strong>
-                <span className="text-gray-700">{selectedStayTierObj.name}</span>
+                <span className="text-gray-700">{activeStayLabel}</span>
               </div>
 
               <div>

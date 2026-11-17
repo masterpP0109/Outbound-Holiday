@@ -2,7 +2,7 @@ import { editorial } from "../../runtime/catalog";
 import React from 'react';
 import { ArtProduct,Currency } from '../../types';
 import { ART_PRODUCTS } from '../../data/artData';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { X,Heart,ShoppingBag,Trash2 } from 'lucide-react';
 
 interface WishlistDrawerProps {
@@ -26,11 +26,7 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
 
   const wishlistedProducts = ART_PRODUCTS.filter((p) => wishlistIds.includes(p.id));
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs">
@@ -67,6 +63,8 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
                   src={product.imageUrl}
                   alt={product.name}
                   className="w-16 h-16 rounded-lg object-cover shrink-0"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="flex-1 min-w-0">
                   <h4 className="font-serif font-bold text-xs text-[#0B5E8E] truncate">

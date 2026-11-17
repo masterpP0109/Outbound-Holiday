@@ -1,6 +1,6 @@
 export type ActivePortal = 'travel' | 'art' | 'combined';
 
-export type Currency = 'USD' | 'ZWL' | 'EUR' | 'GBP' | 'ZAR';
+export type Currency = 'USD' | 'ZAR' | 'GBP' | 'EUR' | 'AUD' | 'ZWG';
 
 export interface CurrencyRate {
   symbol: string;

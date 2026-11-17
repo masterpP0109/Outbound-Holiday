@@ -127,7 +127,7 @@
             if (Array.isArray(parsed)) {
                 blocks = parsed;
             }
-        } catch (err) {
+        } catch (_err) {
             blocks = [];
         }
 
@@ -339,7 +339,9 @@
                     blocks = blocks.concat(snippetBlocks);
                     renderBlocks();
                 }
-            } catch (err) {}
+            } catch (_err) {
+                // Ignore invalid JSON snippet
+            }
         });
 
         $('#outbound-nl-toggle-html').on('change', function () {

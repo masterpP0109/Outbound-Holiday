@@ -11,7 +11,7 @@ import { accommodationPath } from '../../routes';
 import React,{ useState } from 'react';
 import { ALL_ACCOMMODATIONS,DetailedAccommodation } from '../../data/accommodationsData';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import {
 Sparkles,
 ArrowRight,
@@ -75,11 +75,7 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
   const [answers, setAnswers] = useState<AdvisorAnswers>(DEFAULT_ANSWERS);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   const handleNextStep = () => {
     if (currentStep < 6) {
@@ -582,6 +578,8 @@ export const AccommodationAdvisor: React.FC<AccommodationAdvisorProps> = ({
                           src={prop.heroImage} 
                           alt={prop.name}
                           className="w-full h-full object-cover"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="absolute top-3 left-3 bg-[#0D2833] text-[#E5C989] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md border border-[#C9A66B]/40">
                           {rec.matchLabel}

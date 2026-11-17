@@ -1,6 +1,182 @@
 import { z } from 'zod';
-export const RoomTypeSchema = z.object({"name":z.string(),"occupancy":z.string(),"description":z.string(),"imageUrl":z.string(),"features":z.array(z.string())}).strict();
-export const DetailedAccommodationSchema = z.object({"id":z.string(),"slug":z.string(),"name":z.string(),"category":z.union([z.literal('Luxury Lodge'),z.literal('Boutique Hotel'),z.literal('Guest Lodge'),z.literal('Safari Lodge'),z.literal('Resort'),z.literal('Self-Catering'),z.literal('Hotel'),z.literal('Lodge'),z.literal('Guest House'),z.literal('Apartment')]),"accommodationCategory":z.enum(["hotels","lodges","guest-houses","apartments"]).optional(),"badge":z.union([z.literal('Luxury'),z.literal('Family Favourite'),z.literal('Romantic'),z.literal('Best Value'),z.literal('Walking Distance'),z.literal('Boutique')]).optional(),"rating":z.number().finite(),"reviewCount":z.number().finite(),"location":z.string(),"distanceFromFalls":z.string(),"airportDistance":z.string(),"priceFromUSD":z.number().finite(),"currency":z.string().optional(),"priceUnit":z.string().optional(),"maxGuests":z.number().int().positive().optional(),"amenities":z.array(z.string()).optional(),"checkInTime":z.string().optional(),"checkOutTime":z.string().optional(),"publicationStatus":z.enum(["published","draft","archived"]).optional(),"heroImage":z.string(),"galleryImages":z.array(z.string()),"tagline":z.string(),"shortDescription":z.string(),"editorialOverview":z.string(),"whyWeRecommend":z.string(),"filterTags":z.array(z.enum(["luxury-lodges","boutique-hotels","family-friendly","romantic-escapes","best-value","safari-lodges","self-catering","walking-distance"])),"atAGlance":z.object({"type":z.string(),"starRating":z.string(),"bestFor":z.string(),"distanceFromFalls":z.string(),"pool":z.string(),"restaurant":z.string(),"wifi":z.string(),"familyFriendly":z.string(),"transfers":z.string(),"roomTypesSummary":z.string()}).strict(),"roomTypes":z.array(z.lazy(() => RoomTypeSchema)),"facilities":z.array(z.object({"name":z.string(),"category":z.string()}).strict()),"locationInfo":z.object({"address":z.string(),"distanceToFalls":z.string(),"distanceToAirport":z.string(),"nearbyAttractions":z.array(z.string()),"nearbyRestaurants":z.array(z.string()),"departurePoints":z.string()}).strict(),"nearbyExperienceIds":z.array(z.string()),"relatedPropertyIds":z.array(z.string())}).strict();
+export const RoomBedConfigSchema = z.object({
+  type: z.string(),
+  quantity: z.number().int().min(1),
+}).strict();
+
+export const RoomOccupancyConfigSchema = z.object({
+  maxAdults: z.number().int().min(1).optional(),
+  maxChildren: z.number().int().min(0).optional(),
+  maxTotalGuests: z.number().int().min(1).optional(),
+  bedrooms: z.number().int().min(0).optional(),
+  bathrooms: z.number().nonnegative().optional(),
+  beds: z.array(RoomBedConfigSchema).optional(),
+  extraBedAvailable: z.boolean().optional(),
+  extraBedNotes: z.string().optional(),
+  childAgePolicy: z.string().optional(),
+  additionalGuestChargeNote: z.string().optional(),
+  interleadingInfo: z.string().optional(),
+}).strict();
+
+export const RatePlanSchema = z.object({
+  id: z.string(),
+  internalRateName: z.string(),
+  validFrom: z.string().optional(),
+  validTo: z.string().optional(),
+  amountUSD: z.number().nonnegative().nullable().optional(),
+  priceBasis: z.string().optional(),
+  customBasisLabel: z.string().optional(),
+  visitorMarket: z.enum(['international', 'zimbabwe_resident', 'sadc_resident', 'custom']).optional(),
+  customMarketLabel: z.string().optional(),
+  adultOrChildCategory: z.enum(['adult', 'child', 'all']).optional(),
+  boardBasis: z.enum(['room_only', 'self_catering', 'bed_and_breakfast', 'half_board', 'full_board', 'all_inclusive']).optional(),
+  maxOccupancy: z.number().int().min(1).nullable().optional(),
+  minStayNights: z.number().int().min(1).nullable().optional(),
+  inclusions: z.array(z.string()).optional(),
+  exclusions: z.array(z.string()).optional(),
+  rateStatus: z.enum(['provisional', 'confirmed']).optional(),
+  lastConfirmedDate: z.string().optional(),
+  applicableUnitIds: z.array(z.string()).optional(),
+  isActive: z.boolean().optional(),
+}).strict();
+
+export const AccommodationOfferSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  offerCategory: z.enum(['special_offer', 'honeymoon_package', 'seasonal_promotion', 'meal_plan', 'added_value']).optional(),
+  description: z.string().optional(),
+  galleryImages: z.array(z.string()).optional(),
+  includedServices: z.array(z.string()).optional(),
+  applicableUnitIds: z.array(z.string()).optional(),
+  applyToEntireProperty: z.boolean().optional(),
+  applicableRatePlanIds: z.array(z.string()).optional(),
+  validFrom: z.string().optional(),
+  validTo: z.string().optional(),
+  priceType: z.enum(['fixed_offer', 'percentage_discount', 'fixed_discount', 'added_value']).optional(),
+  offerPriceUSD: z.number().nonnegative().nullable().optional(),
+  discountPercent: z.number().nonnegative().nullable().optional(),
+  discountAmountUSD: z.number().nonnegative().nullable().optional(),
+  guestRequirements: z.string().optional(),
+  conditions: z.string().optional(),
+  status: z.enum(['published', 'draft', 'archived', 'trashed']).optional(),
+  ctaLabel: z.string().optional(),
+  featured: z.boolean().optional(),
+}).strict();
+
+export const RoomSeasonalRateSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  nightlyRateUSD: z.number().nonnegative(),
+  weekendRateUSD: z.number().nonnegative().nullable().optional(),
+  minStayNights: z.number().int().min(1).nullable().optional(),
+  isActive: z.boolean().optional(),
+}).strict();
+
+export const RoomDateRateSchema = z.object({
+  id: z.string(),
+  date: z.string(),
+  label: z.string().optional(),
+  nightlyRateUSD: z.number().nonnegative(),
+  isActive: z.boolean().optional(),
+}).strict();
+
+export const RoomMealPlanRateSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  supplementPerPersonPerNightUSD: z.number().nonnegative(),
+  pricingType: z.enum(['per_person_per_night', 'per_unit_per_night']).optional(),
+  description: z.string().optional(),
+  isActive: z.boolean().optional(),
+}).strict();
+
+export const RoomPricingSchema = z.object({
+  baseNightlyRateUSD: z.number().nonnegative().nullable().optional(),
+  startingFromPriceUSD: z.number().nonnegative().nullable().optional(),
+  weekendRateUSD: z.number().nonnegative().nullable().optional(),
+  weekendDays: z.array(z.enum(['fri', 'sat', 'sun'])).optional(),
+  baseOccupancyAdults: z.number().int().min(1).nullable().optional(),
+  additionalGuestRateUSD: z.number().nonnegative().nullable().optional(),
+  childRateUSD: z.number().nonnegative().nullable().optional(),
+  childRate11PlusUSD: z.number().nonnegative().nullable().optional(),
+  minStayNights: z.number().int().min(1).nullable().optional(),
+  rateValidFrom: z.string().optional(),
+  rateValidTo: z.string().optional(),
+  rateStatus: z.enum(['provisional', 'confirmed']).optional(),
+  priceBasis: z.enum(['per_room', 'per_unit', 'per_person', 'per_person_sharing', 'per_person_single']).optional(),
+  seasonalRates: z.array(RoomSeasonalRateSchema).optional(),
+  dateSpecificRates: z.array(RoomDateRateSchema).optional(),
+  mealPlanRates: z.array(RoomMealPlanRateSchema).optional(),
+  ratePlans: z.array(RatePlanSchema).optional(),
+  inclusions: z.array(z.string()).optional(),
+  exclusions: z.array(z.string()).optional(),
+}).strict();
+
+export const RoomGalleryImageSchema = z.object({
+  id: z.string().optional(),
+  url: z.string(),
+  alt: z.string().optional(),
+  caption: z.string().optional(),
+}).strict();
+
+export const RoomPoliciesSchema = z.object({
+  minStayNights: z.number().int().min(1).nullable().optional(),
+  checkInRestrictions: z.string().optional(),
+  cancellationPolicy: z.string().optional(),
+  extraPersonPolicy: z.string().optional(),
+  accessibilityInfo: z.string().optional(),
+  otherRestrictions: z.string().optional(),
+}).strict();
+
+export const RoomTypeSchema = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  occupancy: z.string(),
+  description: z.string(),
+  shortDescription: z.string().optional(),
+  unitCategory: z.string().optional(),
+  wing: z.string().optional(),
+  isEntireProperty: z.boolean().optional(),
+  sizeSqm: z.number().nonnegative().nullable().optional(),
+  unitCount: z.number().int().min(1).nullable().optional(),
+  featured: z.boolean().optional(),
+  status: z.enum(['published', 'draft', 'archived', 'trashed']).optional(),
+  availabilityStatus: z.enum(['available', 'on_request', 'temporarily_unavailable']).optional(),
+  customCtaLabel: z.string().optional(),
+  imageUrl: z.string(),
+  gallery: z.array(RoomGalleryImageSchema).optional(),
+  galleryImages: z.array(z.string()).optional(),
+  features: z.array(z.string()),
+  amenities: z.array(z.string()).optional(),
+  customAmenities: z.array(z.string()).optional(),
+  accessibilityFeatures: z.array(z.string()).optional(),
+  inclusions: z.array(z.string()).optional(),
+  ratePlanIds: z.array(z.string()).optional(),
+  occupancyConfig: RoomOccupancyConfigSchema.optional(),
+  pricing: RoomPricingSchema.optional(),
+  policies: RoomPoliciesSchema.optional(),
+}).strict();
+
+export const PropertyPoliciesSchema = z.object({
+  checkInPolicy: z.string().optional(),
+  checkOutPolicy: z.string().optional(),
+  cancellationPolicy: z.string().optional(),
+  childPolicy: z.string().optional(),
+  petPolicy: z.string().optional(),
+  generalNotes: z.string().optional(),
+}).strict();
+
+export const PropertyEnquirySettingsSchema = z.object({
+  enableWhatsApp: z.boolean().optional(),
+  enableEmail: z.boolean().optional(),
+  customEnquiryNote: z.string().optional(),
+  contactEmail: z.string().optional(),
+  whatsappNumber: z.string().optional(),
+  contactPhone: z.string().optional(),
+}).strict();
+
+export const DetailedAccommodationSchema = z.object({"id":z.string(),"slug":z.string(),"name":z.string(),"category":z.string().min(1),"accommodationCategory":z.enum(["hotels","lodges","guest-houses","apartments"]).optional(),"badge":z.union([z.literal('Luxury'),z.literal('Family Favourite'),z.literal('Romantic'),z.literal('Best Value'),z.literal('Walking Distance'),z.literal('Boutique')]).optional(),"rating":z.number().finite(),"reviewCount":z.number().finite(),"location":z.string(),"distanceFromFalls":z.string(),"airportDistance":z.string(),"priceFromUSD":z.number().finite(),"currency":z.string().optional(),"priceUnit":z.string().optional(),"maxGuests":z.number().int().positive().optional(),"amenities":z.array(z.string()).optional(),"checkInTime":z.string().optional(),"checkOutTime":z.string().optional(),"publicationStatus":z.enum(["published","draft","archived"]).optional(),"roomSectionHeading":z.string().optional(),"roomSectionSubtitle":z.string().optional(),"policies":PropertyPoliciesSchema.optional(),"enquirySettings":PropertyEnquirySettingsSchema.optional(),"ratePlans":z.array(RatePlanSchema).optional(),"offers":z.array(AccommodationOfferSchema).optional(),"heroImage":z.string(),"galleryImages":z.array(z.string()),"tagline":z.string(),"shortDescription":z.string(),"editorialOverview":z.string(),"whyWeRecommend":z.string(),"filterTags":z.array(z.enum(["luxury-lodges","boutique-hotels","family-friendly","romantic-escapes","best-value","safari-lodges","self-catering","walking-distance"])),"atAGlance":z.object({"type":z.string(),"starRating":z.string(),"bestFor":z.string(),"distanceFromFalls":z.string(),"pool":z.string(),"restaurant":z.string(),"wifi":z.string(),"familyFriendly":z.string(),"transfers":z.string(),"roomTypesSummary":z.string()}).strict(),"roomTypes":z.array(z.lazy(() => RoomTypeSchema)),"facilities":z.array(z.object({"name":z.string(),"category":z.string()}).strict()),"locationInfo":z.object({"address":z.string(),"distanceToFalls":z.string(),"distanceToAirport":z.string(),"nearbyAttractions":z.array(z.string()),"nearbyRestaurants":z.array(z.string()),"departurePoints":z.string()}).strict(),"nearbyExperienceIds":z.array(z.string()),"relatedPropertyIds":z.array(z.string())}).strict();
 export const ExperienceStepSchema = z.object({"stepNumber":z.number().finite(),"time":z.string().optional(),"title":z.string(),"description":z.string(),"highlight":z.string().optional(),"image":z.string().optional()}).strict();
 export const ExperienceSchema = z.object({"id":z.string(),"slug":z.string(),"title":z.string(),"subtitle":z.string().optional(),"badge":z.string().optional(),"categories":z.array(z.union([z.literal('featured'),z.literal('first-visit'),z.literal('wildlife'),z.literal('adventure'),z.literal('river'),z.literal('culture'),z.literal('day-trips')])),"shortDescription":z.string(),"fullOverview":z.string(),"whyWeRecommend":z.string(),"duration":z.string(),"location":z.string().optional(),"fromPrice":z.string(),"priceAmount":z.number().finite(),"featuredImage":z.string(),"galleryImages":z.array(z.string()),"highlights":z.array(z.string()),"whatsIncluded":z.array(z.string()),"whatsExcluded":z.array(z.string()).optional(),"goodToKnow":z.array(z.string()),"steps":z.array(z.lazy(() => ExperienceStepSchema)).optional(),"localExpertTip":z.string().optional(),"faqs":z.array(z.object({"q":z.string(),"a":z.string()}).strict()),"relatedIds":z.array(z.string())}).strict();
 export const DetailedItineraryDaySchema = z.object({"day":z.string(),"title":z.string(),"morning":z.string(),"afternoon":z.string(),"evening":z.string(),"included":z.array(z.string()),"optionalUpgrade":z.string().optional(),"travelNotes":z.string().optional(),"image":z.string().optional()}).strict();

@@ -2,10 +2,17 @@ import { editorial, editorialValue, registerContent } from "../../runtime/catalo
 import { getWpConfig, resolveAssetUrl } from "../../runtime/api";
 import { WHATSAPP_DISPLAY_NUMBER, getWhatsAppUrl } from '../../utils/whatsapp';
 import { PageLink } from './PageLink';
-import { sectionPath } from '../../routes';
+import { sectionPath, searchPath } from '../../routes';
+import type { PromotionOffer } from '../../types/promotion';
+import {
+  executeGlobalSearch,
+  type GlobalSearchResult,
+  splitHighlightSegments,
+} from '../../utils/globalSearch';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { CURRENCY_RATES } from '../../runtime/catalog';
+import { getCurrencyStatusSummary } from '../../utils/currency';
 import {
   Search,
   Menu,
@@ -13,6 +20,9 @@ import {
   ChevronDown,
   PhoneCall,
   CalendarCheck,
+  ArrowRight,
+  Loader2,
+  MapPin,
 } from 'lucide-react';
 
 let outboundLogo: any;
@@ -24,6 +34,9 @@ interface HeaderProps {
   onOpenPlanHoliday: () => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  onSubmitSearch?: (q: string) => void;
+  onNavigate?: (path: string) => void;
+  promotions?: PromotionOffer[];
   onNavigateSection: (sectionId: string) => void;
   isHomepage?: boolean;
   isGuideActive?: boolean;
@@ -49,6 +62,9 @@ export const Header = ({
   onOpenPlanHoliday,
   searchQuery,
   setSearchQuery,
+  onSubmitSearch,
+  onNavigate,
+  promotions = [],
   onNavigateSection,
   isHomepage = false,
   isGuideActive = false,
@@ -64,11 +80,106 @@ export const Header = ({
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [focusMobileSearchOnOpen, setFocusMobileSearchOnOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<GlobalSearchResult[]>([]);
+  const [totalMatches, setTotalMatches] = useState(0);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const headerRef = useRef<HTMLElement>(null);
   const currencyMenuRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const mobileCloseBtnRef = useRef<HTMLButtonElement>(null);
+
+  const trimmedQuery = searchQuery.trim();
+
+  useEffect(() => {
+    setActiveSuggestionIndex(-1);
+    if (trimmedQuery.length < 2) {
+      setSuggestions([]);
+      setTotalMatches(0);
+      setSearchLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    setSearchLoading(true);
+    const timer = window.setTimeout(async () => {
+      try {
+        const res = await executeGlobalSearch({
+          q: trimmedQuery,
+          type: 'all',
+          page: 1,
+          perPage: 6,
+          promotions,
+          signal: controller.signal,
+        });
+        if (!controller.signal.aborted) {
+          setSuggestions(res.results);
+          setTotalMatches(res.total);
+          setSearchLoading(false);
+        }
+      } catch {
+        if (!controller.signal.aborted) {
+          setSearchLoading(false);
+        }
+      }
+    }, 180);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [trimmedQuery, promotions]);
+
+  const navigateToResultUrl = (url: string) => {
+    setSearchOpen(false);
+    setMobileMenuOpen(false);
+    setActiveSuggestionIndex(-1);
+    if (onNavigate) {
+      onNavigate(url);
+      return;
+    }
+    window.history.pushState({}, '', url);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  const handleSubmitFullSearch = (rawQuery?: string) => {
+    const q = (rawQuery ?? searchQuery).trim();
+    setSearchOpen(false);
+    setMobileMenuOpen(false);
+    setActiveSuggestionIndex(-1);
+    if (onSubmitSearch) {
+      onSubmitSearch(q);
+      return;
+    }
+    navigateToResultUrl(searchPath(q));
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const maxIndex = trimmedQuery.length >= 1 ? suggestions.length : -1;
+    if (e.key === 'ArrowDown') {
+      if (maxIndex < 0) return;
+      e.preventDefault();
+      setActiveSuggestionIndex((prev) => (prev < maxIndex ? prev + 1 : 0));
+      return;
+    }
+    if (e.key === 'ArrowUp') {
+      if (maxIndex < 0) return;
+      e.preventDefault();
+      setActiveSuggestionIndex((prev) => (prev > 0 ? prev - 1 : maxIndex));
+      return;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (activeSuggestionIndex >= 0 && activeSuggestionIndex < suggestions.length) {
+        navigateToResultUrl(suggestions[activeSuggestionIndex].url);
+      } else {
+        handleSubmitFullSearch();
+      }
+    }
+  };
 
   const wpConfig = getWpConfig();
   const isDraftPreview = Boolean(wpConfig?.isPreview);
@@ -89,11 +200,18 @@ export const Header = ({
     if (!mobileMenuOpen) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    requestAnimationFrame(() => mobileCloseBtnRef.current?.focus());
+    requestAnimationFrame(() => {
+      if (focusMobileSearchOnOpen) {
+        mobileSearchInputRef.current?.focus();
+        setFocusMobileSearchOnOpen(false);
+      } else {
+        mobileCloseBtnRef.current?.focus();
+      }
+    });
     return () => {
       document.body.style.overflow = prevOverflow;
     };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, focusMobileSearchOnOpen]);
 
   useEffect(() => {
     if (!currencyDropdownOpen && !mobileMenuOpen && !searchOpen) return;
@@ -240,36 +358,176 @@ export const Header = ({
 
             <span aria-hidden="true" className="h-5 w-px bg-white/20 mx-0.5 shrink-0" />
 
-            {/* Compact Search Popover Trigger */}
+            {/* Emphasized Search Pill Trigger */}
             <div className="relative" ref={searchContainerRef}>
               <button
                 type="button"
                 onClick={() => setSearchOpen((prev) => !prev)}
-                aria-label="Search holiday packages"
+                aria-label="Search Outbound Holidays"
                 aria-expanded={searchOpen}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white/85 hover:text-white hover:bg-white/12 transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                className={`h-9 px-3 rounded-full flex items-center gap-1.5 text-xs font-semibold border transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
+                  searchOpen
+                    ? 'bg-[#C9A66B] border-[#C9A66B] text-[#0D2833] shadow-md'
+                    : 'bg-white/18 hover:bg-[#C9A66B] hover:text-[#0D2833] text-white border-[#C9A66B]/70 shadow-xs'
+                }`}
               >
-                <Search className="w-3.5 h-3.5" />
+                <Search className="w-3.5 h-3.5 shrink-0" />
+                <span>Search</span>
               </button>
 
               <div
-                className={`absolute right-0 mt-2.5 w-64 bg-white text-[#0D2833] rounded-2xl shadow-2xl border border-[#0D2833]/10 p-2.5 z-50 origin-top-right transition-all duration-200 motion-reduce:transition-none ${
+                className={`absolute right-0 mt-2.5 w-[min(92vw,420px)] bg-white text-[#0D2833] rounded-2xl shadow-2xl border border-[#0D2833]/12 p-3 z-50 origin-top-right transition-all duration-200 motion-reduce:transition-none ${
                   searchOpen
                     ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                     : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'
                 }`}
               >
-                <div className="relative">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmitFullSearch();
+                  }}
+                  role="search"
+                  className="relative"
+                >
                   <input
                     ref={searchInputRef}
                     type="text"
-                    placeholder={editorial("common/Header.text12")}
+                    placeholder="Search stays, rooms, tours, packages, guides..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-gray-100 border border-gray-200 rounded-xl py-2 pl-8 pr-3 text-xs text-[#0D2833] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
+                    onKeyDown={handleSearchKeyDown}
+                    aria-label="Search entire site"
+                    aria-autocomplete="list"
+                    className="w-full bg-gray-100 border border-gray-200 rounded-xl py-2.5 pl-9 pr-16 text-xs text-[#0D2833] placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
                   />
-                  <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5" />
-                </div>
+                  <Search className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-3" />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      aria-label="Clear search"
+                      className="absolute right-8 top-2.5 text-gray-400 hover:text-[#0D2833] p-0.5 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    aria-label="Submit search"
+                    className="absolute right-2 top-1.5 w-6 h-6 rounded-lg bg-[#0D2833] hover:bg-[#0B5E8E] text-white flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </form>
+
+                {trimmedQuery.length >= 2 && (
+                  <div
+                    role="listbox"
+                    aria-label="Search suggestions"
+                    className="mt-2.5 border-t border-gray-100 pt-2 max-h-[360px] overflow-y-auto space-y-1"
+                  >
+                    {searchLoading && suggestions.length === 0 ? (
+                      <div className="flex items-center gap-2 px-3 py-3 text-xs text-gray-500">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0B5E8E]" />
+                        <span>Searching Outbound Holidays...</span>
+                      </div>
+                    ) : suggestions.length > 0 ? (
+                      suggestions.map((item, idx) => {
+                        const isSelected = idx === activeSuggestionIndex;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            role="option"
+                            aria-selected={isSelected}
+                            onClick={() => navigateToResultUrl(item.url)}
+                            className={`w-full text-left flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors cursor-pointer ${
+                              isSelected ? 'bg-[#0B5E8E]/10' : 'hover:bg-gray-50'
+                            }`}
+                          >
+                            {item.image ? (
+                              <img
+                                src={item.image}
+                                alt=""
+                                className="w-11 h-11 rounded-lg object-cover shrink-0 bg-gray-100 border border-gray-100"
+                              />
+                            ) : (
+                              <div className="w-11 h-11 rounded-lg shrink-0 bg-[#0D2833]/5 flex items-center justify-center text-[#0D2833]/50">
+                                <Search className="w-4 h-4" />
+                              </div>
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#0D2833]/8 text-[#0B5E8E]">
+                                  {item.typeLabel}
+                                </span>
+                                {item.priceLabel && (
+                                  <span className="text-[10px] font-semibold text-[#C9A66B]">
+                                    {item.priceLabel}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs font-semibold text-[#0D2833] truncate mt-0.5">
+                                {splitHighlightSegments(item.title, trimmedQuery).map((seg, i) =>
+                                  seg.match ? (
+                                    <mark
+                                      key={i}
+                                      className="bg-[#C9A66B]/30 text-[#0D2833] rounded-sm px-0.5"
+                                    >
+                                      {seg.text}
+                                    </mark>
+                                  ) : (
+                                    <React.Fragment key={i}>{seg.text}</React.Fragment>
+                                  )
+                                )}
+                              </p>
+                              <p className="text-[11px] text-gray-500 truncate flex items-center gap-1">
+                                {item.propertyName ? (
+                                  <span>At {item.propertyName}</span>
+                                ) : item.location ? (
+                                  <>
+                                    <MapPin className="w-3 h-3 shrink-0" />
+                                    <span>{item.location}</span>
+                                  </>
+                                ) : (
+                                  <span>{item.description}</span>
+                                )}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })
+                    ) : (
+                      <div className="px-3 py-3 text-xs text-gray-500">
+                        No instant catalog matches for &ldquo;{trimmedQuery}&rdquo;. Press Enter to see full search &amp; Google Site Search results.
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleSubmitFullSearch()}
+                      className={`w-full mt-1 flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                        activeSuggestionIndex === suggestions.length
+                          ? 'bg-[#0B5E8E] text-white'
+                          : 'bg-[#0D2833]/5 hover:bg-[#0D2833] text-[#0D2833] hover:text-white'
+                      }`}
+                    >
+                      <span>
+                        {totalMatches > 0
+                          ? `View All ${totalMatches} Results`
+                          : `View All Results for "${trimmedQuery}"`}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                {trimmedQuery.length < 2 && (
+                  <p className="mt-2 px-1 text-[11px] text-gray-500">
+                    Type 2+ characters for instant results, or press Enter to search all stays, experiences, packages, blogs &amp; Google Site Search.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -283,7 +541,7 @@ export const Header = ({
                 className="flex items-center gap-1 font-semibold text-white/95 hover:text-white bg-white/10 hover:bg-white/18 px-2.5 py-1.5 rounded-full transition-colors duration-200 text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
               >
                 <span>{currency}</span>
-                <span className="text-white/70">{CURRENCY_RATES[currency].symbol}</span>
+                <span className="text-white/70">{CURRENCY_RATES[currency]?.symbol || '$'}</span>
                 <ChevronDown
                   className={`w-3 h-3 text-[#C9A66B] transition-transform duration-200 motion-reduce:transition-none ${
                     currencyDropdownOpen ? 'rotate-180' : ''
@@ -315,9 +573,12 @@ export const Header = ({
                     }`}
                   >
                     <span>{curr}</span>
-                    <span className="text-gray-400">{CURRENCY_RATES[curr].symbol}</span>
+                    <span className="text-gray-400">{CURRENCY_RATES[curr]?.symbol || curr}</span>
                   </button>
                 ))}
+                <div className="mt-1 pt-1.5 px-3 border-t border-gray-100 text-[10px] leading-tight text-gray-400">
+                  {getCurrencyStatusSummary()}
+                </div>
               </div>
             </div>
 
@@ -332,21 +593,42 @@ export const Header = ({
             </button>
           </div>
 
-          {/* Mobile / Tablet Minimal Floating Glass Hamburger Trigger (< 1280px) */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className={`pointer-events-auto xl:hidden w-[46px] h-[46px] shrink-0 rounded-full flex items-center justify-center text-white border transition-[background-color,box-shadow,border-color] duration-300 motion-reduce:transition-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white outbound-glass-pill ${
-              useLightHeroOverlay
-                ? 'bg-[#0D2833]/62 backdrop-blur-[14px] border-white/22 shadow-[0_8px_24px_rgba(13,40,51,0.3)] hover:bg-[#0D2833]/80'
-                : 'bg-[#0D2833]/90 backdrop-blur-[14px] border-white/15 shadow-[0_8px_24px_rgba(13,40,51,0.22)] hover:bg-[#0D2833]'
-            }`}
-            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-nav-drawer"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Mobile / Tablet Search Pill + Hamburger Trigger (< 1280px) */}
+          <div className="pointer-events-auto xl:hidden flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setFocusMobileSearchOnOpen(true);
+                setMobileMenuOpen(true);
+              }}
+              aria-label="Search Outbound Holidays"
+              className={`h-[44px] px-3.5 rounded-full flex items-center gap-1.5 text-xs font-semibold text-white border transition-[background-color,box-shadow,border-color] duration-300 motion-reduce:transition-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white outbound-glass-pill ${
+                useLightHeroOverlay
+                  ? 'bg-[#0D2833]/72 backdrop-blur-[14px] border-[#C9A66B]/75 shadow-[0_8px_24px_rgba(13,40,51,0.3)] hover:bg-[#0D2833]/90'
+                  : 'bg-[#0D2833]/92 backdrop-blur-[14px] border-[#C9A66B]/75 shadow-[0_8px_24px_rgba(13,40,51,0.22)] hover:bg-[#0D2833]'
+              }`}
+            >
+              <Search className="w-4 h-4 text-[#E5C989] shrink-0" />
+              <span>Search</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setFocusMobileSearchOnOpen(false);
+                setMobileMenuOpen((prev) => !prev);
+              }}
+              className={`w-[46px] h-[46px] shrink-0 rounded-full flex items-center justify-center text-white border transition-[background-color,box-shadow,border-color] duration-300 motion-reduce:transition-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white outbound-glass-pill ${
+                useLightHeroOverlay
+                  ? 'bg-[#0D2833]/62 backdrop-blur-[14px] border-white/22 shadow-[0_8px_24px_rgba(13,40,51,0.3)] hover:bg-[#0D2833]/80'
+                  : 'bg-[#0D2833]/90 backdrop-blur-[14px] border-white/15 shadow-[0_8px_24px_rgba(13,40,51,0.22)] hover:bg-[#0D2833]'
+              }`}
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-drawer"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -380,16 +662,74 @@ export const Header = ({
             </div>
 
             {/* Search */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder={editorial("common/Header.text14")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-2xl py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/70"
-              />
-              <Search className="w-4 h-4 text-white/60 absolute left-3.5 top-3.5" />
-            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmitFullSearch();
+              }}
+              role="search"
+              className="space-y-2"
+            >
+              <div className="relative">
+                <input
+                  ref={mobileSearchInputRef}
+                  type="text"
+                  placeholder="Search stays, rooms, tours, guides..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  aria-label="Search entire site"
+                  className="w-full bg-white/10 border border-white/20 rounded-2xl py-3 pl-10 pr-12 text-sm text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/70"
+                />
+                <Search className="w-4 h-4 text-white/60 absolute left-3.5 top-3.5" />
+                <button
+                  type="submit"
+                  aria-label="Submit search"
+                  className="absolute right-2 top-2 w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {trimmedQuery.length >= 2 && (
+                <div className="bg-white/10 border border-white/15 rounded-2xl p-2 space-y-1 max-h-60 overflow-y-auto">
+                  {suggestions.map((item) => (
+                    <button
+                      key={`mob-${item.id}`}
+                      type="button"
+                      onClick={() => navigateToResultUrl(item.url)}
+                      className="w-full text-left flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-white/10 transition-colors cursor-pointer"
+                    >
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt=""
+                          className="w-9 h-9 rounded-lg object-cover shrink-0 bg-white/10"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A66B] block">
+                          {item.typeLabel}
+                        </span>
+                        <span className="text-xs font-semibold text-white block truncate">
+                          {item.title}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => handleSubmitFullSearch()}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#C9A66B] text-[#0D2833] text-xs font-bold cursor-pointer"
+                  >
+                    <span>
+                      {totalMatches > 0 ? `View All ${totalMatches} Results` : 'View All Search Results'}
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+            </form>
 
             {/* Navigation Links */}
             <nav aria-label="Mobile Navigation" className="grid grid-cols-1 gap-1.5 font-medium text-[15px]">
@@ -448,7 +788,7 @@ export const Header = ({
                         : 'bg-white/10 text-white/80 hover:bg-white/20'
                     }`}
                   >
-                    {curr} ({CURRENCY_RATES[curr].symbol})
+                    {curr} ({CURRENCY_RATES[curr]?.symbol || curr})
                   </button>
                 ))}
               </div>

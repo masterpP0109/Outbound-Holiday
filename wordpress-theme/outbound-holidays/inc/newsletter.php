@@ -1275,10 +1275,11 @@ function outbound_send_newsletter_email(string $to, string $subject, string $htm
     };
     add_action('wp_mail_failed', $fail_cb);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
-    $from_email = !empty($sender_meta['sender_email']) ? sanitize_email((string) $sender_meta['sender_email']) : '';
-    $from_name = !empty($sender_meta['sender_name']) ? sanitize_text_field((string) $sender_meta['sender_name']) : '';
-    $reply_to = !empty($sender_meta['reply_to_email']) ? sanitize_email((string) $sender_meta['reply_to_email']) : '';
+    $headers    = array('Content-Type: text/html; charset=UTF-8');
+    $from_cfg   = function_exists('outbound_get_mail_from_config') ? outbound_get_mail_from_config() : array('email' => 'fungai@outboundholiday.com', 'name' => 'Outbound Holidays');
+    $from_email = !empty($sender_meta['sender_email']) ? sanitize_email((string) $sender_meta['sender_email']) : (string) ($from_cfg['email'] ?? 'fungai@outboundholiday.com');
+    $from_name  = !empty($sender_meta['sender_name']) ? sanitize_text_field((string) $sender_meta['sender_name']) : (string) ($from_cfg['name'] ?? 'Outbound Holidays');
+    $reply_to   = !empty($sender_meta['reply_to_email']) ? sanitize_email((string) $sender_meta['reply_to_email']) : $from_email;
 
     if ($from_email !== '' && is_email($from_email)) {
         $headers[] = $from_name !== '' ? "From: {$from_name} <{$from_email}>" : "From: {$from_email}";

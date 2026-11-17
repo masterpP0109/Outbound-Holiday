@@ -48,6 +48,8 @@ export const IntentCards: React.FC<IntentCardsProps> = ({ onSelectIntent }) => {
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = item.fallbackUrl;
                   }}
+                  loading="lazy"
+                  decoding="async"
                 />
                 {/* Gradient Overlay for Text Contrast */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B5E8E]/98 via-[#0B5E8E]/75 to-black/30 group-hover:from-[#0B5E8E] transition-colors duration-300" />

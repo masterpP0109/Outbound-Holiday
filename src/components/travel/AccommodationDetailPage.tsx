@@ -1,24 +1,46 @@
 import { editorial } from "../../runtime/catalog";
-import { getWhatsAppAccommodationEnquiryUrl } from '../../utils/whatsapp';
+import type { DirectEnquiryContext } from '../../utils/enquiry';
+import { ShareButton } from '../common/ShareButton';
+import { UnifiedEnquiryPanel } from './UnifiedEnquiryPanel';
 import {
+  AMENITY_DEFINITIONS,
   getAccommodationCategorySingular,
   getMaxGuestCapacity,
   getPriceUnitLabel,
+  getPropertyDisplayPriceUSD,
 } from '../../utils/accommodation';
+import {
+  getOfferDisplayBadge,
+  getPublishedPropertyOffers,
+  getPublishedRoomTypes,
+  getRoomBedSummary,
+  getRoomCapacityLabel,
+  getRoomDisplayAmenities,
+  getRoomGalleryImages,
+  getRoomMaxGuests,
+  getRoomPriceUnitLabel,
+  getRoomStartingPriceUSD,
+  getRoomWings,
+  getUnitAvailabilityBadge,
+  isSingleEntireHomeProperty,
+} from '../../utils/roomPricing';
+import { RoomAmenityIcon } from './RoomAmenityIcon';
+import { RoomDetailModal } from './RoomDetailModal';
+import { RoomEnquiryModal, type RoomEnquiryInitialState } from './RoomEnquiryModal';
 import { PageLink } from '../common/PageLink';
 import { accommodationPath,sectionPath } from '../../routes';
-import React,{ useState } from 'react';
-import { DetailedAccommodation,ALL_ACCOMMODATIONS } from '../../data/accommodationsData';
+import React,{ useMemo, useState } from 'react';
+import { DetailedAccommodation, ALL_ACCOMMODATIONS, RoomType } from '../../data/accommodationsData';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { Experience,getExperienceById,ALL_EXPERIENCES } from '../../data/experiencesData';
+import { GalleryLightbox } from './GalleryLightbox';
 import {
 Home,
 ArrowLeft,
 MapPin,
 Star,
 MessageCircle,
-CalendarCheck,
 ShieldCheck,
 Hotel,
 Utensils,
@@ -30,9 +52,7 @@ Bed,
 CheckCircle2,
 Sparkles,Award,ArrowRight,
 Maximize2,
-X,
 Compass,
-Check,
 Building,
 Clock
 } from 'lucide-react';
@@ -41,6 +61,7 @@ interface AccommodationDetailPageProps {
   property: DetailedAccommodation;
   currency: Currency;
   onOpenPlanHolidayWithProperty: (property: DetailedAccommodation) => void;
+  onDirectEnquiry?: (context: DirectEnquiryContext) => void;
   onSelectExperience: (exp: Experience) => void;
   onSelectRelatedProperty: (prop: DetailedAccommodation) => void;
   onNavigateBackToDirectory: () => void;
@@ -50,34 +71,68 @@ interface AccommodationDetailPageProps {
 export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = ({
   property,
   currency,
-  onOpenPlanHolidayWithProperty,
+  onOpenPlanHolidayWithProperty: _onOpenPlanHolidayWithProperty,
+  onDirectEnquiry: _onDirectEnquiry,
   onSelectExperience,
   onSelectRelatedProperty,
   onNavigateBackToDirectory,
   onNavigateHome,
 }) => {
-  const [selectedLightboxImage, setSelectedLightboxImage] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [detailRoom, setDetailRoom] = useState<RoomType | null>(null);
+  const [enquiryTarget, setEnquiryTarget] = useState<RoomEnquiryInitialState | null>(null);
+  const [activeWing, setActiveWing] = useState<string>('ALL');
+  const publishedRooms = useMemo(() => getPublishedRoomTypes(property), [property]);
+  const publishedOffers = useMemo(() => getPublishedPropertyOffers(property), [property]);
+  const wings = useMemo(() => getRoomWings(property), [property]);
+  const isSingleHome = useMemo(() => isSingleEntireHomeProperty(property), [property]);
+  const visibleRooms = useMemo(
+    () =>
+      activeWing === 'ALL'
+        ? publishedRooms
+        : publishedRooms.filter((r) => (r.wing || '').trim().toLowerCase() === activeWing.toLowerCase()),
+    [publishedRooms, activeWing]
+  );
+  const propertyAmenityLabels = useMemo(() => {
+    const raw = property.amenities ?? [];
+    return raw
+      .map((item) => {
+        const clean = item.trim();
+        if (!clean) return '';
+        const match = AMENITY_DEFINITIONS.find(
+          (d) => d.id === clean.toLowerCase() || d.label.toLowerCase() === clean.toLowerCase()
+        );
+        return match ? match.label : clean;
+      })
+      .filter(Boolean);
+  }, [property.amenities]);
+
+  const allPropertyImages = Array.from(
+    new Set(
+      [
+        property.heroImage,
+        ...property.galleryImages,
+        ...publishedRooms.flatMap((r) => getRoomGalleryImages(r).map((g) => g.url)),
+      ].filter(Boolean),
+    ),
+  );
+  const openLightboxForImage = (imgUrl: string) => {
+    const idx = allPropertyImages.indexOf(imgUrl);
+    setLightboxIndex(idx >= 0 ? idx : 0);
+  };
   const [intendedDates, setIntendedDates] = useState<string>('');
   const [partySize, setPartySize] = useState<string>('2 Adults');
   const [roomPreference, setRoomPreference] = useState<string>(
-    property.roomTypes[0]?.name ?? 'Best available / Please advise'
+    publishedRooms[0]?.name ?? 'Best available / Please advise'
   );
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
-  const whatsappUrl = getWhatsAppAccommodationEnquiryUrl(property.name, {
-    dates: intendedDates,
-    guests: partySize,
-    roomPreference,
-  });
   const categoryBadge = getAccommodationCategorySingular(property);
   const maxGuests = getMaxGuestCapacity(property);
   const priceUnitLabel = getPriceUnitLabel(property);
-  const hasGuidePrice = typeof property.priceFromUSD === 'number' && property.priceFromUSD > 0;
+  const displayPriceUSD = getPropertyDisplayPriceUSD(property);
+  const hasGuidePrice = typeof displayPriceUSD === 'number' && displayPriceUSD > 0;
 
   // Match nearby experiences
   const matchedExperiences = property.nearbyExperienceIds
@@ -117,13 +172,19 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
             </span>
           </nav>
 
-          <PageLink href={sectionPath('accommodation')}
-            onClick={onNavigateBackToDirectory}
-            className="flex items-center gap-1.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{editorial("travel/AccommodationDetailPage.text3")}</span>
-          </PageLink>
+          <div className="flex items-center gap-2">
+            <ShareButton
+              title={property.name}
+              canonicalPath={accommodationPath(property)}
+            />
+            <PageLink href={sectionPath('accommodation')}
+              onClick={onNavigateBackToDirectory}
+              className="flex items-center gap-1.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{editorial("travel/AccommodationDetailPage.text3")}</span>
+            </PageLink>
+          </div>
         </div>
       </div>
 
@@ -162,8 +223,8 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                   <span className="bg-[#FAF9F6] text-gray-700 border border-gray-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
                     <Users className="w-3.5 h-3.5 text-[#0B5E8E]" />
                     <span>
-                      {property.roomTypes.length > 1
-                        ? `Up to ${maxGuests} guests per unit (varies by room type)`
+                      {publishedRooms.length > 1
+                        ? `Up to ${maxGuests} guests per unit (varies by unit type)`
                         : `Up to ${maxGuests} guests`}
                     </span>
                   </span>
@@ -189,10 +250,10 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                     {hasGuidePrice ? editorial("travel/AccommodationDetailPage.text4") : 'Availability & Rates'}
                   </span>
                   <div className="flex items-baseline gap-2 mt-0.5">
-                    {hasGuidePrice ? (
+                    {hasGuidePrice && displayPriceUSD !== null ? (
                       <>
                         <span className="text-3xl font-serif font-bold text-[#0B5E8E]">
-                          {editorial("travel/AccommodationDetailPage.text5")}{formatPrice(property.priceFromUSD)}
+                          {editorial("travel/AccommodationDetailPage.text5")}{formatPrice(displayPriceUSD)}
                         </span>
                         <span className="text-xs text-gray-500 font-normal">
                           {property.priceUnit ? priceUnitLabel : editorial("travel/AccommodationDetailPage.text6")}
@@ -244,8 +305,8 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                     onChange={(e) => setRoomPreference(e.target.value)}
                     className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E]"
                   >
-                    {property.roomTypes.map((room) => (
-                      <option key={room.name} value={room.name}>
+                    {publishedRooms.map((room) => (
+                      <option key={room.id || room.name} value={room.name}>
                         {room.name}
                       </option>
                     ))}
@@ -259,22 +320,17 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               {/* Action CTAs */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-1">
                 <button
-                  onClick={() => onOpenPlanHolidayWithProperty(property)}
+                  type="button"
+                  onClick={() => {
+                    const matchedRoom =
+                      publishedRooms.find((r) => r.name === roomPreference) || null;
+                    setEnquiryTarget({ property, room: matchedRoom });
+                  }}
                   className="bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
                 >
-                  <CalendarCheck className="w-4 h-4" />
+                  <MessageCircle className="w-4 h-4" />
                   <span>Enquire About This Stay</span>
                 </button>
-
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>{editorial("travel/AccommodationDetailPage.text9")}</span>
-                </a>
               </div>
 
             </div>
@@ -282,13 +338,15 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
             {/* Right Column: Hero Image Container */}
             <div className="lg:col-span-5">
               <div 
-                onClick={() => setSelectedLightboxImage(property.heroImage)}
+                onClick={() => openLightboxForImage(property.heroImage)}
                 className="relative rounded-2xl overflow-hidden shadow-xl border border-gray-200/80 aspect-[4/3] bg-gray-100 group cursor-pointer"
               >
                 <img
                   src={property.heroImage}
                   alt={property.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 
@@ -312,6 +370,27 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
       {/* Main Body Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
         
+        {/* Property Overview & Unified Accommodation Enquiry Panel */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          <div className="lg:col-span-8 space-y-8">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-6 sm:p-8 space-y-4">
+              <span className="text-xs font-bold text-[#C9A66B] uppercase tracking-widest block">
+                {categoryBadge} · {property.location}
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
+                About {property.name}
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                {property.editorialOverview || property.shortDescription}
+              </p>
+              {property.whyWeRecommend && (
+                <div className="rounded-xl bg-[#FAF9F6] border border-gray-200/80 p-4 text-xs sm:text-sm text-[#0B5E8E]">
+                  <strong className="block mb-1">Why Our Local Team Recommends It:</strong>
+                  <span className="text-gray-700">{property.whyWeRecommend}</span>
+                </div>
+              )}
+            </div>
+
         {/* At a Glance Specs Grid */}
         <section className="space-y-6">
           <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
@@ -435,13 +514,15 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
             {property.galleryImages.map((img, idx) => (
               <div
                 key={idx}
-                onClick={() => setSelectedLightboxImage(img)}
+                onClick={() => openLightboxForImage(img)}
                 className="relative rounded-xl overflow-hidden h-48 sm:h-56 bg-gray-100 border border-gray-200 group cursor-pointer"
               >
                 <img
                   src={img}
                   alt={`${property.name} gallery image ${idx + 1}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
                 <div className="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
@@ -452,86 +533,317 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
           </div>
         </section>
 
-        {/* Room Types Section */}
-        {property.roomTypes.length > 0 && (
-          <section className="space-y-6">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
-              <Bed className="w-4 h-4 text-[#C9A66B]" />
-              <span>{editorial("travel/AccommodationDetailPage.text31")}</span>
+        {/* Dynamic Room / Accommodation Unit Types Section */}
+        {publishedRooms.length > 0 && (
+          <section id="accommodation-units" className="space-y-6">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
+                <Bed className="w-4 h-4 text-[#C9A66B]" />
+                <span>{editorial("travel/AccommodationDetailPage.text31")}</span>
+              </div>
+
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
+                {property.roomSectionHeading?.trim() || editorial("travel/AccommodationDetailPage.text32")}
+              </h2>
+
+              {property.roomSectionSubtitle && (
+                <p className="text-xs sm:text-sm text-gray-600 font-light">
+                  {property.roomSectionSubtitle}
+                </p>
+              )}
+
+              {wings.length > 1 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveWing('ALL')}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer ${
+                      activeWing === 'ALL'
+                        ? 'bg-[#0B5E8E] text-white'
+                        : 'bg-white border border-gray-200 text-gray-700 hover:border-[#0B5E8E]'
+                    }`}
+                  >
+                    All Options ({publishedRooms.length})
+                  </button>
+                  {wings.map((w) => (
+                    <button
+                      key={w}
+                      type="button"
+                      onClick={() => setActiveWing(w)}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer ${
+                        activeWing === w
+                          ? 'bg-[#0B5E8E] text-white'
+                          : 'bg-white border border-gray-200 text-gray-700 hover:border-[#0B5E8E]'
+                      }`}
+                    >
+                      {w}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
-              {editorial("travel/AccommodationDetailPage.text32")}</h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {property.roomTypes.map((room, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs p-6 flex flex-col justify-between space-y-4"
-                >
-                  <div className="space-y-3">
-                    <div className="h-48 w-full rounded-xl overflow-hidden bg-gray-100 relative">
-                      <img
-                        src={room.imageUrl}
-                        alt={room.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md">
-                        {editorial("travel/AccommodationDetailPage.text33")}{room.occupancy}
-                      </div>
-                    </div>
+              {visibleRooms.map((room, idx) => {
+                const unitGallery = getRoomGalleryImages(room, property.heroImage);
+                const mainImg = unitGallery[0]?.url || property.heroImage;
+                const unitPriceUSD = getRoomStartingPriceUSD(room, property);
+                const unitPriceSuffix = getRoomPriceUnitLabel(room);
+                const availBadge = getUnitAvailabilityBadge(room);
+                const capacityText = getRoomCapacityLabel(room);
+                const bedSummary = getRoomBedSummary(room);
+                const unitAmenities = getRoomDisplayAmenities(room);
+                const previewAmenities = unitAmenities.slice(0, 5);
+                const extraAmenityCount = Math.max(0, unitAmenities.length - previewAmenities.length);
 
-                    <h3 className="font-serif font-bold text-lg text-[#0B5E8E]">
-                      {room.name}
-                    </h3>
-
-                    <p className="text-xs text-gray-600 font-light leading-relaxed">
-                      {room.description}
-                    </p>
-
-                    <div className="pt-2 flex flex-wrap gap-1.5">
-                      {room.features.map((feat, fIdx) => (
-                        <span
-                          key={fIdx}
-                          className="bg-[#FAF9F6] border border-gray-200 text-gray-700 text-[11px] font-medium px-2.5 py-1 rounded-md flex items-center gap-1"
-                        >
-                          <Check className="w-3 h-3 text-[#3F6B3C]" />
-                          <span>{feat}</span>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between gap-3">
-                    <span className="text-xs text-gray-500">{editorial("travel/AccommodationDetailPage.text34")}</span>
-                    <div className="flex items-center gap-3">
-                      <a
-                        href={getWhatsAppAccommodationEnquiryUrl(property.name, {
-                          dates: intendedDates,
-                          guests: partySize,
-                          roomPreference: room.name,
-                        })}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => setRoomPreference(room.name)}
-                        className="text-xs font-bold text-[#25D366] hover:underline"
+                return (
+                  <article
+                    key={room.id || `${room.name}-${idx}`}
+                    className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-lg transition-shadow p-5 sm:p-6 flex flex-col justify-between gap-4"
+                  >
+                    <div className="space-y-3.5">
+                      <div
+                        onClick={() => setDetailRoom(room)}
+                        className="aspect-[16/10] w-full rounded-xl overflow-hidden bg-gray-100 relative group cursor-pointer"
                       >
-                        WhatsApp Room Rate
-                      </a>
+                        <img
+                          src={mainImg}
+                          alt={unitGallery[0]?.alt || room.name}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          decoding="async"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+
+                        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
+                          {room.featured && (
+                            <span className="bg-[#E67E22] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-xs">
+                              Featured
+                            </span>
+                          )}
+                          {room.unitCategory && (
+                            <span className="bg-[#0D2833]/85 text-[#E5C989] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                              {room.unitCategory}
+                            </span>
+                          )}
+                          {room.wing && (
+                            <span className="bg-amber-900/85 text-amber-100 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                              {room.wing}
+                            </span>
+                          )}
+                          {availBadge && (
+                            <span
+                              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                                availBadge.tone === 'rose'
+                                  ? 'bg-red-700/90 text-white'
+                                  : 'bg-amber-600/90 text-white'
+                              }`}
+                            >
+                              {availBadge.label}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="absolute bottom-2.5 left-2.5 bg-black/65 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                          <Users className="w-3 h-3 text-[#C9A66B]" />
+                          <span>{capacityText}</span>
+                        </div>
+
+                        {unitGallery.length > 1 && (
+                          <div className="absolute bottom-2.5 right-2.5 bg-black/65 text-white text-[11px] font-semibold px-2 py-1 rounded-md flex items-center gap-1">
+                            <Maximize2 className="w-3 h-3" />
+                            <span>{unitGallery.length} photos</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h3 className="font-serif font-bold text-lg sm:text-xl text-[#0B5E8E] leading-snug break-words">
+                            {room.name}
+                          </h3>
+                          {(bedSummary || (typeof room.sizeSqm === 'number' && room.sizeSqm > 0)) && (
+                            <p className="text-[11px] text-gray-500 mt-0.5">
+                              {[
+                                bedSummary,
+                                typeof room.sizeSqm === 'number' && room.sizeSqm > 0
+                                  ? `${room.sizeSqm} m²`
+                                  : '',
+                              ]
+                                .filter(Boolean)
+                                .join(' · ')}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          {unitPriceUSD !== null ? (
+                            <div>
+                              <span className="text-sm sm:text-base font-serif font-bold text-[#0B5E8E] block whitespace-nowrap">
+                                From {formatPrice(unitPriceUSD)}
+                              </span>
+                              <span className="text-[10px] text-gray-500 block whitespace-nowrap">
+                                {unitPriceSuffix}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-xs sm:text-sm font-serif font-bold text-[#0B5E8E] whitespace-nowrap">
+                              Price on enquiry
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-gray-600 font-light leading-relaxed line-clamp-3">
+                        {room.shortDescription || room.description}
+                      </p>
+
+                      {previewAmenities.length > 0 && (
+                        <div className="pt-1 flex flex-wrap gap-1.5">
+                          {previewAmenities.map((am) => (
+                            <span
+                              key={am.id}
+                              className="bg-[#FAF9F6] border border-gray-200 text-gray-700 text-[11px] font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1.5"
+                            >
+                              <RoomAmenityIcon icon={am.icon} className="w-3 h-3 text-[#3F6B3C] shrink-0" />
+                              <span>{am.label}</span>
+                            </span>
+                          ))}
+                          {extraAmenityCount > 0 && (
+                            <span className="bg-[#FAF9F6] border border-gray-200 text-gray-500 text-[11px] font-medium px-2 py-1 rounded-md">
+                              +{extraAmenityCount} more
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-gray-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setDetailRoom(room)}
+                        className="px-4 py-2.5 rounded-xl border border-[#0B5E8E]/30 text-[#0B5E8E] hover:bg-[#0B5E8E] hover:text-white text-xs font-bold transition-colors cursor-pointer text-center"
+                      >
+                        View Details
+                      </button>
                       <button
                         type="button"
                         onClick={() => {
                           setRoomPreference(room.name);
-                          onOpenPlanHolidayWithProperty(property);
+                          setEnquiryTarget({ property, room });
                         }}
-                        className="text-xs font-bold text-[#E67E22] hover:underline cursor-pointer"
+                        className="px-4 py-2.5 rounded-xl bg-[#E67E22] hover:bg-[#d36e17] text-white text-xs font-bold transition-colors cursor-pointer text-center flex-1 sm:flex-initial"
                       >
-                        {editorial("travel/AccommodationDetailPage.text35")}
+                        {room.customCtaLabel ||
+                          (isSingleHome ? 'Enquire About This Stay' : 'Enquire About This Room')}
                       </button>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Promotional Offers & Special Packages */}
+        {publishedOffers.length > 0 && (
+          <section id="property-offers" className="space-y-6">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
+                <Sparkles className="w-4 h-4 text-[#C9A66B]" />
+                <span>Seasonal Packages &amp; Value-Add Deals</span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B5E8E]">
+                Special Offers at {property.name}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {publishedOffers.map((off) => {
+                const eligibleUnits = off.applyToEntireProperty
+                  ? publishedRooms
+                  : publishedRooms.filter((r) => r.id && off.applicableUnitIds?.includes(r.id));
+                const targetUnit = eligibleUnits[0] || publishedRooms[0] || null;
+                const catLabelMap: Record<string, string> = {
+                  special_offer: 'Special Offer',
+                  honeymoon_package: 'Honeymoon Package',
+                  seasonal_promotion: 'Seasonal Promotion',
+                  meal_plan: 'Meal Plan Offer',
+                  added_value: 'Added Value Package',
+                };
+                const catLabel = off.offerCategory ? catLabelMap[off.offerCategory] || '' : '';
+
+                return (
+                  <article
+                    key={off.id}
+                    className="bg-white rounded-2xl border border-[#C9A66B]/40 shadow-xs p-5 sm:p-6 flex flex-col justify-between gap-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          {catLabel && (
+                            <span className="inline-block mb-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#0B5E8E]/10 text-[#0B5E8E]">
+                              {catLabel}
+                            </span>
+                          )}
+                          <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0B5E8E]">
+                            {off.title}
+                          </h3>
+                        </div>
+                        <span className="bg-[#E67E22] text-white text-[11px] font-bold px-3 py-1 rounded-full shrink-0">
+                          {getOfferDisplayBadge(off, currency)}
+                        </span>
+                      </div>
+                      {off.description && (
+                        <p className="text-xs sm:text-sm text-gray-600 font-light leading-relaxed">
+                          {off.description}
+                        </p>
+                      )}
+                      {eligibleUnits.length > 0 && (
+                        <p className="text-xs text-[#0B5E8E]">
+                          <strong>Applicable Units:</strong>{' '}
+                          {eligibleUnits.map((u) => u.name).join(', ')}
+                        </p>
+                      )}
+                      {(off.validFrom || off.validTo) && (
+                        <p className="text-[11px] text-gray-500">
+                          Valid {off.validFrom || 'now'} to {off.validTo || 'further notice'}
+                        </p>
+                      )}
+                      {off.includedServices && off.includedServices.length > 0 && (
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-gray-700 pt-1">
+                          {off.includedServices.map((srv, sidx) => (
+                            <li key={sidx} className="flex items-center gap-1.5">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#3F6B3C] shrink-0" />
+                              <span>{srv}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {off.conditions && (
+                        <p className="text-[11px] text-gray-500 bg-[#FAF9F6] border border-gray-200 rounded-xl p-2.5">
+                          {off.conditions}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setEnquiryTarget({
+                            property,
+                            room: targetUnit,
+                            offer: off,
+                          })
+                        }
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0B5E8E] hover:bg-[#08486e] text-white text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        {off.ctaLabel || 'Enquire About This Offer'}
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}
@@ -545,6 +857,20 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
 
           <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
             {editorial("travel/AccommodationDetailPage.text37")}</h2>
+
+          {propertyAmenityLabels.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {propertyAmenityLabels.map((amLabel, idx) => (
+                <span
+                  key={`${amLabel}-${idx}`}
+                  className="bg-[#FAF9F6] border border-gray-200/80 text-[#0B5E8E] text-xs font-semibold px-3 py-1.5 rounded-full inline-flex items-center gap-1.5"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#3F6B3C]" />
+                  <span>{amLabel}</span>
+                </span>
+              ))}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {property.facilities.map((fac, idx) => (
@@ -620,6 +946,31 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                   )}
                 </div>
               )}
+
+              {(property.enquirySettings?.contactEmail ||
+                property.enquirySettings?.whatsappNumber ||
+                property.enquirySettings?.contactPhone) && (
+                <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200 space-y-1.5 text-xs">
+                  <span className="font-bold text-[#0B5E8E] uppercase tracking-wider block">
+                    Reservations &amp; Desk Contact
+                  </span>
+                  {property.enquirySettings.contactEmail && (
+                    <p>
+                      <strong>Email:</strong> {property.enquirySettings.contactEmail}
+                    </p>
+                  )}
+                  {property.enquirySettings.contactPhone && (
+                    <p>
+                      <strong>Phone:</strong> {property.enquirySettings.contactPhone}
+                    </p>
+                  )}
+                  {property.enquirySettings.whatsappNumber && (
+                    <p>
+                      <strong>WhatsApp:</strong> {property.enquirySettings.whatsappNumber}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -650,6 +1001,91 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
           </div>
         </section>
 
+        {/* General Property Policies (if configured) */}
+        {property.policies &&
+          (property.policies.checkInPolicy ||
+            property.policies.checkOutPolicy ||
+            property.policies.cancellationPolicy ||
+            property.policies.childPolicy ||
+            property.policies.petPolicy ||
+            property.policies.generalNotes) && (
+            <section className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200/80 shadow-xs space-y-4">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#C9A66B] uppercase tracking-widest">
+                <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
+                <span>Property Policies</span>
+              </div>
+              <h2 className="font-serif text-2xl font-bold text-[#0B5E8E]">
+                Good to Know &amp; Property Policies
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-gray-700">
+                {property.policies.checkInPolicy && (
+                  <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200/80">
+                    <strong className="text-[#0B5E8E] block mb-1">Check-in Policy</strong>
+                    <p className="font-light">{property.policies.checkInPolicy}</p>
+                  </div>
+                )}
+                {property.policies.checkOutPolicy && (
+                  <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200/80">
+                    <strong className="text-[#0B5E8E] block mb-1">Check-out Policy</strong>
+                    <p className="font-light">{property.policies.checkOutPolicy}</p>
+                  </div>
+                )}
+                {property.policies.cancellationPolicy && (
+                  <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200/80">
+                    <strong className="text-[#0B5E8E] block mb-1">Cancellation Policy</strong>
+                    <p className="font-light">{property.policies.cancellationPolicy}</p>
+                  </div>
+                )}
+                {property.policies.childPolicy && (
+                  <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200/80">
+                    <strong className="text-[#0B5E8E] block mb-1">Child &amp; Family Policy</strong>
+                    <p className="font-light">{property.policies.childPolicy}</p>
+                  </div>
+                )}
+                {property.policies.petPolicy && (
+                  <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200/80">
+                    <strong className="text-[#0B5E8E] block mb-1">Pet Policy</strong>
+                    <p className="font-light">{property.policies.petPolicy}</p>
+                  </div>
+                )}
+                {property.policies.generalNotes && (
+                  <div className="bg-[#FAF9F6] p-4 rounded-xl border border-gray-200/80">
+                    <strong className="text-[#0B5E8E] block mb-1">Additional Notes</strong>
+                    <p className="font-light">{property.policies.generalNotes}</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+          </div>
+
+          <aside id="accommodation-enquiry-panel" className="lg:col-span-4 lg:sticky lg:top-28">
+            <UnifiedEnquiryPanel
+              mode="accommodation"
+              currency={currency}
+              itemTitle={property.name}
+              itemSlug={property.slug || property.id}
+              basePriceUSD={hasGuidePrice ? displayPriceUSD : null}
+              priceLabelPrefix="Indicative Stay Rate"
+              priceSuffix={priceUnitLabel || 'per night'}
+              maxGuests={maxGuests ?? undefined}
+              roomOptions={publishedRooms.map((r) => ({
+                id: r.id,
+                name: r.name,
+                occupancy: getRoomCapacityLabel(r),
+                maxGuests: getRoomMaxGuests(r) ?? (maxGuests ?? undefined),
+                pricePerNightUSD: getRoomStartingPriceUSD(r, property),
+                room: r,
+              }))}
+              selectedRoomName={roomPreference}
+              onSelectedRoomChange={setRoomPreference}
+              pricingBasis={/person/i.test(priceUnitLabel || '') ? 'per_person' : 'per_room'}
+              whatsappButtonLabel="Enquire About Availability"
+              emailButtonLabel="Send Stay Enquiry by Email"
+            />
+          </aside>
+        </div>
+
         {/* Nearby Experiences (Clickable Experience Cards) */}
         {matchedExperiences.length > 0 && (
           <section className="space-y-6">
@@ -679,6 +1115,8 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                         src={exp.featuredImage}
                         alt={exp.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
                       
@@ -732,6 +1170,8 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                         src={rel.heroImage}
                         alt={rel.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80" />
                       
@@ -787,47 +1227,57 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10 pt-2">
             <button
-              onClick={() => onOpenPlanHolidayWithProperty(property)}
+              type="button"
+              onClick={() => {
+                const matchedRoom =
+                  publishedRooms.find((r) => r.name === roomPreference) || null;
+                setEnquiryTarget({ property, room: matchedRoom });
+              }}
               className="w-full sm:w-auto bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-4 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <CalendarCheck className="w-4 h-4" />
+              <MessageCircle className="w-4 h-4" />
               <span>Enquire About This Stay</span>
             </button>
-
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>{editorial("travel/AccommodationDetailPage.text59")}</span>
-            </a>
           </div>
         </section>
 
       </div>
 
-      {/* Lightbox Modal */}
-      {selectedLightboxImage && (
-        <div 
-          onClick={() => setSelectedLightboxImage(null)}
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-        >
-          <div className="relative max-w-5xl w-full max-h-[90vh]">
-            <img
-              src={selectedLightboxImage}
-              alt={property.name}
-              className="w-full h-full object-contain rounded-xl"
-            />
-            <button
-              onClick={() => setSelectedLightboxImage(null)}
-              className="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-md transition-colors cursor-pointer"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
+      {/* Room / Unit Detail Modal */}
+      <RoomDetailModal
+        property={property}
+        room={detailRoom}
+        currency={currency}
+        onClose={() => setDetailRoom(null)}
+        onEnquireRoom={(room, prefill) => {
+          setDetailRoom(null);
+          setRoomPreference(room.name);
+          setEnquiryTarget({
+            property,
+            room,
+            checkIn: prefill?.checkIn,
+            checkOut: prefill?.checkOut,
+            adults: prefill?.adults,
+            childrenCount: prefill?.childrenCount,
+            mealPlanId: prefill?.mealPlanId,
+          });
+        }}
+      />
+
+      {/* Room Direct Enquiry Modal (WhatsApp & Email) */}
+      <RoomEnquiryModal
+        target={enquiryTarget}
+        currency={currency}
+        onClose={() => setEnquiryTarget(null)}
+      />
+
+      {/* Gallery Lightbox Modal with Prev/Next Navigation */}
+      {lightboxIndex !== null && (
+        <GalleryLightbox
+          images={allPropertyImages}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
       )}
 
     </div>

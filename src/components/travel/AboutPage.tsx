@@ -5,6 +5,7 @@ import { BedDouble, Compass, MapPin, MessageCircle, Route, ShieldCheck, Trees, T
 import { PageLink } from '../common/PageLink';
 import { clientGalleryImages } from '../../data/clientGalleryImages';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { GalleryLightbox } from './GalleryLightbox';
 
 let founderImage:string;registerContent(()=>{founderImage=editorialValue('travel/AboutPage.founderImage');});
 let fungaiMemories:any[];registerContent(()=>{fungaiMemories=editorialValue('travel/AboutPage.fungaiMemories');});
@@ -18,6 +19,8 @@ export function AboutPage({ onOpenPlanHoliday, onNavigateSection }: {
   onNavigateSection: (section: string) => void;
 }) {
   const [portraitUnavailable, setPortraitUnavailable] = useState(false);
+  const [fungaiLightboxIndex, setFungaiLightboxIndex] = useState<number | null>(null);
+  const [memoriesLightboxIndex, setMemoriesLightboxIndex] = useState<number | null>(null);
   const memories = clientGalleryImages.filter((_, index) =>
     [0, Math.floor(clientGalleryImages.length / 2), clientGalleryImages.length - 1].includes(index)
   );
@@ -41,7 +44,7 @@ export function AboutPage({ onOpenPlanHoliday, onNavigateSection }: {
         <section aria-labelledby="meet-fungai" className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           <div className="lg:col-span-5 rounded-[28px] overflow-hidden border border-gray-100 bg-[#FDFBF7] shadow-[0_20px_50px_rgba(11,94,142,0.12)]">
             {portraitUnavailable ? <div className="h-80 sm:h-[420px] flex items-center justify-center font-serif text-7xl text-[#0B5E8E]" aria-label={editorialFormat("travel/AboutPage.copy1")}>{editorial("travel/AboutPage.text12")}</div> :
-              <img src={founderImage} onError={() => setPortraitUnavailable(true)} alt={editorial("travel/AboutPage.text13")} width={810} height={1080} fetchPriority="high" className="w-full aspect-[3/4] max-h-[560px] object-cover object-center" />}
+              <img src={founderImage} onError={() => setPortraitUnavailable(true)} alt={editorial("travel/AboutPage.text13")} width={810} height={1080} fetchPriority="high" className="w-full aspect-[3/4] max-h-[560px] object-cover object-center" loading="lazy" decoding="async" />}
             <div className="p-6 border-t border-gray-100"><p className="font-serif text-2xl font-bold text-[#0B5E8E]">{editorial("travel/AboutPage.text14")}</p><p className="text-sm mt-1">{editorial("travel/AboutPage.text15")}</p></div>
           </div>
           <div className="lg:col-span-7 space-y-5 max-w-2xl">
@@ -61,7 +64,7 @@ export function AboutPage({ onOpenPlanHoliday, onNavigateSection }: {
           <p className="leading-relaxed">{editorial("travel/AboutPage.text25")}</p>
           </div>
           <figure className="lg:col-span-5 overflow-hidden rounded-[28px] bg-[#FDFBF7] border border-gray-100 shadow-sm">
-            <img src={editorialValue('travel/AboutPage.photo6')} alt={editorial("travel/AboutPage.text26")} width={810} height={1080} loading="lazy" className="w-full aspect-[3/4] max-h-[520px] object-cover" />
+            <img src={editorialValue('travel/AboutPage.photo6')} alt={editorial("travel/AboutPage.text26")} width={810} height={1080} loading="lazy" className="w-full aspect-[3/4] max-h-[520px] object-cover" decoding="async" />
             <figcaption className="px-6 py-4 text-sm text-[#0B5E8E]">{editorial("travel/AboutPage.text27")}</figcaption>
           </figure>
         </section>
@@ -69,14 +72,14 @@ export function AboutPage({ onOpenPlanHoliday, onNavigateSection }: {
         <section aria-labelledby="how-i-help">
           <h2 id="how-i-help" className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E] mb-8">{editorial("travel/AboutPage.text28")}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map(({ icon: Icon, title, copy }) => <article key={title} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"><Icon className="w-6 h-6 text-[#0B5E8E] mb-4" aria-hidden="true" /><h3 className="font-serif text-2xl font-bold text-[#0B5E8E] mb-3">{title}</h3><p className="text-sm leading-relaxed">{copy}</p></article>)}
+            {services.map(({ icon: Icon, title, copy }: any) => <article key={title} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"><Icon className="w-6 h-6 text-[#0B5E8E] mb-4" aria-hidden="true" /><h3 className="font-serif text-2xl font-bold text-[#0B5E8E] mb-3">{title}</h3><p className="text-sm leading-relaxed">{copy}</p></article>)}
           </div>
         </section>
 
         <section aria-labelledby="outbound-approach" className="rounded-[28px] border border-gray-200/80 bg-[#FDFBF7] p-6 sm:p-10">
           <h2 id="outbound-approach" className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E] mb-8">{editorial("travel/AboutPage.text29")}</h2>
           <div className="grid sm:grid-cols-2 gap-8">
-            {principles.map(({ icon: Icon, title, copy }) => <div key={title}><Icon className="w-6 h-6 text-[#3F6B3C] mb-3" aria-hidden="true" /><h3 className="font-serif text-2xl font-bold text-[#0B5E8E] mb-2">{title}</h3><p className="text-sm leading-relaxed max-w-lg">{copy}</p></div>)}
+            {principles.map(({ icon: Icon, title, copy }: any) => <div key={title}><Icon className="w-6 h-6 text-[#3F6B3C] mb-3" aria-hidden="true" /><h3 className="font-serif text-2xl font-bold text-[#0B5E8E] mb-2">{title}</h3><p className="text-sm leading-relaxed max-w-lg">{copy}</p></div>)}
           </div>
         </section>
 
@@ -87,7 +90,7 @@ export function AboutPage({ onOpenPlanHoliday, onNavigateSection }: {
           <p className="leading-relaxed">{editorial("travel/AboutPage.text32")}</p>
           </div>
           <figure className="lg:col-span-5 lg:col-start-1 lg:row-start-1 overflow-hidden rounded-[28px] bg-[#FDFBF7] border border-gray-100 shadow-sm">
-            <img src={editorialValue('travel/AboutPage.photo3')} alt={editorial("travel/AboutPage.text33")} width={810} height={1080} loading="lazy" className="w-full aspect-[3/4] max-h-[520px] object-cover" />
+            <img src={editorialValue('travel/AboutPage.photo3')} alt={editorial("travel/AboutPage.text33")} width={810} height={1080} loading="lazy" className="w-full aspect-[3/4] max-h-[520px] object-cover" decoding="async" />
             <figcaption className="px-6 py-4 text-sm text-[#0B5E8E]">{editorial("travel/AboutPage.text34")}</figcaption>
           </figure>
         </section>
@@ -98,17 +101,32 @@ export function AboutPage({ onOpenPlanHoliday, onNavigateSection }: {
             <p className="leading-relaxed">{editorial("travel/AboutPage.text36")}</p>
           </div>
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-5">
-            {fungaiMemories.map(({ src, alt, width, height }) => (
-              <a key={src} href={src} target="_blank" rel="noopener noreferrer" aria-label={`View full photo: ${alt}`} className="block mb-5 break-inside-avoid overflow-hidden rounded-2xl bg-[#FDFBF7] shadow-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5E8E]">
-                <img src={src} alt={alt} width={width} height={height} loading="lazy" className="w-full h-auto transition-transform duration-300 hover:scale-[1.02] motion-reduce:transition-none" />
-              </a>
+            {fungaiMemories.map(({ src, alt, width, height }: any, idx: number) => (
+              <button type="button" key={src} onClick={() => setFungaiLightboxIndex(idx)} aria-label={`View full photo: ${alt}`} className="block w-full mb-5 break-inside-avoid overflow-hidden rounded-2xl bg-[#FDFBF7] shadow-sm cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5E8E]">
+                <img src={src} alt={alt} width={width} height={height} loading="lazy" className="w-full h-auto transition-transform duration-300 hover:scale-[1.02] motion-reduce:transition-none" decoding="async" />
+              </button>
             ))}
           </div>
+          {fungaiLightboxIndex !== null && (
+            <GalleryLightbox
+              images={fungaiMemories.map((m: any) => m.src)}
+              metadata={fungaiMemories.map((m: any) => ({ alt: m.alt }))}
+              initialIndex={fungaiLightboxIndex}
+              onClose={() => setFungaiLightboxIndex(null)}
+            />
+          )}
         </section>
 
         <section aria-labelledby="outbound-memories" className="space-y-6">
           <div className="max-w-2xl space-y-3"><h2 id="outbound-memories" className="font-serif text-3xl sm:text-4xl font-bold text-[#0B5E8E]">{editorial("travel/AboutPage.text37")}</h2><p className="leading-relaxed">{editorial("travel/AboutPage.text38")}</p></div>
-          <div className="grid sm:grid-cols-3 gap-4">{memories.map((src, index) => <img key={src} src={src} alt={editorialFormat("travel/AboutPage.copy2", [index + 1])} loading="lazy" className="w-full h-72 sm:h-80 object-cover rounded-2xl shadow-sm" />)}</div>
+          <div className="grid sm:grid-cols-3 gap-4">{memories.map((src, index) => <button type="button" key={src} onClick={() => setMemoriesLightboxIndex(index)} className="block w-full overflow-hidden rounded-2xl shadow-sm cursor-zoom-in"><img src={src} alt={editorialFormat("travel/AboutPage.copy2", [index + 1])} loading="lazy" className="w-full h-72 sm:h-80 object-cover transition-transform duration-300 hover:scale-[1.02]" decoding="async" /></button>)}</div>
+          {memoriesLightboxIndex !== null && (
+            <GalleryLightbox
+              images={memories}
+              initialIndex={memoriesLightboxIndex}
+              onClose={() => setMemoriesLightboxIndex(null)}
+            />
+          )}
           <PageLink href="/client-gallery" onClick={() => onNavigateSection('client-gallery')} className="inline-block text-[#0B5E8E] font-bold hover:underline rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5E8E]">{editorial("travel/AboutPage.text39")}</PageLink>
         </section>
 

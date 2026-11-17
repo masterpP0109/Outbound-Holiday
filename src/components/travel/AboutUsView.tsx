@@ -55,6 +55,8 @@ export const AboutUsView: React.FC<AboutUsViewProps> = () => {
                 src={fallsTour1}
                 alt={editorial("travel/AboutUsView.text8")}
                 className="w-full h-80 sm:h-[420px] object-cover group-hover:scale-[1.02] transition-transform duration-700"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               

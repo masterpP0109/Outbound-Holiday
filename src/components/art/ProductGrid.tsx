@@ -1,7 +1,7 @@
 import React,{ useState } from 'react';
 import { ArtProduct,Currency } from '../../types';
 import { ART_PRODUCTS } from '../../data/artData';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import {
 ShoppingBag,
 Heart,
@@ -66,11 +66,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     filtered.sort((a, b) => b.rating - a.rating);
   }
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   return (
     <section id="art-shop" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
@@ -158,6 +154,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                         src={product.imageUrl}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
 
                       {/* Top Badges */}

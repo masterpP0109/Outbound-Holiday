@@ -5,7 +5,7 @@ import { accommodationPath } from '../../routes';
 import React, { useState, useMemo, useEffect } from 'react';
 import { DetailedAccommodation, ALL_ACCOMMODATIONS } from '../../data/accommodationsData';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { AccommodationAdvisor } from './AccommodationAdvisor';
 import {
   ACCOMMODATION_CATEGORY_DEFS,
@@ -20,9 +20,11 @@ import {
   getKeyAmenitiesForCard,
   getPriceUnitLabel,
   getPropertyAmenities,
+  getPropertyDisplayPriceUSD,
   isPublishedAccommodation,
   parseCategorySlugFromSearch,
 } from '../../utils/accommodation';
+import { getPublishedRoomTypes } from '../../utils/roomPricing';
 import {
   ArrowRight,
   Home,
@@ -128,11 +130,7 @@ export const AccommodationDirectoryPage: React.FC<AccommodationDirectoryPageProp
     return preferred?.heroImage || '';
   }, [publishedAccommodations]);
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'] || { symbol: '$', rate: 1 };
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<AccommodationCategoryId, number> = {
@@ -287,6 +285,8 @@ export const AccommodationDirectoryPage: React.FC<AccommodationDirectoryPageProp
               src={heroBackdropImage}
               alt="Victoria Falls Accommodation"
               className="w-full h-full object-cover object-center filter brightness-90 saturate-110"
+              loading="lazy"
+              decoding="async"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/92 via-[#0D2833]/82 to-[#0D2833]/92" />
@@ -867,7 +867,9 @@ const PropertyDisplayCard: React.FC<PropertyDisplayCardProps> = ({
   const categoryBadge = getAccommodationCategorySingular(property);
   const keyAmenities = getKeyAmenitiesForCard(property, 3);
   const priceUnit = getPriceUnitLabel(property);
-  const hasGuidePrice = typeof property.priceFromUSD === 'number' && property.priceFromUSD > 0;
+  const displayPriceUSD = getPropertyDisplayPriceUSD(property);
+  const hasGuidePrice = typeof displayPriceUSD === 'number' && displayPriceUSD > 0;
+  const publishedUnitsCount = getPublishedRoomTypes(property).length;
 
   return (
     <article
@@ -882,6 +884,7 @@ const PropertyDisplayCard: React.FC<PropertyDisplayCardProps> = ({
             alt={property.name}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
           <div className="absolute top-3.5 left-3.5 bg-[#0D2833]/90 text-[#E5C989] px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider shadow-md border border-[#C9A66B]/40">
@@ -922,9 +925,9 @@ const PropertyDisplayCard: React.FC<PropertyDisplayCardProps> = ({
       {/* Footer: Clearly Qualified Price + View Details CTA */}
       <div className="p-5 sm:p-6 pt-0 space-y-3.5">
         <div className="border-t border-gray-100 pt-3.5 space-y-0.5">
-          {hasGuidePrice ? (
+          {hasGuidePrice && displayPriceUSD !== null ? (
             <div className="text-sm font-serif font-bold text-[#0B5E8E]">
-              From {formatPrice(property.priceFromUSD)}{' '}
+              From {formatPrice(displayPriceUSD)}{' '}
               <span className="font-sans text-xs font-normal text-gray-500">{priceUnit}</span>
             </div>
           ) : (
@@ -932,8 +935,13 @@ const PropertyDisplayCard: React.FC<PropertyDisplayCardProps> = ({
               Price on enquiry
             </div>
           )}
-          <div className="text-[11px] text-gray-500 font-normal">
-            Guide rate · Rates confirmed before booking
+          <div className="text-[11px] text-gray-500 font-normal flex items-center justify-between gap-2">
+            <span>Guide rate · Rates confirmed before booking</span>
+            {publishedUnitsCount > 0 && (
+              <span className="text-[#0B5E8E] font-semibold shrink-0">
+                {publishedUnitsCount} {publishedUnitsCount === 1 ? 'unit option' : 'unit options'}
+              </span>
+            )}
           </div>
         </div>
 

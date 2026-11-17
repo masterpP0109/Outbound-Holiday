@@ -1,15 +1,188 @@
+export interface RoomBedConfig {
+  type: string;
+  quantity: number;
+}
+
+export interface RoomOccupancyConfig {
+  maxAdults?: number;
+  maxChildren?: number;
+  maxTotalGuests?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  beds?: RoomBedConfig[];
+  extraBedAvailable?: boolean;
+  extraBedNotes?: string;
+  childAgePolicy?: string;
+  additionalGuestChargeNote?: string;
+  interleadingInfo?: string;
+}
+
+export type VisitorMarketCode = 'international' | 'zimbabwe_resident' | 'sadc_resident' | 'custom';
+export type BoardBasisCode = 'room_only' | 'self_catering' | 'bed_and_breakfast' | 'half_board' | 'full_board' | 'all_inclusive';
+
+export interface AccommodationRatePlan {
+  id: string;
+  internalRateName: string;
+  validFrom?: string;
+  validTo?: string;
+  amountUSD?: number | null;
+  priceBasis?: string;
+  customBasisLabel?: string;
+  visitorMarket?: VisitorMarketCode;
+  customMarketLabel?: string;
+  adultOrChildCategory?: 'adult' | 'child' | 'all';
+  boardBasis?: BoardBasisCode;
+  maxOccupancy?: number | null;
+  minStayNights?: number | null;
+  inclusions?: string[];
+  exclusions?: string[];
+  rateStatus?: 'provisional' | 'confirmed';
+  lastConfirmedDate?: string;
+  applicableUnitIds?: string[];
+  isActive?: boolean;
+}
+
+export interface AccommodationOffer {
+  id: string;
+  title: string;
+  offerCategory?: 'special_offer' | 'honeymoon_package' | 'seasonal_promotion' | 'meal_plan' | 'added_value';
+  description?: string;
+  galleryImages?: string[];
+  includedServices?: string[];
+  applicableUnitIds?: string[];
+  applyToEntireProperty?: boolean;
+  applicableRatePlanIds?: string[];
+  validFrom?: string;
+  validTo?: string;
+  priceType?: 'fixed_offer' | 'percentage_discount' | 'fixed_discount' | 'added_value';
+  offerPriceUSD?: number | null;
+  discountPercent?: number | null;
+  discountAmountUSD?: number | null;
+  guestRequirements?: string;
+  conditions?: string;
+  status?: 'published' | 'draft' | 'archived' | 'trashed';
+  ctaLabel?: string;
+  featured?: boolean;
+}
+
+export interface RoomSeasonalRate {
+  id: string;
+  label: string;
+  startDate: string;
+  endDate: string;
+  nightlyRateUSD: number;
+  weekendRateUSD?: number | null;
+  minStayNights?: number | null;
+  isActive?: boolean;
+}
+
+export interface RoomDateRate {
+  id: string;
+  date: string;
+  label?: string;
+  nightlyRateUSD: number;
+  isActive?: boolean;
+}
+
+export interface RoomMealPlanRate {
+  id: string;
+  name: string;
+  supplementPerPersonPerNightUSD: number;
+  pricingType?: 'per_person_per_night' | 'per_unit_per_night';
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface RoomPricing {
+  baseNightlyRateUSD?: number | null;
+  startingFromPriceUSD?: number | null;
+  weekendRateUSD?: number | null;
+  weekendDays?: ('fri' | 'sat' | 'sun')[];
+  baseOccupancyAdults?: number | null;
+  additionalGuestRateUSD?: number | null;
+  childRateUSD?: number | null;
+  childRate11PlusUSD?: number | null;
+  minStayNights?: number | null;
+  rateValidFrom?: string;
+  rateValidTo?: string;
+  rateStatus?: 'provisional' | 'confirmed';
+  priceBasis?: 'per_room' | 'per_unit' | 'per_person' | 'per_person_sharing' | 'per_person_single';
+  seasonalRates?: RoomSeasonalRate[];
+  dateSpecificRates?: RoomDateRate[];
+  mealPlanRates?: RoomMealPlanRate[];
+  ratePlans?: AccommodationRatePlan[];
+  inclusions?: string[];
+  exclusions?: string[];
+}
+
+export interface RoomGalleryImage {
+  id?: string;
+  url: string;
+  alt?: string;
+  caption?: string;
+}
+
+export interface RoomPolicies {
+  minStayNights?: number | null;
+  checkInRestrictions?: string;
+  cancellationPolicy?: string;
+  extraPersonPolicy?: string;
+  accessibilityInfo?: string;
+  otherRestrictions?: string;
+}
+
 export interface RoomType {
+  id?: string;
   name: string;
   occupancy: string;
   description: string;
+  shortDescription?: string;
+  unitCategory?: string;
+  wing?: string;
+  isEntireProperty?: boolean;
+  sizeSqm?: number | null;
+  unitCount?: number | null;
+  featured?: boolean;
+  status?: 'published' | 'draft' | 'archived' | 'trashed';
+  availabilityStatus?: 'available' | 'on_request' | 'temporarily_unavailable';
+  customCtaLabel?: string;
   imageUrl: string;
+  gallery?: RoomGalleryImage[];
+  galleryImages?: string[];
   features: string[];
+  amenities?: string[];
+  customAmenities?: string[];
+  accessibilityFeatures?: string[];
+  inclusions?: string[];
+  ratePlanIds?: string[];
+  occupancyConfig?: RoomOccupancyConfig;
+  pricing?: RoomPricing;
+  policies?: RoomPolicies;
 }
+
+export interface PropertyPolicies {
+  checkInPolicy?: string;
+  checkOutPolicy?: string;
+  cancellationPolicy?: string;
+  childPolicy?: string;
+  petPolicy?: string;
+  generalNotes?: string;
+}
+
+export interface PropertyEnquirySettings {
+  enableWhatsApp?: boolean;
+  enableEmail?: boolean;
+  customEnquiryNote?: string;
+  contactEmail?: string;
+  whatsappNumber?: string;
+  contactPhone?: string;
+}
+
 export interface DetailedAccommodation {
   id: string;
   slug: string;
   name: string;
-  category: 'Luxury Lodge' | 'Boutique Hotel' | 'Guest Lodge' | 'Safari Lodge' | 'Resort' | 'Self-Catering' | 'Hotel' | 'Lodge' | 'Guest House' | 'Apartment';
+  category: string;
   accommodationCategory?: 'hotels' | 'lodges' | 'guest-houses' | 'apartments';
   badge?: 'Luxury' | 'Family Favourite' | 'Romantic' | 'Best Value' | 'Walking Distance' | 'Boutique';
   rating: number;
@@ -25,6 +198,12 @@ export interface DetailedAccommodation {
   checkInTime?: string;
   checkOutTime?: string;
   publicationStatus?: 'published' | 'draft' | 'archived';
+  roomSectionHeading?: string;
+  roomSectionSubtitle?: string;
+  policies?: PropertyPolicies;
+  enquirySettings?: PropertyEnquirySettings;
+  ratePlans?: AccommodationRatePlan[];
+  offers?: AccommodationOffer[];
   heroImage: string;
   galleryImages: string[];
   tagline: string;

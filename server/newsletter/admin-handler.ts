@@ -77,8 +77,8 @@ export async function handleNewsletterAdmin(req: Request, res: Response, subpath
       newsletterProvider: process.env.NEWSLETTER_PROVIDER || 'self-hosted',
       newsletterSendingEnabled: process.env.NEWSLETTER_SENDING_ENABLED === 'true',
       isLiveSendingActive: isLiveSendingEnabled(),
-      emailFrom: process.env.EMAIL_FROM || 'Outbound Holidays <travel@outboundholiday.com>',
-      testRecipient: process.env.EMAIL_TEST_TO || 'not-configured',
+      emailFrom: process.env.EMAIL_FROM || 'Outbound Holidays <fungai@outboundholiday.com>',
+      testRecipient: process.env.EMAIL_TEST_TO || 'fungai@outboundholiday.com',
       wordpressMigrationReady: true
     });
   }

@@ -37,7 +37,7 @@ export const VicFallsGuidePage: React.FC<VicFallsGuidePageProps> = ({
 
           {/* Center/Right Brand Title */}
           <div className="flex items-center gap-2 text-[#C9A66B] font-bold text-[11px] uppercase tracking-wider">
-            <img src={outboundLogo} alt={editorial("travel/VicFallsGuidePage.text3")} className="w-6 h-6 object-contain" />
+            <img src={outboundLogo} alt={editorial("travel/VicFallsGuidePage.text3")} className="w-6 h-6 object-contain" loading="lazy" decoding="async" />
             <span>{editorial("travel/VicFallsGuidePage.text4")}</span>
           </div>
         </div>

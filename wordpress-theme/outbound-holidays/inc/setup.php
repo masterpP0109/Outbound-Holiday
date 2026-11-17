@@ -61,10 +61,12 @@ function outbound_resolve_wp_initial_route_path(): string {
         (function_exists('is_home') && is_home()) ||
         (function_exists('is_archive') && is_archive()) ||
         (function_exists('is_category') && is_category()) ||
-        (function_exists('is_tag') && is_tag()) ||
-        (function_exists('is_search') && is_search())
+        (function_exists('is_tag') && is_tag())
     ) {
         return '/blog';
+    }
+    if (function_exists('is_search') && is_search()) {
+        return '/search';
     }
     if (function_exists('is_tax') && is_tax('experience_category')) {
         $term = get_queried_object();
@@ -118,6 +120,16 @@ function outbound_get_frontend_runtime_config(): array {
     $rest_base  = function_exists('rest_url') ? rtrim((string) rest_url('outbound/v1'), '/') : '/wp-json/outbound/v1';
     $is_preview = function_exists('outbound_is_preview_request') && outbound_is_preview_request();
 
+    $snap_ver = function_exists('get_option') ? (string) get_option('outbound_cms_snapshot_version', OUTBOUND_THEME_VERSION) : OUTBOUND_THEME_VERSION;
+    $ver_qs   = $snap_ver !== '' ? ('ver=' . rawurlencode($snap_ver)) : '';
+    $snap_qs  = array();
+    if ($is_preview) {
+        $snap_qs[] = 'outbound_preview=1';
+    }
+    if ($ver_qs !== '') {
+        $snap_qs[] = $ver_qs;
+    }
+
     $cfg = array(
         'isWordPress'      => true,
         'isPreview'        => $is_preview,
@@ -125,8 +137,10 @@ function outbound_get_frontend_runtime_config(): array {
         'siteUrl'          => $site_url,
         'themeUri'         => defined('OUTBOUND_THEME_URI') ? rtrim((string) OUTBOUND_THEME_URI, '/') : '/wp-content/themes/outbound-holidays',
         'restUrl'          => $rest_base,
-        'snapshotUrl'      => $rest_base . '/snapshot' . ($is_preview ? '?outbound_preview=1' : ''),
-        'postsUrl'         => $rest_base . '/posts',
+        'snapshotUrl'      => $rest_base . '/snapshot' . (!empty($snap_qs) ? ('?' . implode('&', $snap_qs)) : ''),
+        'postsUrl'         => $rest_base . '/posts' . ($ver_qs !== '' ? ('?' . $ver_qs) : ''),
+        'searchUrl'        => $rest_base . '/search' . ($ver_qs !== '' ? ('?' . $ver_qs) : ''),
+        'googleCseId'      => '04ba449966f8744d2',
         'nonce'            => function_exists('wp_create_nonce') ? wp_create_nonce('wp_rest') : '',
         'heroFallbackUrl'  => outbound_get_media_fallback('hero'),
         'turnstileSiteKey' => $turnstile['siteKey'],
@@ -144,12 +158,17 @@ function outbound_get_frontend_runtime_config(): array {
  * Prevent public/proxy caching on authenticated Admin Draft Preview requests.
  */
 function outbound_send_preview_headers(): void {
-    if (function_exists('outbound_is_preview_request') && outbound_is_preview_request() && !headers_sent()) {
+    $is_preview   = function_exists('outbound_is_preview_request') && outbound_is_preview_request();
+    $is_logged_in = function_exists('is_user_logged_in') && is_user_logged_in();
+    if (($is_preview || $is_logged_in) && !headers_sent()) {
         if (function_exists('nocache_headers')) {
             nocache_headers();
         }
         header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0, private');
-        header('X-Robots-Tag: noindex, nofollow', true);
+        header('X-LiteSpeed-Cache-Control: no-cache');
+        if ($is_preview) {
+            header('X-Robots-Tag: noindex, nofollow', true);
+        }
     }
 }
 if (function_exists('add_action')) {
@@ -169,6 +188,13 @@ function outbound_disable_frontend_global_styles(): void {
         remove_action('wp_enqueue_scripts', 'wp_enqueue_global_styles_custom_css');
         remove_action('wp_footer', 'wp_enqueue_global_styles', 1);
         remove_action('wp_footer', 'wp_enqueue_stored_styles');
+        // Strip legacy WordPress emoji & discovery scripts to eliminate extra render-blocking work.
+        remove_action('wp_head', 'print_emoji_detection_script', 7);
+        remove_action('wp_print_styles', 'print_emoji_styles');
+        remove_action('wp_head', 'wp_generator');
+        remove_action('wp_head', 'wlwmanifest_link');
+        remove_action('wp_head', 'rsd_link');
+        remove_action('wp_head', 'wp_shortlink_wp_head');
     }
 }
 if (function_exists('add_action')) {
@@ -201,7 +227,7 @@ function outbound_enqueue_assets(): void {
     wp_enqueue_style(
         'outbound-app-style',
         OUTBOUND_THEME_URI . '/assets/app/outbound-app.css',
-        array('outbound-google-fonts'),
+        array(),
         $css_ver
     );
 
@@ -241,6 +267,10 @@ add_action('wp_enqueue_scripts', 'outbound_enqueue_assets', 100);
  * Preconnect Google Fonts and preload homepage LCP hero image for faster mobile FCP/LCP.
  */
 add_action('wp_head', static function (): void {
+    echo '<link rel="dns-prefetch" href="https://br-icy-darkness-b4agzqde.storage.c-6.us-east-2.aws.neon.tech">' . "\n";
+    echo '<link rel="preconnect" href="https://br-icy-darkness-b4agzqde.storage.c-6.us-east-2.aws.neon.tech" crossorigin>' . "\n";
+    echo '<link rel="dns-prefetch" href="https://fonts.googleapis.com">' . "\n";
+    echo '<link rel="dns-prefetch" href="https://fonts.gstatic.com">' . "\n";
     echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
     if (function_exists('is_front_page') && is_front_page() && function_exists('outbound_get_media_fallback')) {

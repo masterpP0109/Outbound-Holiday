@@ -75,6 +75,8 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                     src={cat.imageUrl}
                     alt={cat.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-xs text-[#2F3A44] text-[10px] font-bold px-2 py-0.5 rounded-full">

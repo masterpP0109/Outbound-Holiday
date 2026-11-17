@@ -10,6 +10,231 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Return allowed enquiry workflow statuses.
+ *
+ * @return array<string, string>
+ */
+function outbound_get_enquiry_statuses(): array {
+    return array(
+        'new'       => 'New',
+        'contacted' => 'Contacted',
+        'quoted'    => 'Quoted',
+        'follow-up' => 'Follow-up',
+        'booked'    => 'Booked',
+        'closed'    => 'Closed',
+        'archived'  => 'Archived',
+    );
+}
+
+/**
+ * Neutralize spreadsheet formula injection prefixes in CSV export cells.
+ */
+function outbound_csv_safe_cell(string $cell): string {
+    if ($cell !== '' && in_array($cell[0], array('=', '+', '-', '@', "\t", "\r"), true)) {
+        return "'" . $cell;
+    }
+    return $cell;
+}
+
+/**
+ * Return normalized catalog context (`stayTiers`, `accommodations`, `activities`) for enquiry pricing & resolution.
+ *
+ * @return array{stayTiers:array<int,array<string,mixed>>,accommodations:array<int,array<string,mixed>>,activities:array<int,array<string,mixed>>}
+ */
+function outbound_get_enquiry_catalog_context(): array {
+    $snap = function_exists('outbound_build_live_snapshot')
+        ? outbound_build_live_snapshot()
+        : (function_exists('outbound_get_baseline_snapshot') ? outbound_get_baseline_snapshot() : array());
+
+    $activities = array();
+    foreach ((array) ($snap['builderActivities'] ?? array()) as $act) {
+        if (!is_array($act) || empty($act['id'])) {
+            continue;
+        }
+        $activities[] = array(
+            'id'          => (string) $act['id'],
+            'title'       => (string) ($act['title'] ?? $act['id']),
+            'duration'    => (string) ($act['duration'] ?? ''),
+            'priceAmount' => (float) ($act['priceUSD'] ?? ($act['priceAmount'] ?? 0)),
+        );
+    }
+
+    return array(
+        'stayTiers'      => array_values((array) ($snap['stayTiers'] ?? array())),
+        'accommodations' => array_values((array) ($snap['accommodations'] ?? array())),
+        'activities'     => $activities,
+    );
+}
+
+/**
+ * Build a structured enquiry snapshot and itemized USD estimate from a submission payload and catalog.
+ *
+ * @param array<string, mixed> $payload
+ * @param array<string, mixed> $catalog
+ * @return array<string, mixed>
+ */
+function outbound_build_enquiry_snapshot(array $payload, array $catalog = array()): array {
+    if (empty($catalog)) {
+        $catalog = outbound_get_enquiry_catalog_context();
+    }
+    $trip      = isset($payload['trip']) && is_array($payload['trip']) ? $payload['trip'] : array();
+    $adults    = max(1, (int) ($payload['adultsCount'] ?? ($trip['adults'] ?? ($payload['adults'] ?? 2))));
+    $children  = max(0, (int) ($payload['kidsCount'] ?? ($trip['children'] ?? ($payload['children'] ?? 0))));
+    $nights    = max(1, (int) ($payload['nightsCount'] ?? ($trip['nights'] ?? ($payload['nights'] ?? 3))));
+    $transport = (string) ($payload['transportType'] ?? ($trip['transportType'] ?? 'private-transfers'));
+    $tier_id   = (string) ($payload['stayTierId'] ?? ($trip['stayTierId'] ?? 'comfort-plus'));
+    $acc_id    = (string) ($payload['accommodationId'] ?? ($trip['accommodationId'] ?? ''));
+
+    $stay_rate = 235.0;
+    foreach ((array) ($catalog['stayTiers'] ?? array()) as $t) {
+        if (is_array($t) && (string) ($t['id'] ?? '') === $tier_id) {
+            $stay_rate = (float) ($t['pricePerNightUSD'] ?? ($t['startingPrice'] ?? 235.0));
+            break;
+        }
+    }
+
+    $acc_name = (string) ($trip['accommodationName'] ?? ($payload['propertyName'] ?? ''));
+    if ($acc_id !== '') {
+        foreach ((array) ($catalog['accommodations'] ?? array()) as $acc) {
+            if (is_array($acc) && ((string) ($acc['id'] ?? '') === $acc_id || (string) ($acc['slug'] ?? '') === $acc_id)) {
+                $acc_name  = (string) ($acc['name'] ?? $acc_name);
+                $stay_rate = (float) ($acc['priceFromUSD'] ?? $stay_rate);
+                break;
+            }
+        }
+    }
+
+    $act_map = array();
+    foreach ((array) ($catalog['activities'] ?? array()) as $act) {
+        if (is_array($act) && !empty($act['id'])) {
+            $act_map[(string) $act['id']] = $act;
+        }
+    }
+
+    $raw_act_ids = (array) ($payload['selectedActivityIds'] ?? ($trip['activityIds'] ?? array()));
+    $selected_activities = array();
+    $activity_rates = array();
+    foreach ($raw_act_ids as $raw_id) {
+        $aid = (string) $raw_id;
+        $matched = $act_map[$aid] ?? null;
+        if (!$matched) {
+            foreach ($act_map as $cand_id => $cand) {
+                if (str_starts_with($cand_id, $aid) || str_starts_with($aid, $cand_id)) {
+                    $matched = $cand;
+                    break;
+                }
+            }
+        }
+        if ($matched) {
+            $price = (float) ($matched['priceAmount'] ?? ($matched['priceUSD'] ?? 0));
+            $selected_activities[] = array(
+                'id'          => (string) $matched['id'],
+                'title'       => (string) ($matched['title'] ?? $aid),
+                'duration'    => (string) ($matched['duration'] ?? ''),
+                'priceAmount' => $price,
+            );
+            $activity_rates[] = $price;
+        }
+    }
+
+    $est = outbound_calculate_holiday_estimate(array(
+        'nights'           => $nights,
+        'adults'           => $adults,
+        'children'         => $children,
+        'stayNightRateUSD' => $stay_rate,
+        'activityRatesUSD' => $activity_rates,
+        'transportType'    => $transport,
+    ));
+    $rooms = max(1, (int) ($est['rooms'] ?? ceil(($adults + $children) / 2)));
+    $est['stayCost']      = (int) round($stay_rate * $nights * $rooms);
+    $est['activityCost']  = (int) round(array_sum($activity_rates) * ($adults + ($children * 0.8)));
+    $est['transportCost'] = $transport === 'private-transfers'
+        ? 120
+        : ($transport === 'shared-shuttle' ? 60 : ($transport === 'VIP-helicopter' ? 680 : 0));
+
+    return array(
+        'entryMode'          => (string) ($trip['entryMode'] ?? 'custom'),
+        'country'            => (string) ($trip['country'] ?? ($payload['country'] ?? '')),
+        'arrivalDate'        => (string) ($trip['arrivalDate'] ?? ($payload['checkInDate'] ?? '')),
+        'departureDate'      => (string) ($trip['departureDate'] ?? ($payload['checkOutDate'] ?? '')),
+        'childrenAges'       => (string) ($trip['childrenAges'] ?? ''),
+        'roomType'           => (string) ($trip['roomType'] ?? ($payload['roomType'] ?? '')),
+        'celebrationDetails' => (string) ($trip['celebrationDetails'] ?? ''),
+        'adults'             => $adults,
+        'children'           => $children,
+        'nights'             => $nights,
+        'accommodationId'    => $acc_id,
+        'accommodationName'  => $acc_name,
+        'selectedActivities' => $selected_activities,
+        'estimate'           => $est,
+        'notes'              => (string) ($payload['notes'] ?? ($payload['message'] ?? '')),
+    );
+}
+
+/**
+ * Extract structured enquiry details from a stored DB row (preserving historical estimate bounds).
+ */
+function outbound_extract_enquiry_details(object $row): array {
+    $decoded = !empty($row->payload_json) ? json_decode((string) $row->payload_json, true) : array();
+    $snap = outbound_build_enquiry_snapshot(is_array($decoded) ? $decoded : array());
+    if (!empty($row->estimate_min_usd)) {
+        $snap['estimate']['minimum'] = (int) $row->estimate_min_usd;
+        $snap['estimate']['maximum'] = (int) ($row->estimate_max_usd ?? $row->estimate_min_usd);
+    }
+    return $snap;
+}
+
+/**
+ * Build specialist and customer HTML email payloads for an enquiry.
+ *
+ * @param array<string, mixed> $ctx
+ * @return array{specialist_subject:string,customer_subject:string,specialist_html:string,customer_html:string}
+ */
+function outbound_build_enquiry_emails(array $ctx): array {
+    $ref       = (string) ($ctx['reference'] ?? '');
+    $name      = (string) ($ctx['name'] ?? 'Guest');
+    $notes     = (string) ($ctx['notes'] ?? '');
+    $whatsapp  = (string) ($ctx['whatsapp_display'] ?? '+263 714 701 721');
+    $estimate  = isset($ctx['estimate']) && is_array($ctx['estimate']) ? $ctx['estimate'] : array();
+    $min       = (int) ($estimate['minimum'] ?? 0);
+    $max       = (int) ($estimate['maximum'] ?? $min);
+    $struct    = isset($ctx['structured']) && is_array($ctx['structured']) ? $ctx['structured'] : array();
+    $acc_name  = (string) ($struct['accommodationName'] ?? ($ctx['accommodationName'] ?? ''));
+
+    $exp_titles = array();
+    foreach ((array) ($ctx['experiences'] ?? array()) as $exp) {
+        if (is_string($exp) && $exp !== '') {
+            $exp_titles[] = $exp;
+        } elseif (is_array($exp) && !empty($exp['title'])) {
+            $exp_titles[] = (string) $exp['title'];
+        }
+    }
+
+    $budget_str = $min > 0 ? sprintf('US$%s&ndash;%s', number_format($min), number_format($max)) : 'Available on quotation';
+    $exp_html   = !empty($exp_titles) ? '<ul><li>' . implode('</li><li>', array_map('esc_html', $exp_titles)) . '</li></ul>' : '';
+    $acc_html   = $acc_name !== '' ? '<p><strong>Accommodation:</strong> ' . esc_html($acc_name) . '</p>' : '';
+
+    $customer_html = "<div><p>YOUR ENQUIRY REFERENCE: <strong>" . esc_html($ref) . "</strong></p>"
+        . "<p>Dear " . esc_html($name) . ",</p>"
+        . "<p>Estimated Budget: {$budget_str}</p>"
+        . $acc_html . $exp_html
+        . "<p>WhatsApp Concierge: " . esc_html($whatsapp) . "</p></div>";
+
+    $specialist_html = "<div><h2>New Holiday Enquiry (" . esc_html($ref) . ")</h2>"
+        . "<p><strong>Customer:</strong> " . esc_html($name) . "</p>"
+        . "<p><strong>Estimated Budget:</strong> {$budget_str}</p>"
+        . $acc_html . $exp_html
+        . "<p><strong>Notes:</strong> " . esc_html($notes) . "</p></div>";
+
+    return array(
+        'specialist_subject' => sprintf('New Holiday Enquiry | %s | %s', $ref, $name),
+        'customer_subject'   => sprintf('Your Victoria Falls Holiday Enquiry (%s)', $ref),
+        'specialist_html'    => $specialist_html,
+        'customer_html'      => $customer_html,
+    );
+}
+
+/**
  * Check DB-backed sliding window rate limit for spam protection.
  */
 function outbound_check_rate_limit(string $bucket, string $ip, int $max_attempts = 8, int $window_seconds = 600): bool {
@@ -133,15 +358,47 @@ function outbound_process_enquiry_submission(array $payload, string $client_ip) 
     }
 
     $raw_source = (string) ($payload['type'] ?? ($payload['source'] ?? 'holiday-builder'));
-    $type = in_array($raw_source, array('holiday-builder', 'contact'), true) ? $raw_source : 'holiday-builder';
+    $allowed_types = array('holiday-builder', 'contact', 'activity-enquiry', 'package-enquiry', 'accommodation-enquiry');
+    $type = in_array($raw_source, $allowed_types, true) ? $raw_source : 'holiday-builder';
     $trip = isset($payload['trip']) && is_array($payload['trip']) ? $payload['trip'] : array();
 
     $full_name = sanitize_text_field((string) ($payload['fullName'] ?? ($payload['name'] ?? '')));
-    $email     = sanitize_email((string) ($payload['email'] ?? ''));
+    $raw_email = trim((string) ($payload['email'] ?? ''));
+    $email     = $raw_email !== '' ? sanitize_email($raw_email) : '';
     $phone     = sanitize_text_field((string) ($payload['phone'] ?? ''));
+    $phone_digits = preg_replace('/\D+/', '', $phone) ?: '';
 
-    if ($full_name === '' || !is_email($email)) {
-        return new WP_Error('validation_error', 'Please enter your full name and a valid email address.', array('status' => 400));
+    if ($full_name === '') {
+        return new WP_Error('validation_error', 'Please enter your full name.', array('status' => 400));
+    }
+    if ($raw_email !== '' && !is_email($email)) {
+        return new WP_Error('validation_error', 'Please enter a valid email address.', array('status' => 400));
+    }
+    if (!is_email($email) && strlen($phone_digits) < 7) {
+        return new WP_Error('validation_error', 'Please provide at least one valid contact method (email or WhatsApp/phone number).', array('status' => 400));
+    }
+
+    $idempotency_key = sanitize_text_field((string) ($_SERVER['HTTP_IDEMPOTENCY_KEY'] ?? ($payload['idempotencyKey'] ?? '')));
+    if ($idempotency_key !== '' && isset($GLOBALS['wpdb'])) {
+        global $wpdb;
+        $tables = outbound_get_table_names();
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+        $existing_row = $wpdb->get_row($wpdb->prepare(
+            "SELECT id, reference_code, full_name FROM {$tables['enquiries']} WHERE idempotency_key = %s LIMIT 1",
+            $idempotency_key
+        ));
+        if ($existing_row) {
+            return array(
+                'saved'         => true,
+                'ok'            => true,
+                'deduplicated'  => true,
+                'reference'     => (string) $existing_row->reference_code,
+                'referenceCode' => (string) $existing_row->reference_code,
+                'customerName'  => (string) $existing_row->full_name,
+                'submittedAt'   => gmdate('c'),
+                'message'       => 'Your enquiry has already been recorded.',
+            );
+        }
     }
 
     $adults        = max(1, (int) ($payload['adultsCount'] ?? ($trip['adults'] ?? ($payload['adults'] ?? 2))));
@@ -251,6 +508,25 @@ function outbound_process_enquiry_submission(array $payload, string $client_ip) 
         }
     }
 
+    $child_ages = array();
+    if (!empty($payload['childAges']) && is_array($payload['childAges'])) {
+        foreach (array_slice($payload['childAges'], 0, 10) as $ca) {
+            $clean_ca = sanitize_text_field((string) $ca);
+            if ($clean_ca !== '') {
+                $child_ages[] = $clean_ca;
+            }
+        }
+    }
+    $selected_extras = array();
+    if (!empty($payload['selectedExtras']) && is_array($payload['selectedExtras'])) {
+        foreach (array_slice($payload['selectedExtras'], 0, 20) as $ex) {
+            $clean_ex = sanitize_text_field((string) $ex);
+            if ($clean_ex !== '') {
+                $selected_extras[] = $clean_ex;
+            }
+        }
+    }
+
     $builder_details = array(
         'trip_intent'        => ucwords(str_replace('-', ' ', $trip_intent)),
         'party_type'         => ucwords(str_replace('-', ' ', $party_type)),
@@ -259,9 +535,25 @@ function outbound_process_enquiry_submission(array $payload, string $client_ip) 
         'stay_preferences'   => $stay_preferences,
         'activities'         => $activity_titles,
         'transport'          => ucwords(str_replace('-', ' ', $transport)),
-        'accommodation_name' => sanitize_text_field((string) ($trip['accommodationName'] ?? '')),
-        'package_title'      => sanitize_text_field((string) ($trip['packageTitle'] ?? '')),
-        'preselected_exp'    => sanitize_text_field((string) ($trip['preselectedExperienceTitle'] ?? '')),
+        'accommodation_name' => sanitize_text_field((string) ($trip['accommodationName'] ?? ($payload['propertyName'] ?? ''))),
+        'package_title'      => sanitize_text_field((string) ($trip['packageTitle'] ?? ($payload['packageName'] ?? ''))),
+        'preselected_exp'    => sanitize_text_field((string) ($trip['preselectedExperienceTitle'] ?? ($payload['activityName'] ?? ''))),
+        'room_id'            => sanitize_text_field((string) ($payload['roomId'] ?? ($trip['roomId'] ?? ''))),
+        'room_type'          => sanitize_text_field((string) ($payload['roomType'] ?? ($trip['roomType'] ?? ''))),
+        'meal_plan'          => sanitize_text_field((string) ($payload['mealPlan'] ?? ($trip['mealPlan'] ?? ''))),
+        'offer_id'           => sanitize_text_field((string) ($payload['offerId'] ?? '')),
+        'offer_name'         => sanitize_text_field((string) ($payload['offerName'] ?? '')),
+        'visitor_market'     => sanitize_text_field((string) ($payload['visitorMarket'] ?? '')),
+        'rooms_count'        => max(1, (int) ($payload['roomsCount'] ?? 1)),
+        'check_in_date'      => sanitize_text_field((string) ($payload['checkInDate'] ?? '')),
+        'check_out_date'     => sanitize_text_field((string) ($payload['checkOutDate'] ?? '')),
+        'preferred_date'     => sanitize_text_field((string) ($payload['preferredDate'] ?? '')),
+        'child_ages'         => $child_ages,
+        'country'            => sanitize_text_field((string) ($payload['country'] ?? '')),
+        'selected_extras'    => $selected_extras,
+        'estimated_price'    => sanitize_text_field((string) ($payload['estimatedPriceLabel'] ?? '')),
+        'preferred_channel'  => sanitize_text_field((string) ($payload['preferredChannel'] ?? 'email')),
+        'source_page'        => esc_url_raw((string) ($payload['sourcePageUrl'] ?? '')),
         'itinerary_draft'    => $itinerary_draft,
         'promotion_id'       => $promotion_id,
         'promotion_name'     => $promotion_name,
@@ -278,42 +570,60 @@ function outbound_process_enquiry_submission(array $payload, string $client_ip) 
         ))
         : array('minimum' => 0, 'maximum' => 0, 'currency' => 'USD', 'rooms' => 0, 'disclaimer' => '');
 
+    if (function_exists('outbound_maybe_install_schema')) {
+        outbound_maybe_install_schema(false);
+    }
+
     $reference_code = outbound_generate_reference_code();
 
     global $wpdb;
     $tables = outbound_get_table_names();
     $now    = gmdate('Y-m-d H:i:s');
+    $cap_str = static fn(string $v, int $max): string => function_exists('mb_substr') ? mb_substr($v, 0, $max, 'UTF-8') : substr($v, 0, $max);
 
-    // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-    $inserted = $wpdb->insert($tables['enquiries'], array(
+    $insert_data = array(
         'reference_code'    => $reference_code,
-        'type'              => $type,
-        'full_name'         => $full_name,
-        'email'             => $email,
-        'phone'             => $phone,
-        'party_type'        => $party_type,
-        'trip_intent'       => $trip_intent,
+        'idempotency_key'   => $idempotency_key !== '' ? $cap_str($idempotency_key, 95) : null,
+        'type'              => $cap_str($type, 38),
+        'full_name'         => $cap_str($full_name, 155),
+        'email'             => $cap_str($email, 250),
+        'phone'             => $cap_str($phone, 60),
+        'party_type'        => $cap_str($party_type, 38),
+        'trip_intent'       => $cap_str($trip_intent, 60),
         'adults'            => $adults,
         'children'          => $children,
         'nights'            => $nights,
-        'travel_season'     => $travel_season,
-        'stay_tier_id'      => $stay_tier_id,
-        'transport_type'    => $transport,
+        'travel_season'     => $cap_str($travel_season, 75),
+        'stay_tier_id'      => $cap_str($stay_tier_id, 75),
+        'transport_type'    => $cap_str($transport, 60),
         'estimate_min_usd'  => (int) $estimate['minimum'],
         'estimate_max_usd'  => (int) $estimate['maximum'],
         'marketing_consent' => $marketing ? 1 : 0,
-        'subject'           => $subject,
+        'subject'           => $cap_str($subject, 250),
         'message'           => $notes,
-        'payload_json'      => wp_json_encode($payload),
+        'payload_json'      => wp_json_encode($payload) ?: '{}',
         'status'            => 'new',
-        'promotion_id'      => $promotion_id,
-        'promotion_name'    => $promotion_name !== '' ? $promotion_name : null,
+        'promotion_id'      => $promotion_id ?: 0,
+        'promotion_name'    => $promotion_name !== '' ? $cap_str($promotion_name, 250) : null,
         'ip_address'        => hash('sha256', $client_ip),
         'created_at'        => $now,
         'updated_at'        => $now,
-    ), array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s'));
+    );
+    $insert_formats = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s');
+
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+    $inserted = $wpdb->insert($tables['enquiries'], $insert_data, $insert_formats);
+    if (!$inserted && function_exists('outbound_maybe_install_schema')) {
+        // Self-heal missing table or upgraded columns (e.g. after theme ZIP update) and retry once.
+        outbound_maybe_install_schema(true);
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+        $inserted = $wpdb->insert($tables['enquiries'], $insert_data, $insert_formats);
+    }
 
     if (!$inserted) {
+        if (!empty($wpdb->last_error)) {
+            error_log('[Outbound Enquiries] DB insert failed: ' . $wpdb->last_error);
+        }
         return new WP_Error('db_error', 'Unable to save enquiry at this time.', array('status' => 500));
     }
 
@@ -412,8 +722,49 @@ function outbound_build_enquiry_options_html(
     if (!empty($builder_details['accommodation_name'])) {
         $rows[] = array('Preferred Property', (string) $builder_details['accommodation_name']);
     }
+    if (!empty($builder_details['room_type'])) {
+        $rows[] = array('Room / Unit Type', (string) $builder_details['room_type']);
+    }
+    if (!empty($builder_details['meal_plan'])) {
+        $rows[] = array('Meal Plan', (string) $builder_details['meal_plan']);
+    }
+    if (!empty($builder_details['offer_name'])) {
+        $rows[] = array('Special Offer / Package', (string) $builder_details['offer_name']);
+    }
+    if (!empty($builder_details['visitor_market'])) {
+        $rows[] = array('Visitor Market', (string) $builder_details['visitor_market']);
+    }
+    if (!empty($builder_details['rooms_count']) && (int) $builder_details['rooms_count'] > 1) {
+        $rows[] = array('Rooms / Units', (string) (int) $builder_details['rooms_count']);
+    }
     if (!empty($builder_details['package_title'])) {
-        $rows[] = array('Selected Package', (string) $builder_details['package_title']);
+        $rows[] = array('Holiday Package', (string) $builder_details['package_title']);
+    }
+    if (!empty($builder_details['preselected_exp'])) {
+        $rows[] = array('Selected Experience', (string) $builder_details['preselected_exp']);
+    }
+    if (!empty($builder_details['check_in_date']) || !empty($builder_details['check_out_date'])) {
+        $rows[] = array('Check-in / Check-out', trim((string) ($builder_details['check_in_date'] ?? '') . ' to ' . (string) ($builder_details['check_out_date'] ?? '')));
+    } elseif (!empty($builder_details['preferred_date'])) {
+        $rows[] = array('Preferred Date', (string) $builder_details['preferred_date']);
+    }
+    if (!empty($builder_details['child_ages']) && is_array($builder_details['child_ages'])) {
+        $rows[] = array('Children Age Categories', implode(', ', array_map('strval', $builder_details['child_ages'])));
+    }
+    if (!empty($builder_details['selected_extras']) && is_array($builder_details['selected_extras'])) {
+        $rows[] = array('Selected Extras', implode(', ', array_map('strval', $builder_details['selected_extras'])));
+    }
+    if (!empty($builder_details['estimated_price'])) {
+        $rows[] = array('Estimated Price', (string) $builder_details['estimated_price']);
+    }
+    if (!empty($builder_details['country'])) {
+        $rows[] = array('Country of Residence', (string) $builder_details['country']);
+    }
+    if (!empty($builder_details['preferred_channel'])) {
+        $rows[] = array('Preferred Contact Channel', ucfirst((string) $builder_details['preferred_channel']));
+    }
+    if (!empty($builder_details['source_page'])) {
+        $rows[] = array('Source Page', (string) $builder_details['source_page']);
     }
     if (!empty($builder_details['preselected_exp'])) {
         $rows[] = array('Featured Experience', (string) $builder_details['preselected_exp']);
@@ -491,22 +842,34 @@ function outbound_dispatch_enquiry_emails(
     int $enquiry_id,
     array $builder_details = array()
 ): void {
-    $cms = outbound_get_site_options();
-    $smtp_opts = function_exists('get_option') ? (array) get_option('outbound_smtp_options', array()) : array();
-    $configured_from = defined('OUTBOUND_SMTP_FROM_EMAIL') ? (string) OUTBOUND_SMTP_FROM_EMAIL : (string) ($smtp_opts['from_email'] ?? '');
-    $cms_email = (string) ($cms['contact']['email'] ?? '');
-    if ($cms_email !== '' && $cms_email !== 'travel@outboundholidays.co.zw' && is_email($cms_email)) {
+    $cms             = outbound_get_site_options();
+    $from_cfg        = function_exists('outbound_get_mail_from_config') ? outbound_get_mail_from_config() : array('email' => 'fungai@outboundholiday.com', 'name' => 'Outbound Holidays');
+    $configured_from = (string) ($from_cfg['email'] ?? 'fungai@outboundholiday.com');
+    $from_name       = (string) ($from_cfg['name'] ?? 'Outbound Holidays');
+    $cms_email       = strtolower(trim((string) ($cms['contact']['email'] ?? '')));
+    $legacy_emails   = array('travel@outboundholidays.co.zw', 'travel@outboundholiday.com');
+
+    if ($cms_email !== '' && !in_array($cms_email, $legacy_emails, true) && is_email($cms_email)) {
         $specialist_email = $cms_email;
     } elseif (is_email($configured_from)) {
         $specialist_email = $configured_from;
     } else {
-        $specialist_email = (string) get_option('admin_email');
+        $specialist_email = 'fungai@outboundholiday.com';
     }
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+
+    $from_header = sprintf('From: %s <%s>', $from_name !== '' ? $from_name : 'Outbound Holidays', is_email($configured_from) ? $configured_from : 'fungai@outboundholiday.com');
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        $from_header,
+        'Reply-To: Outbound Holidays <' . $specialist_email . '>',
+    );
     $specialist_headers = array(
         'Content-Type: text/html; charset=UTF-8',
-        'Reply-To: ' . $name . ' <' . $email . '>',
+        $from_header,
     );
+    if (is_email($email)) {
+        $specialist_headers[] = 'Reply-To: ' . $name . ' <' . $email . '>';
+    }
 
     $estimate_line = !empty($estimate['minimum'])
         ? sprintf('<p><strong>Estimated Guide Budget:</strong> $%s – $%s USD</p>', number_format((int) $estimate['minimum']), number_format((int) $estimate['maximum']))
@@ -563,7 +926,9 @@ function outbound_dispatch_enquiry_emails(
             </div>
         </div>";
 
-    wp_mail($email, sprintf('We received your Outbound Holidays enquiry (%s)', $reference), $guest_body, $headers);
+    if (is_email($email)) {
+        wp_mail($email, sprintf('We received your Outbound Holidays enquiry (%s)', $reference), $guest_body, $headers);
+    }
 }
 
 /**
@@ -618,7 +983,7 @@ function outbound_render_enquiries_admin_page(): void {
         $eid    = (int) ($_POST['enquiry_id'] ?? 0);
         $status = sanitize_text_field((string) ($_POST['status'] ?? 'new'));
         $notes  = sanitize_textarea_field((string) ($_POST['admin_notes'] ?? ''));
-        if ($eid > 0 && in_array($status, array('new', 'contacted', 'quoted', 'booked', 'archived'), true)) {
+        if ($eid > 0 && array_key_exists($status, outbound_get_enquiry_statuses())) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery
             $wpdb->update($tables['enquiries'], array(
                 'status'      => $status,
@@ -637,7 +1002,8 @@ function outbound_render_enquiries_admin_page(): void {
         $out = fopen('php://output', 'w');
         fputcsv($out, array('Reference', 'Type', 'Promotion', 'Name', 'Email', 'Phone', 'Adults', 'Children', 'Nights', 'Estimate Min USD', 'Estimate Max USD', 'Status', 'Created At'));
         foreach ((array) $rows as $r) {
-            fputcsv($out, array($r['reference_code'], $r['type'], $r['promotion_name'] ?? '', $r['full_name'], $r['email'], $r['phone'], $r['adults'], $r['children'], $r['nights'], $r['estimate_min_usd'], $r['estimate_max_usd'], $r['status'], $r['created_at']));
+            $cells = array($r['reference_code'], $r['type'], $r['promotion_name'] ?? '', $r['full_name'], $r['email'], $r['phone'], $r['adults'], $r['children'], $r['nights'], $r['estimate_min_usd'], $r['estimate_max_usd'], $r['status'], $r['created_at']);
+            fputcsv($out, array_map(static fn($c) => outbound_csv_safe_cell((string) $c), $cells));
         }
         fclose($out);
         exit;
@@ -684,8 +1050,23 @@ function outbound_render_enquiries_admin_page(): void {
                 <?php if (!empty($decoded['trip']['stayPreferences'])) : ?>
                     <p><strong>Stay Preferences:</strong> <?php echo esc_html(implode(', ', (array) $decoded['trip']['stayPreferences'])); ?></p>
                 <?php endif; ?>
-                <?php if (!empty($decoded['trip']['accommodationName'])) : ?>
-                    <p><strong>Preferred Property:</strong> <?php echo esc_html((string) $decoded['trip']['accommodationName']); ?></p>
+                <?php if (!empty($decoded['trip']['accommodationName']) || !empty($decoded['propertyName'])) : ?>
+                    <p><strong>Property:</strong> <?php echo esc_html((string) ($decoded['trip']['accommodationName'] ?? $decoded['propertyName'])); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($decoded['roomType']) || !empty($decoded['trip']['roomType'])) : ?>
+                    <p><strong>Room / Unit Type:</strong> <?php echo esc_html((string) ($decoded['roomType'] ?? $decoded['trip']['roomType'])); ?><?php if (!empty($decoded['roomId'])) : ?> <code>(<?php echo esc_html((string) $decoded['roomId']); ?>)</code><?php endif; ?></p>
+                <?php endif; ?>
+                <?php if (!empty($decoded['mealPlan'])) : ?>
+                    <p><strong>Meal Plan:</strong> <?php echo esc_html((string) $decoded['mealPlan']); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($decoded['checkInDate']) || !empty($decoded['checkOutDate'])) : ?>
+                    <p><strong>Dates:</strong> <?php echo esc_html(trim((string) ($decoded['checkInDate'] ?? '') . ' to ' . (string) ($decoded['checkOutDate'] ?? ''))); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($decoded['childAges']) && is_array($decoded['childAges'])) : ?>
+                    <p><strong>Children&apos;s Ages:</strong> <?php echo esc_html(implode(', ', array_map('strval', $decoded['childAges']))); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($decoded['estimatedPriceLabel'])) : ?>
+                    <p><strong>Displayed Rate / Quote:</strong> <?php echo esc_html((string) $decoded['estimatedPriceLabel']); ?></p>
                 <?php endif; ?>
                 <?php if (!empty($decoded['trip']['packageTitle'])) : ?>
                     <p><strong>Selected Package:</strong> <?php echo esc_html((string) $decoded['trip']['packageTitle']); ?></p>
@@ -700,8 +1081,8 @@ function outbound_render_enquiries_admin_page(): void {
                     <p>
                         <label><strong>Status:</strong></label>
                         <select name="status">
-                            <?php foreach (array('new', 'contacted', 'quoted', 'booked', 'archived') as $st) : ?>
-                                <option value="<?php echo esc_attr($st); ?>" <?php selected((string) $selected->status, $st); ?>><?php echo esc_html(ucfirst($st)); ?></option>
+                            <?php foreach (outbound_get_enquiry_statuses() as $st => $st_label) : ?>
+                                <option value="<?php echo esc_attr($st); ?>" <?php selected((string) $selected->status, $st); ?>><?php echo esc_html($st_label); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </p>

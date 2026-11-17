@@ -40,7 +40,7 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
         <div className="max-w-6xl mx-auto relative z-10 space-y-6 text-center">
           
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C9A66B]/20 text-[#E5C989] text-xs font-bold uppercase tracking-widest border border-[#C9A66B]/40 shadow-xs">
-            <img src={outboundLogo} alt={editorial("travel/guide/GuideHubView.text1")} className="w-6 h-6 object-contain" />
+            <img src={outboundLogo} alt={editorial("travel/guide/GuideHubView.text1")} className="w-6 h-6 object-contain" loading="lazy" decoding="async" />
             <span>{editorial("travel/guide/GuideHubView.text2")}</span>
           </div>
 
@@ -99,7 +99,7 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
                 ? 'md:grid-cols-2' 
                 : 'md:grid-cols-2 lg:grid-cols-3'
             } gap-6`}>
-              {categoryGroup.articles.map((article) => {
+              {categoryGroup.articles.map((article: any) => {
                 const isFeatured = article.featured;
                 return (
                   <div
@@ -118,6 +118,8 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
                           src={article.imageUrl} 
                           alt={article.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                         
@@ -208,6 +210,8 @@ export const GuideHubView: React.FC<GuideHubViewProps> = ({
                 src={elephantExperienceImg}
                 alt={editorial("travel/guide/GuideHubView.text17")}
                 className="w-16 h-16 rounded-full mx-auto object-cover ring-4 ring-[#C9A66B]/40 shadow-md"
+                loading="lazy"
+                decoding="async"
               />
               <div>
                 <h3 className="font-serif font-bold text-base text-white">{editorial("travel/guide/GuideHubView.text18")}</h3>

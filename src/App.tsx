@@ -1,6 +1,5 @@
-import { ContactUsView } from './components/travel/ContactUsView';
-import { useEffect,useState } from 'react';
-import { resolveRoute,sectionPath,experiencePath,packagePath,accommodationPath,categoryPath,blogPath,offerPath } from './routes';
+import { Suspense, lazy, useEffect, useState } from 'react';
+import { resolveRoute,sectionPath,experiencePath,packagePath,accommodationPath,categoryPath,blogPath,offerPath,searchPath } from './routes';
 import { getWpConfig } from './runtime/api';
 import { editorialValueOptional } from './runtime/catalog';
 import { PageMetadata } from './components/common/PageMetadata';
@@ -12,39 +11,51 @@ import { PlanYourHolidaySection } from './components/travel/PlanYourHolidaySecti
 import { QuickPlanningBar } from './components/travel/QuickPlanningBar';
 import { WhyChooseOutbound } from './components/travel/WhyChooseOutbound';
 import { FeaturedExperiences } from './components/travel/FeaturedExperiences';
-import { ExperiencesDirectoryPage } from './components/travel/ExperiencesDirectoryPage';
-import { ExperienceDetailPage } from './components/travel/ExperienceDetailPage';
 import { Experience,ALL_EXPERIENCES } from './data/experiencesData';
 import { WhereToStaySection } from './components/travel/WhereToStaySection';
-import { AccommodationDirectoryPage } from './components/travel/AccommodationDirectoryPage';
-import { AccommodationDetailPage } from './components/travel/AccommodationDetailPage';
-import { DetailedAccommodation } from './data/accommodationsData';
+import type { DetailedAccommodation } from './data/accommodationsData';
 import { FeaturedPackages } from './components/travel/FeaturedPackages';
-import { PackagesDirectoryPage } from './components/travel/PackagesDirectoryPage';
-import { PackageDetailPage } from './components/travel/PackageDetailPage';
-import { DetailedPackage } from './data/packagesData';
+import type { DetailedPackage } from './data/packagesData';
 import { TravellerStories } from './components/travel/TravellerStories';
-import { AboutPage } from './components/travel/AboutPage';
-import { ClientGallery } from './components/travel/ClientGallery';
 import { FinalCtaBanner } from './components/travel/FinalCtaBanner';
 import { VicFallsGuide } from './components/travel/VicFallsGuide';
-import { VicFallsGuidePage } from './components/travel/VicFallsGuidePage';
-import { BlogListingPage } from './components/blog/BlogListingPage';
-import { BlogArticlePage } from './components/blog/BlogArticlePage';
-import { ExperienceCategoryPage } from './components/travel/ExperienceCategoryPage';
-import { BomaExperiencePage } from './components/travel/BomaExperiencePage';
-import { BungeeExperiencePage } from './components/travel/BungeeExperiencePage';
-import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
-import { PromotionalModal } from './components/promotions/PromotionalModal';
-import { PromotionEnquiryModal } from './components/promotions/PromotionEnquiryModal';
 import { PromotionsSection } from './components/promotions/PromotionsSection';
-import { OfferDetailPage } from './components/promotions/OfferDetailPage';
 import type { PromotionOffer } from './types/promotion';
 import { fetchActivePromotions, canShowPromotionPopup } from './data/promotionsData';
 import { MobileStickyCta } from './components/common/MobileStickyCta';
+import { getEnquiryItemLabel, type DirectEnquiryContext } from './utils/enquiry';
+import { trackEnquiryEvent } from './utils/analytics';
 import { Newsletter } from './components/common/Newsletter';
-import { NewsletterAdmin } from './components/admin/NewsletterAdmin';
 import { Footer } from './components/common/Footer';
+
+const ContactUsView = lazy(() => import('./components/travel/ContactUsView').then((m) => ({ default: m.ContactUsView })));
+const SearchResultsPage = lazy(() => import('./components/common/SearchResultsPage').then((m) => ({ default: m.SearchResultsPage })));
+const ExperiencesDirectoryPage = lazy(() => import('./components/travel/ExperiencesDirectoryPage').then((m) => ({ default: m.ExperiencesDirectoryPage })));
+const ExperienceDetailPage = lazy(() => import('./components/travel/ExperienceDetailPage').then((m) => ({ default: m.ExperienceDetailPage })));
+const AccommodationDirectoryPage = lazy(() => import('./components/travel/AccommodationDirectoryPage').then((m) => ({ default: m.AccommodationDirectoryPage })));
+const AccommodationDetailPage = lazy(() => import('./components/travel/AccommodationDetailPage').then((m) => ({ default: m.AccommodationDetailPage })));
+const PackagesDirectoryPage = lazy(() => import('./components/travel/PackagesDirectoryPage').then((m) => ({ default: m.PackagesDirectoryPage })));
+const PackageDetailPage = lazy(() => import('./components/travel/PackageDetailPage').then((m) => ({ default: m.PackageDetailPage })));
+const AboutPage = lazy(() => import('./components/travel/AboutPage').then((m) => ({ default: m.AboutPage })));
+const ClientGallery = lazy(() => import('./components/travel/ClientGallery').then((m) => ({ default: m.ClientGallery })));
+const VicFallsGuidePage = lazy(() => import('./components/travel/VicFallsGuidePage').then((m) => ({ default: m.VicFallsGuidePage })));
+const BlogListingPage = lazy(() => import('./components/blog/BlogListingPage').then((m) => ({ default: m.BlogListingPage })));
+const BlogArticlePage = lazy(() => import('./components/blog/BlogArticlePage').then((m) => ({ default: m.BlogArticlePage })));
+const ExperienceCategoryPage = lazy(() => import('./components/travel/ExperienceCategoryPage').then((m) => ({ default: m.ExperienceCategoryPage })));
+const BomaExperiencePage = lazy(() => import('./components/travel/BomaExperiencePage').then((m) => ({ default: m.BomaExperiencePage })));
+const BungeeExperiencePage = lazy(() => import('./components/travel/BungeeExperiencePage').then((m) => ({ default: m.BungeeExperiencePage })));
+const OfferDetailPage = lazy(() => import('./components/promotions/OfferDetailPage').then((m) => ({ default: m.OfferDetailPage })));
+const NewsletterAdmin = lazy(() => import('./components/admin/NewsletterAdmin').then((m) => ({ default: m.NewsletterAdmin })));
+const PlanHolidayModal = lazy(() => import('./components/travel/PlanHolidayModal').then((m) => ({ default: m.PlanHolidayModal })));
+const PromotionalModal = lazy(() => import('./components/promotions/PromotionalModal').then((m) => ({ default: m.PromotionalModal })));
+const PromotionEnquiryModal = lazy(() => import('./components/promotions/PromotionEnquiryModal').then((m) => ({ default: m.PromotionEnquiryModal })));
+const DirectEnquiryModal = lazy(() => import('./components/common/DirectEnquiryModal').then((m) => ({ default: m.DirectEnquiryModal })));
+
+const PageLoadingFallback = () => (
+  <div className="min-h-[60vh] flex items-center justify-center bg-[#FAF9F6]" aria-busy="true">
+    <div className="w-8 h-8 rounded-full border-2 border-[#0B5E8E]/20 border-t-[#0B5E8E] animate-spin" />
+  </div>
+);
 
 export default function App({ initialPath,contentVersion }: { initialPath?: string;contentVersion?:string } = {}) {
   // Application View & Navigation State
@@ -89,8 +100,29 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
   // Modals & Drawers
   const [preselectedActivity,setPreselectedActivity]=useState<string|null>(null);
   const [planHolidayOpen, setPlanHolidayOpen] = useState(false);
+  const [directEnquiryContext, setDirectEnquiryContext] = useState<DirectEnquiryContext | null>(null);
   const [preselectedPackage, setPreselectedPackage] = useState<TravelPackage | DetailedPackage | null>(null);
   const [preselectedAccommodation, setPreselectedAccommodation] = useState<DetailedAccommodation | null>(null);
+
+  const openDirectEnquiry = (ctx: DirectEnquiryContext) => {
+    trackEnquiryEvent('enquiry_cta_clicked', {
+      category: ctx.category,
+      sourcePage: ctx.sourceUrl || (typeof window !== 'undefined' ? window.location.pathname : '/'),
+      itemLabel: getEnquiryItemLabel(ctx) || undefined,
+    });
+    setDirectEnquiryContext(ctx);
+  };
+
+  const openHolidayBuilder = (opts?: {
+    pkg?: TravelPackage | DetailedPackage | null;
+    acc?: DetailedAccommodation | null;
+    activityId?: string | null;
+  }) => {
+    setPreselectedPackage(opts?.pkg ?? null);
+    setPreselectedAccommodation(opts?.acc ?? null);
+    setPreselectedActivity(opts?.activityId ?? null);
+    setPlanHolidayOpen(true);
+  };
 
   const handleSelectAccommodationDetail = (property: DetailedAccommodation) => navigate(accommodationPath(property));
   const handleExploreAllAccommodations = () => navigate(sectionPath('accommodation'));
@@ -99,9 +131,9 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
   const handleSelectExperience = (experience: Experience) => navigate(experiencePath(experience));
   const handleSelectCategory = (category: string) => navigate(categoryPath(category));
   const handleNavigateSection = (section: string) => navigate(sectionPath(section));
-  const handleSearchQuery = (query: string) => {
+  const handleSearchSubmit = (query: string) => {
     setSearchQuery(query);
-    if (activeView !== 'packages') navigate(sectionPath('packages'));
+    navigate(searchPath(query));
   };
 
   // Promotions & Campaigns State
@@ -264,12 +296,12 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
       <Header
         currency={currency}
         setCurrency={setCurrency}
-        onOpenPlanHoliday={() => {
-          setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
-          setPlanHolidayOpen(true);
-        }}
+        onOpenPlanHoliday={() => openHolidayBuilder()}
         searchQuery={searchQuery}
-        setSearchQuery={handleSearchQuery}
+        setSearchQuery={setSearchQuery}
+        onSubmitSearch={handleSearchSubmit}
+        onNavigate={navigate}
+        promotions={promotions}
 
         onNavigateSection={handleNavigateSection}
         isHomepage={activeView === 'home'}
@@ -285,11 +317,23 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
 
       {/* Main Content Area - Render Dedicated Page or Home Layout */}
       <main className="flex-1">
+        <Suspense fallback={<PageLoadingFallback />}>
         {activeView === 'not-found' ? (
           <section className="max-w-3xl mx-auto px-6 py-20 text-center space-y-6">
             <h1 className="font-serif text-4xl font-bold text-[#0B5E8E]">Page not found</h1>
-            <p>The page you’re looking for is unavailable. Explore our Victoria Falls holidays and experiences.</p>
-            <PageLink href="/" onClick={() => navigate('/')} className="inline-block rounded-xl bg-[#0B5E8E] px-6 py-3 text-white">Back to home</PageLink>
+            <p>
+              {route.path.startsWith('/accommodation/')
+                ? 'This accommodation property is no longer listed or is currently unavailable. Explore our other curated Victoria Falls stays below.'
+                : 'The page you’re looking for is unavailable. Explore our Victoria Falls holidays and experiences.'}
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {route.path.startsWith('/accommodation/') && (
+                <PageLink href={sectionPath('accommodation')} onClick={() => navigate(sectionPath('accommodation'))} className="inline-block rounded-xl bg-[#E67E22] px-6 py-3 text-white font-semibold">
+                  Browse Where to Stay
+                </PageLink>
+              )}
+              <PageLink href="/" onClick={() => navigate('/')} className="inline-block rounded-xl bg-[#0B5E8E] px-6 py-3 text-white">Back to home</PageLink>
+            </div>
           </section>
         ) : activeView === 'admin-newsletter' ? (
           <NewsletterAdmin onNavigateHome={() => navigate('/')} />
@@ -334,6 +378,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
           <AccommodationDetailPage
             property={selectedAccommodation}
             currency={currency}
+            onDirectEnquiry={openDirectEnquiry}
             onOpenPlanHolidayWithProperty={(prop) => {
               setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPreselectedAccommodation(prop);
@@ -365,6 +410,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
           <PackageDetailPage
             packageData={selectedPackage}
             currency={currency}
+            onDirectEnquiry={openDirectEnquiry}
             onPlanHoliday={(pkg) => {
               setPreselectedPackage(pkg); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPlanHolidayOpen(true);
@@ -413,6 +459,8 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
         ) : activeView === 'experience-detail' && selectedExperience ? (
           <ExperienceDetailPage
             experience={selectedExperience}
+            currency={currency}
+            onDirectEnquiry={openDirectEnquiry}
             onOpenPlanHoliday={() => {
               setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(selectedExperience?.id??null);
               setPlanHolidayOpen(true);
@@ -508,6 +556,13 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
               setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
               setPlanHolidayOpen(true);
             }}
+          />
+        ) : activeView === 'search' ? (
+          <SearchResultsPage
+            initialQuery={searchQuery || (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('q') || '' : '')}
+            initialType={(typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('type') : undefined) as never}
+            promotions={promotions}
+            onNavigate={navigate}
           />
         ) : activeView === 'offer-detail' ? (
           <OfferDetailPage
@@ -641,18 +696,14 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
 
             {/* 9. Final Call To Action */}
             {showHomepageSection('showFinalCta') && (
-              <FinalCtaBanner
-                onOpenPlanHoliday={() => {
-                  setPreselectedPackage(null); setPreselectedAccommodation(null); setPreselectedActivity(null);
-                  setPlanHolidayOpen(true);
-                }}
-              />
+              <FinalCtaBanner onOpenPlanHoliday={() => openHolidayBuilder()} />
             )}
           </div>
         )}
 
         {/* Global Travel Newsletter Section (omitted on blog views where compact Victoria Falls Travel Club sits in-page) */}
         {activeView !== 'admin-newsletter' && activeView !== 'blog' && activeView !== 'blog-post' && showHomepageSection('showNewsletter') && <Newsletter />}
+        </Suspense>
       </main>
 
       <PageMetadata route={route} />
@@ -676,38 +727,65 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
       />
 
       {/* Holiday Builder Modal */}
-      <PlanHolidayModal
-        isOpen={planHolidayOpen}
-        onClose={() => setPlanHolidayOpen(false)}
-        preselectedActivity={preselectedActivity}
-        preselectedPackage={preselectedPackage}
-        preselectedAccommodation={preselectedAccommodation}
-      />
+      {planHolidayOpen && (
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center" aria-busy="true">
+              <div className="w-9 h-9 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+            </div>
+          }
+        >
+          <PlanHolidayModal
+            isOpen={planHolidayOpen}
+            onClose={() => setPlanHolidayOpen(false)}
+            preselectedActivity={preselectedActivity}
+            preselectedPackage={preselectedPackage}
+            preselectedAccommodation={preselectedAccommodation}
+          />
+        </Suspense>
+      )}
+
+      {directEnquiryContext && (
+        <Suspense fallback={null}>
+          <DirectEnquiryModal
+            context={directEnquiryContext}
+            onClose={() => setDirectEnquiryContext(null)}
+            onNavigateContact={() => {
+              setDirectEnquiryContext(null);
+              handleNavigateSection('contact');
+            }}
+          />
+        </Suspense>
+      )}
 
       {/* Promotional Pop-up Modal */}
       {activePopupPromo && (
-        <PromotionalModal
-          promotion={activePopupPromo}
-          isOpen={Boolean(activePopupPromo)}
-          onClose={() => setActivePopupPromo(null)}
-          onSelectOffer={(promo) => {
-            setActivePopupPromo(null);
-            setPromoEnquiryTarget(promo);
-          }}
-          onOpenOfferDetails={(promo) => {
-            setActivePopupPromo(null);
-            navigate(offerPath(promo.slug));
-          }}
-        />
+        <Suspense fallback={null}>
+          <PromotionalModal
+            promotion={activePopupPromo}
+            isOpen={Boolean(activePopupPromo)}
+            onClose={() => setActivePopupPromo(null)}
+            onSelectOffer={(promo) => {
+              setActivePopupPromo(null);
+              setPromoEnquiryTarget(promo);
+            }}
+            onOpenOfferDetails={(promo) => {
+              setActivePopupPromo(null);
+              navigate(offerPath(promo.slug));
+            }}
+          />
+        </Suspense>
       )}
 
       {/* Promotion-Linked Dedicated Enquiry Modal */}
       {promoEnquiryTarget && (
-        <PromotionEnquiryModal
-          promotion={promoEnquiryTarget}
-          isOpen={Boolean(promoEnquiryTarget)}
-          onClose={() => setPromoEnquiryTarget(null)}
-        />
+        <Suspense fallback={null}>
+          <PromotionEnquiryModal
+            promotion={promoEnquiryTarget}
+            isOpen={Boolean(promoEnquiryTarget)}
+            onClose={() => setPromoEnquiryTarget(null)}
+          />
+        </Suspense>
       )}
     </div>
   );

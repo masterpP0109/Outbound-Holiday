@@ -44,6 +44,18 @@ function outbound_map_accommodation_migration_record(array $item): array {
         ? array_values($item['highlights'])
         : ($why_text !== '' ? array($why_text) : array());
 
+    $rooms_in  = array_values((array) ($item['roomTypes'] ?? array()));
+    $rooms_out = array();
+    foreach ($rooms_in as $ridx => $rm) {
+        if (!is_array($rm) || empty($rm['name'])) {
+            continue;
+        }
+        if (empty($rm['id'])) {
+            $rm['id'] = 'unit_' . $slug . '_' . ($ridx + 1);
+        }
+        $rooms_out[] = $rm;
+    }
+
     return array(
         'post_type'    => 'accommodation',
         'post_name'    => $slug,
@@ -75,11 +87,13 @@ function outbound_map_accommodation_migration_record(array $item): array {
             '_outbound_at_a_glance_json'        => wp_json_encode((array) ($item['atAGlance'] ?? array())),
             '_outbound_highlights_json'         => wp_json_encode($highlights),
             '_outbound_gallery_json'            => wp_json_encode($gallery),
-            '_outbound_room_types_json'         => wp_json_encode(array_values((array) ($item['roomTypes'] ?? array()))),
+            '_outbound_room_types_json'         => wp_json_encode($rooms_out),
             '_outbound_facilities_json'         => wp_json_encode(array_values((array) ($item['facilities'] ?? array()))),
             '_outbound_location_info_json'      => wp_json_encode((array) ($item['locationInfo'] ?? array())),
             '_outbound_nearby_experiences_json' => wp_json_encode(array_values((array) ($item['nearbyExperienceIds'] ?? array()))),
             '_outbound_related_ids_json'        => wp_json_encode(array_values((array) ($item['relatedPropertyIds'] ?? array()))),
+            '_outbound_rate_plans_json'         => wp_json_encode(array_values((array) ($item['ratePlans'] ?? array()))),
+            '_outbound_property_offers_json'    => wp_json_encode(array_values((array) ($item['offers'] ?? array()))),
             '_outbound_full_json'               => wp_json_encode($item),
         ),
     );
@@ -329,13 +343,19 @@ function outbound_sideload_image_to_library(string $image_url, int $post_id = 0)
  *
  * @param array<string, mixed>  $postarr
  * @param array<string, string> $meta
+ * @param string|null           $action_taken Out-parameter set to 'created', 'updated', or 'skipped'.
  */
-function outbound_upsert_migrated_post(array $postarr, array $meta, bool $sideload_media = false): int {
+function outbound_upsert_migrated_post(array $postarr, array $meta, bool $sideload_media = false, bool $overwrite = false, ?string &$action_taken = null): int {
     $slug      = sanitize_title((string) $postarr['post_name']);
     $post_type = (string) $postarr['post_type'];
 
     $existing = get_page_by_path($slug, OBJECT, $post_type);
-    $payload  = array(
+    if ($existing instanceof WP_Post && !$overwrite) {
+        $action_taken = 'skipped';
+        return (int) $existing->ID;
+    }
+
+    $payload = array(
         'post_type'    => $post_type,
         'post_name'    => $slug,
         'post_title'   => (string) $postarr['post_title'],
@@ -346,9 +366,11 @@ function outbound_upsert_migrated_post(array $postarr, array $meta, bool $sidelo
 
     if ($existing instanceof WP_Post) {
         $payload['ID'] = $existing->ID;
-        $post_id = (int) wp_update_post($payload);
+        $post_id       = (int) wp_update_post($payload);
+        $action_taken  = 'updated';
     } else {
-        $post_id = (int) wp_insert_post($payload);
+        $post_id      = (int) wp_insert_post($payload);
+        $action_taken = 'created';
     }
 
     if ($post_id > 0) {
@@ -373,12 +395,62 @@ function outbound_upsert_migrated_post(array $postarr, array $meta, bool $sidelo
 }
 
 /**
- * Run complete idempotent migration from decoded migration bundle JSON array.
+ * Dry-run preview of what a bundle import would create, skip, or overwrite without modifying the database.
  *
  * @param array<string, mixed> $bundle
- * @return array<string, int>
+ * @return array<string, mixed>
  */
-function outbound_execute_bundle_import(array $bundle, bool $sideload_media = false): array {
+function outbound_preview_bundle_import(array $bundle, bool $overwrite = false): array {
+    $fallback = function_exists('outbound_get_baseline_snapshot') ? outbound_get_baseline_snapshot() : array();
+    $preview  = array(
+        'overwrite' => $overwrite,
+        'summary'   => array(),
+        'details'   => array(),
+    );
+
+    $check_group = static function (string $label, string $post_type, array $records, callable $mapper) use ($overwrite, &$preview): void {
+        $counts = array('create' => 0, 'skip' => 0, 'overwrite' => 0);
+        $items  = array();
+        foreach ($records as $rec) {
+            $mapped = $mapper((array) $rec);
+            $slug   = sanitize_title((string) ($mapped['post_name'] ?? ''));
+            if ($slug === '') {
+                continue;
+            }
+            $existing = get_page_by_path($slug, OBJECT, $post_type);
+            if ($existing instanceof WP_Post) {
+                if ($overwrite) {
+                    $counts['overwrite']++;
+                    $items[] = array('slug' => $slug, 'title' => (string) $mapped['post_title'], 'action' => 'overwrite');
+                } else {
+                    $counts['skip']++;
+                    $items[] = array('slug' => $slug, 'title' => (string) $mapped['post_title'], 'action' => 'skip');
+                }
+            } else {
+                $counts['create']++;
+                $items[] = array('slug' => $slug, 'title' => (string) $mapped['post_title'], 'action' => 'create');
+            }
+        }
+        $preview['summary'][$label] = $counts;
+        $preview['details'][$label] = $items;
+    };
+
+    $check_group('Accommodations', 'accommodation', (array) ($bundle['accommodations'] ?? ($fallback['accommodations'] ?? array())), 'outbound_map_accommodation_migration_record');
+    $check_group('Experiences', 'experience', (array) ($bundle['experiences'] ?? ($fallback['experiences'] ?? array())), 'outbound_map_experience_migration_record');
+    $check_group('Packages', 'package', (array) ($bundle['packages'] ?? ($fallback['packages'] ?? array())), 'outbound_map_package_migration_record');
+    $check_group('Planning Guides', 'guide_article', (array) ($bundle['guides'] ?? ($fallback['guides'] ?? array())), 'outbound_map_guide_migration_record');
+    $check_group('Client Albums', 'client_album', (array) ($bundle['clientGalleries'] ?? ($bundle['albums'] ?? ($fallback['albums'] ?? array()))), 'outbound_map_album_migration_record');
+
+    return $preview;
+}
+
+/**
+ * Run safe non-destructive migration by default (skips existing records unless `$overwrite = true`).
+ *
+ * @param array<string, mixed> $bundle
+ * @return array<string, array<string, int>>
+ */
+function outbound_execute_bundle_import(array $bundle, bool $sideload_media = false, bool $overwrite = false): array {
     if (function_exists('set_time_limit')) {
         @set_time_limit(120);
     }
@@ -388,37 +460,44 @@ function outbound_execute_bundle_import(array $bundle, bool $sideload_media = fa
     $fallback = function_exists('outbound_get_baseline_snapshot') ? outbound_get_baseline_snapshot() : array();
 
     $counts = array(
-        'accommodation' => 0,
-        'experience'    => 0,
-        'package'       => 0,
-        'guide_article' => 0,
-        'client_album'  => 0,
-        'post'          => 0,
+        'accommodation' => array('created' => 0, 'updated' => 0, 'skipped' => 0),
+        'experience'    => array('created' => 0, 'updated' => 0, 'skipped' => 0),
+        'package'       => array('created' => 0, 'updated' => 0, 'skipped' => 0),
+        'guide_article' => array('created' => 0, 'updated' => 0, 'skipped' => 0),
+        'client_album'  => array('created' => 0, 'updated' => 0, 'skipped' => 0),
+        'post'          => array('created' => 0, 'updated' => 0, 'skipped' => 0),
     );
 
     foreach ((array) ($bundle['accommodations'] ?? ($fallback['accommodations'] ?? array())) as $acc) {
         $mapped = outbound_map_accommodation_migration_record((array) $acc);
-        $pid = outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media);
-        if ($pid > 0) {
+        $act    = null;
+        $pid    = outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media, $overwrite, $act);
+        if ($pid > 0 && $act !== 'skipped') {
             wp_set_object_terms($pid, array($mapped['category_id']), 'accommodation_category');
-            $counts['accommodation']++;
+        }
+        if ($act && isset($counts['accommodation'][$act])) {
+            $counts['accommodation'][$act]++;
         }
     }
 
     foreach ((array) ($bundle['experiences'] ?? ($fallback['experiences'] ?? array())) as $exp) {
         $mapped = outbound_map_experience_migration_record((array) $exp);
-        $pid = outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media);
-        if ($pid > 0) {
+        $act    = null;
+        $pid    = outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media, $overwrite, $act);
+        if ($pid > 0 && $act !== 'skipped') {
             wp_set_object_terms($pid, (array) $mapped['categories'], 'experience_category');
-            $counts['experience']++;
+        }
+        if ($act && isset($counts['experience'][$act])) {
+            $counts['experience'][$act]++;
         }
     }
 
     foreach ((array) ($bundle['packages'] ?? ($fallback['packages'] ?? array())) as $pkg) {
         $mapped = outbound_map_package_migration_record((array) $pkg);
-        $pid = outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media);
-        if ($pid > 0) {
-            $counts['package']++;
+        $act    = null;
+        outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media, $overwrite, $act);
+        if ($act && isset($counts['package'][$act])) {
+            $counts['package'][$act]++;
         }
     }
 
@@ -426,14 +505,16 @@ function outbound_execute_bundle_import(array $bundle, bool $sideload_media = fa
     foreach ($guides_list as $guide) {
         $g_arr  = (array) $guide;
         $mapped = outbound_map_guide_migration_record($g_arr);
-        $pid    = outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media);
-        if ($pid > 0) {
-            $counts['guide_article']++;
+        $act    = null;
+        outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media, $overwrite, $act);
+        if ($act && isset($counts['guide_article'][$act])) {
+            $counts['guide_article'][$act]++;
         }
 
         if (empty($bundle['blogPosts'])) {
             $slug    = (string) $mapped['post_name'];
             $img     = (string) ($mapped['meta']['_outbound_hero_image_url'] ?? '');
+            $b_act   = null;
             $blog_id = outbound_upsert_migrated_post(
                 array(
                     'post_type'    => 'post',
@@ -448,11 +529,15 @@ function outbound_execute_bundle_import(array $bundle, bool $sideload_media = fa
                     '_outbound_sections_json'  => (string) ($mapped['meta']['_outbound_sections_json'] ?? '[]'),
                     '_outbound_faqs_json'      => (string) ($mapped['meta']['_outbound_faqs_json'] ?? '[]'),
                 ),
-                $sideload_media
+                $sideload_media,
+                $overwrite,
+                $b_act
             );
-            if ($blog_id > 0) {
+            if ($blog_id > 0 && $b_act !== 'skipped') {
                 wp_set_object_terms($blog_id, array('victoria-falls-travel-guides'), 'category');
-                $counts['post']++;
+            }
+            if ($b_act && isset($counts['post'][$b_act])) {
+                $counts['post'][$b_act]++;
             }
         }
     }
@@ -460,18 +545,19 @@ function outbound_execute_bundle_import(array $bundle, bool $sideload_media = fa
     $albums_list = (array) ($bundle['clientGalleries'] ?? ($bundle['albums'] ?? ($fallback['albums'] ?? array())));
     foreach ($albums_list as $album) {
         $mapped = outbound_map_album_migration_record((array) $album);
-        $pid = outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media);
-        if ($pid > 0) {
-            $counts['client_album']++;
+        $act    = null;
+        outbound_upsert_migrated_post($mapped, $mapped['meta'], $sideload_media, $overwrite, $act);
+        if ($act && isset($counts['client_album'][$act])) {
+            $counts['client_album'][$act]++;
         }
     }
 
     $stay_tiers = $bundle['stayTiers'] ?? ($fallback['stayTiers'] ?? array());
-    if (!empty($stay_tiers)) {
+    if (!empty($stay_tiers) && ($overwrite || empty(get_option('outbound_builder_stay_tiers', array())))) {
         update_option('outbound_builder_stay_tiers', $stay_tiers);
     }
     $builder_acts = $bundle['builderActivities'] ?? ($fallback['builderActivities'] ?? array());
-    if (!empty($builder_acts)) {
+    if (!empty($builder_acts) && ($overwrite || empty(get_option('outbound_builder_activities', array())))) {
         update_option('outbound_builder_activities', $builder_acts);
     }
 
@@ -485,13 +571,226 @@ function outbound_execute_bundle_import(array $bundle, bool $sideload_media = fa
 }
 
 /**
+ * Safely assign stable unique IDs and backfill missing legacy room structures on existing
+ * WordPress `accommodation` posts without overwriting any user-edited names, rates, or images.
+ *
+ * @return array{scanned:int,updated:int}
+ */
+function outbound_upgrade_existing_accommodation_rooms(): array {
+    $stats = array('scanned' => 0, 'updated' => 0);
+    if (!function_exists('get_posts') || !function_exists('get_post_meta') || !function_exists('update_post_meta')) {
+        return $stats;
+    }
+
+    $posts = get_posts(array(
+        'post_type'              => 'accommodation',
+        'posts_per_page'         => -1,
+        'post_status'            => array('publish', 'draft', 'pending', 'private'),
+        'no_found_rows'          => true,
+        'update_post_meta_cache' => true,
+    ));
+    if (empty($posts)) {
+        return $stats;
+    }
+
+    $indexed = array();
+    if (function_exists('outbound_get_baseline_snapshot') && function_exists('outbound_index_snapshot_records')) {
+        $indexed = outbound_index_snapshot_records(outbound_get_baseline_snapshot()['accommodations'] ?? array());
+    }
+
+    foreach ($posts as $p) {
+        $stats['scanned']++;
+        $pid  = (int) $p->ID;
+        $slug = sanitize_title((string) $p->post_name);
+        $raw  = get_post_meta($pid, '_outbound_room_types_json', true);
+
+        $rooms = null;
+        $needs_write = false;
+
+        if (is_string($raw) && trim($raw) !== '') {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                $rooms = $decoded;
+            }
+        }
+
+        // Only backfill when `_outbound_room_types_json` has never been saved at all (not `'[]'`).
+        if ($rooms === null) {
+            $full_raw = get_post_meta($pid, '_outbound_full_json', true);
+            $full     = is_string($full_raw) && $full_raw !== '' ? json_decode($full_raw, true) : null;
+            if (is_array($full) && !empty($full['roomTypes']) && is_array($full['roomTypes'])) {
+                $rooms = $full['roomTypes'];
+                $needs_write = true;
+            } elseif ($slug !== '' && !empty($indexed[$slug]['roomTypes']) && is_array($indexed[$slug]['roomTypes'])) {
+                $rooms = $indexed[$slug]['roomTypes'];
+                $needs_write = true;
+            } else {
+                $rooms = array();
+            }
+        }
+
+        $normalized = array();
+        foreach (array_values($rooms) as $ridx => $rm) {
+            if (!is_array($rm)) {
+                continue;
+            }
+            if (empty($rm['id'])) {
+                $base_slug = sanitize_title((string) ($rm['name'] ?? ($slug ?: 'room')));
+                $rm['id']  = 'unit_' . ($base_slug !== '' ? $base_slug : 'room') . '_' . ($ridx + 1);
+                $needs_write = true;
+            }
+            $normalized[] = $rm;
+        }
+
+        if ($needs_write) {
+            update_post_meta($pid, '_outbound_room_types_json', wp_json_encode($normalized));
+            $stats['updated']++;
+        }
+    }
+
+    if ($stats['updated'] > 0 && function_exists('outbound_invalidate_snapshot_cache')) {
+        outbound_invalidate_snapshot_cache();
+    }
+
+    return $stats;
+}
+
+/**
+ * Find any baseline catalog properties in default-snapshot.json that do not yet have a WordPress `accommodation` post.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function outbound_get_unimported_baseline_accommodations(): array {
+    if (!function_exists('outbound_get_baseline_snapshot') || !function_exists('get_posts')) {
+        return array();
+    }
+
+    $snap = outbound_get_baseline_snapshot();
+    $baseline = (array) ($snap['accommodations'] ?? array());
+    if (empty($baseline)) {
+        return array();
+    }
+
+    $existing_posts = get_posts(array(
+        'post_type'      => 'accommodation',
+        'posts_per_page' => -1,
+        'post_status'    => array('publish', 'draft', 'pending', 'private', 'archived', 'trash'),
+        'fields'         => 'all',
+        'no_found_rows'  => true,
+    ));
+
+    $existing_slugs = array();
+    foreach ($existing_posts as $ep) {
+        if ($ep instanceof WP_Post && $ep->post_name !== '') {
+            $existing_slugs[sanitize_title((string) $ep->post_name)] = true;
+        }
+    }
+
+    $missing = array();
+    foreach ($baseline as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $slug = sanitize_title((string) ($item['slug'] ?? ($item['id'] ?? '')));
+        if ($slug !== '' && empty($existing_slugs[$slug])) {
+            $missing[] = $item;
+        }
+    }
+    return $missing;
+}
+
+/**
+ * Ensure a single baseline accommodation property exists as a WordPress CPT post so it can be edited
+ * immediately with the dynamic Room / Unit Manager without affecting existing WP posts.
+ */
+function outbound_ensure_baseline_accommodation_post(string $slug): int {
+    $clean_slug = sanitize_title($slug);
+    if ($clean_slug === '' || !function_exists('get_page_by_path')) {
+        return 0;
+    }
+
+    $existing = get_page_by_path($clean_slug, defined('OBJECT') ? OBJECT : 'OBJECT', 'accommodation');
+    if ($existing instanceof WP_Post) {
+        return (int) $existing->ID;
+    }
+
+    if (!function_exists('outbound_get_baseline_snapshot')) {
+        return 0;
+    }
+    $snap = outbound_get_baseline_snapshot();
+    foreach ((array) ($snap['accommodations'] ?? array()) as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $item_slug = sanitize_title((string) ($item['slug'] ?? ($item['id'] ?? '')));
+        if ($item_slug !== $clean_slug) {
+            continue;
+        }
+        $mapped = outbound_map_accommodation_migration_record($item);
+        $act    = null;
+        $pid    = outbound_upsert_migrated_post($mapped, $mapped['meta'], false, false, $act);
+        if ($pid > 0 && $act !== 'skipped' && function_exists('wp_set_object_terms')) {
+            wp_set_object_terms($pid, array($mapped['category_id']), 'accommodation_category');
+        }
+        if (function_exists('outbound_invalidate_snapshot_cache')) {
+            outbound_invalidate_snapshot_cache();
+        }
+        return $pid;
+    }
+
+    return 0;
+}
+
+/**
+ * Safely import any missing baseline properties into WordPress `accommodation` CPT posts
+ * without touching or overwriting existing WP accommodation posts.
+ *
+ * @return array{created:int,existing:int}
+ */
+function outbound_sync_missing_baseline_accommodations(): array {
+    $counts = array('created' => 0, 'existing' => 0);
+    if (!function_exists('outbound_get_baseline_snapshot')) {
+        return $counts;
+    }
+    $snap = outbound_get_baseline_snapshot();
+    foreach ((array) ($snap['accommodations'] ?? array()) as $acc) {
+        if (!is_array($acc)) {
+            continue;
+        }
+        $mapped = outbound_map_accommodation_migration_record($acc);
+        $act    = null;
+        $pid    = outbound_upsert_migrated_post($mapped, $mapped['meta'], false, false, $act);
+        if ($pid > 0 && $act === 'created') {
+            if (function_exists('wp_set_object_terms')) {
+                wp_set_object_terms($pid, array($mapped['category_id']), 'accommodation_category');
+            }
+            $counts['created']++;
+        } else {
+            $counts['existing']++;
+        }
+    }
+    outbound_upgrade_existing_accommodation_rooms();
+    if (function_exists('outbound_invalidate_snapshot_cache')) {
+        outbound_invalidate_snapshot_cache();
+    }
+    return $counts;
+}
+
+/**
  * Safely auto-seed CPT records once in WordPress admin when CPTs are completely empty,
- * avoiding heavy remote sideloading so it never causes 502 timeouts.
+ * avoiding heavy remote sideloading so it never causes 502 timeouts, and ensure existing
+ * accommodation room types receive stable IDs.
  */
 function outbound_maybe_auto_seed_initial_content(): void {
     if (!function_exists('is_admin') || !is_admin() || !current_user_can('manage_options')) {
         return;
     }
+
+    if (get_option('outbound_rooms_upgraded_version', '') !== '1.5.0') {
+        outbound_upgrade_existing_accommodation_rooms();
+        update_option('outbound_rooms_upgraded_version', '1.5.0', false);
+    }
+
     if (get_option('outbound_initial_migration_done', '') !== '') {
         return;
     }
@@ -505,7 +804,7 @@ function outbound_maybe_auto_seed_initial_content(): void {
     if (file_exists($bundled)) {
         $decoded = json_decode((string) file_get_contents($bundled), true);
         if (is_array($decoded)) {
-            outbound_execute_bundle_import($decoded, false);
+            outbound_execute_bundle_import($decoded, false, false);
         }
     }
 }
@@ -537,36 +836,65 @@ function outbound_render_migration_admin_page(): void {
         return;
     }
 
-    $result = null;
-    $error  = '';
+    $result  = null;
+    $preview = null;
+    $error   = '';
 
-    if (isset($_POST['outbound_seed_bundled']) && check_admin_referer('outbound_migrate_action', 'outbound_migrate_nonce')) {
-        $sideload = !empty($_POST['sideload_media']);
-        $bundled  = OUTBOUND_THEME_DIR . '/inc/default-snapshot.json';
-        if (file_exists($bundled)) {
-            $decoded = json_decode((string) file_get_contents($bundled), true);
-            if (is_array($decoded)) {
-                $result = outbound_execute_bundle_import($decoded, $sideload);
+    $resolve_overwrite = static function () use (&$error): ?bool {
+        $wants_overwrite = !empty($_POST['overwrite_existing']);
+        if (!$wants_overwrite) {
+            return false;
+        }
+        if (empty($_POST['confirm_overwrite'])) {
+            $error = __('Destructive overwrite was requested, but the explicit confirmation checkbox was not ticked. Import aborted; existing CMS content is untouched.', 'outbound-holidays');
+            return null;
+        }
+        return true;
+    };
+
+    if ((isset($_POST['outbound_preview_bundled']) || isset($_POST['outbound_seed_bundled'])) && check_admin_referer('outbound_migrate_action', 'outbound_migrate_nonce')) {
+        $sideload  = !empty($_POST['sideload_media']);
+        $is_dry    = isset($_POST['outbound_preview_bundled']);
+        $overwrite = $is_dry ? !empty($_POST['overwrite_existing']) : $resolve_overwrite();
+        if ($overwrite !== null) {
+            $bundled = OUTBOUND_THEME_DIR . '/inc/default-snapshot.json';
+            if (file_exists($bundled)) {
+                $decoded = json_decode((string) file_get_contents($bundled), true);
+                if (is_array($decoded)) {
+                    if ($is_dry) {
+                        $preview = outbound_preview_bundle_import($decoded, $overwrite);
+                    } else {
+                        $result = outbound_execute_bundle_import($decoded, $sideload, $overwrite);
+                    }
+                } else {
+                    $error = __('Could not decode bundled theme snapshot.', 'outbound-holidays');
+                }
             } else {
-                $error = __('Could not decode bundled theme snapshot.', 'outbound-holidays');
+                $error = __('Bundled theme snapshot file inc/default-snapshot.json was not found.', 'outbound-holidays');
             }
-        } else {
-            $error = __('Bundled theme snapshot file inc/default-snapshot.json was not found.', 'outbound-holidays');
         }
     }
 
-    if (isset($_POST['outbound_run_import']) && check_admin_referer('outbound_migrate_action', 'outbound_migrate_nonce')) {
-        $sideload = !empty($_POST['sideload_media']);
-        if (!empty($_FILES['bundle_file']['tmp_name'])) {
-            $raw = file_get_contents((string) $_FILES['bundle_file']['tmp_name']);
-            $decoded = json_decode((string) $raw, true);
-            if (is_array($decoded)) {
-                $result = outbound_execute_bundle_import($decoded, $sideload);
+    if ((isset($_POST['outbound_preview_import']) || isset($_POST['outbound_run_import'])) && check_admin_referer('outbound_migrate_action', 'outbound_migrate_nonce')) {
+        $sideload  = !empty($_POST['sideload_media']);
+        $is_dry    = isset($_POST['outbound_preview_import']);
+        $overwrite = $is_dry ? !empty($_POST['overwrite_existing']) : $resolve_overwrite();
+        if ($overwrite !== null) {
+            if (!empty($_FILES['bundle_file']['tmp_name'])) {
+                $raw     = file_get_contents((string) $_FILES['bundle_file']['tmp_name']);
+                $decoded = json_decode((string) $raw, true);
+                if (is_array($decoded)) {
+                    if ($is_dry) {
+                        $preview = outbound_preview_bundle_import($decoded, $overwrite);
+                    } else {
+                        $result = outbound_execute_bundle_import($decoded, $sideload, $overwrite);
+                    }
+                } else {
+                    $error = __('Invalid JSON structure in uploaded bundle file.', 'outbound-holidays');
+                }
             } else {
-                $error = __('Invalid JSON structure in uploaded bundle file.', 'outbound-holidays');
+                $error = __('Please choose the exported outbound-migration-bundle.json file first.', 'outbound-holidays');
             }
-        } else {
-            $error = __('Please choose the exported outbound-migration-bundle.json file first.', 'outbound-holidays');
         }
     }
 
@@ -583,7 +911,7 @@ function outbound_render_migration_admin_page(): void {
         <div class="outbound-admin-header">
             <div>
                 <h1><?php esc_html_e('Content & Media Migration Importer', 'outbound-holidays'); ?></h1>
-                <p><?php esc_html_e('Populate all WordPress CPTs (Accommodations, Experiences, Packages, Guides, Client Albums), Blog posts, and Builder options idempotently with zero data loss.', 'outbound-holidays'); ?></p>
+                <p><?php esc_html_e('Safe by default: existing WordPress CMS records, room types, galleries, prices, and descriptions are skipped and preserved unless you explicitly confirm a destructive overwrite.', 'outbound-holidays'); ?></p>
             </div>
         </div>
 
@@ -593,24 +921,52 @@ function outbound_render_migration_admin_page(): void {
         <?php if ($result !== null) : ?>
             <div class="notice notice-success"><p><?php echo esc_html('Migration complete: ' . wp_json_encode($result)); ?></p></div>
         <?php endif; ?>
+        <?php if ($preview !== null) : ?>
+            <div class="outbound-admin-card" style="border-left:4px solid #0B5E8E;">
+                <h2><?php esc_html_e('Dry-Run Preview (No Changes Applied Yet)', 'outbound-holidays'); ?></h2>
+                <table class="widefat striped">
+                    <thead><tr><th><?php esc_html_e('Content Type', 'outbound-holidays'); ?></th><th><?php esc_html_e('Will Create (New)', 'outbound-holidays'); ?></th><th><?php esc_html_e('Will Skip (Protected)', 'outbound-holidays'); ?></th><th><?php esc_html_e('Will Overwrite', 'outbound-holidays'); ?></th></tr></thead>
+                    <tbody>
+                        <?php foreach ((array) ($preview['summary'] ?? array()) as $label => $cnts) : ?>
+                            <tr>
+                                <td><strong><?php echo esc_html((string) $label); ?></strong></td>
+                                <td><?php echo esc_html((string) ($cnts['create'] ?? 0)); ?></td>
+                                <td><?php echo esc_html((string) ($cnts['skip'] ?? 0)); ?></td>
+                                <td style="<?php echo !empty($cnts['overwrite']) ? 'color:#b91c1c;font-weight:700;' : ''; ?>"><?php echo esc_html((string) ($cnts['overwrite'] ?? 0)); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
 
         <div class="outbound-admin-card">
             <h2><?php esc_html_e('Quick Seed from Built-in Theme Snapshot', 'outbound-holidays'); ?></h2>
-            <p><?php esc_html_e('Synchronizes all 8 Accommodations, 25 Experiences, 8 Holiday Packages, 11 Planning Guides, Client Gallery Albums, Stay Tiers, and Builder Activities from inc/default-snapshot.json cleanly without duplicate records.', 'outbound-holidays'); ?></p>
-            <form method="post">
+            <p><?php esc_html_e('Adds any missing Accommodations, Experiences, Packages, Guides, and Client Albums from inc/default-snapshot.json. Existing CMS-edited records are skipped by default.', 'outbound-holidays'); ?></p>
+            <form method="post" onsubmit="if (this.overwrite_existing && this.overwrite_existing.checked && (!this.confirm_overwrite || !this.confirm_overwrite.checked)) { alert('Please tick the explicit confirmation checkbox to allow overwriting existing CMS records.'); return false; } if (this.overwrite_existing && this.overwrite_existing.checked) { return confirm('WARNING: This will overwrite existing WordPress CMS records with bundled theme defaults. Continue?'); } return true;">
                 <?php wp_nonce_field('outbound_migrate_action', 'outbound_migrate_nonce'); ?>
                 <p><label><input type="checkbox" name="sideload_media" value="1"> <?php esc_html_e('Download & register remote hero images into WordPress Media Library (leave unchecked on slow/shared hosts to avoid 502 timeouts; bundled assets already work locally).', 'outbound-holidays'); ?></label></p>
-                <p><button type="submit" name="outbound_seed_bundled" class="button button-primary button-hero"><?php esc_html_e('One-Click Import Built-in Theme Content into WordPress', 'outbound-holidays'); ?></button></p>
+                <p><label style="color:#991b1b;"><input type="checkbox" name="overwrite_existing" value="1"> <?php esc_html_e('Overwrite existing CMS records (DESTRUCTIVE — replaces existing descriptions, prices, room types, and galleries with theme defaults)', 'outbound-holidays'); ?></label></p>
+                <p><label style="color:#991b1b;font-weight:600;"><input type="checkbox" name="confirm_overwrite" value="1"> <?php esc_html_e('I confirm I have a database backup and want to overwrite existing records', 'outbound-holidays'); ?></label></p>
+                <p>
+                    <button type="submit" name="outbound_preview_bundled" class="button button-secondary"><?php esc_html_e('Preview Changes (Dry Run)', 'outbound-holidays'); ?></button>
+                    <button type="submit" name="outbound_seed_bundled" class="button button-primary"><?php esc_html_e('Import Missing Records (Safe Mode)', 'outbound-holidays'); ?></button>
+                </p>
             </form>
         </div>
 
         <div class="outbound-admin-card">
             <h2><?php esc_html_e('Or Upload Custom Export Bundle', 'outbound-holidays'); ?></h2>
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" onsubmit="if (this.overwrite_existing && this.overwrite_existing.checked && (!this.confirm_overwrite || !this.confirm_overwrite.checked)) { alert('Please tick the explicit confirmation checkbox to allow overwriting existing CMS records.'); return false; } if (this.overwrite_existing && this.overwrite_existing.checked) { return confirm('WARNING: This will overwrite existing WordPress CMS records with the uploaded bundle. Continue?'); } return true;">
                 <?php wp_nonce_field('outbound_migrate_action', 'outbound_migrate_nonce'); ?>
                 <p><input type="file" name="bundle_file" accept=".json,application/json"></p>
                 <p><label><input type="checkbox" name="sideload_media" value="1"> <?php esc_html_e('Attempt Media Library attachment download on import', 'outbound-holidays'); ?></label></p>
-                <p><button type="submit" name="outbound_run_import" class="button button-secondary"><?php esc_html_e('Run Idempotent Bundle Import', 'outbound-holidays'); ?></button></p>
+                <p><label style="color:#991b1b;"><input type="checkbox" name="overwrite_existing" value="1"> <?php esc_html_e('Overwrite existing CMS records (DESTRUCTIVE)', 'outbound-holidays'); ?></label></p>
+                <p><label style="color:#991b1b;font-weight:600;"><input type="checkbox" name="confirm_overwrite" value="1"> <?php esc_html_e('I confirm I want to overwrite existing records', 'outbound-holidays'); ?></label></p>
+                <p>
+                    <button type="submit" name="outbound_preview_import" class="button button-secondary"><?php esc_html_e('Preview Bundle (Dry Run)', 'outbound-holidays'); ?></button>
+                    <button type="submit" name="outbound_run_import" class="button button-secondary"><?php esc_html_e('Run Bundle Import', 'outbound-holidays'); ?></button>
+                </p>
             </form>
         </div>
 
@@ -633,7 +989,7 @@ function outbound_render_migration_admin_page(): void {
 }
 
 if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
-    WP_CLI::add_command('outbound migrate', static function (array $args): void {
+    WP_CLI::add_command('outbound migrate', static function (array $args, array $assoc_args = array()): void {
         $file = $args[0] ?? (OUTBOUND_THEME_DIR . '/inc/default-snapshot.json');
         if (!file_exists($file)) {
             WP_CLI::error("Migration bundle file not found: {$file}");
@@ -642,7 +998,8 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
         if (!is_array($decoded)) {
             WP_CLI::error('Failed to decode migration bundle JSON.');
         }
-        $counts = outbound_execute_bundle_import($decoded, false);
+        $overwrite = !empty($assoc_args['overwrite']);
+        $counts    = outbound_execute_bundle_import($decoded, false, $overwrite);
         WP_CLI::success('Migrated records: ' . wp_json_encode($counts));
     });
 }

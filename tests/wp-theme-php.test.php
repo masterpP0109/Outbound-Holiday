@@ -34,6 +34,22 @@ if (!function_exists('add_action')) {
     function sanitize_text_field($str) {
         return trim(strip_tags((string) $str));
     }
+    function wp_strip_all_tags($str, $remove_breaks = false) {
+        $text = preg_replace('@<(script|style)[^>]*?>.*?</\\1>@si', '', (string) $str);
+        $text = strip_tags((string) $text);
+        if ($remove_breaks) {
+            $text = preg_replace('/[\r\n\t ]+/', ' ', $text);
+        }
+        return trim((string) $text);
+    }
+    function wp_trim_words($text, $num_words = 55, $more = null) {
+        $words = preg_split('/\s+/', wp_strip_all_tags((string) $text), -1, PREG_SPLIT_NO_EMPTY);
+        if (!is_array($words) || count($words) <= $num_words) {
+            return implode(' ', (array) $words);
+        }
+        return implode(' ', array_slice($words, 0, $num_words)) . ($more ?? '...');
+    }
+    function wp_cache_delete($key, $group = '') { return true; }
     function sanitize_textarea_field($str) {
         return trim(strip_tags((string) $str));
     }
@@ -87,9 +103,10 @@ if (!function_exists('add_action')) {
     function set_transient($k, $v, $exp = 0) { $GLOBALS['__mock_wp_transients'][$k] = $v; return true; }
     function delete_transient($k) { unset($GLOBALS['__mock_wp_transients'][$k]); return true; }
     function remove_action($hook, $cb, $prio = 10) { return true; }
+    function admin_url($path = '', $scheme = 'admin') { return 'https://outboundholiday.com/wp-admin/' . ltrim((string) $path, '/'); }
     function is_email($email) { return (bool) filter_var((string) $email, FILTER_VALIDATE_EMAIL); }
     function wp_mail($to, $subject, $message, $headers = array()) {
-        $GLOBALS['__mock_wp_mail_calls'][] = array('to' => $to, 'subject' => $subject);
+        $GLOBALS['__mock_wp_mail_calls'][] = array('to' => $to, 'subject' => $subject, 'headers' => $headers);
         return $GLOBALS['__mock_wp_mail_ok'] ?? true;
     }
 }
@@ -99,14 +116,18 @@ $GLOBALS['__mock_wp_mail_calls'] = array();
 $GLOBALS['__mock_wp_mail_ok'] = true;
 
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/helpers.php';
+require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/currency-rates.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/migrations.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/seo.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/item-editors.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/migration.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/newsletter.php';
+require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/admin-settings.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/enquiries.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/snapshot.php';
 require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/cms-hub.php';
+require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/accommodation-crud.php';
+require_once __DIR__ . '/../wordpress-theme/outbound-holidays/inc/search.php';
 
 $failures = 0;
 function assert_true(bool $cond, string $msg): void {
@@ -805,6 +826,1097 @@ assert_true(
     && (int) $GLOBALS['wpdb']->campaigns[1]->sent_count === 1,
     'Successful dispatch marks notification sent, updates sent_count, and completes campaign'
 );
+
+// 11. Dynamic Accommodation Unit Types, Stable IDs, Internal Supplier Isolation & Room Enquiries
+$GLOBALS['__mock_wp_meta'] = array();
+$GLOBALS['__mock_can_manage'] = true;
+
+$ten_rooms_payload = array();
+$custom_names = array(
+    'Standard Room',
+    'Deluxe Room',
+    'Executive Suite',
+    'Presidential Suite',
+    'Luxury Safari Tent',
+    'River View Chalet',
+    'Honeymoon Suite',
+    'Family Villa',
+    'Self-Catering Cottage',
+    'Three-Bedroom Apartment',
+);
+foreach ($custom_names as $idx => $cname) {
+    $ten_rooms_payload[] = array(
+        'id'               => 'unit_stable_' . ($idx + 1),
+        'name'             => $cname,
+        'shortDescription' => 'Custom summary for ' . $cname,
+        'description'      => 'Full description for ' . $cname,
+        'unitCategory'     => $idx >= 4 ? 'Chalet / Tent' : 'Hotel Room',
+        'sizeSqm'          => 40 + ($idx * 10),
+        'unitCount'        => 2,
+        'featured'         => $idx === 0,
+        'status'           => $idx === 9 ? 'draft' : 'published',
+        'imageUrl'         => 'https://example.com/room-' . ($idx + 1) . '.jpg',
+        'gallery'          => array(
+            array('id' => 'g1', 'url' => 'https://example.com/room-' . ($idx + 1) . '.jpg', 'alt' => $cname, 'caption' => 'Main view'),
+            array('id' => 'g2', 'url' => 'https://example.com/room-' . ($idx + 1) . '-b.jpg', 'alt' => $cname . ' bath', 'caption' => ''),
+        ),
+        'amenities'        => $idx === 0 ? array('wifi', 'air-conditioning') : array('river-view', 'balcony'),
+        'customAmenities'  => array('Custom Feature ' . ($idx + 1)),
+        'inclusions'       => array('Breakfast included'),
+        'occupancyConfig'  => array(
+            'maxAdults'         => 2 + ($idx % 3),
+            'maxChildren'       => $idx % 2,
+            'maxTotalGuests'    => 3 + ($idx % 3),
+            'bedrooms'          => $idx === 9 ? 3 : 1,
+            'bathrooms'         => $idx === 9 ? 2 : 1,
+            'beds'              => array(array('type' => 'King Bed', 'quantity' => 1)),
+            'extraBedAvailable' => true,
+            'extraBedNotes'     => 'Cot available',
+            'childAgePolicy'    => 'Under 12 half price',
+        ),
+        'pricing'          => array(
+            'baseNightlyRateUSD'   => 200 + ($idx * 50),
+            'startingFromPriceUSD' => 190 + ($idx * 50),
+            'weekendRateUSD'       => 225 + ($idx * 50),
+            'weekendDays'          => array('fri', 'sat'),
+            'baseOccupancyAdults'  => 2,
+            'additionalGuestRateUSD' => 60,
+            'childRateUSD'         => 40,
+            'minStayNights'        => 2,
+            'rateValidFrom'        => '2026-01-01',
+            'rateValidTo'          => '2026-12-31',
+            'rateStatus'           => 'provisional',
+            'priceBasis'           => 'per_room',
+            'seasonalRates'        => array(
+                array('id' => 'sr1', 'label' => 'Peak', 'startDate' => '2026-07-01', 'endDate' => '2026-09-30', 'nightlyRateUSD' => 250 + ($idx * 50)),
+            ),
+            'dateSpecificRates'    => array(
+                array('id' => 'dr1', 'date' => '2026-12-25', 'label' => 'Christmas', 'nightlyRateUSD' => 350 + ($idx * 50)),
+            ),
+            'mealPlanRates'        => array(
+                array('id' => 'mp1', 'name' => 'Half Board', 'supplementPerPersonPerNightUSD' => 35, 'pricingType' => 'per_person_per_night'),
+            ),
+        ),
+        'policies'         => array(
+            'minStayNights'      => 2,
+            'cancellationPolicy' => 'Free cancellation up to 14 days prior.',
+        ),
+        'internalSupplierRate' => 'NET US$' . (120 + ($idx * 30)),
+        'internalNotes'        => 'Confidential supplier rate for ' . $cname,
+    );
+}
+
+outbound_save_structured_item_meta(505, 'accommodation', array(
+    'outbound_meta' => array(
+        '_outbound_category_id'           => 'lodges',
+        '_outbound_category_label'        => 'Safari Camp',
+        '_outbound_room_section_heading'  => 'Choose Your Chalet or Tent',
+        '_outbound_room_section_subtitle' => 'Every unit includes river views.',
+    ),
+    'outbound_rooms_present' => '1',
+    'outbound_rooms_json'    => json_encode($ten_rooms_payload),
+    'outbound_prop_policies' => array(
+        'cancellationPolicy' => '30 days prior free cancellation.',
+        'childPolicy'        => 'All ages welcome.',
+    ),
+    'outbound_prop_enquiry'  => array(
+        'enableWhatsApp'    => '1',
+        'enableEmail'       => '1',
+        'customEnquiryNote' => 'Enquiry only — concierge confirms rates.',
+    ),
+));
+
+$saved_public_rooms   = json_decode((string) get_post_meta(505, '_outbound_room_types_json', true), true);
+$saved_internal_rooms = json_decode((string) get_post_meta(505, '_outbound_room_internal_json', true), true);
+$public_json_str      = (string) get_post_meta(505, '_outbound_room_types_json', true);
+
+assert_true(
+    is_array($saved_public_rooms)
+    && count($saved_public_rooms) === 10
+    && $saved_public_rooms[0]['id'] === 'unit_stable_1'
+    && $saved_public_rooms[0]['name'] === 'Standard Room'
+    && $saved_public_rooms[4]['name'] === 'Luxury Safari Tent'
+    && $saved_public_rooms[9]['status'] === 'draft'
+    && !str_contains($public_json_str, 'internalSupplierRate')
+    && !str_contains($public_json_str, 'Confidential supplier rate')
+    && ($saved_internal_rooms['unit_stable_1']['internalSupplierRate'] ?? '') === 'NET US$120',
+    'Saves 10 custom unit types with stable IDs and strips admin-only internal supplier rates/notes from public JSON'
+);
+
+// Test renaming a room preserves its stable ID and internal data
+$renamed_payload = $saved_public_rooms;
+$renamed_payload[0]['name'] = 'Renamed Heritage Suite';
+$renamed_payload[0]['internalSupplierRate'] = $saved_internal_rooms['unit_stable_1']['internalSupplierRate'];
+$renamed_payload[0]['internalNotes']        = $saved_internal_rooms['unit_stable_1']['internalNotes'];
+outbound_save_structured_item_meta(505, 'accommodation', array(
+    'outbound_rooms_present' => '1',
+    'outbound_rooms_json'    => json_encode($renamed_payload),
+));
+$after_rename = json_decode((string) get_post_meta(505, '_outbound_room_types_json', true), true);
+$after_int    = json_decode((string) get_post_meta(505, '_outbound_room_internal_json', true), true);
+assert_true(
+    $after_rename[0]['id'] === 'unit_stable_1'
+    && $after_rename[0]['name'] === 'Renamed Heritage Suite'
+    && count($after_rename[0]['gallery']) === 2
+    && ($after_int['unit_stable_1']['internalSupplierRate'] ?? '') === 'NET US$120',
+    'Renaming a unit preserves its stable ID, gallery, and internal supplier notes'
+);
+
+// Test deleting all rooms saves [] cleanly without falling back to stale rooms
+outbound_save_structured_item_meta(505, 'accommodation', array(
+    'outbound_rooms_present' => '1',
+    'outbound_rooms_json'    => '[]',
+));
+$after_clear = json_decode((string) get_post_meta(505, '_outbound_room_types_json', true), true);
+assert_true(
+    is_array($after_clear) && count($after_clear) === 0,
+    'Clearing all room types persists an empty array cleanly'
+);
+
+// Test public room normalization strips any stray internal keys defensively
+$public_normalized = outbound_build_public_room_type(array(
+    'id'                   => 'unit_leak_test',
+    'name'                 => 'Riverfront Chalet',
+    'internalSupplierRate' => 'SECRET 99',
+    'internalNotes'        => 'SECRET NOTE',
+));
+assert_true(
+    !isset($public_normalized['internalSupplierRate'])
+    && !isset($public_normalized['internalNotes'])
+    && $public_normalized['id'] === 'unit_leak_test',
+    'Public room serializer never leaks internal supplier fields'
+);
+
+// Test accommodation room enquiry snapshot captures roomId, roomType, mealPlan, and childAges
+$room_enq_snap = outbound_build_enquiry_snapshot(array(
+    'type'                => 'accommodation-enquiry',
+    'propertyName'        => 'Zambezi Safari Lodge',
+    'accommodationId'     => 'zambezi-safari-lodge',
+    'roomId'              => 'unit_tent_1',
+    'roomType'            => 'Luxury Safari Tent',
+    'mealPlan'            => 'Half Board',
+    'checkInDate'         => '2026-08-14',
+    'checkOutDate'        => '2026-08-16',
+    'adultsCount'         => 2,
+    'kidsCount'           => 1,
+    'nightsCount'         => 2,
+    'estimatedPriceLabel' => '$1,120 USD (2 nights)',
+    'notes'               => 'Sunset deck tent requested.',
+));
+$room_enq_html = outbound_build_enquiry_options_html('accommodation-enquiry', 2, 1, 2, array(
+    'accommodation_name' => 'Zambezi Safari Lodge',
+    'room_id'            => 'unit_tent_1',
+    'room_type'          => 'Luxury Safari Tent',
+    'meal_plan'          => 'Half Board',
+    'check_in_date'      => '2026-08-14',
+    'check_out_date'     => '2026-08-16',
+    'child_ages'         => array('Child 1: 7 yrs'),
+    'estimated_price'    => '$1,120 USD (2 nights)',
+));
+assert_true(
+    $room_enq_snap['roomType'] === 'Luxury Safari Tent'
+    && str_contains($room_enq_html, 'Luxury Safari Tent')
+    && str_contains($room_enq_html, 'Half Board')
+    && str_contains($room_enq_html, 'Child 1: 7 yrs'),
+    'Room-specific enquiry snapshot and emails preserve exact property, unit name, meal plan, and child ages'
+);
+
+// Test upgrading existing WP accommodation posts & importing unimported baseline properties safely
+if (!class_exists('WP_Post')) {
+    class WP_Post {
+        public $ID;
+        public $post_type;
+        public $post_name;
+        public $post_title;
+        public $post_excerpt;
+        public $post_content;
+        public $post_status;
+        public $menu_order;
+        public function __construct($obj) {
+            foreach ((array) $obj as $k => $v) {
+                $this->$k = $v;
+            }
+        }
+    }
+}
+$GLOBALS['__mock_wp_posts'] = array(
+    601 => new WP_Post((object) array(
+        'ID' => 601, 'post_type' => 'accommodation', 'post_name' => 'victoria-falls-safari-lodge',
+        'post_title' => 'Victoria Falls Safari Lodge', 'post_status' => 'publish', 'post_excerpt' => '', 'post_content' => '', 'menu_order' => 0,
+    )),
+    602 => new WP_Post((object) array(
+        'ID' => 602, 'post_type' => 'accommodation', 'post_name' => 'roomless-retreat',
+        'post_title' => 'Roomless Retreat', 'post_status' => 'publish', 'post_excerpt' => '', 'post_content' => '', 'menu_order' => 0,
+    )),
+);
+// 601 has legacy rooms without `id`; 602 intentionally cleared `[]`
+update_post_meta(601, '_outbound_room_types_json', json_encode(array(
+    array('name' => 'Waterhole View Room', 'occupancy' => '2 Adults', 'description' => 'Balcony room', 'imageUrl' => 'https://example.com/r1.jpg', 'features' => array('Air Conditioning')),
+)));
+update_post_meta(602, '_outbound_room_types_json', '[]');
+
+if (!defined('OBJECT')) {
+    define('OBJECT', 'OBJECT');
+}
+if (!defined('ARRAY_A')) {
+    define('ARRAY_A', 'ARRAY_A');
+}
+if (!function_exists('get_posts')) {
+    function get_posts($args = array()) {
+        $pt = $args['post_type'] ?? 'post';
+        $ps = $args['post_status'] ?? 'publish';
+        return array_values(array_filter($GLOBALS['__mock_wp_posts'], static function ($p) use ($pt, $ps) {
+            if ($pt !== 'any' && $p->post_type !== $pt) {
+                return false;
+            }
+            if ($ps === 'any') {
+                return true;
+            }
+            $statuses = is_array($ps) ? $ps : array($ps);
+            return in_array($p->post_status, $statuses, true);
+        }));
+    }
+    function get_post($id) {
+        return $GLOBALS['__mock_wp_posts'][(int) $id] ?? null;
+    }
+    function get_post_type($id) {
+        $p = get_post($id);
+        return $p ? $p->post_type : false;
+    }
+    function get_post_status($id) {
+        $p = get_post($id);
+        return $p ? $p->post_status : false;
+    }
+    function get_page_by_path($slug, $output = OBJECT, $post_type = 'page') {
+        foreach ($GLOBALS['__mock_wp_posts'] as $p) {
+            if ($p->post_type === $post_type && $p->post_name === $slug) {
+                return $p;
+            }
+        }
+        return null;
+    }
+    function wp_insert_post($postarr) {
+        $nid = empty($GLOBALS['__mock_wp_posts']) ? 700 : (max(array_keys($GLOBALS['__mock_wp_posts'])) + 1);
+        $postarr['ID'] = $nid;
+        if (empty($postarr['post_name']) && !empty($postarr['post_title'])) {
+            $postarr['post_name'] = sanitize_title($postarr['post_title']);
+        }
+        if (empty($postarr['post_modified_gmt'])) {
+            $postarr['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
+        }
+        $GLOBALS['__mock_wp_posts'][$nid] = new WP_Post((object) $postarr);
+        return $nid;
+    }
+    function wp_update_post($postarr) {
+        $pid = (int) ($postarr['ID'] ?? 0);
+        if (!isset($GLOBALS['__mock_wp_posts'][$pid])) {
+            return 0;
+        }
+        foreach ($postarr as $k => $v) {
+            $GLOBALS['__mock_wp_posts'][$pid]->$k = $v;
+        }
+        return $pid;
+    }
+    function wp_trash_post($post_id) {
+        $pid = (int) $post_id;
+        if (!isset($GLOBALS['__mock_wp_posts'][$pid])) {
+            return false;
+        }
+        $p = $GLOBALS['__mock_wp_posts'][$pid];
+        $GLOBALS['__mock_wp_meta'][$pid]['_wp_trash_meta_status'] = $p->post_status;
+        $p->post_status = 'trash';
+        return $p;
+    }
+    function wp_untrash_post($post_id) {
+        $pid = (int) $post_id;
+        if (!isset($GLOBALS['__mock_wp_posts'][$pid])) {
+            return false;
+        }
+        $p = $GLOBALS['__mock_wp_posts'][$pid];
+        $prev = $GLOBALS['__mock_wp_meta'][$pid]['_wp_trash_meta_status'] ?? 'draft';
+        $p->post_status = $prev ?: 'draft';
+        unset($GLOBALS['__mock_wp_meta'][$pid]['_wp_trash_meta_status']);
+        return $p;
+    }
+    function wp_delete_post($post_id, $force_delete = false) {
+        $pid = (int) $post_id;
+        if (!isset($GLOBALS['__mock_wp_posts'][$pid])) {
+            return false;
+        }
+        $old = $GLOBALS['__mock_wp_posts'][$pid];
+        unset($GLOBALS['__mock_wp_posts'][$pid], $GLOBALS['__mock_wp_meta'][$pid]);
+        return $old;
+    }
+    function delete_post_meta($post_id, $key) {
+        unset($GLOBALS['__mock_wp_meta'][(int) $post_id][$key]);
+        return true;
+    }
+    function wp_count_posts($post_type = 'post') {
+        $c = (object) array('publish' => 0, 'draft' => 0, 'pending' => 0, 'private' => 0, 'archived' => 0, 'trash' => 0);
+        foreach ($GLOBALS['__mock_wp_posts'] as $p) {
+            if ($p->post_type === $post_type) {
+                $st = (string) $p->post_status;
+                $c->$st = ($c->$st ?? 0) + 1;
+            }
+        }
+        return $c;
+    }
+    function wp_delete_object_term_relationships($post_id, $taxonomies) { return true; }
+    function is_wp_error($thing) { return false; }
+    function wp_generate_password($length = 12, $special = true, $extra = false) {
+        return substr(bin2hex(random_bytes(max(4, $length))), 0, $length);
+    }
+    function wp_set_object_terms($post_id, $terms, $taxonomy, $append = false) { return array(); }
+    function get_the_post_thumbnail_url($post_id, $size = 'full') { return ''; }
+    function has_post_thumbnail($post_id) { return false; }
+    function wp_get_post_terms($post_id, $tax, $args = array()) { return array(); }
+    function selected($selected, $current = true, $display = true) {
+        $res = (string) $selected === (string) $current ? ' selected="selected"' : '';
+        if ($display) { echo $res; }
+        return $res;
+    }
+    function checked($checked, $current = true, $display = true) {
+        $res = (bool) $checked === (bool) $current ? ' checked="checked"' : '';
+        if ($display) { echo $res; }
+        return $res;
+    }
+}
+
+$up_stats = outbound_upgrade_existing_accommodation_rooms();
+$up_601 = json_decode((string) get_post_meta(601, '_outbound_room_types_json', true), true);
+$up_602 = json_decode((string) get_post_meta(602, '_outbound_room_types_json', true), true);
+assert_true(
+    $up_stats['scanned'] === 2
+    && $up_stats['updated'] === 1
+    && !empty($up_601[0]['id'])
+    && $up_601[0]['name'] === 'Waterhole View Room'
+    && is_array($up_602) && count($up_602) === 0,
+    'Existing WP accommodations receive stable room unit IDs non-destructively while respecting empty []'
+);
+
+$missing_accs = outbound_get_unimported_baseline_accommodations();
+assert_true(
+    count($missing_accs) === 7,
+    'Identifies all remaining unimported baseline accommodations cleanly alongside existing WP properties'
+);
+
+$ensured_ilala = outbound_ensure_baseline_accommodation_post('ilala-lodge-hotel');
+$ilala_rooms = json_decode((string) get_post_meta($ensured_ilala, '_outbound_room_types_json', true), true);
+assert_true(
+    $ensured_ilala > 0
+    && count($ilala_rooms) >= 2
+    && !empty($ilala_rooms[0]['id']),
+    'Imports a baseline current property into WordPress with stable dynamic unit IDs on demand'
+);
+
+ob_start();
+outbound_editor_render_accommodation_fields($GLOBALS['__mock_wp_posts'][601], false);
+$rendered_editor_html = (string) ob_get_clean();
+assert_true(
+    str_contains($rendered_editor_html, 'ROOMS &amp; ACCOMMODATION UNITS')
+    && str_contains($rendered_editor_html, '3. Rates &amp; Seasons')
+    && str_contains($rendered_editor_html, '6. Offers &amp; Packages')
+    && str_contains($rendered_editor_html, 'Waterhole View Room')
+    && str_contains($rendered_editor_html, 'Indicative Starting Rate (USD)')
+    && str_contains($rendered_editor_html, 'outbound_indicative_price_usd_mirror')
+    && str_contains($rendered_editor_html, 'outbound-unit-manager-config'),
+    'Accommodation 8-tab editor renders existing WP properties with dynamic Units, Rates, and Offers managers'
+);
+
+// Test Rate Plans & Special Offers persistence and strict supplier-cost isolation in PHP
+$GLOBALS['__mock_can_manage'] = true;
+outbound_save_structured_item_meta(601, 'accommodation', array(
+    'outbound_rate_plans_present' => '1',
+    'outbound_rate_plans_json'    => json_encode(array(
+        array(
+            'id'                => 'rp_zim_test',
+            'internalRateName'  => 'Zim Resident Wet Season',
+            'amountUSD'         => 210,
+            'priceBasis'        => 'per_room',
+            'visitorMarket'     => 'zimbabwe_resident',
+            'boardBasis'        => 'bed_and_breakfast',
+            'rateStatus'        => 'confirmed',
+            'applicableUnitIds' => array('unit_waterhole-view-room_1'),
+            'supplierCostUSD'   => 145,
+            'internalNotes'     => 'Confidential net contract rate',
+        ),
+    )),
+    'outbound_offers_present' => '1',
+    'outbound_offers_json'    => json_encode(array(
+        array(
+            'id'                => 'offer_romance_test',
+            'title'             => 'Romantic Sunset Package',
+            'description'       => 'Includes sunset cruise for two.',
+            'includedServices'  => array('Zambezi Sunset Cruise', 'Sparkling Wine'),
+            'applicableUnitIds' => array('unit_waterhole-view-room_1'),
+            'priceType'         => 'percentage_discount',
+            'discountPercent'   => 15,
+            'status'            => 'published',
+        ),
+    )),
+));
+$saved_rps_pub = json_decode((string) get_post_meta(601, '_outbound_rate_plans_json', true), true);
+$saved_rps_int = json_decode((string) get_post_meta(601, '_outbound_rate_plan_internal_json', true), true);
+$saved_offers  = json_decode((string) get_post_meta(601, '_outbound_property_offers_json', true), true);
+$built_rp_pub  = outbound_build_public_rate_plan(array_merge($saved_rps_pub[0], array('supplierCostUSD' => 99, 'internalNotes' => 'SECRET')));
+assert_true(
+    !isset($saved_rps_pub[0]['supplierCostUSD'])
+    && !isset($saved_rps_pub[0]['internalNotes'])
+    && !isset($built_rp_pub['supplierCostUSD'])
+    && ($saved_rps_int['rp_zim_test']['supplierCostUSD'] ?? 0) == 145
+    && ($saved_offers[0]['title'] ?? '') === 'Romantic Sunset Package',
+    'Rate Plans isolate supplier cost & margins from public JSON and Special Offers persist separately from rooms'
+);
+
+// Test Global Website Search Engine (`inc/search.php`)
+$GLOBALS['__mock_wp_posts'][603] = new WP_Post((object) array(
+    'ID'           => 603,
+    'post_type'    => 'accommodation',
+    'post_status'  => 'publish',
+    'post_title'   => 'Victoria Falls City Residences',
+    'post_name'    => 'vic-falls-city-residences',
+    'post_excerpt' => 'Modern family apartments with swimming pool in Victoria Falls Town.',
+    'post_content' => 'Self-catering family apartments in Victoria Falls Town with pool access.',
+    'menu_order'   => 99,
+));
+$GLOBALS['__mock_wp_meta'][603] = array(
+    '_outbound_category_id'     => 'apartments',
+    '_outbound_category_label'  => 'Apartment',
+    '_outbound_location'        => 'Victoria Falls Town',
+    '_outbound_price_usd'       => '220',
+    '_outbound_max_guests'      => '6',
+    '_outbound_amenities_json'  => json_encode(array('wifi', 'pool', 'family-friendly', 'self-catering')),
+    '_outbound_room_types_json' => json_encode(array(
+        array(
+            'id'          => 'unit_three-bedroom-apartment_1',
+            'name'        => 'Three-Bedroom Apartment',
+            'status'      => 'published',
+            'description' => 'Large family suite with kitchen and swimming pool view.',
+            'pricing'     => array('startingFromPriceUSD' => 220, 'baseNightlyRateUSD' => 220),
+            'ratePlans'   => array(
+                array(
+                    'id'               => 'rp_hidden',
+                    'internalRateName' => 'Contract Net',
+                    'amountUSD'        => 220,
+                    'supplierCostUSD'  => 140,
+                    'internalNotes'    => 'HIDDEN_PHP_SUPPLIER_SECRET',
+                ),
+            ),
+        ),
+        array(
+            'id'          => 'unit_draft_hidden_2',
+            'name'        => 'Draft Hidden Penthouse',
+            'status'      => 'draft',
+            'description' => 'Must never be indexed in public search.',
+        ),
+    )),
+);
+
+outbound_invalidate_snapshot_cache();
+outbound_invalidate_search_index_cache();
+
+$php_search_index = outbound_build_public_search_index(true);
+assert_true(
+    is_array($php_search_index) && count($php_search_index) >= 8,
+    'PHP public search index builds across published accommodations, units, experiences, packages, and guides'
+);
+
+$php_queries = array(
+    'Victoria Falls',
+    'Sunset Cruise',
+    'Family accommodation',
+    'Lodge',
+    'Swimming pool',
+    'Chobe',
+    'Helicopter',
+    'Three-bedroom apartment',
+);
+$all_php_queries_hit = true;
+foreach ($php_queries as $pq) {
+    $res = outbound_execute_public_search(array('q' => $pq, 'type' => 'all', 'page' => 1, 'per_page' => 12));
+    if (empty($res['total']) || empty($res['results'])) {
+        $all_php_queries_hit = false;
+        echo "[FAIL DETAILS] Query returned 0 results: {$pq}\n";
+    }
+}
+assert_true($all_php_queries_hit, 'PHP global search matches Victoria Falls, Sunset Cruise, Family accommodation, Lodge, Swimming pool, Chobe, Helicopter, and Three-bedroom apartment');
+
+$apt_res = outbound_execute_public_search(array('q' => 'Three-bedroom apartment', 'type' => 'accommodation'));
+$apt_urls = array_column((array) ($apt_res['results'] ?? array()), 'url');
+assert_true(
+    in_array('/accommodation/vic-falls-city-residences?unit=unit_three-bedroom-apartment_1#accommodation-units', $apt_urls, true),
+    'PHP global search links matched unit directly to /accommodation/{slug}?unit={unitId}#accommodation-units'
+);
+
+$draft_res = outbound_execute_public_search(array('q' => 'Draft Hidden Penthouse', 'type' => 'all'));
+$secret_res = outbound_execute_public_search(array('q' => 'HIDDEN_PHP_SUPPLIER_SECRET', 'type' => 'all'));
+assert_true(
+    (int) ($draft_res['total'] ?? -1) === 0 && (int) ($secret_res['total'] ?? -1) === 0,
+    'PHP global search excludes draft/unpublished room units and confidential supplier notes'
+);
+
+outbound_invalidate_search_index_cache();
+assert_true(
+    empty($GLOBALS['__mock_wp_transients']['outbound_public_search_index_v1']),
+    'outbound_invalidate_search_index_cache() clears public search index transient cleanly'
+);
+
+// ============================================================
+// 11. FULL ACCOMMODATION CRUD & DATA SAFETY LIFECYCLE TESTS
+// ============================================================
+
+// A. Permission check when unauthenticated
+$GLOBALS['__mock_can_manage'] = false;
+$unauth_trash = outbound_change_accommodation_status(603, 'trash');
+$unauth_perm  = outbound_permanently_delete_accommodation(603, true);
+assert_true(
+    empty($unauth_trash['ok']) && empty($unauth_perm['ok']) && get_post_status(603) === 'publish',
+    'Unauthorized users are blocked from trashing or permanently deleting accommodations'
+);
+
+// Authenticate as CMS Administrator
+$GLOBALS['__mock_can_manage'] = true;
+
+// B. Step 1-3: Create property -> Draft -> Publish
+$create_draft_res = outbound_cms_save_item_record('accommodation', 0, 'draft', array(
+    'outbound_post' => array(
+        'post_title'   => 'Zambezi Riverbend Sanctuary',
+        'post_name'    => 'zambezi-riverbend-sanctuary',
+        'post_excerpt' => 'Luxury riverside eco-sanctuary near Victoria Falls.',
+        'post_content' => 'Full description of Zambezi Riverbend Sanctuary with deck dining.',
+    ),
+    'outbound_category_id' => 'lodges',
+    'outbound_amenities' => array('wifi', 'pool', 'Shared Riverside Deck'),
+    'outbound_meta'      => array(
+        '_outbound_category_label' => 'Safari Lodge',
+        '_outbound_location'       => 'Upper Zambezi Riverfront',
+        '_outbound_price_usd'      => '410',
+        '_outbound_hero_image_url' => 'https://example.com/zambezi-hero.jpg',
+        '_outbound_featured'       => '1',
+    ),
+    'outbound_prop_enquiry' => array(
+        'enableWhatsApp' => '1',
+        'enableEmail'    => '1',
+        'contactEmail'   => 'bookings@zambeziriverbend.example',
+        'contactPhone'   => '+263 83 284 9999',
+        'whatsappNumber' => '+263 714 701 721',
+    ),
+));
+$zrs_id = (int) ($create_draft_res['post_id'] ?? 0);
+assert_true(
+    $zrs_id > 0 && ($create_draft_res['status'] ?? '') === 'draft' && get_post_status($zrs_id) === 'draft',
+    'Step 1-2: Created new accommodation property saved cleanly as Draft'
+);
+
+$pub_snap_while_draft = outbound_build_live_snapshot(false, false);
+$pub_slugs_while_draft = array_column((array) ($pub_snap_while_draft['accommodations'] ?? array()), 'slug');
+assert_true(
+    !in_array('zambezi-riverbend-sanctuary', $pub_slugs_while_draft, true),
+    'Draft property does not appear in public snapshot'
+);
+
+$pub_op = outbound_change_accommodation_status($zrs_id, 'publish');
+assert_true(
+    !empty($pub_op['ok']) && get_post_status($zrs_id) === 'publish',
+    'Step 3: Published Draft accommodation property live'
+);
+
+$pub_snap_after_publish = outbound_build_live_snapshot(false, false);
+$pub_slugs_after_publish = array_column((array) ($pub_snap_after_publish['accommodations'] ?? array()), 'slug');
+assert_true(
+    in_array('zambezi-riverbend-sanctuary', $pub_slugs_after_publish, true),
+    'Published property immediately appears in public snapshot after cache invalidation'
+);
+
+// C. Steps 4-12: Add 5 custom-named units with galleries/rates/amenities -> Edit 2nd -> Duplicate 3rd -> Trash 4th -> Restore 4th -> Perm delete -> Photo & Rate CRUD
+$custom_unit_names = array(
+    'Classic Room',
+    'River View Suite',
+    'Horizon Tented Residence',
+    'Family Chalet',
+    'Honeymoon Suite',
+);
+$unit_ids = array();
+foreach ($custom_unit_names as $u_idx => $u_name) {
+    $ures = outbound_crud_upsert_unit($zrs_id, array(
+        'name'             => $u_name,
+        'unitCategory'     => 'Suite',
+        'status'           => 'published',
+        'shortDescription' => $u_name . ' overlooking the Zambezi.',
+        'imageUrl'         => 'https://example.com/unit-main-' . $u_idx . '.jpg',
+        'gallery'          => array(
+            array('id' => 'gal_a_' . $u_idx, 'url' => 'https://example.com/gal-a-' . $u_idx . '.jpg', 'alt' => $u_name . ' 1'),
+            array('id' => 'gal_b_' . $u_idx, 'url' => 'https://example.com/gal-b-' . $u_idx . '.jpg', 'alt' => $u_name . ' 2'),
+        ),
+        'amenities'        => array('wifi', 'ac', 'private-deck'),
+        'customAmenities'  => array('Copper Outdoor Bath'),
+        'features'         => array('Wi-Fi', 'Air Conditioning', 'Private Deck', 'Copper Outdoor Bath'),
+        'pricing'          => array(
+            'startingFromPriceUSD' => 410 + ($u_idx * 50),
+            'baseNightlyRateUSD'   => 410 + ($u_idx * 50),
+            'seasonalRates'        => array(
+                array('id' => 'sr_peak_' . $u_idx, 'label' => 'Peak Dry Season', 'startDate' => '2026-07-01', 'endDate' => '2026-10-31', 'nightlyRateUSD' => 550, 'isActive' => true),
+                array('id' => 'sr_old_' . $u_idx, 'label' => 'Old Deactivated Season', 'startDate' => '2025-01-01', 'endDate' => '2025-03-31', 'nightlyRateUSD' => 290, 'isActive' => false),
+            ),
+        ),
+    ));
+    if (!empty($ures['unit']['id'])) {
+        $unit_ids[] = $ures['unit']['id'];
+    }
+}
+$list_5 = outbound_crud_list_units($zrs_id, 'all');
+assert_true(
+    count($unit_ids) === 5 && count($list_5) === 5,
+    'Steps 4-5: Added 5 custom-named accommodation units with photos, rates, and amenities'
+);
+
+// Step 6: Edit 2nd unit (River View Suite -> price & custom amenity edit)
+$second_id = $unit_ids[1];
+$edit2 = outbound_crud_upsert_unit($zrs_id, array(
+    'id'              => $second_id,
+    'name'            => 'River View Suite Deluxe',
+    'customAmenities' => array('Heated Plunge Pool'),
+    'amenities'       => array('private-deck', 'wifi'), // Reordered amenities
+    'features'        => array('Private Deck', 'Wi-Fi', 'Heated Plunge Pool'),
+    'pricing'         => array(
+        'startingFromPriceUSD' => 525,
+        'baseNightlyRateUSD'   => 525,
+        'seasonalRates'        => array(
+            array('id' => 'sr_peak_1', 'label' => 'Peak Dry Season', 'startDate' => '2026-07-01', 'endDate' => '2026-10-31', 'nightlyRateUSD' => 595, 'isActive' => true),
+            array('id' => 'sr_old_1', 'label' => 'Old Deactivated Season', 'startDate' => '2025-01-01', 'endDate' => '2025-03-31', 'nightlyRateUSD' => 290, 'isActive' => false),
+        ),
+    ),
+));
+assert_true(
+    !empty($edit2['ok']) && ($edit2['unit']['name'] ?? '') === 'River View Suite Deluxe' && (float) ($edit2['unit']['pricing']['startingFromPriceUSD'] ?? 0) === 525.0,
+    'Step 6: Updated 2nd unit name, price, reordered amenities, and custom amenity'
+);
+
+// Step 7: Duplicate 3rd unit
+$third_id = $unit_ids[2];
+$dup3 = outbound_crud_duplicate_unit($zrs_id, $third_id);
+assert_true(
+    !empty($dup3['ok']) && ($dup3['unit']['id'] ?? '') !== $third_id && str_contains((string) ($dup3['unit']['name'] ?? ''), '(Copy)'),
+    'Step 7: Duplicated 3rd unit cleanly with new stable unit ID'
+);
+
+// Step 8-9: Trash 4th unit (Family Chalet) & verify other units + parent remain untouched & public hides trashed
+$fourth_id = $unit_ids[3];
+$trash4 = outbound_crud_change_unit_status($zrs_id, $fourth_id, 'trash');
+$snap_after_unit_trash = outbound_build_live_snapshot(false, false);
+$zrs_public = null;
+foreach ((array) ($snap_after_unit_trash['accommodations'] ?? array()) as $acc_row) {
+    if (($acc_row['slug'] ?? '') === 'zambezi-riverbend-sanctuary') {
+        $zrs_public = $acc_row;
+    }
+}
+$zrs_public_unit_ids = array_column((array) ($zrs_public['roomTypes'] ?? array()), 'id');
+assert_true(
+    !empty($trash4['ok'])
+    && !in_array($fourth_id, $zrs_public_unit_ids, true)
+    && in_array($unit_ids[0], $zrs_public_unit_ids, true)
+    && in_array($second_id, $zrs_public_unit_ids, true)
+    && in_array($unit_ids[4], $zrs_public_unit_ids, true)
+    && get_post_status($zrs_id) === 'publish',
+    'Steps 8-9: Moving 4th unit (Family Chalet) to Trash hides it publicly while leaving other units and parent property unchanged'
+);
+
+// Verify public rate serializer strips deactivated seasonal rates (`isActive: false`) on 2nd unit
+$pub_unit2 = null;
+foreach ((array) ($zrs_public['roomTypes'] ?? array()) as $pu) {
+    if (($pu['id'] ?? '') === $second_id) {
+        $pub_unit2 = $pu;
+    }
+}
+assert_true(
+    is_array($pub_unit2) && count((array) ($pub_unit2['pricing']['seasonalRates'] ?? array())) === 1 && ($pub_unit2['pricing']['seasonalRates'][0]['id'] ?? '') === 'sr_peak_1',
+    'Deactivated seasonal rates (isActive=false) are excluded from public frontend snapshot while active rates persist'
+);
+
+// Step 10: Restore trashed 4th unit & test permanent delete requires confirmation
+$rest4 = outbound_crud_change_unit_status($zrs_id, $fourth_id, 'restore');
+$unconf_unit_del = outbound_crud_permanently_delete_unit($zrs_id, $fourth_id, false);
+assert_true(
+    !empty($rest4['ok']) && ($rest4['unit']['status'] ?? '') === 'draft' && empty($unconf_unit_del['ok']),
+    'Step 10: Restored deleted unit to Draft and enforced explicit confirmation before permanent unit removal'
+);
+
+// Steps 11-12: Remove 1 gallery photo and delete old seasonal rate from 1st unit
+$first_edit = outbound_crud_upsert_unit($zrs_id, array(
+    'id'      => $unit_ids[0],
+    'gallery' => array(
+        array('id' => 'gal_b_0', 'url' => 'https://example.com/gal-b-0.jpg', 'alt' => 'Classic Room 2'),
+    ),
+    'pricing' => array(
+        'startingFromPriceUSD' => 410,
+        'baseNightlyRateUSD'   => 410,
+        'seasonalRates'        => array(
+            array('id' => 'sr_peak_0', 'label' => 'Peak Dry Season', 'startDate' => '2026-07-01', 'endDate' => '2026-10-31', 'nightlyRateUSD' => 550, 'isActive' => true),
+        ),
+    ),
+));
+assert_true(
+    count((array) ($first_edit['unit']['gallery'] ?? array())) === 1 && count((array) ($first_edit['unit']['pricing']['seasonalRates'] ?? array())) === 1,
+    'Steps 11-12: Removed individual gallery photo and deleted old seasonal rate cleanly'
+);
+
+// Step 13: Archive a special offer and verify excluded publicly
+update_post_meta($zrs_id, '_outbound_property_offers_json', wp_json_encode(array(
+    array('id' => 'off_live', 'title' => 'Stay 4 Pay 3', 'offerCategory' => 'special-offer', 'status' => 'published', 'applyToEntireProperty' => true),
+    array('id' => 'off_arch', 'title' => 'Archived Winter Special', 'offerCategory' => 'seasonal-promotion', 'status' => 'archived', 'applyToEntireProperty' => true),
+    array('id' => 'off_trash', 'title' => 'Trashed Honeymoon Promo', 'offerCategory' => 'honeymoon-package', 'status' => 'trashed', 'applyToEntireProperty' => true),
+)));
+outbound_invalidate_snapshot_cache();
+$snap_offers = outbound_build_live_snapshot(false, false);
+$zrs_off_titles = array();
+foreach ((array) ($snap_offers['accommodations'] ?? array()) as $acc_row) {
+    if (($acc_row['slug'] ?? '') === 'zambezi-riverbend-sanctuary') {
+        $zrs_off_titles = array_column((array) ($acc_row['offers'] ?? array()), 'title');
+    }
+}
+assert_true(
+    $zrs_off_titles === array('Stay 4 Pay 3'),
+    'Step 13: Archived and trashed special offers never leak onto the public website'
+);
+
+// Steps 14-16: Unpublish & Trash property -> confirm hidden from public -> Restore -> Republish
+$unpub_res = outbound_change_accommodation_status($zrs_id, 'unpublish');
+$snap_unpub = outbound_build_live_snapshot(false, false);
+$unpub_slugs = array_column((array) ($snap_unpub['accommodations'] ?? array()), 'slug');
+assert_true(
+    !empty($unpub_res['ok']) && get_post_status($zrs_id) === 'draft' && !in_array('zambezi-riverbend-sanctuary', $unpub_slugs, true),
+    'Steps 14-15: Unpublished property disappears from public website immediately'
+);
+
+// Verify critical bugfix: even when ALL WP accommodation posts are unpublished/trashed (0 published), baseline does NOT resurrect!
+$saved_statuses = array();
+foreach ($GLOBALS['__mock_wp_posts'] as $mpid => $mpo) {
+    if ($mpo->post_type === 'accommodation') {
+        $saved_statuses[$mpid] = $mpo->post_status;
+        $mpo->post_status = 'draft';
+    }
+}
+outbound_invalidate_snapshot_cache();
+$snap_zero_pub = outbound_build_live_snapshot(false, false);
+assert_true(
+    is_array($snap_zero_pub['accommodations'] ?? null) && count($snap_zero_pub['accommodations']) === 0,
+    'When all WP accommodations are unpublished/trashed (0 live), public snapshot returns [] instead of reverting to baseline'
+);
+foreach ($saved_statuses as $mpid => $orig_st) {
+    if (isset($GLOBALS['__mock_wp_posts'][$mpid])) {
+        $GLOBALS['__mock_wp_posts'][$mpid]->post_status = $orig_st;
+    }
+}
+outbound_invalidate_snapshot_cache();
+
+$trash_prop = outbound_change_accommodation_status($zrs_id, 'trash');
+$rest_prop  = outbound_change_accommodation_status($zrs_id, 'restore');
+$repub_prop = outbound_change_accommodation_status($zrs_id, 'publish');
+$snap_repub = outbound_build_live_snapshot(false, false);
+$repub_slugs = array_column((array) ($snap_repub['accommodations'] ?? array()), 'slug');
+assert_true(
+    !empty($trash_prop['ok']) && !empty($rest_prop['ok']) && !empty($repub_prop['ok']) && in_array('zambezi-riverbend-sanctuary', $repub_slugs, true),
+    'Step 16: Trash -> Restore -> Republish cycle restores property cleanly to public website'
+);
+
+// Shared Library dependency protection + unlink isolation
+$shared_am = outbound_get_shared_property_amenities();
+$shared_am['helipad-access'] = array('id' => 'helipad-access', 'label' => 'Helipad Access', 'category' => 'property', 'icon' => 'star');
+outbound_save_shared_property_amenities($shared_am);
+update_post_meta($zrs_id, '_outbound_amenities_json', wp_json_encode(array('wifi', 'helipad-access')));
+update_post_meta(603, '_outbound_amenities_json', wp_json_encode(array('wifi', 'pool', 'helipad-access')));
+$deps_before = outbound_find_shared_record_dependencies('property_amenities', 'helipad-access');
+$del_unconf_shared = outbound_delete_shared_library_record('property_amenities', 'helipad-access', false);
+// Unlink from ZRS only -> 603 must retain helipad-access!
+update_post_meta($zrs_id, '_outbound_amenities_json', wp_json_encode(array('wifi')));
+$meta_603_am = json_decode((string) get_post_meta(603, '_outbound_amenities_json', true), true);
+assert_true(
+    (int) ($deps_before['count'] ?? 0) === 2 && empty($del_unconf_shared['ok']) && in_array('helipad-access', (array) $meta_603_am, true),
+    'Shared amenity tracks cross-property dependencies, blocks unconfirmed deletion, and unlinking from one property leaves others intact'
+);
+
+// Steps 17-18: Permanent Delete requires Trash/Confirm -> permanently deletes ZRS with zero orphans & leaves 601/603 unaffected
+$impact = outbound_get_accommodation_delete_impact($zrs_id);
+$perm_fail_unconf = outbound_permanently_delete_accommodation($zrs_id, false);
+$perm_ok = outbound_permanently_delete_accommodation($zrs_id, true);
+$snap_final = outbound_build_live_snapshot(false, false);
+$final_slugs = array_column((array) ($snap_final['accommodations'] ?? array()), 'slug');
+assert_true(
+    ($impact['units_count'] ?? 0) === 6 // 5 created + 1 duplicated
+    && empty($perm_fail_unconf['ok'])
+    && !empty($perm_ok['ok'])
+    && get_post($zrs_id) === null
+    && empty($GLOBALS['__mock_wp_meta'][$zrs_id])
+    && !in_array('zambezi-riverbend-sanctuary', $final_slugs, true)
+    && get_post(603) !== null
+    && get_post_status(603) === 'publish'
+    && in_array('vic-falls-city-residences', $final_slugs, true),
+    'Steps 17-18: Permanent property deletion requires explicit confirmation, removes owned records cleanly with zero orphans, and leaves unrelated properties untouched'
+);
+
+// D. Generalized CPT CRUD (Experiences, Holiday Packages, Guides, Client Albums) & zero-baseline-resurrection
+$exp_save = outbound_cms_save_item_record('experience', 0, 'publish', array(
+    'outbound_post' => array('post_title' => 'Quad BikesF', 'post_name' => 'quad-bikesf', 'post_excerpt' => 'Quad biking adventure'),
+    'outbound_meta' => array('_outbound_price_usd' => '95', '_outbound_duration' => '2 hours'),
+));
+$pkg_save = outbound_cms_save_item_record('package', 0, 'publish', array(
+    'outbound_post' => array('post_title' => '3-Day Zambezi Getaway', 'post_name' => '3-day-zambezi-getaway', 'post_excerpt' => 'Package'),
+    'outbound_meta' => array('_outbound_price_usd' => '890', '_outbound_duration' => '3 Days / 2 Nights'),
+));
+$exp_id = (int) ($exp_save['post_id'] ?? 0);
+$pkg_id = (int) ($pkg_save['post_id'] ?? 0);
+
+$GLOBALS['__mock_can_manage'] = false;
+$unauth_exp_del = outbound_permanently_delete_cms_post($exp_id, true, 'experience');
+$GLOBALS['__mock_can_manage'] = true;
+
+$dup_exp = outbound_duplicate_cms_post($exp_id);
+$dup_exp_id = (int) ($dup_exp['post_id'] ?? 0);
+$dup_status_before_del = get_post_status($dup_exp_id);
+$trash_exp = outbound_change_cms_post_status($exp_id, 'trash', 'experience');
+$trash_pkg = outbound_change_cms_post_status($pkg_id, 'trash', 'package');
+$exp_status_after_trash = get_post_status($exp_id);
+$pkg_status_after_trash = get_post_status($pkg_id);
+$snap_after_cpt_trash = outbound_build_live_snapshot(false, false);
+$exp_slugs_after = array_column((array) ($snap_after_cpt_trash['experiences'] ?? array()), 'slug');
+$pkg_slugs_after = array_column((array) ($snap_after_cpt_trash['packages'] ?? array()), 'slug');
+$unconf_exp_perm = outbound_permanently_delete_cms_post($exp_id, false, 'experience');
+$perm_exp_ok = outbound_permanently_delete_cms_post($exp_id, true, 'experience');
+$perm_dup_ok = outbound_permanently_delete_cms_post($dup_exp_id, true, 'experience');
+$perm_pkg_ok = outbound_permanently_delete_cms_post($pkg_id, true, 'package');
+
+assert_true(
+    $exp_id > 0 && $pkg_id > 0
+    && empty($unauth_exp_del['ok'])
+    && !empty($dup_exp['ok']) && $dup_exp_id !== $exp_id && $dup_status_before_del === 'draft'
+    && !empty($trash_exp['ok']) && $exp_status_after_trash === 'trash'
+    && !empty($trash_pkg['ok']) && $pkg_status_after_trash === 'trash'
+    && !in_array('quad-bikesf', $exp_slugs_after, true)
+    && !in_array('3-day-zambezi-getaway', $pkg_slugs_after, true)
+    && empty($unconf_exp_perm['ok'])
+    && !empty($perm_exp_ok['ok']) && get_post($exp_id) === null
+    && !empty($perm_dup_ok['ok']) && get_post($dup_exp_id) === null
+    && !empty($perm_pkg_ok['ok']) && get_post($pkg_id) === null,
+    'Any Experience or Holiday Package can be duplicated, trashed (leaving public site empty rather than resurrecting baseline), and permanently deleted with confirmation'
+);
+
+// E. Holiday Builder live CMS Experience + Accommodation pricing sync & shared-shuttle parity + Animated Edit CTAs
+$live_exp_save = outbound_cms_save_item_record('experience', 0, 'publish', array(
+    'outbound_post' => array('post_title' => 'Sunset River Kayak', 'post_name' => 'sunset-river-kayak', 'post_excerpt' => 'Guided evening kayak'),
+    'outbound_meta' => array('_outbound_price_usd' => '135', '_outbound_duration' => '2.5 Hours'),
+));
+$live_exp_id = (int) ($live_exp_save['post_id'] ?? 0);
+outbound_invalidate_snapshot_cache();
+$synced_snap = outbound_build_live_snapshot(false, true);
+$synced_builder_acts = array_column((array) ($synced_snap['builderActivities'] ?? array()), null, 'id');
+$synced_cruise_price = (float) ($synced_builder_acts['act-sunset-cruise']['priceUSD'] ?? 0);
+$synced_kayak_price  = (float) ($synced_builder_acts['sunset-river-kayak']['priceUSD'] ?? 0);
+$kayak_est_snap = outbound_build_enquiry_snapshot(array(
+    'source' => 'holiday-builder',
+    'trip'   => array(
+        'adults'          => 2,
+        'children'        => 1,
+        'nights'          => 3,
+        'accommodationId' => 'vic-falls-city-residences',
+        'activityIds'     => array('sunset-river-kayak'),
+        'transportType'   => 'shared-shuttle',
+    ),
+));
+// vic-falls-city-residences rate = 220 * 3N * 2 rooms = 1320; activity = 135 * 2.8 = 378; shared-shuttle = 60 => min = 1758
+assert_true(
+    $synced_cruise_price > 0
+    && $synced_kayak_price === 135.0
+    && ($kayak_est_snap['estimate']['stayCost'] ?? 0) === 1320
+    && ($kayak_est_snap['estimate']['activityCost'] ?? 0) === 378
+    && ($kayak_est_snap['estimate']['transportCost'] ?? 0) === 60
+    && ($kayak_est_snap['estimate']['minimum'] ?? 0) === 1758,
+    'PHP builder snapshot and estimator sync live CMS experiences, accommodations, and shared-shuttle pricing 1:1'
+);
+outbound_permanently_delete_cms_post($live_exp_id, true, 'experience');
+
+$admin_css_src = (string) file_get_contents(__DIR__ . '/../wordpress-theme/outbound-holidays/assets/css/admin-outbound.css');
+$cms_hub_src   = (string) file_get_contents(__DIR__ . '/../wordpress-theme/outbound-holidays/inc/cms-hub.php');
+$admin_js_src  = (string) file_get_contents(__DIR__ . '/../wordpress-theme/outbound-holidays/assets/js/admin-meta.js');
+assert_true(
+    str_contains($admin_css_src, '@keyframes outboundEditSheen')
+    && str_contains($admin_css_src, '@keyframes outboundPencilWiggle')
+    && str_contains($admin_css_src, '.outbound-edit-cta')
+    && str_contains($cms_hub_src, 'outbound-edit-cta')
+    && str_contains($admin_js_src, 'outbound-edit-cta'),
+    'Emphasized animated Edit CTA styles and classes are wired across Studio dashboards and Unit Manager'
+);
+
+// F. Email delivery normalization (fungai@outboundholiday.com) & Holiday Builder enquiry persistence
+$GLOBALS['__mock_wp_options']['outbound_cms_site'] = array(
+    'contact' => array('email' => 'travel@outboundholidays.co.zw'),
+);
+$GLOBALS['__mock_wp_options']['outbound_smtp_settings'] = array(
+    'from_email' => 'travel@outboundholiday.com',
+    'from_name'  => 'Outbound Holidays',
+    'test_to'    => '',
+);
+$normalized_site_opts = outbound_get_site_options();
+$mail_from_cfg = outbound_get_mail_from_config();
+$GLOBALS['__mock_wp_mail_calls'] = array();
+outbound_dispatch_enquiry_emails(
+    'OH-261117-001',
+    'holiday-builder',
+    'Test Guest',
+    'guest@example.com',
+    '+263714701721',
+    2,
+    0,
+    3,
+    array('minimum' => 950, 'maximum' => 1121),
+    'Need sunset cruise.',
+    42,
+    array('stay_tier' => 'Comfort Plus Lodge')
+);
+$spec_mail = $GLOBALS['__mock_wp_mail_calls'][0] ?? array();
+$cust_mail = $GLOBALS['__mock_wp_mail_calls'][1] ?? array();
+assert_true(
+    ($normalized_site_opts['contact']['email'] ?? '') === 'fungai@outboundholiday.com'
+    && ($mail_from_cfg['email'] ?? '') === 'fungai@outboundholiday.com'
+    && ($spec_mail['to'] ?? '') === 'fungai@outboundholiday.com'
+    && ($cust_mail['to'] ?? '') === 'guest@example.com'
+    && in_array('From: Outbound Holidays <fungai@outboundholiday.com>', (array) ($spec_mail['headers'] ?? array()), true),
+    'Legacy travel@ emails normalize to fungai@outboundholiday.com and enquiry dispatches use Outbound Holidays <fungai@outboundholiday.com>'
+);
+
+$GLOBALS['__mock_wp_options']['outbound_db_schema_version'] = '1.4.0';
+$GLOBALS['wpdb'] = new class {
+    public string $prefix = 'wp_';
+    public string $last_error = '';
+    public int $insert_id = 0;
+    public int $seq = 0;
+    public array $rows = array();
+    public function get_charset_collate() { return 'DEFAULT CHARACTER SET utf8mb4'; }
+    public function prepare($query, ...$args) { return array('query' => $query, 'args' => $args); }
+    public function query($prepared) {
+        $q = is_array($prepared) ? $prepared['query'] : (string) $prepared;
+        if (str_contains($q, 'outbound_enquiry_sequences')) {
+            $this->seq++;
+            return 1;
+        }
+        return 0;
+    }
+    public function get_var($q) {
+        if (str_contains((string) $q, 'LAST_INSERT_ID')) {
+            return $this->seq;
+        }
+        return null;
+    }
+    public function get_row($prepared) { return null; }
+    public function insert($table, $data, $formats = null) {
+        $this->insert_id++;
+        $data['id'] = $this->insert_id;
+        $this->rows[] = array('table' => $table, 'data' => $data);
+        return 1;
+    }
+    public function update($table, $data, $where, $format = null, $where_format = null) { return 1; }
+};
+$hb_quick_res = outbound_process_enquiry_submission(array(
+    'name'        => 'Sarah Jenkins',
+    'email'       => 'sarah@example.com',
+    'phone'       => '+263771122334',
+    'message'     => 'Quick trip enquiry',
+    'source'      => 'holiday-builder',
+    'promotionId' => 0,
+    'trip'        => array(
+        'entryMode'   => 'quick',
+        'adults'      => 2,
+        'children'    => 0,
+        'nights'      => 3,
+        'stayTierId'  => 'comfort-plus',
+        'transportType' => 'undecided',
+    ),
+), '127.0.0.1');
+$hb_guided_res = outbound_process_enquiry_submission(array(
+    'name'    => 'Daniel Moyo',
+    'email'   => 'daniel@example.com',
+    'message' => '',
+    'source'  => 'holiday-builder',
+    'trip'    => array(
+        'entryMode'     => 'guided',
+        'adults'        => 2,
+        'children'      => 1,
+        'nights'        => 4,
+        'stayTierId'    => 'comfort-plus',
+        'stayTierName'  => 'Comfort Plus Lodge',
+        'activityIds'   => array('act-sunset-cruise'),
+        'transportType' => 'shared-shuttle',
+        'itineraryDraft' => array(
+            array('day' => 'Day 1', 'title' => 'Arrival', 'description' => 'Check in'),
+        ),
+    ),
+), '127.0.0.2');
+assert_true(
+    is_array($hb_quick_res) && !empty($hb_quick_res['saved'])
+    && is_array($hb_guided_res) && !empty($hb_guided_res['saved'])
+    && count($GLOBALS['wpdb']->rows) >= 2,
+    'Holiday Builder Quick and Guided submissions persist cleanly via outbound_process_enquiry_submission'
+);
+
+// G. Stale featured_overrides never break SnapshotSchema (empty badge) or overwrite Accommodation CPT edits
+$ilala_save = outbound_cms_save_item_record('accommodation', 0, 'publish', array(
+    'outbound_post' => array(
+        'post_title'   => 'Ilala Lodge Hotel Updated',
+        'post_name'    => 'ilala-lodge-hotel',
+        'post_excerpt' => 'Fresh CMS summary for Ilala Lodge Hotel.',
+    ),
+    'outbound_meta' => array(
+        '_outbound_price_usd' => '345',
+        '_outbound_tagline'   => 'Updated tagline directly from CMS',
+    ),
+    'outbound_rooms_present' => '1',
+    'outbound_rooms_json'    => json_encode(array(
+        array('id' => 'unit_deluxe', 'name' => 'Deluxe Suite', 'status' => 'published', 'pricing' => array('baseNightlyRateUSD' => 420)),
+    )),
+));
+$ilala_id = (int) ($ilala_save['post_id'] ?? 0);
+update_option('outbound_featured_item_overrides', array(
+    'accommodations' => array(
+        'ilala-lodge-hotel' => array(
+            'title' => 'Stale Override Title',
+            'price' => '295',
+            'badge' => '',
+        ),
+    ),
+));
+outbound_invalidate_snapshot_cache();
+$snap_with_override = outbound_build_live_snapshot(true);
+$ilala_with_ov = array_values(array_filter((array) ($snap_with_override['accommodations'] ?? array()), static fn($a) => ($a['slug'] ?? '') === 'ilala-lodge-hotel'))[0] ?? array();
+assert_true(
+    !array_key_exists('badge', $ilala_with_ov) || $ilala_with_ov['badge'] !== '',
+    'Empty featured_overrides badge never emits invalid empty string onto accommodation snapshot'
+);
+
+// Re-saving the Accommodation CPT clears stale featured_overrides so CPT price/title/rooms reflect immediately
+outbound_cms_save_item_record('accommodation', $ilala_id, 'publish', array(
+    'outbound_post' => array(
+        'post_title'   => 'Ilala Lodge Hotel Live',
+        'post_name'    => 'ilala-lodge-hotel',
+        'post_excerpt' => 'Live CMS summary.',
+    ),
+    'outbound_meta' => array(
+        '_outbound_price_usd' => '380',
+        '_outbound_tagline'   => 'Newly saved live tagline',
+    ),
+    'outbound_rooms_present' => '1',
+    'outbound_rooms_json'    => json_encode(array(
+        array('id' => 'unit_exec', 'name' => 'Executive Suite', 'status' => 'published', 'pricing' => array('baseNightlyRateUSD' => 495)),
+    )),
+));
+$snap_after_cpt = outbound_build_live_snapshot(true);
+$ilala_live = array_values(array_filter((array) ($snap_after_cpt['accommodations'] ?? array()), static fn($a) => ($a['slug'] ?? '') === 'ilala-lodge-hotel'))[0] ?? array();
+assert_true(
+    ($ilala_live['name'] ?? '') === 'Ilala Lodge Hotel Live'
+    && (float) ($ilala_live['priceFromUSD'] ?? 0) === 380.0
+    && ($ilala_live['tagline'] ?? '') === 'Newly saved live tagline'
+    && ($ilala_live['roomTypes'][0]['name'] ?? '') === 'Executive Suite',
+    'Saving an Accommodation CPT clears stale featured_overrides and updates frontend snapshot title, rate, tagline, and rooms immediately'
+);
+outbound_permanently_delete_cms_post($ilala_id, true, 'accommodation');
 
 echo "\nSummary: " . ($failures === 0 ? 'ALL PHP CHECKS PASSED' : "{$failures} CHECK(S) FAILED") . "\n";
 exit($failures === 0 ? 0 : 1);

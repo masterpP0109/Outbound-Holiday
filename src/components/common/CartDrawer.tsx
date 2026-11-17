@@ -1,7 +1,7 @@
 import { editorial } from "../../runtime/catalog";
 import React,{ useState } from 'react';
 import { CartItem,Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { X,ShoppingBag,Trash2,Plus,Minus,ArrowRight,Check } from 'lucide-react';
 
 interface CartDrawerProps {
@@ -29,8 +29,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   if (!isOpen) return null;
 
-  const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-
   const rawSubtotalUSD = cartItems.reduce(
     (acc, item) => acc + item.product.priceUSD * item.quantity,
     0
@@ -39,10 +37,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const discountAmountUSD = (rawSubtotalUSD * discountPercent) / 100;
   const finalSubtotalUSD = rawSubtotalUSD - discountAmountUSD;
 
-  const formatPrice = (priceUSD: number) => {
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +106,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     src={item.product.imageUrl}
                     alt={item.product.name}
                     className="w-16 h-16 rounded-lg object-cover shrink-0"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="flex-1 min-w-0">
                     <h4 className="font-serif font-bold text-xs text-[#0B5E8E] truncate">

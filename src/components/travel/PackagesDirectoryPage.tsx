@@ -4,7 +4,7 @@ import { packagePath } from '../../routes';
 import React,{ useState } from 'react';
 import { DetailedPackage,ALL_PACKAGES } from '../../data/packagesData';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import {
 Compass,Clock,
 ArrowRight,
@@ -41,11 +41,7 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
 
   const filterCategories: { id: FilterCategory; label: string }[] = editorialValue("travel/PackagesDirectoryPage.section1", {});
 
-  const formatPrice = (priceUSD: number) => {
-    const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-    const converted = Math.round(priceUSD * rateObj.rate);
-    return `${rateObj.symbol}${converted.toLocaleString()}`;
-  };
+  const formatPrice = (priceUSD: number) => formatCurrencyAmount(priceUSD, currency);
 
   const filteredPackages = ALL_PACKAGES.filter((pkg) => {
     // Filter by Category
@@ -74,6 +70,8 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
             src={fallsTour1} 
             alt={editorial("travel/PackagesDirectoryPage.text9")}
             className="w-full h-full object-cover object-center filter brightness-90 saturate-110 scale-105"
+            loading="lazy"
+            decoding="async"
           />
           {/* Multi-stage dark gradient overlays for maximum contrast */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/90 via-[#0D2833]/80 to-[#0D2833]/90" />
@@ -191,6 +189,8 @@ export const PackagesDirectoryPage: React.FC<PackagesDirectoryPageProps> = ({
                       src={pkg.imageUrl}
                       alt={pkg.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90" />
 

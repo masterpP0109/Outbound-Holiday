@@ -1,4 +1,5 @@
 import type { DetailedAccommodation } from '../types/content';
+import { getPublishedRoomTypes, getRoomMaxGuests, getRoomStartingPriceUSD } from './roomPricing';
 
 export type AccommodationCategoryId = 'all' | 'hotels' | 'lodges' | 'guest-houses' | 'apartments';
 export type CanonicalAccommodationCategory = Exclude<AccommodationCategoryId, 'all'>;
@@ -168,25 +169,32 @@ export function getMaxGuestCapacity(property: DetailedAccommodation): number | n
   }
 
   let maxCap = 0;
-  for (const room of property.roomTypes ?? []) {
-    const occ = room.occupancy ?? '';
-    // Handle patterns like "4-6 Guests"
-    const rangeMatch = occ.match(/(\d+)\s*[-–]\s*(\d+)/);
-    if (rangeMatch) {
-      const upper = Number(rangeMatch[2]);
-      if (upper > maxCap) maxCap = upper;
-      continue;
-    }
-
-    // Handle additive patterns like "2 Adults + 2 Children" or single numbers like "2 Adults"
-    const nums = occ.match(/\d+/g);
-    if (nums && nums.length > 0) {
-      const sum = nums.reduce((acc, n) => acc + Number(n), 0);
-      if (sum > maxCap) maxCap = sum;
+  for (const room of getPublishedRoomTypes(property)) {
+    const cap = getRoomMaxGuests(room);
+    if (cap !== null && cap > maxCap) {
+      maxCap = cap;
     }
   }
 
   return maxCap > 0 ? maxCap : null;
+}
+
+/**
+ * Returns the property's starting nightly price in USD:
+ * Uses property.priceFromUSD if > 0, otherwise the lowest published room starting price if available,
+ * otherwise null ("Price on enquiry").
+ */
+export function getPropertyDisplayPriceUSD(property: DetailedAccommodation): number | null {
+  if (typeof property.priceFromUSD === 'number' && property.priceFromUSD > 0) {
+    return property.priceFromUSD;
+  }
+  const roomPrices = getPublishedRoomTypes(property)
+    .map((r) => getRoomStartingPriceUSD(r))
+    .filter((p): p is number => typeof p === 'number' && p > 0);
+  if (roomPrices.length > 0) {
+    return Math.min(...roomPrices);
+  }
+  return null;
 }
 
 /**

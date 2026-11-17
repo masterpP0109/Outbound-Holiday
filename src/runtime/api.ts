@@ -9,6 +9,9 @@ interface OutboundWpConfig {
   themeUri?: string;
   restUrl?: string;
   snapshotUrl?: string;
+  postsUrl?: string;
+  searchUrl?: string;
+  googleCseId?: string;
   nonce?: string;
   heroFallbackUrl?: string;
   turnstileSiteKey?: string;
@@ -47,7 +50,13 @@ export function resolveAssetUrl(url: string): string {
   return url;
 }
 
-let cached:ContentSnapshot|undefined;let cachedAt=0;let inFlight:Promise<ContentSnapshot>|undefined;let etag:string|undefined;
+let cached:ContentSnapshot|undefined;let cachedAt=0;let inFlight:Promise<ContentSnapshot>|undefined;let etag:string|undefined;let lastSnapshotError:string|null=null;
+export function getLastSnapshotError():string|null{return lastSnapshotError;}
+export function seedInitialContentCache(snapshot:ContentSnapshot, fromServer:boolean):void{
+ if(!fromServer)return;
+ cached=snapshot;
+ cachedAt=Date.now();
+}
 export async function fetchContent(force=false):Promise<ContentSnapshot>{
  const wpCfg = getWpConfig();
  const isPreview = Boolean(wpCfg?.isPreview);
@@ -56,13 +65,56 @@ export async function fetchContent(force=false):Promise<ContentSnapshot>{
  const reqHeaders: Record<string, string> = {};
  if (!isPreview && etag) reqHeaders['If-None-Match'] = etag;
  if (isPreview && wpCfg?.nonce) reqHeaders['X-WP-Nonce'] = wpCfg.nonce;
- inFlight=(async()=>{const response=await fetch(endpoint,{headers:reqHeaders,signal:AbortSignal.timeout(75000)});if(!isPreview&&response.status===304&&cached){cachedAt=Date.now();return cached;}if(!response.ok)throw new Error('Holiday content is temporarily unavailable. Please retry.');cached=SnapshotSchema.parse(await response.json());cachedAt=Date.now();if(!isPreview)etag=response.headers.get('ETag')??undefined;return cached;})();
+ inFlight=(async()=>{const response=await fetch(endpoint,{headers:reqHeaders,cache:isPreview?'no-store':'no-cache',signal:AbortSignal.timeout(75000)});if(!isPreview&&response.status===304&&cached){cachedAt=Date.now();return cached;}if(!response.ok)throw new Error(`Holiday content request failed (${response.status}).`);const raw=await response.json();const parsed=SnapshotSchema.safeParse(raw);if(!parsed.success){const msg='Live CMS snapshot validation failed: '+parsed.error.issues.slice(0,3).map(i=>`${i.path.join('.')}: ${i.message}`).join('; ');lastSnapshotError=msg;console.error('[Outbound CMS]',msg,parsed.error);throw new Error(msg);}lastSnapshotError=null;cached=parsed.data;cachedAt=Date.now();if(!isPreview)etag=response.headers.get('ETag')??undefined;return cached;})();
  try{return await inFlight;}finally{inFlight=undefined;}
+}
+let initialFromServer = false;
+export function hasServerInitialContent(): boolean {
+ return initialFromServer;
 }
 export function readInitialContent():ContentSnapshot{
  const element=document.getElementById('outbound-content');
- if(element){try{return SnapshotSchema.parse(JSON.parse(element.textContent??'null'));}catch{ /* Recover using the bundled published snapshot. */ }}
+ if(element){try{const parsed=SnapshotSchema.safeParse(JSON.parse(element.textContent??'null'));if(parsed.success){lastSnapshotError=null;initialFromServer=true;return parsed.data;}const msg='Initial WordPress snapshot validation failed: '+parsed.error.issues.slice(0,3).map(i=>`${i.path.join('.')}: ${i.message}`).join('; ');lastSnapshotError=msg;console.error('[Outbound CMS]',msg,parsed.error);}catch(err){const msg='Failed to parse #outbound-content JSON payload.';lastSnapshotError=msg;console.error('[Outbound CMS]',msg,err);}}
+ initialFromServer=false;
  return SnapshotSchema.parse(publishedContent);
+}
+export async function fetchCurrencyRates(): Promise<{
+ rates: Record<string, { symbol: string; rate: number }>;
+ meta: { mode: 'automatic' | 'manual'; status: 'live' | 'cached' | 'manual' | 'unavailable'; provider: string; effectiveDate?: string | null; fetchedAt?: string | null };
+} | null> {
+ const wpCfg = getWpConfig();
+ const endpoint = wpCfg?.restUrl
+  ? `${wpCfg.restUrl.replace(/\/$/, '')}/currency-rates`
+  : `${API_BASE_URL}/currency-rates`;
+ try {
+  const response = await fetch(endpoint, { headers: { Accept: 'application/json' }, cache: 'no-cache', signal: AbortSignal.timeout(10000) });
+  if (!response.ok) return null;
+  const raw = await response.json();
+  if (!raw || typeof raw !== 'object' || !raw.rates || typeof raw.rates !== 'object') return null;
+  const rates: Record<string, { symbol: string; rate: number }> = {};
+  for (const [code, info] of Object.entries(raw.rates as Record<string, any>)) {
+   const upper = code.toUpperCase();
+   if (upper === 'ZWL') continue;
+   if (info && typeof info.rate === 'number' && Number.isFinite(info.rate) && info.rate > 0) {
+    rates[upper] = { symbol: String(info.symbol || upper), rate: upper === 'USD' ? 1 : info.rate };
+   }
+  }
+  if (!rates.USD) rates.USD = { symbol: '$', rate: 1 };
+  const status = raw.status === 'live' || raw.status === 'cached' || raw.status === 'manual' ? raw.status : 'unavailable';
+  const mode = raw.mode === 'manual' ? 'manual' : 'automatic';
+  return {
+   rates,
+   meta: {
+    mode,
+    status,
+    provider: String(raw.provider || 'Frankfurter API v2'),
+    effectiveDate: raw.effectiveDate ? String(raw.effectiveDate) : null,
+    fetchedAt: raw.fetchedAt ? String(raw.fetchedAt) : null,
+   },
+  };
+ } catch {
+  return null;
+ }
 }
 export async function submitForm(path:'enquiries'|'newsletter',payload:unknown,key:string){
  const wpCfg = getWpConfig();
@@ -72,7 +124,7 @@ export async function submitForm(path:'enquiries'|'newsletter',payload:unknown,k
  // omitting X-WP-Nonce prevents 403 rest_cookie_invalid_nonce on cached pages.
  let response:Response;
  try{response=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify(payload),signal:AbortSignal.timeout(75000)});}catch{throw new Error('We could not connect right now. Please check your internet connection and try again.');}
- let result:any=null;
+ let result:any;
  try{result=await response.json();}catch{result=null;}
  if(!response.ok){
   const isTechnicalCode=typeof result?.code==='string'&&result.code.startsWith('rest_');

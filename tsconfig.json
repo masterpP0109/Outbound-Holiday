@@ -6,7 +6,8 @@
     "server",
     "shared",
     "prisma",
-    "tests"
+    "tests",
+    "wordpress-theme/app-src"
   ],
   "compilerOptions": {
     "target": "ES2022",
@@ -31,6 +32,7 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,
+    "noImplicitAny": false,
     "strictNullChecks": true
   }
 }

@@ -261,3 +261,17 @@ add_action('template_redirect', static function (): void {
         exit;
     }
 });
+
+/**
+ * Prevent WordPress from guessing a similar slug when a property, experience, package, guide, or gallery item
+ * is removed or trashed, ensuring deleted/unpublished URLs return a clean 404 response.
+ */
+add_filter('do_redirect_guess_404_permalink', static function (bool $do_redirect): bool {
+    $req_path = trim((string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH), '/');
+    foreach (array('accommodation/', 'things-to-do/', 'experience/', 'packages/', 'package/', 'guide/', 'client-gallery/') as $prefix) {
+        if (str_starts_with($req_path, $prefix)) {
+            return false;
+        }
+    }
+    return $do_redirect;
+});

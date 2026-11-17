@@ -39,7 +39,8 @@ function outbound_maybe_install_schema(bool $force = false): void {
     }
 
     $current = (string) get_option('outbound_db_schema_version', '0');
-    if (!$force && version_compare($current, OUTBOUND_DB_SCHEMA_VERSION, '>=')) {
+    $target_version = defined('OUTBOUND_DB_SCHEMA_VERSION') ? OUTBOUND_DB_SCHEMA_VERSION : '1.4.0';
+    if (!$force && version_compare($current, $target_version, '>=')) {
         return;
     }
 

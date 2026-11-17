@@ -88,6 +88,8 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
             src={detail.image} 
             alt={detail.title} 
             className="w-full h-full object-cover object-center scale-105 filter brightness-90 saturate-110"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/95 via-[#0D2833]/85 to-[#0D2833]/95" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-transparent to-[#0D2833]/70" />
@@ -215,6 +217,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
                       alt={exp.title}
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
 
@@ -286,7 +289,9 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
                 <img 
                   src={relCat.image} 
                   alt={relCat.title}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/60 to-transparent" />
                 <div className="relative z-10 space-y-1 text-white">

@@ -24,13 +24,13 @@ function outbound_editor_get_cpt_title_map(string $post_type): array {
 
     $map = array();
     global $wpdb;
-    if (isset($wpdb) && is_object($wpdb) && method_exists($wpdb, 'get_results')) {
+    if (isset($wpdb) && is_object($wpdb) && isset($wpdb->posts) && method_exists($wpdb, 'get_results')) {
         $rows = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT post_name, post_title FROM {$wpdb->posts} WHERE post_type = %s AND post_status IN ('publish','draft','pending','private') ORDER BY menu_order ASC, post_title ASC",
                 $post_type
             ),
-            ARRAY_A
+            defined('ARRAY_A') ? ARRAY_A : 'ARRAY_A'
         );
         if (is_array($rows)) {
             foreach ($rows as $row) {
@@ -97,10 +97,8 @@ function outbound_editor_load_effective_record(int $post_id, string $post_type):
     $post = function_exists('get_post') ? get_post($post_id) : null;
     $slug = $post ? (string) $post->post_name : '';
 
-    $stored_full = $post_id > 0 ? outbound_editor_get_json_meta($post_id, '_outbound_full_json', array()) : array();
-    if (!empty($stored_full)) {
-        return $stored_full;
-    }
+    $stored_full  = $post_id > 0 ? outbound_editor_get_json_meta($post_id, '_outbound_full_json', array()) : array();
+    $baseline_rec = array();
 
     if ($slug !== '' && function_exists('outbound_get_baseline_snapshot')) {
         $snap = outbound_get_baseline_snapshot();
@@ -115,13 +113,18 @@ function outbound_editor_load_effective_record(int $post_id, string $post_type):
         if ($snap_key !== '' && !empty($snap[$snap_key]) && is_array($snap[$snap_key])) {
             foreach ($snap[$snap_key] as $rec) {
                 if (is_array($rec) && (($rec['slug'] ?? '') === $slug || ($rec['id'] ?? '') === $slug)) {
-                    return $rec;
+                    $baseline_rec = $rec;
+                    break;
                 }
             }
         }
     }
 
-    return array();
+    if (!empty($stored_full)) {
+        return !empty($baseline_rec) ? array_merge($baseline_rec, $stored_full) : $stored_full;
+    }
+
+    return $baseline_rec;
 }
 
 /**
@@ -561,7 +564,19 @@ function outbound_editor_render_accommodation_fields(WP_Post $post, bool $in_cms
         outbound_editor_render_cms_core_fields($post, 'accommodation', $hero_url, 'acc_hero_img_input', 'Card Summary (Short Description)', 'Editorial Overview');
     }
 
-    $category_id = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_category_id', true) : '') ?: 'lodges';
+    $category_id = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_category_id', true) : '');
+    if ($category_id === '' && $post_id > 0 && function_exists('wp_get_post_terms')) {
+        $acc_terms = wp_get_post_terms($post_id, 'accommodation_category', array('fields' => 'slugs'));
+        if (is_array($acc_terms) && !empty($acc_terms[0])) {
+            $category_id = (string) $acc_terms[0];
+        }
+    }
+    if ($category_id === '' && !empty($base) && function_exists('outbound_resolve_accommodation_category_id')) {
+        $category_id = outbound_resolve_accommodation_category_id($base);
+    }
+    if ($category_id === '') {
+        $category_id = 'lodges';
+    }
     $cat_label   = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_category_label', true) : '') ?: (string) ($base['category'] ?? 'Luxury Lodge');
     $badge       = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_badge', true) : '') ?: (string) ($base['badge'] ?? '');
     $tagline     = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_tagline', true) : '') ?: (string) ($base['tagline'] ?? '');
@@ -586,13 +601,59 @@ function outbound_editor_render_accommodation_fields(WP_Post $post, bool $in_cms
     $filter_tags = outbound_editor_get_json_meta($post_id, '_outbound_filter_tags_json', (array) ($base['filterTags'] ?? array()));
     $at_glance   = outbound_editor_get_json_meta($post_id, '_outbound_at_a_glance_json', is_array($base['atAGlance'] ?? null) ? $base['atAGlance'] : array());
     $rooms       = outbound_editor_get_json_meta($post_id, '_outbound_room_types_json', (array) ($base['roomTypes'] ?? array()));
+    $room_internal = (function_exists('current_user_can') && current_user_can('manage_options'))
+        ? outbound_editor_get_json_meta($post_id, '_outbound_room_internal_json', array())
+        : array();
+    $rate_plans  = outbound_editor_get_json_meta($post_id, '_outbound_rate_plans_json', (array) ($base['ratePlans'] ?? array()));
+    $rate_internal = (function_exists('current_user_can') && current_user_can('manage_options'))
+        ? outbound_editor_get_json_meta($post_id, '_outbound_rate_plan_internal_json', array())
+        : array();
+    $offers      = outbound_editor_get_json_meta($post_id, '_outbound_property_offers_json', (array) ($base['offers'] ?? array()));
+    $room_sec_heading = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_room_section_heading', true) : '') ?: (string) ($base['roomSectionHeading'] ?? '');
+    $room_sec_sub     = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_room_section_subtitle', true) : '') ?: (string) ($base['roomSectionSubtitle'] ?? '');
+    $prop_policies    = outbound_editor_get_json_meta($post_id, '_outbound_property_policies_json', (array) ($base['policies'] ?? array()));
+    $prop_enquiry     = outbound_editor_get_json_meta($post_id, '_outbound_enquiry_settings_json', (array) ($base['enquirySettings'] ?? array()));
     $facilities  = outbound_editor_get_json_meta($post_id, '_outbound_facilities_json', (array) ($base['facilities'] ?? array()));
     $loc_info    = outbound_editor_get_json_meta($post_id, '_outbound_location_info_json', (array) ($base['locationInfo'] ?? array()));
     $gallery     = outbound_editor_get_json_meta($post_id, '_outbound_gallery_json', (array) ($base['galleryImages'] ?? array()));
     $nearby_exp  = outbound_editor_get_json_meta($post_id, '_outbound_nearby_experiences_json', (array) ($base['nearbyExperienceIds'] ?? array()));
     $related_ids = outbound_editor_get_json_meta($post_id, '_outbound_related_ids_json', (array) ($base['relatedPropertyIds'] ?? array()));
 
-    $cat_labels = array('Luxury Lodge', 'Boutique Hotel', 'Guest Lodge', 'Safari Lodge', 'Resort', 'Self-Catering', 'Hotel', 'Lodge', 'Guest House', 'Apartment');
+    // Normalize rooms for the admin Unit Manager and merge admin-only internal fields if authorized
+    $editor_rooms = array();
+    foreach (array_values((array) $rooms) as $ridx => $rm) {
+        if (!is_array($rm)) { continue; }
+        if (!empty($rm['id'])) {
+            $uid = (string) $rm['id'];
+        } else {
+            $rm_slug = function_exists('sanitize_title') ? sanitize_title((string) ($rm['name'] ?? 'room')) : preg_replace('/[^a-z0-9]+/', '_', strtolower((string) ($rm['name'] ?? 'room')));
+            $uid = 'unit_' . ($rm_slug !== '' ? $rm_slug : 'room') . '_' . ($ridx + 1);
+        }
+        $rm['id'] = $uid;
+        if (isset($room_internal[$uid]) && is_array($room_internal[$uid])) {
+            $rm['internalSupplierRate'] = (string) ($room_internal[$uid]['internalSupplierRate'] ?? '');
+            $rm['internalNotes']        = (string) ($room_internal[$uid]['internalNotes'] ?? '');
+        }
+        $editor_rooms[] = $rm;
+    }
+
+    // Normalize reusable rate plans & merge admin-only supplier costs if authorized
+    $editor_rate_plans = array();
+    foreach (array_values((array) $rate_plans) as $rpidx => $rp) {
+        if (!is_array($rp)) { continue; }
+        $rpid = !empty($rp['id']) ? (string) $rp['id'] : ('rp_legacy_' . ($rpidx + 1));
+        $rp['id'] = $rpid;
+        if (isset($rate_internal[$rpid]) && is_array($rate_internal[$rpid])) {
+            $rp['supplierCostUSD'] = $rate_internal[$rpid]['supplierCostUSD'] ?? null;
+            $rp['internalNotes']   = (string) ($rate_internal[$rpid]['internalNotes'] ?? '');
+        }
+        $editor_rate_plans[] = $rp;
+    }
+
+    $editor_offers = array_values(array_filter((array) $offers, 'is_array'));
+
+    $cat_labels = array('Hotel', 'Lodge', 'Guesthouse', 'Apartment', 'Luxury Lodge', 'Boutique Hotel', 'Guest Lodge', 'Safari Lodge', 'Resort', 'Self-Catering', 'Villa', 'Safari Camp', 'Private Home');
+    $heading_presets = array('Choose Your Room', 'Our Suites', 'Explore Our Villas', 'Accommodation Options', 'Choose Your Chalet', 'Safari Tents & Suites');
     $badges     = array('', 'Luxury', 'Family Favourite', 'Romantic', 'Best Value', 'Walking Distance', 'Boutique');
     $tag_defs   = array(
         'luxury-lodges'    => 'Luxury Lodges',
@@ -605,203 +666,396 @@ function outbound_editor_render_accommodation_fields(WP_Post $post, bool $in_cms
         'walking-distance' => 'Walking Distance to Town/Falls',
     );
     ?>
-    <details class="outbound-editor-section" open>
-        <summary>Property Classification, Pricing &amp; Distances</summary>
-        <div class="outbound-editor-section-body">
-            <div class="outbound-meta-grid">
-                <p><label><strong>Filter Group (Where to Stay Tab)</strong><br>
-                    <select name="outbound_meta[_outbound_category_id]" class="widefat">
-                        <?php foreach (outbound_get_accommodation_category_defs() as $cid => $cdef) :
-                            if ($cid === 'all') { continue; } ?>
-                            <option value="<?php echo outbound_cms_esc_attr($cid); ?>" <?php selected($category_id, $cid); ?>><?php echo outbound_cms_esc_html($cdef['label']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label></p>
-                <p><label><strong>Property Label</strong><br>
-                    <select name="outbound_meta[_outbound_category_label]" class="widefat">
-                        <?php foreach ($cat_labels as $cl) : ?>
-                            <option value="<?php echo outbound_cms_esc_attr($cl); ?>" <?php selected($cat_label, $cl); ?>><?php echo outbound_cms_esc_html($cl); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label></p>
-                <p><label><strong>Highlight Badge</strong><br>
-                    <select name="outbound_meta[_outbound_badge]" class="widefat">
-                        <?php foreach ($badges as $b) : ?>
-                            <option value="<?php echo outbound_cms_esc_attr($b); ?>" <?php selected($badge, $b); ?>><?php echo outbound_cms_esc_html($b === '' ? '— None —' : $b); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label></p>
-                <p><label><strong>Starting Price (USD)</strong><br><input type="number" step="1" min="0" name="outbound_meta[_outbound_price_usd]" value="<?php echo outbound_cms_esc_attr($price_usd); ?>" class="widefat" /></label></p>
-                <p><label><strong>Price Unit Label</strong><br><input type="text" name="outbound_meta[_outbound_price_basis]" value="<?php echo outbound_cms_esc_attr($price_basis); ?>" class="widefat" /></label></p>
-                <p><label><strong>Location / Area</strong><br><input type="text" name="outbound_meta[_outbound_location]" value="<?php echo outbound_cms_esc_attr($location); ?>" class="widefat" /></label></p>
-                <p><label><strong>Distance from Victoria Falls</strong><br><input type="text" name="outbound_meta[_outbound_distance_falls]" value="<?php echo outbound_cms_esc_attr($dist_falls); ?>" class="widefat" placeholder="10 min walk / 15 min drive" /></label></p>
-                <p><label><strong>Airport Distance</strong><br><input type="text" name="outbound_meta[_outbound_airport_distance]" value="<?php echo outbound_cms_esc_attr($dist_air); ?>" class="widefat" placeholder="25 min from VFA Airport" /></label></p>
-                <p><label><strong>Max Guests Capacity</strong><br><input type="number" min="1" name="outbound_meta[_outbound_max_guests]" value="<?php echo outbound_cms_esc_attr($max_guests); ?>" class="widefat" /></label></p>
-                <p><label><strong>Rating (1–5)</strong><br><input type="text" name="outbound_meta[_outbound_rating]" value="<?php echo outbound_cms_esc_attr($rating); ?>" class="widefat" /></label></p>
-                <p><label><strong>Review Count</strong><br><input type="number" min="0" name="outbound_meta[_outbound_review_count]" value="<?php echo outbound_cms_esc_attr($review_cnt); ?>" class="widefat" /></label></p>
-                <p><label><strong>Check-in / Check-out Times</strong><br>
-                    <span style="display:flex;gap:6px;"><input type="text" name="outbound_meta[_outbound_checkin_time]" value="<?php echo outbound_cms_esc_attr($check_in); ?>" placeholder="14:00" style="width:50%;" /><input type="text" name="outbound_meta[_outbound_checkout_time]" value="<?php echo outbound_cms_esc_attr($check_out); ?>" placeholder="10:00" style="width:50%;" /></span>
-                </label></p>
+    <div class="outbound-prop-editor-shell" id="outbound-prop-editor-shell">
+        <div class="outbound-prop-tabs-nav" role="tablist" aria-label="Accommodation Editor Sections">
+            <button type="button" class="outbound-prop-tab-btn is-active" data-prop-tab="details">1. Property Details</button>
+            <button type="button" class="outbound-prop-tab-btn" data-prop-tab="units">2. Rooms &amp; Accommodation Units (<span id="outbound-unit-count-badge"><?php echo count($editor_rooms); ?></span>)</button>
+            <button type="button" class="outbound-prop-tab-btn" data-prop-tab="rates">3. Rates &amp; Seasons (<span id="outbound-rp-count-badge"><?php echo count($editor_rate_plans); ?></span>)</button>
+            <button type="button" class="outbound-prop-tab-btn" data-prop-tab="amenities">4. Amenities &amp; Facilities</button>
+            <button type="button" class="outbound-prop-tab-btn" data-prop-tab="media">5. Photos &amp; Media (<?php echo count($gallery); ?>)</button>
+            <button type="button" class="outbound-prop-tab-btn" data-prop-tab="offers">6. Offers &amp; Packages (<span id="outbound-offer-count-badge"><?php echo count($editor_offers); ?></span>)</button>
+            <button type="button" class="outbound-prop-tab-btn" data-prop-tab="policies">7. Availability &amp; Policies</button>
+            <button type="button" class="outbound-prop-tab-btn" data-prop-tab="seo">8. SEO &amp; Publishing</button>
+        </div>
+
+        <!-- TAB 1: PROPERTY DETAILS -->
+        <div class="outbound-prop-tab-pane is-active" data-prop-pane="details">
+            <div class="outbound-admin-card" style="margin-top:0;">
+                <h3>Property Identity, Classification &amp; Overview</h3>
+                <div class="outbound-meta-grid">
+                    <p><label><strong>Filter Group (Where to Stay Directory Tab)</strong><br>
+                        <select name="outbound_meta[_outbound_category_id]" class="widefat">
+                            <?php foreach (outbound_get_accommodation_category_defs() as $cid => $cdef) :
+                                if ($cid === 'all') { continue; } ?>
+                                <option value="<?php echo outbound_cms_esc_attr($cid); ?>" <?php selected($category_id, $cid); ?>><?php echo outbound_cms_esc_html($cdef['label']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label></p>
+                    <p><label><strong>Accommodation Category Label (Free-text or Preset)</strong><br>
+                        <input type="text" list="outbound-prop-cat-list" name="outbound_meta[_outbound_category_label]" value="<?php echo outbound_cms_esc_attr($cat_label); ?>" class="widefat" placeholder="Hotel, Lodge, Guesthouse, Apartment, Villa..." />
+                        <datalist id="outbound-prop-cat-list">
+                            <?php foreach ($cat_labels as $cl) : ?>
+                                <option value="<?php echo outbound_cms_esc_attr($cl); ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
+                    </label></p>
+                    <p><label><strong>Highlight Badge</strong><br>
+                        <select name="outbound_meta[_outbound_badge]" class="widefat">
+                            <?php foreach ($badges as $b) : ?>
+                                <option value="<?php echo outbound_cms_esc_attr($b); ?>" <?php selected($badge, $b); ?>><?php echo outbound_cms_esc_html($b === '' ? '— None —' : $b); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label></p>
+                    <p><label><strong>Indicative Starting Rate (USD)</strong><br><input type="number" step="1" min="0" id="outbound_indicative_price_usd" name="outbound_meta[_outbound_price_usd]" value="<?php echo outbound_cms_esc_attr($price_usd); ?>" class="widefat" placeholder="295" /><span class="description">Shown as "Indicative Starting Rate / Indicative Stay Rate" on the property page and directory cards. Enter 0 to auto-use the lowest published room rate.</span></label></p>
+                    <p><label><strong>Indicative Rate Unit Label</strong><br><input type="text" id="outbound_indicative_price_unit" name="outbound_meta[_outbound_price_basis]" value="<?php echo outbound_cms_esc_attr($price_basis); ?>" class="widefat" placeholder="per night (sharing)" /><span class="description">Displayed beside the rate (e.g. "per night (sharing)", "per room / night").</span></label></p>
+                    <p><label><strong>Location / Area</strong><br><input type="text" name="outbound_meta[_outbound_location]" value="<?php echo outbound_cms_esc_attr($location); ?>" class="widefat" /></label></p>
+                    <p><label><strong>Distance from Victoria Falls</strong><br><input type="text" name="outbound_meta[_outbound_distance_falls]" value="<?php echo outbound_cms_esc_attr($dist_falls); ?>" class="widefat" placeholder="10 min walk / 15 min drive" /></label></p>
+                    <p><label><strong>Airport Distance</strong><br><input type="text" name="outbound_meta[_outbound_airport_distance]" value="<?php echo outbound_cms_esc_attr($dist_air); ?>" class="widefat" placeholder="25 min from VFA Airport" /></label></p>
+                    <p><label><strong>Property Max Guests Capacity</strong><br><input type="number" min="1" name="outbound_meta[_outbound_max_guests]" value="<?php echo outbound_cms_esc_attr($max_guests); ?>" class="widefat" /></label></p>
+                    <p><label><strong>Rating (1–5)</strong><br><input type="text" name="outbound_meta[_outbound_rating]" value="<?php echo outbound_cms_esc_attr($rating); ?>" class="widefat" /></label></p>
+                    <p><label><strong>Review Count</strong><br><input type="number" min="0" name="outbound_meta[_outbound_review_count]" value="<?php echo outbound_cms_esc_attr($review_cnt); ?>" class="widefat" /></label></p>
+                </div>
+
+                <p><label><input type="checkbox" name="outbound_meta[_outbound_featured]" value="1" <?php checked($featured, true); ?> /> <strong>Feature on Homepage &ldquo;Where to Stay&rdquo; showcase</strong></label></p>
+                <p><label><strong>Property Tagline</strong><br><input type="text" name="outbound_meta[_outbound_tagline]" value="<?php echo outbound_cms_esc_attr($tagline); ?>" class="large-text" /></label></p>
+                <p><label><strong>Why Outbound Recommends This Stay</strong><br><textarea name="outbound_meta[_outbound_why_recommend]" rows="3" class="large-text"><?php echo outbound_cms_esc_html($why_rec); ?></textarea></label></p>
+
+                <hr style="margin:14px 0;" />
+                <h4 style="margin:0 0 8px;">Property Contact Details</h4>
+                <div class="outbound-meta-grid">
+                    <p><label><strong>Reservations Email</strong><br><input type="email" name="outbound_prop_enquiry[contactEmail]" value="<?php echo outbound_cms_esc_attr((string) ($prop_enquiry['contactEmail'] ?? '')); ?>" class="widefat" placeholder="reservations@property.com" /></label></p>
+                    <p><label><strong>Property WhatsApp Number</strong><br><input type="text" name="outbound_prop_enquiry[whatsappNumber]" value="<?php echo outbound_cms_esc_attr((string) ($prop_enquiry['whatsappNumber'] ?? '')); ?>" class="widefat" placeholder="+263 71 470 1721" /></label></p>
+                    <p><label><strong>Property Telephone</strong><br><input type="text" name="outbound_prop_enquiry[contactPhone]" value="<?php echo outbound_cms_esc_attr((string) ($prop_enquiry['contactPhone'] ?? '')); ?>" class="widefat" placeholder="+263 83 284..." /></label></p>
+                </div>
             </div>
 
-            <p><label><input type="checkbox" name="outbound_meta[_outbound_featured]" value="1" <?php checked($featured, true); ?> /> <strong>Feature on Homepage &ldquo;Where to Stay&rdquo; showcase</strong></label></p>
-            <p><label><strong>Property Tagline</strong><br><input type="text" name="outbound_meta[_outbound_tagline]" value="<?php echo outbound_cms_esc_attr($tagline); ?>" class="large-text" /></label></p>
-            <p><label><strong>Why Outbound Recommends This Stay</strong><br><textarea name="outbound_meta[_outbound_why_recommend]" rows="3" class="large-text"><?php echo outbound_cms_esc_html($why_rec); ?></textarea></label></p>
+            <details class="outbound-editor-section">
+                <summary>Extended Location, Access &amp; Nearby Landmarks</summary>
+                <div class="outbound-editor-section-body">
+                    <div class="outbound-meta-grid">
+                        <p><label><strong>Street / Neighbourhood Address</strong><br><input type="text" name="outbound_loc_info[address]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['address'] ?? $location)); ?>" class="widefat" /></label></p>
+                        <p><label><strong>Distance to Victoria Falls</strong><br><input type="text" name="outbound_loc_info[distanceToFalls]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['distanceToFalls'] ?? $dist_falls)); ?>" class="widefat" /></label></p>
+                        <p><label><strong>Distance to VFA Airport</strong><br><input type="text" name="outbound_loc_info[distanceToAirport]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['distanceToAirport'] ?? $dist_air)); ?>" class="widefat" /></label></p>
+                        <p><label><strong>Activity Pick-up / Departure Point</strong><br><input type="text" name="outbound_loc_info[departurePoints]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['departurePoints'] ?? 'Direct lobby pick-up for all tours')); ?>" class="widefat" /></label></p>
+                    </div>
+                    <?php
+                    outbound_editor_render_string_repeater('outbound_loc_attractions', 'Nearby Attractions', (array) ($loc_info['nearbyAttractions'] ?? array('Victoria Falls Rainforest', 'Victoria Falls Bridge')), '+ Add Attraction');
+                    outbound_editor_render_string_repeater('outbound_loc_restaurants', 'Nearby Restaurants', (array) ($loc_info['nearbyRestaurants'] ?? array('The Lookout Cafe', 'Palm Restaurant')), '+ Add Restaurant');
+                    ?>
+                </div>
+            </details>
+        </div>
 
-            <p><strong>Filter Tags (Directory Filters)</strong></p>
-            <div class="outbound-related-grid" style="margin-bottom:14px;">
-                <?php foreach ($tag_defs as $tkey => $tlabel) :
-                    $is_t = in_array($tkey, $filter_tags, true);
-                ?>
-                    <label class="outbound-related-chip <?php echo $is_t ? 'is-checked' : ''; ?>">
-                        <input type="checkbox" name="outbound_filter_tags[]" value="<?php echo outbound_cms_esc_attr($tkey); ?>" <?php checked($is_t, true); ?> />
-                        <span><?php echo outbound_cms_esc_html($tlabel); ?></span>
-                    </label>
-                <?php endforeach; ?>
-            </div>
+        <!-- TAB 2: ROOMS & ACCOMMODATION UNITS -->
+        <div class="outbound-prop-tab-pane" data-prop-pane="units" style="display:none;">
+            <div class="outbound-admin-card" style="margin-top:0;">
+                <div class="outbound-unit-section-heading-box">
+                    <div class="outbound-meta-grid">
+                        <p><label><strong>Frontend Section Heading (customizable per property)</strong><br>
+                            <input type="text" list="outbound-room-heading-presets" name="outbound_meta[_outbound_room_section_heading]" value="<?php echo outbound_cms_esc_attr($room_sec_heading); ?>" class="widefat" placeholder="Choose Your Room / Our Suites / Explore Our Villas / Accommodation Options..." />
+                            <datalist id="outbound-room-heading-presets">
+                                <?php foreach ($heading_presets as $hp) : ?>
+                                    <option value="<?php echo outbound_cms_esc_attr($hp); ?>"></option>
+                                <?php endforeach; ?>
+                            </datalist>
+                            <span class="description">Examples: Choose Your Room, Our Suites, Explore Our Villas, Accommodation Options, Choose Your Chalet.</span>
+                        </label></p>
+                        <p><label><strong>Section Subtitle (optional)</strong><br>
+                            <input type="text" name="outbound_meta[_outbound_room_section_subtitle]" value="<?php echo outbound_cms_esc_attr($room_sec_sub); ?>" class="widefat" placeholder="Select a unit type to inspect rates, photos and send a direct enquiry." />
+                        </label></p>
+                    </div>
+                </div>
 
-            <p><strong>Core Amenities</strong></p>
-            <div class="outbound-related-grid">
-                <?php foreach (outbound_get_amenity_definitions() as $aid => $adef) :
-                    $has_a = in_array($aid, $amenities, true);
-                ?>
-                    <label class="outbound-related-chip <?php echo $has_a ? 'is-checked' : ''; ?>">
-                        <input type="checkbox" name="outbound_amenities[]" value="<?php echo outbound_cms_esc_attr($aid); ?>" <?php checked($has_a, true); ?> />
-                        <span><?php echo outbound_cms_esc_html($adef['label']); ?></span>
-                    </label>
-                <?php endforeach; ?>
+                <div class="outbound-unit-manager-toolbar">
+                    <div>
+                        <strong>ROOMS &amp; ACCOMMODATION UNITS</strong>
+                        <p class="description" style="margin:2px 0 0;">Create unlimited custom unit types (rooms, chalets, tents, cottages, suites, villas, entire homes). Assign optional wings, independent galleries, occupancy, pricing &amp; availability. Drag cards to reorder.</p>
+                    </div>
+                    <button type="button" id="outbound-add-unit-btn" class="button button-primary button-hero">+ Add Accommodation Unit</button>
+                </div>
+
+                <div class="outbound-unit-filter-bar" id="outbound-unit-filter-bar">
+                    <div class="outbound-unit-status-pills" role="tablist" aria-label="Filter Units by Status">
+                        <button type="button" class="button button-small outbound-u-status-filter is-active" data-unit-status="active">All Active (<span id="outbound-u-cnt-active">0</span>)</button>
+                        <button type="button" class="button button-small outbound-u-status-filter" data-unit-status="published">Published (<span id="outbound-u-cnt-pub">0</span>)</button>
+                        <button type="button" class="button button-small outbound-u-status-filter" data-unit-status="draft">Draft (<span id="outbound-u-cnt-draft">0</span>)</button>
+                        <button type="button" class="button button-small outbound-u-status-filter" data-unit-status="archived">Archived (<span id="outbound-u-cnt-arch">0</span>)</button>
+                        <button type="button" class="button button-small outbound-u-status-filter" data-unit-status="trashed">Trash (<span id="outbound-u-cnt-trash">0</span>)</button>
+                    </div>
+                    <input type="search" id="outbound-unit-search-input" class="regular-text" placeholder="Search unit name or category..." />
+                </div>
+
+                <input type="hidden" name="outbound_rooms_present" value="1" />
+                <input type="hidden" id="outbound_rooms_json_input" name="outbound_rooms_json" value="<?php echo outbound_cms_esc_attr((string) wp_json_encode($editor_rooms)); ?>" />
+                <script type="application/json" id="outbound-unit-manager-config"><?php
+                    $room_am_opts = function_exists('outbound_get_shared_room_amenities')
+                        ? array_values(outbound_get_shared_room_amenities())
+                        : array_values(outbound_get_room_amenity_definitions());
+                    $shared_rate_tpls = function_exists('outbound_get_shared_rate_templates')
+                        ? outbound_get_shared_rate_templates()
+                        : array();
+                    $shared_offer_tpls = function_exists('outbound_get_shared_offer_templates')
+                        ? outbound_get_shared_offer_templates()
+                        : array();
+                    echo wp_json_encode(array(
+                        'units'               => $editor_rooms,
+                        'ratePlans'           => $editor_rate_plans,
+                        'offers'              => $editor_offers,
+                        'amenityOptions'      => $room_am_opts,
+                        'inclusionPresets'    => outbound_get_room_inclusion_presets(),
+                        'sharedRateTemplates' => $shared_rate_tpls,
+                        'sharedOfferTemplates'=> $shared_offer_tpls,
+                        'canEditInternal'     => function_exists('current_user_can') ? (bool) current_user_can('manage_options') : true,
+                    ));
+                ?></script>
+                <div id="outbound-unit-manager-list" class="outbound-unit-manager-list"></div>
             </div>
         </div>
-    </details>
 
-    <details class="outbound-editor-section" open>
-        <summary>At-a-Glance Summary Table</summary>
-        <div class="outbound-editor-section-body">
-            <div class="outbound-meta-grid">
+        <!-- TAB 3: RATES & SEASONS -->
+        <?php
+        $shared_rate_templates = function_exists('outbound_get_shared_rate_templates')
+            ? array_values(outbound_get_shared_rate_templates())
+            : array();
+        ?>
+        <div class="outbound-prop-tab-pane" data-prop-pane="rates" style="display:none;">
+            <div class="outbound-admin-card" style="margin-top:0;margin-bottom:14px;border-left:4px solid #0B5E8E;background:#FAF9F6;">
+                <h3 style="margin-top:0;">Indicative Starting Rate (Property Headline &amp; Stay Card Rate)</h3>
+                <p class="description" style="margin:2px 0 10px;">Controls the <strong>INDICATIVE STARTING RATE</strong> &amp; <strong>INDICATIVE STAY RATE</strong> display shown at the top of the property page and on listing cards. Synced live with <em>1. Property Details</em>.</p>
+                <div class="outbound-meta-grid">
+                    <p><label><strong>Indicative Starting Rate (USD)</strong><br><input type="number" step="1" min="0" id="outbound_indicative_price_usd_mirror" value="<?php echo outbound_cms_esc_attr($price_usd); ?>" class="widefat" placeholder="295" /><span class="description">Enter 0 to auto-use the lowest published room rate (or Price on enquiry).</span></label></p>
+                    <p><label><strong>Indicative Rate Unit Label</strong><br><input type="text" id="outbound_indicative_price_unit_mirror" value="<?php echo outbound_cms_esc_attr($price_basis); ?>" class="widefat" placeholder="per night (sharing)" /><span class="description">e.g. "per night (sharing)", "per room / night", "per unit / night".</span></label></p>
+                </div>
+            </div>
+            <div class="outbound-admin-card" style="margin-top:0;">
+                <div class="outbound-unit-manager-toolbar">
+                    <div>
+                        <strong>Reusable Rate Plans &amp; Seasonal Tariffs</strong>
+                        <p class="description" style="margin:2px 0 0;">Create flexible multi-market rate plans (International, SADC, Zimbabwe Resident, custom), meal-board options, validity windows &amp; supplier cost records. Deactivate old plans instead of deleting them, or import from Shared Rate Templates.</p>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <?php if (!empty($shared_rate_templates)) : ?>
+                            <select id="outbound-rp-shared-template-select" aria-label="Import shared rate template">
+                                <option value="">Import Shared Rate Template...</option>
+                                <?php foreach ($shared_rate_templates as $srt) : ?>
+                                    <option value="<?php echo outbound_cms_esc_attr((string) ($srt['id'] ?? '')); ?>">
+                                        <?php echo outbound_cms_esc_html((string) ($srt['name'] ?? 'Template') . ' ($' . (int) ($srt['nightlyRate'] ?? 0) . ')'); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="button" id="outbound-rp-import-template-btn" class="button">+ Import Template</button>
+                        <?php endif; ?>
+                        <button type="button" id="outbound-add-rate-plan-btn" class="button button-primary">+ Add Rate Plan</button>
+                    </div>
+                </div>
+                <script type="application/json" id="outbound-shared-rate-templates-config"><?php echo wp_json_encode($shared_rate_templates); ?></script>
+                <input type="hidden" name="outbound_rate_plans_present" value="1" />
+                <input type="hidden" id="outbound_rate_plans_json_input" name="outbound_rate_plans_json" value="<?php echo outbound_cms_esc_attr((string) wp_json_encode($editor_rate_plans)); ?>" />
+                <div id="outbound-rate-plan-manager-list" class="outbound-unit-manager-list"></div>
+            </div>
+        </div>
+
+        <!-- TAB 4: AMENITIES & FACILITIES -->
+        <div class="outbound-prop-tab-pane" data-prop-pane="amenities" style="display:none;">
+            <div class="outbound-admin-card" style="margin-top:0;">
+                <h3>Shared Property Amenities &amp; Directory Filters (Separate from Individual Room Amenities)</h3>
+                <p><strong>Filter Tags (Directory Filters)</strong></p>
+                <div class="outbound-related-grid" style="margin-bottom:14px;">
+                    <?php foreach ($tag_defs as $tkey => $tlabel) :
+                        $is_t = in_array($tkey, $filter_tags, true);
+                    ?>
+                        <label class="outbound-related-chip <?php echo $is_t ? 'is-checked' : ''; ?>">
+                            <input type="checkbox" name="outbound_filter_tags[]" value="<?php echo outbound_cms_esc_attr($tkey); ?>" <?php checked($is_t, true); ?> />
+                            <span><?php echo outbound_cms_esc_html($tlabel); ?></span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+
+                <p><strong>Shared Property Amenities</strong> <span class="description">(Unchecking an amenity here only removes it from this property; other properties keep it.)</span></p>
+                <div class="outbound-related-grid" id="outbound-prop-amenities-grid" style="margin-bottom:12px;">
+                    <?php
+                    $shared_prop_ams = function_exists('outbound_get_shared_property_amenities')
+                        ? outbound_get_shared_property_amenities()
+                        : outbound_get_amenity_definitions();
+                    foreach ($shared_prop_ams as $aid => $adef) :
+                        $has_a = in_array($aid, $amenities, true) || in_array((string) ($adef['label'] ?? ''), $amenities, true);
+                    ?>
+                        <label class="outbound-related-chip <?php echo $has_a ? 'is-checked' : ''; ?>">
+                            <input type="checkbox" name="outbound_amenities[]" value="<?php echo outbound_cms_esc_attr((string) $aid); ?>" <?php checked($has_a, true); ?> />
+                            <span><?php echo outbound_cms_esc_html((string) $adef['label']); ?></span>
+                        </label>
+                    <?php endforeach;
+                    // Preserve any property-specific custom amenities not in the shared list
+                    foreach ($amenities as $custom_am) :
+                        $cam = trim((string) $custom_am);
+                        if ($cam === '' || isset($shared_prop_ams[$cam])) { continue; }
+                    ?>
+                        <label class="outbound-related-chip is-checked">
+                            <input type="checkbox" name="outbound_amenities[]" value="<?php echo outbound_cms_esc_attr($cam); ?>" checked />
+                            <span><?php echo outbound_cms_esc_html($cam); ?></span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+                <div class="outbound-u-inline-grid" style="margin-bottom:16px;">
+                    <input type="text" id="outbound-custom-prop-amenity-input" class="regular-text" placeholder="Add custom amenity to this property (e.g. Helipad, River Jetty...)" />
+                    <button type="button" class="button" id="outbound-add-custom-prop-amenity-btn">+ Add Property Amenity</button>
+                </div>
+
                 <?php
-                $glance_fields = array(
-                    'type'              => array('Property Style', $cat_label),
-                    'starRating'        => array('Star Rating / Standard', '4-Star Boutique'),
-                    'bestFor'           => array('Best For', 'Couples & Families'),
-                    'distanceFromFalls' => array('Falls Access', $dist_falls ?: '10 min drive'),
-                    'pool'              => array('Swimming Pool', 'Outdoor pool & deck'),
-                    'restaurant'        => array('Dining / Restaurant', 'On-site restaurant & bar'),
-                    'wifi'              => array('Wi-Fi Access', 'Complimentary high-speed Wi-Fi'),
-                    'familyFriendly'    => array('Family Friendly', 'Yes, family suites available'),
-                    'transfers'         => array('Airport Transfers', 'Private transfers arranged'),
-                    'roomTypesSummary'  => array('Rooms Overview', 'Suites & Garden Rooms'),
-                );
-                foreach ($glance_fields as $gkey => $gmeta) :
-                    $gval = (string) ($at_glance[$gkey] ?? $gmeta[1]);
+                $fac_rows = array();
+                foreach ($facilities as $fac) {
+                    if (is_array($fac) && isset($fac['name'])) {
+                        $fac_rows[] = $fac;
+                    } elseif (is_string($fac) && $fac !== '') {
+                        $fac_rows[] = array('name' => $fac, 'category' => 'General');
+                    }
+                }
+                if (empty($fac_rows)) {
+                    $fac_rows[] = array('name' => '', 'category' => 'Property');
+                }
                 ?>
-                    <p><label><strong><?php echo outbound_cms_esc_html($gmeta[0]); ?></strong><br><input type="text" name="outbound_at_glance[<?php echo outbound_cms_esc_attr($gkey); ?>]" value="<?php echo outbound_cms_esc_attr($gval); ?>" class="widefat" /></label></p>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </details>
-
-    <details class="outbound-editor-section" open>
-        <summary>Room Configurations (<?php echo count($rooms); ?> room types)</summary>
-        <div class="outbound-editor-section-body">
-            <?php
-            $room_rows = !empty($rooms) ? array_values($rooms) : array(array('name' => '', 'occupancy' => '2 Guests', 'description' => '', 'imageUrl' => '', 'features' => array()));
-            ?>
-            <div class="outbound-repeater-list" data-repeater-prefix="outbound_rooms[">
-                <?php foreach ($room_rows as $ridx => $room) :
-                    if (!is_array($room)) { continue; }
-                    $feats = is_array($room['features'] ?? null) ? $room['features'] : array();
-                ?>
-                    <div class="outbound-repeater-row outbound-repeater-card">
-                        <div class="outbound-repeater-card-head">
-                            <strong>Room #<?php echo (int) ($ridx + 1); ?>: <?php echo outbound_cms_esc_html((string) ($room['name'] ?? 'New Room')); ?></strong>
+                <label class="outbound-field-label">Shared Property Facilities List</label>
+                <div class="outbound-repeater-list" data-repeater-prefix="outbound_facilities[">
+                    <?php foreach ($fac_rows as $fidx => $fac) : ?>
+                        <div class="outbound-repeater-row outbound-repeater-inline-row">
+                            <span class="outbound-row-handle"><?php echo (int) ($fidx + 1); ?></span>
+                            <input type="text" name="outbound_facilities[<?php echo (int) $fidx; ?>][name]" value="<?php echo outbound_cms_esc_attr((string) ($fac['name'] ?? '')); ?>" class="regular-text" placeholder="Facility name (e.g. Infinity Pool)" />
+                            <input type="text" name="outbound_facilities[<?php echo (int) $fidx; ?>][category]" value="<?php echo outbound_cms_esc_attr((string) ($fac['category'] ?? 'Property')); ?>" class="regular-text" placeholder="Category (Dining, Wellness...)" />
                             <div class="outbound-row-controls">
                                 <button type="button" class="button button-small outbound-row-up">&uarr;</button>
                                 <button type="button" class="button button-small outbound-row-down">&darr;</button>
-                                <button type="button" class="button button-small outbound-row-duplicate">Duplicate</button>
-                                <button type="button" class="button-link-delete outbound-row-remove">Remove</button>
+                                <button type="button" class="button-link-delete outbound-row-remove">&times;</button>
                             </div>
                         </div>
-                        <div class="outbound-meta-grid">
-                            <p><label>Room Type Name<br><input type="text" name="outbound_rooms[<?php echo (int) $ridx; ?>][name]" value="<?php echo outbound_cms_esc_attr((string) ($room['name'] ?? '')); ?>" class="widefat" placeholder="Luxury River Suite" /></label></p>
-                            <p><label>Occupancy<br><input type="text" name="outbound_rooms[<?php echo (int) $ridx; ?>][occupancy]" value="<?php echo outbound_cms_esc_attr((string) ($room['occupancy'] ?? '')); ?>" class="widefat" placeholder="2 Adults + 1 Child" /></label></p>
-                        </div>
-                        <p><label>Description<br><textarea rows="2" name="outbound_rooms[<?php echo (int) $ridx; ?>][description]" class="large-text"><?php echo outbound_cms_esc_html((string) ($room['description'] ?? '')); ?></textarea></label></p>
-                        <p><label>Room Features (one per line)<br><textarea rows="2" name="outbound_rooms[<?php echo (int) $ridx; ?>][features_text]" class="large-text" placeholder="Private veranda&#10;Air conditioning&#10;En-suite rain shower"><?php echo outbound_cms_esc_html(implode("\n", array_map('strval', $feats))); ?></textarea></label></p>
-                        <?php outbound_editor_render_media_field('outbound_rooms[' . $ridx . '][imageUrl]', (string) ($room['imageUrl'] ?? ''), 'acc_room_img_' . $ridx); ?>
+                    <?php endforeach; ?>
+                </div>
+                <button type="button" class="button button-secondary outbound-row-add">+ Add Facility</button>
+            </div>
+
+            <details class="outbound-editor-section">
+                <summary>At-a-Glance Quick Facts Table (Advanced Display Summary)</summary>
+                <div class="outbound-editor-section-body">
+                    <div class="outbound-meta-grid">
+                        <?php
+                        $glance_fields = array(
+                            'type'              => array('Property Style', $cat_label),
+                            'starRating'        => array('Star Rating / Standard', '4-Star Boutique'),
+                            'bestFor'           => array('Best For', 'Couples & Families'),
+                            'distanceFromFalls' => array('Falls Access', $dist_falls ?: '10 min drive'),
+                            'pool'              => array('Swimming Pool', 'Outdoor pool & deck'),
+                            'restaurant'        => array('Dining / Restaurant', 'On-site restaurant & bar'),
+                            'wifi'              => array('Wi-Fi Access', 'Complimentary high-speed Wi-Fi'),
+                            'familyFriendly'    => array('Family Friendly', 'Yes, family suites available'),
+                            'transfers'         => array('Airport Transfers', 'Private transfers arranged'),
+                            'roomTypesSummary'  => array('Rooms Overview', 'Suites & Garden Rooms'),
+                        );
+                        foreach ($glance_fields as $gkey => $gmeta) :
+                            $gval = (string) ($at_glance[$gkey] ?? $gmeta[1]);
+                        ?>
+                            <p><label><strong><?php echo outbound_cms_esc_html($gmeta[0]); ?></strong><br><input type="text" name="outbound_at_glance[<?php echo outbound_cms_esc_attr($gkey); ?>]" value="<?php echo outbound_cms_esc_attr($gval); ?>" class="widefat" /></label></p>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
+                </div>
+            </details>
+        </div>
+
+        <!-- TAB 5: PHOTOS & MEDIA -->
+        <div class="outbound-prop-tab-pane" data-prop-pane="media" style="display:none;">
+            <div class="outbound-admin-card" style="margin-top:0;">
+                <h3>Property Photo Gallery (<?php echo count($gallery); ?> photos)</h3>
+                <p class="description">General photography showcasing the property grounds, pools, dining, and communal areas. Individual room photos are managed per unit under <strong>2. Rooms &amp; Accommodation Units &rarr; D. Photography</strong>.</p>
+                <?php outbound_editor_render_gallery_editor('outbound_gallery_items', 'General Property Gallery Photos', $gallery, $in_cms_hub ? '#acc_hero_img_input' : '', false); ?>
             </div>
-            <button type="button" class="button button-secondary outbound-row-add">+ Add Room Configuration</button>
         </div>
-    </details>
 
-    <details class="outbound-editor-section" open>
-        <summary>Property Photo Gallery (<?php echo count($gallery); ?> photos)</summary>
-        <div class="outbound-editor-section-body">
-            <?php outbound_editor_render_gallery_editor('outbound_gallery_items', 'Gallery Photos', $gallery, $in_cms_hub ? '#acc_hero_img_input' : '', false); ?>
-        </div>
-    </details>
-
-    <details class="outbound-editor-section">
-        <summary>Facilities &amp; Detailed Location Information</summary>
-        <div class="outbound-editor-section-body">
-            <?php
-            $fac_rows = array();
-            foreach ($facilities as $fac) {
-                if (is_array($fac) && isset($fac['name'])) {
-                    $fac_rows[] = $fac;
-                } elseif (is_string($fac) && $fac !== '') {
-                    $fac_rows[] = array('name' => $fac, 'category' => 'General');
-                }
-            }
-            if (empty($fac_rows)) {
-                $fac_rows[] = array('name' => '', 'category' => 'Property');
-            }
-            ?>
-            <label class="outbound-field-label">Facilities List</label>
-            <div class="outbound-repeater-list" data-repeater-prefix="outbound_facilities[">
-                <?php foreach ($fac_rows as $fidx => $fac) : ?>
-                    <div class="outbound-repeater-row outbound-repeater-inline-row">
-                        <span class="outbound-row-handle"><?php echo (int) ($fidx + 1); ?></span>
-                        <input type="text" name="outbound_facilities[<?php echo (int) $fidx; ?>][name]" value="<?php echo outbound_cms_esc_attr((string) ($fac['name'] ?? '')); ?>" class="regular-text" placeholder="Facility name (e.g. Infinity Pool)" />
-                        <input type="text" name="outbound_facilities[<?php echo (int) $fidx; ?>][category]" value="<?php echo outbound_cms_esc_attr((string) ($fac['category'] ?? 'Property')); ?>" class="regular-text" placeholder="Category (Dining, Wellness...)" />
-                        <div class="outbound-row-controls">
-                            <button type="button" class="button button-small outbound-row-up">&uarr;</button>
-                            <button type="button" class="button button-small outbound-row-down">&darr;</button>
-                            <button type="button" class="button-link-delete outbound-row-remove">&times;</button>
-                        </div>
+        <!-- TAB 6: OFFERS & PACKAGES -->
+        <?php
+        $shared_offer_templates = function_exists('outbound_get_shared_offer_templates')
+            ? array_values(outbound_get_shared_offer_templates())
+            : array();
+        ?>
+        <div class="outbound-prop-tab-pane" data-prop-pane="offers" style="display:none;">
+            <div class="outbound-admin-card" style="margin-top:0;">
+                <div class="outbound-unit-manager-toolbar">
+                    <div>
+                        <strong>Special Offers, Honeymoon Packages &amp; Seasonal Promotions</strong>
+                        <p class="description" style="margin:2px 0 0;">Create honeymoon packages, stay-longer deals, or seasonal promotions linked to unit types or the whole property. Archive expired offers or move unused ones to Offer Trash before permanently deleting.</p>
                     </div>
-                <?php endforeach; ?>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <?php if (!empty($shared_offer_templates)) : ?>
+                            <select id="outbound-offer-shared-template-select" aria-label="Import shared package or offer template">
+                                <option value="">Import Shared Package / Offer...</option>
+                                <?php foreach ($shared_offer_templates as $sot) : ?>
+                                    <option value="<?php echo outbound_cms_esc_attr((string) ($sot['id'] ?? '')); ?>">
+                                        <?php echo outbound_cms_esc_html((string) ($sot['title'] ?? 'Package')); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="button" id="outbound-offer-import-template-btn" class="button">+ Import Package</button>
+                        <?php endif; ?>
+                        <button type="button" id="outbound-add-offer-btn" class="button button-primary">+ Add Special Offer</button>
+                    </div>
+                </div>
+                <script type="application/json" id="outbound-shared-offer-templates-config"><?php echo wp_json_encode($shared_offer_templates); ?></script>
+                <input type="hidden" name="outbound_offers_present" value="1" />
+                <input type="hidden" id="outbound_offers_json_input" name="outbound_offers_json" value="<?php echo outbound_cms_esc_attr((string) wp_json_encode($editor_offers)); ?>" />
+                <div id="outbound-offer-manager-list" class="outbound-unit-manager-list"></div>
             </div>
-            <button type="button" class="button button-secondary outbound-row-add">+ Add Facility</button>
+        </div>
 
-            <hr style="margin:18px 0;" />
-            <div class="outbound-meta-grid">
-                <p><label><strong>Street / Neighbourhood Address</strong><br><input type="text" name="outbound_loc_info[address]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['address'] ?? $location)); ?>" class="widefat" /></label></p>
-                <p><label><strong>Distance to Victoria Falls</strong><br><input type="text" name="outbound_loc_info[distanceToFalls]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['distanceToFalls'] ?? $dist_falls)); ?>" class="widefat" /></label></p>
-                <p><label><strong>Distance to VFA Airport</strong><br><input type="text" name="outbound_loc_info[distanceToAirport]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['distanceToAirport'] ?? $dist_air)); ?>" class="widefat" /></label></p>
-                <p><label><strong>Activity Pick-up / Departure Point</strong><br><input type="text" name="outbound_loc_info[departurePoints]" value="<?php echo outbound_cms_esc_attr((string) ($loc_info['departurePoints'] ?? 'Direct lobby pick-up for all tours')); ?>" class="widefat" /></label></p>
+        <!-- TAB 7: AVAILABILITY & POLICIES -->
+        <div class="outbound-prop-tab-pane" data-prop-pane="policies" style="display:none;">
+            <div class="outbound-admin-card" style="margin-top:0;">
+                <h3>Check-in, Property Policies &amp; Enquiry Channels</h3>
+                <div class="outbound-meta-grid">
+                    <p><label><strong>Standard Check-in Time</strong><br><input type="text" name="outbound_meta[_outbound_checkin_time]" value="<?php echo outbound_cms_esc_attr($check_in); ?>" placeholder="14:00" class="widefat" /></label></p>
+                    <p><label><strong>Standard Check-out Time</strong><br><input type="text" name="outbound_meta[_outbound_checkout_time]" value="<?php echo outbound_cms_esc_attr($check_out); ?>" placeholder="10:00" class="widefat" /></label></p>
+                </div>
+                <div class="outbound-meta-grid">
+                    <p><label><strong>Check-in Policy</strong><br><textarea rows="2" name="outbound_prop_policies[checkInPolicy]" class="widefat" placeholder="Standard check-in from 14:00; early check-in subject to availability."><?php echo outbound_cms_esc_html((string) ($prop_policies['checkInPolicy'] ?? '')); ?></textarea></label></p>
+                    <p><label><strong>Check-out Policy</strong><br><textarea rows="2" name="outbound_prop_policies[checkOutPolicy]" class="widefat" placeholder="Check-out by 10:00; late check-out on request."><?php echo outbound_cms_esc_html((string) ($prop_policies['checkOutPolicy'] ?? '')); ?></textarea></label></p>
+                    <p><label><strong>General Cancellation Policy</strong><br><textarea rows="2" name="outbound_prop_policies[cancellationPolicy]" class="widefat" placeholder="Property cancellation terms &amp; seasonal deposit conditions..."><?php echo outbound_cms_esc_html((string) ($prop_policies['cancellationPolicy'] ?? '')); ?></textarea></label></p>
+                    <p><label><strong>Child &amp; Family Policy</strong><br><textarea rows="2" name="outbound_prop_policies[childPolicy]" class="widefat" placeholder="Children of all ages welcome; cots and inter-leading rooms on request."><?php echo outbound_cms_esc_html((string) ($prop_policies['childPolicy'] ?? '')); ?></textarea></label></p>
+                    <p><label><strong>Pet Policy</strong><br><input type="text" name="outbound_prop_policies[petPolicy]" value="<?php echo outbound_cms_esc_attr((string) ($prop_policies['petPolicy'] ?? '')); ?>" class="widefat" placeholder="Pets not permitted" /></label></p>
+                    <p><label><strong>General Notes</strong><br><input type="text" name="outbound_prop_policies[generalNotes]" value="<?php echo outbound_cms_esc_attr((string) ($prop_policies['generalNotes'] ?? '')); ?>" class="widefat" /></label></p>
+                </div>
+                <hr style="margin:14px 0;" />
+                <p><strong>Direct Enquiry Options (Enquiry-First Concierge Workflow)</strong></p>
+                <div class="outbound-meta-grid">
+                    <p><label><input type="checkbox" name="outbound_prop_enquiry[enableWhatsApp]" value="1" <?php checked(array_key_exists('enableWhatsApp', $prop_enquiry) ? (bool) $prop_enquiry['enableWhatsApp'] : true, true); ?> /> <strong>Enable Send via WhatsApp on Room Enquiries</strong></label></p>
+                    <p><label><input type="checkbox" name="outbound_prop_enquiry[enableEmail]" value="1" <?php checked(array_key_exists('enableEmail', $prop_enquiry) ? (bool) $prop_enquiry['enableEmail'] : true, true); ?> /> <strong>Enable Send via Email on Room Enquiries</strong></label></p>
+                    <p><label><strong>Custom Enquiry Note (shown in enquiry modal)</strong><br><input type="text" name="outbound_prop_enquiry[customEnquiryNote]" value="<?php echo outbound_cms_esc_attr((string) ($prop_enquiry['customEnquiryNote'] ?? '')); ?>" class="widefat" placeholder="Enquiry only — not a confirmed booking." /></label></p>
+                </div>
             </div>
+
+            <details class="outbound-editor-section">
+                <summary>Nearby Experiences &amp; Similar Properties Linking</summary>
+                <div class="outbound-editor-section-body">
+                    <?php
+                    outbound_editor_render_related_selector('outbound_nearby_experiences', 'Nearby Experiences Suggested on Property Page', 'experience', $nearby_exp);
+                    outbound_editor_render_related_selector('outbound_related_ids', 'Similar Properties to Consider', 'accommodation', $related_ids, (string) $post->post_name);
+                    ?>
+                </div>
+            </details>
+        </div>
+
+        <!-- TAB 8: SEO & PUBLISHING -->
+        <div class="outbound-prop-tab-pane" data-prop-pane="seo" style="display:none;">
             <?php
-            outbound_editor_render_string_repeater('outbound_loc_attractions', 'Nearby Attractions', (array) ($loc_info['nearbyAttractions'] ?? array('Victoria Falls Rainforest', 'Victoria Falls Bridge')), '+ Add Attraction');
-            outbound_editor_render_string_repeater('outbound_loc_restaurants', 'Nearby Restaurants', (array) ($loc_info['nearbyRestaurants'] ?? array('The Lookout Cafe', 'Palm Restaurant')), '+ Add Restaurant');
+            if ($in_cms_hub) {
+                outbound_editor_render_seo_block($post_id, (array) ($base['seo'] ?? array()), false);
+            } else {
+                ?>
+                <div class="outbound-admin-card" style="margin-top:0;">
+                    <h3>SEO &amp; Publishing Controls</h3>
+                    <p class="description">Use the <strong>Outbound SEO Metadata</strong> box in the editor sidebar to customize Meta Title, Meta Description, Canonical URL, and Keywords, and use WordPress <strong>Save Draft / Update / Publish</strong> to push live changes across the site.</p>
+                </div>
+                <?php
+            }
             ?>
         </div>
-    </details>
-
-    <details class="outbound-editor-section">
-        <summary>Nearby Experiences &amp; Related Properties</summary>
-        <div class="outbound-editor-section-body">
-            <?php
-            outbound_editor_render_related_selector('outbound_nearby_experiences', 'Nearby Experiences Suggested on Property Page', 'experience', $nearby_exp);
-            outbound_editor_render_related_selector('outbound_related_ids', 'Similar Properties to Consider', 'accommodation', $related_ids, (string) $post->post_name);
-            ?>
-        </div>
-    </details>
+    </div>
     <?php
-    if ($in_cms_hub) {
-        outbound_editor_render_seo_block($post_id, (array) ($base['seo'] ?? array()), false);
-    }
 }
 
 /**
@@ -1544,22 +1798,77 @@ function outbound_save_structured_item_meta(int $post_id, string $post_type, arr
         }
         update_post_meta($post_id, '_outbound_at_a_glance_json', wp_json_encode($ag));
     }
-    if (isset($input['outbound_rooms']) && is_array($input['outbound_rooms'])) {
-        $rooms_out = array();
-        foreach ($input['outbound_rooms'] as $rrow) {
-            if (!is_array($rrow)) { continue; }
-            $rname = outbound_cms_sanitize_text((string) ($rrow['name'] ?? ''));
-            if ($rname === '') { continue; }
-            $ft_lines = preg_split('/\r\n|\r|\n/', (string) ($rrow['features_text'] ?? '')) ?: array();
-            $rooms_out[] = array(
-                'name'        => $rname,
-                'occupancy'   => outbound_cms_sanitize_text((string) ($rrow['occupancy'] ?? '2 Guests')),
-                'description' => outbound_cms_sanitize_textarea((string) ($rrow['description'] ?? '')),
-                'imageUrl'    => outbound_cms_sanitize_url((string) ($rrow['imageUrl'] ?? '')),
-                'features'    => array_values(array_filter(array_map('outbound_cms_sanitize_text', $ft_lines))),
-            );
+    if ($post_type === 'accommodation' && (isset($input['outbound_rooms_json']) || isset($input['outbound_rooms']) || !empty($input['outbound_rooms_present']))) {
+        $existing_internal = $post_id > 0 ? outbound_editor_get_json_meta($post_id, '_outbound_room_internal_json', array()) : array();
+        $raw_rooms = array();
+        if (isset($input['outbound_rooms_json']) && is_string($input['outbound_rooms_json'])) {
+            $decoded_rooms = json_decode($input['outbound_rooms_json'], true);
+            if (is_array($decoded_rooms)) {
+                $raw_rooms = $decoded_rooms;
+            }
+        } elseif (isset($input['outbound_rooms']) && is_array($input['outbound_rooms'])) {
+            $raw_rooms = $input['outbound_rooms'];
         }
-        update_post_meta($post_id, '_outbound_room_types_json', wp_json_encode($rooms_out));
+
+        $can_internal = function_exists('current_user_can') ? (bool) current_user_can('manage_options') : true;
+        $sanitized_rooms = outbound_sanitize_room_types_payload(
+            $raw_rooms,
+            is_array($existing_internal) ? $existing_internal : array(),
+            $can_internal
+        );
+        update_post_meta($post_id, '_outbound_room_types_json', wp_json_encode($sanitized_rooms['public_rooms']));
+        update_post_meta($post_id, '_outbound_room_internal_json', wp_json_encode($sanitized_rooms['internal_map']));
+    }
+    if ($post_type === 'accommodation' && (isset($input['outbound_rate_plans_json']) || !empty($input['outbound_rate_plans_present']))) {
+        $existing_rp_int = $post_id > 0 ? outbound_editor_get_json_meta($post_id, '_outbound_rate_plan_internal_json', array()) : array();
+        $raw_rps = array();
+        if (isset($input['outbound_rate_plans_json']) && is_string($input['outbound_rate_plans_json'])) {
+            $decoded_rps = json_decode($input['outbound_rate_plans_json'], true);
+            if (is_array($decoded_rps)) {
+                $raw_rps = $decoded_rps;
+            }
+        }
+        $can_internal = function_exists('current_user_can') ? (bool) current_user_can('manage_options') : true;
+        $san_rps = outbound_sanitize_rate_plans_payload(
+            $raw_rps,
+            is_array($existing_rp_int) ? $existing_rp_int : array(),
+            $can_internal
+        );
+        update_post_meta($post_id, '_outbound_rate_plans_json', wp_json_encode($san_rps['public_plans']));
+        update_post_meta($post_id, '_outbound_rate_plan_internal_json', wp_json_encode($san_rps['internal_map']));
+    }
+    if ($post_type === 'accommodation' && (isset($input['outbound_offers_json']) || !empty($input['outbound_offers_present']))) {
+        $raw_offs = array();
+        if (isset($input['outbound_offers_json']) && is_string($input['outbound_offers_json'])) {
+            $decoded_offs = json_decode($input['outbound_offers_json'], true);
+            if (is_array($decoded_offs)) {
+                $raw_offs = $decoded_offs;
+            }
+        }
+        $san_offs = outbound_sanitize_accommodation_offers_payload($raw_offs);
+        update_post_meta($post_id, '_outbound_property_offers_json', wp_json_encode($san_offs));
+    }
+    if (isset($input['outbound_prop_policies']) && is_array($input['outbound_prop_policies'])) {
+        $pp = array();
+        foreach (array('checkInPolicy', 'checkOutPolicy', 'cancellationPolicy', 'childPolicy', 'petPolicy', 'generalNotes') as $pk) {
+            $pv = outbound_cms_sanitize_textarea((string) ($input['outbound_prop_policies'][$pk] ?? ''));
+            if ($pv !== '') {
+                $pp[$pk] = $pv;
+            }
+        }
+        update_post_meta($post_id, '_outbound_property_policies_json', wp_json_encode($pp));
+    }
+    if ($post_type === 'accommodation' && (isset($input['outbound_prop_enquiry']) || !empty($input['outbound_rooms_present']))) {
+        $pe_in = isset($input['outbound_prop_enquiry']) && is_array($input['outbound_prop_enquiry']) ? $input['outbound_prop_enquiry'] : array();
+        $pe = array(
+            'enableWhatsApp'    => !empty($pe_in['enableWhatsApp']),
+            'enableEmail'       => !empty($pe_in['enableEmail']),
+            'customEnquiryNote' => outbound_cms_sanitize_text((string) ($pe_in['customEnquiryNote'] ?? '')),
+            'contactEmail'      => function_exists('sanitize_email') ? (string) sanitize_email((string) ($pe_in['contactEmail'] ?? '')) : outbound_cms_sanitize_text((string) ($pe_in['contactEmail'] ?? '')),
+            'whatsappNumber'    => outbound_cms_sanitize_text((string) ($pe_in['whatsappNumber'] ?? '')),
+            'contactPhone'      => outbound_cms_sanitize_text((string) ($pe_in['contactPhone'] ?? '')),
+        );
+        update_post_meta($post_id, '_outbound_enquiry_settings_json', wp_json_encode($pe));
     }
     if (isset($input['outbound_facilities']) && is_array($input['outbound_facilities'])) {
         $fac_out = array();
@@ -1850,6 +2159,31 @@ function outbound_save_structured_item_meta(int $post_id, string $post_type, arr
         $rel_slugs = isset($input['outbound_related_guides_slugs']) ? $clean_list($input['outbound_related_guides_slugs']) : array();
         update_post_meta($post_id, '_outbound_related_guides_json', wp_json_encode($rel_slugs));
     }
+
+    // Clear stale Homepage Featured Item overrides when the underlying CPT post is explicitly edited,
+    // so updates to Title, Price, Description, Badge, or Hero Image reflect immediately on the frontend.
+    $override_kind_map = array(
+        'accommodation' => 'accommodations',
+        'experience'    => 'experiences',
+        'package'       => 'packages',
+    );
+    if (isset($override_kind_map[$post_type]) && function_exists('get_post') && function_exists('get_option') && function_exists('update_option')) {
+        $saved_post = get_post($post_id);
+        $saved_slug = ($saved_post && !empty($saved_post->post_name)) ? (string) $saved_post->post_name : '';
+        $ov_kind    = $override_kind_map[$post_type];
+        if ($saved_slug !== '') {
+            $feat_items = get_option('outbound_featured_item_overrides', array());
+            if (is_array($feat_items) && isset($feat_items[$ov_kind][$saved_slug])) {
+                unset($feat_items[$ov_kind][$saved_slug]);
+                update_option('outbound_featured_item_overrides', $feat_items, false);
+            }
+            $draft_state = get_option('outbound_cms_draft_state', array());
+            if (is_array($draft_state) && isset($draft_state['featured_overrides'][$ov_kind][$saved_slug])) {
+                unset($draft_state['featured_overrides'][$ov_kind][$saved_slug]);
+                update_option('outbound_cms_draft_state', $draft_state, false);
+            }
+        }
+    }
 }
 
 /**
@@ -1873,7 +2207,7 @@ function outbound_cms_save_item_record(string $post_type, int $post_id, string $
     $menu_order = (int) ($post_data['menu_order'] ?? 0);
     $excerpt    = outbound_cms_sanitize_textarea((string) ($post_data['post_excerpt'] ?? ''));
     $content    = outbound_cms_sanitize_textarea((string) ($post_data['post_content'] ?? ''));
-    $status     = $target_status === 'publish' ? 'publish' : 'draft';
+    $status     = in_array($target_status, array('publish', 'draft', 'archived'), true) ? $target_status : 'draft';
 
     $postarr = array(
         'post_type'    => $post_type,

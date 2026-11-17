@@ -82,6 +82,8 @@ export const ArtHero: React.FC<ArtHeroProps> = ({
               src={simunyeSpotlightImg}
               alt="Shona Stone Sculpture Spotlight"
               className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-700"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">

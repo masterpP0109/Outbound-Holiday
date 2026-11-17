@@ -4,7 +4,6 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  ExternalLink,
   Info,
   MapPin,
   MessageSquare,
@@ -14,7 +13,7 @@ import {
 } from 'lucide-react';
 import type { PromotionOffer } from '../../types/promotion';
 import { resolveAssetUrl } from '../../runtime/api';
-import { trackPromotionEvent, parseUtmParams } from '../../data/promotionsData';
+import { trackPromotionEvent } from '../../data/promotionsData';
 import { PromotionEnquiryModal } from './PromotionEnquiryModal';
 
 interface OfferDetailPageProps {
@@ -26,7 +25,7 @@ interface OfferDetailPageProps {
 export const OfferDetailPage: React.FC<OfferDetailPageProps> = ({
   offer,
   onNavigateHome,
-  onNavigatePackages,
+  onNavigatePackages: _onNavigatePackages,
 }) => {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
 
@@ -69,6 +68,8 @@ export const OfferDetailPage: React.FC<OfferDetailPageProps> = ({
               src={resolveAssetUrl(offer.imageUrl)}
               alt={offer.headline}
               className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
 

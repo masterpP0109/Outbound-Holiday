@@ -1,3 +1,4 @@
+import { mergeLiveBuilderActivities } from '../utils/holidayCalculator';
 import { createElement,Fragment } from 'react';
 import type { DetailedAccommodation, Experience, DetailedPackage, ActivityItem } from '../types/content';
 import type { GuideArticle } from '../types/guide';
@@ -14,7 +15,66 @@ export let FEATURED_HOMEPAGE_ACCOMMODATIONS: DetailedAccommodation[] = [];
 export let clientGalleryImages: string[] = [];
 export let ACTIVITIES_DATA: ActivityItem[] = [];
 export let STAY_TIERS: ContentSnapshot['stayTiers'] = [];
+export interface CurrencyMeta {
+  mode: 'automatic' | 'manual';
+  status: 'live' | 'cached' | 'manual' | 'unavailable';
+  provider: string;
+  effectiveDate?: string | null;
+  fetchedAt?: string | null;
+}
+
 export let CURRENCY_RATES: Record<string,{symbol:string;rate:number}> = {};
+export let CURRENCY_META: CurrencyMeta = {
+  mode: 'automatic',
+  status: 'unavailable',
+  provider: 'Frankfurter API v2',
+  effectiveDate: null,
+  fetchedAt: null,
+};
+let ratesInstalledFromServer = false;
+let currencyRevision = 0;
+const currencyListeners = new Set<() => void>();
+export function subscribeCurrencyRates(listener: () => void): () => void {
+  currencyListeners.add(listener);
+  return () => { currencyListeners.delete(listener); };
+}
+export function getCurrencyRevision(): number {
+  return currencyRevision;
+}
+function sanitizeCurrencyRatesMap(raw: Record<string,{symbol:string;rate:number}>): Record<string,{symbol:string;rate:number}> {
+  const clean: Record<string,{symbol:string;rate:number}> = {};
+  for (const [code, info] of Object.entries(raw || {})) {
+    const upper = code.toUpperCase();
+    if (upper === 'ZWL') continue;
+    if (info && typeof info.rate === 'number' && Number.isFinite(info.rate) && info.rate > 0) {
+      clean[upper] = { symbol: info.symbol || upper, rate: upper === 'USD' ? 1 : info.rate };
+    }
+  }
+  if (!clean.USD) {
+    clean.USD = { symbol: '$', rate: 1 };
+  }
+  return clean;
+}
+export function installCurrencyRates(
+  rates: Record<string,{symbol:string;rate:number}>,
+  meta?: CurrencyMeta,
+  fromServer = true,
+) {
+  if (!fromServer && ratesInstalledFromServer) {
+    return;
+  }
+  CURRENCY_RATES = sanitizeCurrencyRatesMap(rates);
+  if (meta) {
+    CURRENCY_META = meta;
+  }
+  if (fromServer) {
+    ratesInstalledFromServer = true;
+  }
+  currencyRevision += 1;
+  for (const listener of currencyListeners) {
+    listener();
+  }
+}
 export let TRUST_BUILDERS: any[] = [];
 export let FEATURED_PACKAGES: TravelPackage[] = [];
 export let VIC_FALLS_SPOTS: TravelSpot[] = [];
@@ -23,7 +83,8 @@ export let TRAVEL_REVIEWS: Review[] = [];
 let snapshot: ContentSnapshot;
 const installers: (()=>void)[] = [];
 export function registerContent(install:()=>void){ installers.push(install);if(snapshot)install(); }
-export function installContent(next:ContentSnapshot){
+export function installContent(next:ContentSnapshot, options?: { fromServer?: boolean }){
+  const fromServer = options?.fromServer ?? false;
   snapshot=next;
   ALL_ACCOMMODATIONS=next.accommodations;ALL_EXPERIENCES=next.experiences;ALL_PACKAGES=next.packages;
   ALL_GUIDE_ARTICLES=Object.fromEntries(next.guides.map(g=>[g.slug,g]));
@@ -31,7 +92,8 @@ export function installContent(next:ContentSnapshot){
   GUIDE_HUB_CATEGORIES=next.site.guideCategories;
   FEATURED_HOMEPAGE_ACCOMMODATIONS=next.site.featured.accommodationIds.map(id=>getAccommodationBySlug(id)).filter((item): item is NonNullable<typeof item> => Boolean(item));
   clientGalleryImages=next.albums.flatMap(a=>a.images.map(i=>i.url));
-  ACTIVITIES_DATA=next.builderActivities;STAY_TIERS=next.stayTiers;CURRENCY_RATES=next.site.currencyRates;
+  ACTIVITIES_DATA=mergeLiveBuilderActivities(next.builderActivities, next.experiences);STAY_TIERS=next.stayTiers;
+  installCurrencyRates(next.site.currencyRates, next.site.currencyMeta, fromServer);
   TRUST_BUILDERS=next.site.legacy.TRUST_BUILDERS as any[];FEATURED_PACKAGES=next.site.legacy.FEATURED_PACKAGES as unknown as TravelPackage[];
   VIC_FALLS_SPOTS=next.site.legacy.VIC_FALLS_SPOTS as unknown as TravelSpot[];ACCOMMODATIONS=next.site.legacy.ACCOMMODATIONS as unknown as Accommodation[];TRAVEL_REVIEWS=next.site.legacy.TRAVEL_REVIEWS as unknown as Review[];
   for(const install of installers)install();

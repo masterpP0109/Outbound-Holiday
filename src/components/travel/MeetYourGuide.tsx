@@ -24,6 +24,8 @@ export const MeetYourGuide: React.FC<MeetYourGuideProps> = ({ onOpenConsultation
                 src={elephantExperienceImg}
                 alt={editorial("travel/MeetYourGuide.text1")}
                 className="w-full h-[380px] object-cover object-top"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               

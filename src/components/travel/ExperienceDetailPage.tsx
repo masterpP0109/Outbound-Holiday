@@ -1,13 +1,17 @@
 import { editorialFormat } from "../../runtime/catalog";
 import { editorial } from "../../runtime/catalog";
 import { PageLink } from '../common/PageLink';
-import { sectionPath } from '../../routes';
+import { sectionPath, experiencePath } from '../../routes';
 import React,{ useState,useEffect } from 'react';
 import { Experience,getExperienceById } from '../../data/experiencesData';
 import { BungeeExperiencePage } from './BungeeExperiencePage';
 import { GalleryLightbox } from './GalleryLightbox';
-import { WhatsAppEnquiryButton,WhatsAppSpecialistCTA,WhatsAppIcon } from '../common/WhatsAppButton';
+import { WhatsAppIcon } from '../common/WhatsAppButton';
 import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
+import { ShareButton } from '../common/ShareButton';
+import { UnifiedEnquiryPanel } from './UnifiedEnquiryPanel';
+import type { Currency } from '../../types';
+import type { DirectEnquiryContext } from '../../utils/enquiry';
 import {
 Clock,
 Star,
@@ -16,7 +20,6 @@ ShieldCheck,
 Sparkles,ChevronDown,
 ChevronUp,
 ArrowLeft,
-Share2,
 Check,
 Info,
 MapPin,
@@ -25,7 +28,9 @@ XCircle
 
 interface ExperienceDetailPageProps {
   experience: Experience;
+  currency?: Currency;
   onOpenPlanHoliday: () => void;
+  onDirectEnquiry?: (context: DirectEnquiryContext) => void;
   onNavigateHome: () => void;
   onSelectRelatedExperience: (exp: Experience) => void;
   onBackToDirectory?: () => void;
@@ -33,15 +38,13 @@ interface ExperienceDetailPageProps {
 
 export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   experience,
+  currency = 'USD',
   onOpenPlanHoliday,
+  onDirectEnquiry: _onDirectEnquiry,
   onNavigateHome,
   onSelectRelatedExperience,
   onBackToDirectory
 }) => {
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [guestCount, setGuestCount] = useState(2);
-  const [includeTransfers, setIncludeTransfers] = useState(true);
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -54,6 +57,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   if (experience.id === 'bungee-jump' || experience.slug === 'bungee-jump') {
     return (
       <BungeeExperiencePage
+        currency={currency}
         onOpenPlanHoliday={onOpenPlanHoliday}
         onNavigateHome={onNavigateHome}
         onSelectRelatedExperience={onSelectRelatedExperience}
@@ -61,14 +65,6 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
       />
     );
   }
-
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-    }
-  };
 
   const toggleFaq = (idx: number) => {
     setOpenFaqIndices(prev => 
@@ -79,9 +75,6 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   const relatedList = experience.relatedIds
     .map(id => getExperienceById(id))
     .filter((e): e is Experience => e !== undefined);
-
-  const transferPricePerPerson = includeTransfers ? 15 : 0;
-  const estimatedTotal = (experience.priceAmount + transferPricePerPerson) * guestCount;
 
   return (
     <div className="bg-[#FAF9F6] text-[#1A2E35] min-h-screen selection:bg-[#C9A66B]/30 selection:text-[#0B5E8E]">
@@ -115,13 +108,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleShare}
-              className="text-gray-300 hover:text-white transition-colors flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
-            >
-              <Share2 className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>{copiedLink ? 'Copied!' : 'Share'}</span>
-            </button>
+            <ShareButton
+              title={experience.title}
+              canonicalPath={experiencePath(experience)}
+            />
           </div>
         </div>
       </div>
@@ -133,6 +123,8 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             src={experience.featuredImage} 
             alt={experience.title}
             className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/70 to-[#0D2833]/40" />
         </div>
@@ -270,7 +262,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                     <div key={st.stepNumber} className="bg-[#FAF9F6] rounded-2xl p-5 border border-gray-200/70 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
                       {st.image && (
                         <div className="md:col-span-4 h-40 rounded-xl overflow-hidden relative">
-                          <img src={st.image} alt={st.title} className="w-full h-full object-cover" />
+                          <img src={st.image} alt={st.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                         </div>
                       )}
                       <div className={st.image ? "md:col-span-8 space-y-1.5" : "md:col-span-12 space-y-1.5"}>
@@ -311,7 +303,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                       <img 
                         src={imgUrl} 
                         alt={`${experience.title} gallery photo ${idx + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                   ))}
@@ -445,7 +439,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                         <img 
                           src={rel.featuredImage} 
                           alt={rel.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="absolute top-2 right-2 bg-[#0D2833]/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md">
                           {rel.fromPrice}
@@ -467,81 +463,29 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
 
           </main>
 
-          {/* Sticky Booking Sidebar (4 Cols) */}
+          {/* Sticky Enquiry Sidebar (4 Cols) */}
           <aside id="experience-booking-sidebar" className="lg:col-span-4 sticky top-28 space-y-6">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-lg space-y-6">
-              <div className="space-y-1 border-b border-gray-200 pb-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{editorial("travel/ExperienceDetailPage.text24")}</span>
-                <div className="text-3xl font-bold font-serif text-[#0B5E8E]">
-                  {experience.fromPrice} <span className="text-xs font-normal text-gray-500">{editorial("travel/ExperienceDetailPage.text25")}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 pt-1">
-                  <Clock className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>{editorial("travel/ExperienceDetailPage.text26")}{experience.duration}</span>
-                </div>
-              </div>
-
-              {/* Calculator Form */}
-              <div className="space-y-3 text-xs">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/ExperienceDetailPage.text27")}</label>
-                  <input 
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E] text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/ExperienceDetailPage.text28")}</label>
-                  <select
-                    value={guestCount}
-                    onChange={(e) => setGuestCount(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E] text-xs bg-white"
-                  >
-                    {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                      <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <label className="flex items-center justify-between cursor-pointer p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200">
-                  <span className="font-semibold text-gray-700">{editorial("travel/ExperienceDetailPage.text29")}</span>
-                  <input 
-                    type="checkbox" 
-                    checked={includeTransfers} 
-                    onChange={(e) => setIncludeTransfers(e.target.checked)}
-                    className="w-4 h-4 accent-[#0B5E8E] cursor-pointer"
-                  />
-                </label>
-
-                <div className="p-3 rounded-xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 flex items-center justify-between">
-                  <span className="font-bold text-gray-700">{editorial("travel/ExperienceDetailPage.text30")}</span>
-                  <span className="font-serif font-bold text-base text-[#0B5E8E]">{editorial("travel/ExperienceDetailPage.text31")}{estimatedTotal}</span>
-                </div>
-
-                <WhatsAppEnquiryButton 
-                  experienceName={experience.title}
-                  date={selectedDate}
-                  guests={guestCount}
-                  additionalNotes={includeTransfers ? editorialFormat("travel/ExperienceDetailPage.copy2") : undefined}
-                  buttonText="Enquire About Availability"
-                  variant="whatsapp-green"
-                />
-
-                <WhatsAppSpecialistCTA topic={experience.title} />
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 space-y-2 text-xs">
-                <div className="flex items-center gap-2 font-bold text-[#0B5E8E]">
-                  <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-                  <span>{editorial("travel/ExperienceDetailPage.text32")}</span>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-[11px]">
-                  {editorial("travel/ExperienceDetailPage.text33")}</p>
-              </div>
-            </div>
+            <UnifiedEnquiryPanel
+              mode="activity"
+              currency={currency}
+              itemTitle={experience.title}
+              itemSlug={experience.slug || experience.id}
+              basePriceUSD={experience.priceAmount || null}
+              priceLabelPrefix={editorial("travel/ExperienceDetailPage.text24")}
+              priceSuffix={editorial("travel/ExperienceDetailPage.text25")}
+              durationLabel={`${editorial("travel/ExperienceDetailPage.text26")}${experience.duration}`}
+              extras={[
+                {
+                  id: 'transfers',
+                  label: editorial("travel/ExperienceDetailPage.text29"),
+                  pricePerPersonUSD: 15,
+                },
+              ]}
+              trustTitle={editorial("travel/ExperienceDetailPage.text32")}
+              trustBody={editorial("travel/ExperienceDetailPage.text33")}
+              whatsappButtonLabel="Enquire About Availability"
+              onBuildHoliday={onOpenPlanHoliday}
+            />
           </aside>
 
         </div>

@@ -16,10 +16,13 @@ define('OUTBOUND_THEME_URI', get_template_directory_uri());
 
 $outbound_modules = array(
     'inc/helpers.php',
+    'inc/currency-rates.php',
     'inc/migrations.php',
     'inc/post-types.php',
     'inc/item-editors.php',
+    'inc/accommodation-crud.php',
     'inc/snapshot.php',
+    'inc/search.php',
     'inc/setup.php',
     'inc/meta-boxes.php',
     'inc/cms-hub.php',

@@ -3,7 +3,10 @@ import { editorial, editorialValue, registerContent } from "../../runtime/catalo
 import { PageLink } from '../common/PageLink';
 import { experiencePath,sectionPath } from '../../routes';
 import React,{ useState,useEffect } from 'react';
-import { WhatsAppEnquiryButton,WhatsAppSpecialistCTA,WhatsAppIcon } from '../common/WhatsAppButton';
+import { WhatsAppIcon } from '../common/WhatsAppButton';
+import { ShareButton } from '../common/ShareButton';
+import { UnifiedEnquiryPanel } from './UnifiedEnquiryPanel';
+import type { Currency } from '../../types';
 import {
 Clock,
 MapPin,
@@ -13,7 +16,6 @@ ShieldCheck,
 Sparkles,ChevronDown,
 ChevronUp,
 ArrowLeft,
-Share2,
 Users,
 Check,XCircle,
 Zap,
@@ -34,6 +36,7 @@ registerContent(() => { bungeeImg = editorialValue("travel/BungeeExperiencePage.
 
 
 interface BungeeExperiencePageProps {
+  currency?: Currency;
   onOpenPlanHoliday: () => void;
   onNavigateHome: () => void;
   onSelectRelatedExperience?: (exp: Experience) => void;
@@ -41,42 +44,24 @@ interface BungeeExperiencePageProps {
 }
 
 export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
+  currency = 'USD',
   onOpenPlanHoliday,
   onNavigateHome,
   onSelectRelatedExperience,
   onBackToDirectory
 }) => {
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [jumperCount, setJumperCount] = useState(1);
-  const [includeTransfers, setIncludeTransfers] = useState(true);
-  const [includeVideoPackage, setIncludeVideoPackage] = useState(false);
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([0, 1, 2]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
-
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
-
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-    }
-  };
 
   const toggleFaq = (idx: number) => {
     setOpenFaqIndices(prev => 
       prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
     );
   };
-
-  const bungeePricePerPerson = 160;
-  const transferCostPerPerson = includeTransfers ? 15 : 0;
-  const videoPackageCost = includeVideoPackage ? 55 : 0;
-  const totalEstimatedCost = (bungeePricePerPerson + transferCostPerPerson) * jumperCount + (includeVideoPackage ? videoPackageCost : 0);
 
   const steps = editorialValue("travel/BungeeExperiencePage.section1", {});
 
@@ -118,13 +103,10 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleShare}
-              className="text-gray-300 hover:text-white transition-colors flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
-            >
-              <Share2 className="w-3.5 h-3.5 text-[#C9A66B]" />
-              <span>{copiedLink ? 'Copied!' : 'Share'}</span>
-            </button>
+            <ShareButton
+              title="Victoria Falls Bungee Jump"
+              canonicalPath="/things-to-do/bungee-jump"
+            />
           </div>
         </div>
       </div>
@@ -137,6 +119,8 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
             src={bungeeImg} 
             alt={editorial("travel/BungeeExperiencePage.text30")}
             className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/70 to-[#0D2833]/40" />
         </div>
@@ -277,6 +261,8 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                         src={st.image} 
                         alt={st.title}
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute top-2 left-2 bg-[#0D2833]/90 text-[#E5C989] text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md">
                         {editorial("travel/BungeeExperiencePage.text62")}{st.stepNumber} • {st.time}
@@ -320,6 +306,8 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                       src={imgUrl} 
                       alt={`Victoria Falls bungee gallery ${idx + 1}`} 
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 ))}
@@ -503,7 +491,9 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
                         <img 
                           src={rel.featuredImage} 
                           alt={rel.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="absolute top-2 right-2 bg-[#0D2833]/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md">
                           {rel.fromPrice}
@@ -525,95 +515,36 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
 
           </main>
 
-          {/* Sticky Booking Sidebar (4 Cols) */}
+          {/* Sticky Enquiry Sidebar (4 Cols) */}
           <aside id="bungee-booking-section" className="lg:col-span-4 sticky top-28 space-y-6">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-lg space-y-6">
-              
-              <div className="space-y-1 border-b border-gray-200 pb-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{editorial("travel/BungeeExperiencePage.text91")}</span>
-                <div className="text-3xl font-bold font-serif text-[#0B5E8E]">
-                  {editorial("travel/BungeeExperiencePage.text92")}<span className="text-xs font-normal text-gray-500">{editorial("travel/BungeeExperiencePage.text93")}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 pt-1">
-                  <Clock className="w-3.5 h-3.5 text-[#C9A66B]" />
-                  <span>{editorial("travel/BungeeExperiencePage.text94")}</span>
-                </div>
-              </div>
-
-              {/* Interactive Booking Calculator Form */}
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/BungeeExperiencePage.text95")}</label>
-                  <input 
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E] text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">{editorial("travel/BungeeExperiencePage.text96")}</label>
-                  <select
-                    value={jumperCount}
-                    onChange={(e) => setJumperCount(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0B5E8E] text-xs bg-white"
-                  >
-                    {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                      <option key={n} value={n}>{n} {n === 1 ? 'Jumper' : 'Jumpers'}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Add-on Toggles */}
-                <div className="space-y-2 pt-1 border-t border-gray-100">
-                  <label className="flex items-center justify-between cursor-pointer p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200">
-                    <span className="font-semibold text-gray-700">{editorial("travel/BungeeExperiencePage.text97")}</span>
-                    <input 
-                      type="checkbox" 
-                      checked={includeTransfers} 
-                      onChange={(e) => setIncludeTransfers(e.target.checked)}
-                      className="w-4 h-4 accent-[#0B5E8E] cursor-pointer"
-                    />
-                  </label>
-
-                  <label className="flex items-center justify-between cursor-pointer p-2.5 rounded-xl bg-[#FAF9F6] border border-gray-200">
-                    <span className="font-semibold text-gray-700">{editorial("travel/BungeeExperiencePage.text98")}</span>
-                    <input 
-                      type="checkbox" 
-                      checked={includeVideoPackage} 
-                      onChange={(e) => setIncludeVideoPackage(e.target.checked)}
-                      className="w-4 h-4 accent-[#0B5E8E] cursor-pointer"
-                    />
-                  </label>
-                </div>
-
-                {/* Estimated Total Display */}
-                <div className="p-3.5 rounded-xl bg-[#0B5E8E]/5 border border-[#0B5E8E]/20 flex items-center justify-between">
-                  <span className="font-bold text-gray-700">{editorial("travel/BungeeExperiencePage.text99")}</span>
-                  <span className="font-serif font-bold text-lg text-[#0B5E8E]">{editorial("travel/BungeeExperiencePage.text100")}{totalEstimatedCost}</span>
-                </div>
-
-                <WhatsAppEnquiryButton 
-                  experienceName={editorialFormat("travel/BungeeExperiencePage.copy2")}
-                  date={selectedDate}
-                  guests={jumperCount}
-                  buttonText="Enquire About Availability"
-                  variant="whatsapp-green"
-                />
-
-                <WhatsAppSpecialistCTA topic="Victoria Falls Bungee Jump" />
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 space-y-2 text-xs">
-                <div className="flex items-center gap-2 font-bold text-[#0B5E8E]">
-                  <ShieldCheck className="w-4 h-4 text-[#C9A66B]" />
-                  <span>{editorial("travel/BungeeExperiencePage.text101")}</span>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-[11px]">
-                  {editorial("travel/BungeeExperiencePage.text102")}</p>
-              </div>
-            </div>
+            <UnifiedEnquiryPanel
+              mode="activity"
+              currency={currency}
+              itemTitle="Victoria Falls Bungee Jump"
+              itemSlug="bungee-jump"
+              basePriceUSD={168}
+              priceLabelPrefix={editorial("travel/BungeeExperiencePage.text91")}
+              priceSuffix={editorial("travel/BungeeExperiencePage.text93")}
+              durationLabel={editorial("travel/BungeeExperiencePage.text94")}
+              minimumAge={14}
+              ageNotice="Victoria Falls Bungee Jump requires participants to be at least 14 years old and 40 kg."
+              extras={[
+                {
+                  id: 'transfers',
+                  label: editorial("travel/BungeeExperiencePage.text97"),
+                  pricePerPersonUSD: 15,
+                },
+                {
+                  id: 'video',
+                  label: editorial("travel/BungeeExperiencePage.text98"),
+                  pricePerPersonUSD: 50,
+                },
+              ]}
+              trustTitle={editorial("travel/BungeeExperiencePage.text101")}
+              trustBody={editorial("travel/BungeeExperiencePage.text102")}
+              whatsappButtonLabel="Enquire About Availability"
+              onBuildHoliday={onOpenPlanHoliday}
+            />
           </aside>
 
         </div>

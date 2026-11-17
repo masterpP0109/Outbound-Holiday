@@ -73,10 +73,6 @@ try {
 
   browser = await chromium.launch({ executablePath: chromePath, headless: true });
 
-  const consoleErrors = [];
-  const pageErrors = [];
-  const failedAssets = [];
-
   async function inspectSite(page, label, baseUrl, route, vp, saveShotName) {
     console.log(`Visiting [${label}:${vp.name}] ${route}`);
     await page.goto(`${baseUrl}${route}`, { waitUntil: 'load', timeout: 20000 });

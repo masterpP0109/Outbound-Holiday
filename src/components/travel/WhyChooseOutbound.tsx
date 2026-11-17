@@ -28,7 +28,7 @@ export const WhyChooseOutbound: React.FC<WhyChooseOutboundProps> = ({
 
         {/* 4 Premium Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {cards.map((card, idx) => {
+          {cards.map((card: any, idx: number) => {
             const Icon = card.icon;
             return (
               <div

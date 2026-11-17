@@ -1,7 +1,7 @@
 import { editorial, editorialValue } from "../../runtime/catalog";
 import React from 'react';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../data/travelData';
+import { formatCurrencyAmount } from '../../utils/currency';
 import { Check,ArrowRight,ShieldCheck,Sparkles,Crown } from 'lucide-react';
 
 interface BudgetSelectorProps {
@@ -13,12 +13,7 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
   currency,
   onSelectBudgetStyle,
 }) => {
-  const rateObj = CURRENCY_RATES[currency] || CURRENCY_RATES['USD'];
-
-  const formatPrice = (usd: number) => {
-    const val = Math.round(usd * rateObj.rate);
-    return `${rateObj.symbol}${val.toLocaleString()}`;
-  };
+  const formatPrice = (usd: number) => formatCurrencyAmount(usd, currency);
 
   const tiers = [
     {
@@ -107,7 +102,7 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
                     <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-1">
                       {editorial("travel/BudgetSelector.text18")}</strong>
                     <ul className="space-y-1">
-                      {tier.perfectFor.map((item, i) => (
+                      {tier.perfectFor.map((item: string, i: number) => (
                         <li key={i} className="flex items-center gap-1.5 text-gray-700 font-medium">
                           <Check className="w-3.5 h-3.5 text-[#3F6B3C] shrink-0" />
                           <span>{item}</span>
@@ -126,7 +121,7 @@ export const BudgetSelector: React.FC<BudgetSelectorProps> = ({
                     <strong className="block text-[#1A2E35] text-[11px] uppercase tracking-wider mb-1">
                       {editorial("travel/BudgetSelector.text20")}</strong>
                     <ul className="space-y-1">
-                      {tier.experiences.map((exp, i) => (
+                      {tier.experiences.map((exp: string, i: number) => (
                         <li key={i} className="flex items-center gap-1.5 text-gray-600">
                           <Check className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
                           <span>{exp}</span>

@@ -102,6 +102,8 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
             src={heroVictoriaFalls}
             alt={editorial("travel/ExperiencesDirectoryPage.text31")}
             className="w-full h-full object-cover object-center scale-105 filter brightness-90 saturate-110"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0D2833]/90 via-[#0D2833]/75 to-[#0D2833]/90" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-transparent to-[#0D2833]/60" />
@@ -299,6 +301,8 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
                       src={cat.image} 
                       alt={cat.title} 
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/60 to-transparent" />
 
@@ -593,6 +597,7 @@ const ExperienceCard: React.FC<{ experience: Experience; onSelect: () => void }>
             alt={experience.title}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
 

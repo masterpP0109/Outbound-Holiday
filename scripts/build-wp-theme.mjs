@@ -25,12 +25,20 @@ const outJsPath = path.join(outAppDir, 'outbound-app.js');
 const outZipPath = path.join(rootDir, 'wordpress-theme', 'outbound-holidays.zip');
 const tmpViteOut = path.join(rootDir, '.tmp-wp-theme-build');
 
+function safeCopyFile(src, dst) {
+  try {
+    fs.copyFileSync(src, dst);
+  } catch {
+    fs.writeFileSync(dst, fs.readFileSync(src));
+  }
+}
+
 fs.mkdirSync(outAppDir, { recursive: true });
 
 // Step 1: Sync baseline snapshot JSON into theme inc/
 const srcSnapshot = path.join(rootDir, 'src', 'runtime', 'published-content.json');
 const dstSnapshot = path.join(themeDir, 'inc', 'default-snapshot.json');
-fs.copyFileSync(srcSnapshot, dstSnapshot);
+safeCopyFile(srcSnapshot, dstSnapshot);
 
 // Remove legacy split assets superseded by outbound-app.js / outbound-app.css
 for (const legacyFile of [
@@ -47,6 +55,7 @@ for (const legacyFile of [
 console.log('Building WordPress theme React + Tailwind bundle from wordpress-theme/app-src/wp-main.tsx...');
 await build({
   root: rootDir,
+  configFile: false,
   plugins: [react(), tailwindcss()],
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
@@ -84,8 +93,8 @@ if (!fs.existsSync(builtCss) || !fs.existsSync(builtJs)) {
   throw new Error('Vite WordPress theme app build failed to emit outbound-app.css or outbound-app.js.');
 }
 
-fs.copyFileSync(builtCss, outCssPath);
-fs.copyFileSync(builtJs, outJsPath);
+safeCopyFile(builtCss, outCssPath);
+safeCopyFile(builtJs, outJsPath);
 fs.rmSync(tmpViteOut, { recursive: true, force: true });
 
 console.log(`Generated: ${path.relative(rootDir, outCssPath)} (${Math.round(fs.statSync(outCssPath).size / 1024)} KB)`);

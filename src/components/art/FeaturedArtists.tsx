@@ -39,6 +39,8 @@ export const FeaturedArtists: React.FC<FeaturedArtistsProps> = ({
                     src={artist.featuredWorkImage}
                     alt={artist.name}
                     className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   
@@ -48,6 +50,8 @@ export const FeaturedArtists: React.FC<FeaturedArtistsProps> = ({
                       src={artist.avatarUrl}
                       alt={artist.name}
                       className="w-16 h-16 rounded-full border-2 border-white object-cover shadow-md"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
 

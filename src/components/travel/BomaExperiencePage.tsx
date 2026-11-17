@@ -120,6 +120,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
             src={bomaDinnerImg} 
             alt={editorial("travel/BomaExperiencePage.text32")}
              className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D2833] via-[#0D2833]/70 to-[#0D2833]/40" />
         </div>
@@ -277,6 +279,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     src={bomaDinnerImg}
                     alt={editorial("travel/BomaExperiencePage.text58")}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute top-4 left-4 bg-[#0D2833]/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
                     {editorial("travel/BomaExperiencePage.text59")}</div>
@@ -310,6 +314,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     src={bomaDinnerImg2} 
                     alt={editorial("travel/BomaExperiencePage.text66")}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute top-4 left-4 bg-[#0D2833]/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
                     {editorial("travel/BomaExperiencePage.text67")}</div>
@@ -323,6 +329,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     src={bomaDinnerImg3} 
                     alt={editorial("travel/BomaExperiencePage.text68")}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute top-4 left-4 bg-[#0D2833]/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
                     {editorial("travel/BomaExperiencePage.text69")}</div>
@@ -356,6 +364,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     src={bomaDinnerImg5}
                     alt={editorial("travel/BomaExperiencePage.text76")}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute top-4 left-4 bg-[#0D2833]/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
                     {editorial("travel/BomaExperiencePage.text77")}</div>
@@ -369,6 +379,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     src={bomaDinnerImg5}
                     alt={editorial("travel/BomaExperiencePage.text78")}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute top-4 left-4 bg-[#0D2833]/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
                     {editorial("travel/BomaExperiencePage.text79")}</div>
@@ -402,6 +414,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     src={bomaDinnerImg6} 
                     alt={editorial("travel/BomaExperiencePage.text86")}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute top-4 left-4 bg-[#0D2833]/80 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
                     {editorial("travel/BomaExperiencePage.text87")}</div>
@@ -431,7 +445,9 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                     <img 
                       src={imgUrl} 
                       alt={`The Boma gallery photo ${idx + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 ))}
@@ -802,6 +818,8 @@ export const BomaExperiencePage: React.FC<BomaExperiencePageProps> = ({
                           src={item.image} 
                           alt={item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="absolute top-3 right-3 bg-[#0D2833]/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md">
                           {item.duration}

@@ -124,6 +124,8 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onStartPlanning }) => {
                           src={step.imageUrl}
                           alt={step.title}
                           className="w-full h-full object-cover"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2.5">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1">

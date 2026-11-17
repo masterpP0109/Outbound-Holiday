@@ -69,7 +69,7 @@ function outbound_render_site_cms_page(): void {
             'contact' => array(
                 'whatsappNumber' => preg_replace('/[^0-9]/', '', (string) ($raw['whatsappNumber'] ?? '263714701721')),
                 'displayNumber'  => sanitize_text_field((string) ($raw['displayNumber'] ?? '')),
-                'email'          => sanitize_email((string) ($raw['email'] ?? 'travel@outboundholidays.co.zw')),
+                'email'          => sanitize_email((string) ($raw['email'] ?? 'fungai@outboundholiday.com')),
                 'address'        => sanitize_text_field((string) ($raw['address'] ?? '')),
                 'hours'          => sanitize_text_field((string) ($raw['hours'] ?? '')),
             ),
@@ -246,14 +246,12 @@ function outbound_get_mail_from_config(): array {
     $opts     = function_exists('get_option') ? (array) get_option('outbound_smtp_options', array()) : array();
     $from     = defined('OUTBOUND_SMTP_FROM_EMAIL') ? (string) OUTBOUND_SMTP_FROM_EMAIL : (string) ($opts['from_email'] ?? '');
     $fromName = defined('OUTBOUND_SMTP_FROM_NAME') ? (string) OUTBOUND_SMTP_FROM_NAME : (string) ($opts['from_name'] ?? 'Outbound Holidays');
-    if (!is_email($from) && function_exists('get_option')) {
-        $admin = (string) get_option('admin_email');
-        if (is_email($admin)) {
-            $from = $admin;
-        }
+    $low_from = strtolower(trim($from));
+    if (!is_email($from) || $low_from === 'travel@outboundholidays.co.zw' || $low_from === 'travel@outboundholiday.com') {
+        $from = defined('OUTBOUND_DEFAULT_DELIVERY_EMAIL') ? OUTBOUND_DEFAULT_DELIVERY_EMAIL : 'fungai@outboundholiday.com';
     }
     return array(
-        'email' => is_email($from) ? $from : '',
+        'email' => is_email($from) ? $from : 'fungai@outboundholiday.com',
         'name'  => $fromName !== '' ? $fromName : 'Outbound Holidays',
     );
 }
@@ -431,7 +429,7 @@ function outbound_render_setup_health_page(): void {
                 <tr><th>SMTP Username</th><td><input type="text" name="smtp[user]" value="<?php echo esc_attr((string) ($smtp_opts['user'] ?? '')); ?>" class="regular-text"></td></tr>
                 <tr><th>SMTP Password</th><td><input type="password" name="smtp[pass]" value="" class="regular-text" placeholder="<?php echo !empty($smtp_opts['pass']) ? '•••••••• (saved — leave blank to keep)' : ''; ?>"></td></tr>
                 <tr><th>From Email & Name</th><td>
-                    <input type="email" name="smtp[from_email]" value="<?php echo esc_attr((string) ($smtp_opts['from_email'] ?? get_option('admin_email'))); ?>" class="regular-text">
+                    <input type="email" name="smtp[from_email]" value="<?php echo esc_attr((string) ($smtp_opts['from_email'] ?? 'fungai@outboundholiday.com')); ?>" class="regular-text">
                     <input type="text" name="smtp[from_name]" value="<?php echo esc_attr((string) ($smtp_opts['from_name'] ?? 'Outbound Holidays')); ?>" class="regular-text">
                 </td></tr>
                 <tr><th>Live Newsletter Campaigns</th><td>
@@ -448,7 +446,7 @@ function outbound_render_setup_health_page(): void {
             <?php wp_nonce_field('outbound_setup_action', 'outbound_setup_nonce'); ?>
             <h2><?php esc_html_e('Send SMTP Diagnostic Email', 'outbound-holidays'); ?></h2>
             <p>
-                <input type="email" name="test_email_address" value="<?php echo esc_attr((string) get_option('admin_email')); ?>" class="regular-text">
+                <input type="email" name="test_email_address" value="fungai@outboundholiday.com" class="regular-text">
                 <button type="submit" name="outbound_send_test_email" value="1" class="button button-secondary"><?php esc_html_e('Send Test Email Now', 'outbound-holidays'); ?></button>
             </p>
         </form>

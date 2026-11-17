@@ -168,6 +168,8 @@ export const BlogListingPage: React.FC<BlogListingPageProps> = ({
                         src={featured.main.featuredImage.url}
                         alt={featured.main.featuredImage.alt}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </PageLink>
                     <span className="absolute top-4 left-4 bg-[#E67E22] text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
@@ -247,6 +249,8 @@ export const BlogListingPage: React.FC<BlogListingPageProps> = ({
                         src={story.featuredImage.url}
                         alt={story.featuredImage.alt}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </PageLink>
 
@@ -420,6 +424,7 @@ export const BlogListingPage: React.FC<BlogListingPageProps> = ({
                         alt={post.featuredImage.alt}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        decoding="async"
                       />
                     </PageLink>
 

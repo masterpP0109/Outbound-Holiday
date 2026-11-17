@@ -8,16 +8,40 @@ import { HttpError } from './security';
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 export const consentVersion='travel-club-2026-10';
 export async function selectTrip(tx:Prisma.TransactionClient,trip:Prisma.JsonObject){
+ const legacyActMap:Record<string,string>={'act-guided-falls':'guided-tour-falls','act-sunset-cruise':'upper-zambezi-sunset-cruise','act-boma-dinner':'boma-dinner-show','act-helicopter':'flight-of-angels','act-chobe-safari':'chobe-day-safari','act-gorge-swing':'gorge-swing'};
  const wanted:[string,string][]=[];
  if(trip.accommodationId)wanted.push(['accommodation',String(trip.accommodationId)]);
  if(trip.packageId)wanted.push(['package',String(trip.packageId)]);
  if(trip.stayTierId)wanted.push(['stayTier',String(trip.stayTierId)]);
- for(const id of (trip.activityIds??[]) as string[])wanted.push(['builderActivity',id]);
- for(const id of (trip.experienceIds??[]) as string[])wanted.push(['experience',id]);
+ const seenActs=new Set<string>();
+ for(const id of (trip.activityIds??[]) as string[]){
+  const expSlug=legacyActMap[id]??id;
+  if(!seenActs.has(expSlug)){seenActs.add(expSlug);wanted.push(['activity',id]);}
+ }
+ for(const id of (trip.experienceIds??[]) as string[]){
+  if(!seenActs.has(id)){seenActs.add(id);wanted.push(['experience',id]);}
+ }
  const selected:{id:string;kind:string;title:string;startingPrice:number|null;currency:string;priceBasis:string|null;payload:Prisma.JsonValue}[]=[];
- for(const [kind,id] of wanted){const record=await tx.content.findFirst({where:{kind:kind as any,status:'published',OR:[{id:kind+':'+id},{slug:id}]}});if(!record)throw new HttpError(422,'A selected item is no longer available. Please refresh your selections.');validatePayload(kind,record.payload);selected.push({id,kind,title:record.title,startingPrice:record.startingPrice?.toNumber()??null,currency:record.currency,priceBasis:record.priceBasis,payload:record.payload});}
+ for(const [kind,id] of wanted){
+  const mapped=kind==='activity'?legacyActMap[id]:undefined;
+  const record=kind==='activity'
+   ?((mapped?await tx.content.findFirst({where:{kind:'experience',status:'published',OR:[{id:'experience:'+mapped},{slug:mapped}]}}):null)
+    ?? await tx.content.findFirst({where:{kind:{in:['builderActivity','experience']},status:'published',OR:[{id:'builderActivity:'+id},{id:'experience:'+id},{slug:id}]}}))
+   :await tx.content.findFirst({where:{kind:kind as any,status:'published',OR:[{id:kind+':'+id},{slug:id}]}});
+  if(!record)throw new HttpError(422,'A selected item is no longer available. Please refresh your selections.');
+  const resolvedKind=kind==='activity'?'builderActivity':kind;
+  validatePayload(record.kind,record.payload);
+  selected.push({id,kind:resolvedKind,title:record.title,startingPrice:record.startingPrice?.toNumber()??null,currency:record.currency,priceBasis:record.priceBasis,payload:record.payload});
+ }
  const tier=selected.find(s=>s.kind==='stayTier');const stay=selected.find(s=>s.kind==='accommodation');const adults=Number(trip.adults??1),children=Number(trip.children??0),nights=Number(trip.nights??1);
- const minimum=Math.round((stay?.startingPrice??tier?.startingPrice??0)*nights*Math.ceil((adults+children)/2)+selected.filter(s=>s.kind==='builderActivity').reduce((sum,s)=>sum+(s.startingPrice??0)*(adults+children*0.8),0)+(trip.transportType==='private-transfers'?120:trip.transportType==='shared-shuttle'?60:0));
+ let stayNightRate=stay?.startingPrice??null;
+ if((stayNightRate===null||stayNightRate<=0)&&stay?.payload&&typeof stay.payload==='object'){
+  const rooms=((stay.payload as Record<string,unknown>).roomTypes as Array<Record<string,unknown>>|undefined)??[];
+  const roomPrices=rooms.filter(r=>r&&r.status!=='draft'&&r.status!=='archived'&&r.status!=='trashed').map(r=>{const pr=(r.pricing as Record<string,unknown>|undefined)??{};return Number(pr.startingFromPriceUSD??pr.baseNightlyRateUSD??0);}).filter(n=>Number.isFinite(n)&&n>0);
+  if(roomPrices.length)stayNightRate=Math.min(...roomPrices);
+ }
+ const effectiveStayRate=(stayNightRate&&stayNightRate>0?stayNightRate:null)??tier?.startingPrice??0;
+ const minimum=Math.round(effectiveStayRate*nights*Math.ceil((adults+children)/2)+selected.filter(s=>s.kind==='builderActivity').reduce((sum,s)=>sum+(s.startingPrice??0)*(adults+children*0.8),0)+(trip.transportType==='private-transfers'?120:trip.transportType==='shared-shuttle'?60:0));
  return {items:selected,estimate:{minimumUSD:minimum,maximumUSD:Math.round(minimum*1.18),estimated:true,assumptions:'Two guests per room; child activities estimated at 80% of adult rates; supplier rates, room allocation, age restrictions and availability require confirmation. Extra requested catalogue experiences are quoted separately from builder selections.'}};
 }
 async function subscription(tx:Prisma.TransactionClient,email:string){

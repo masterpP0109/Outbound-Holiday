@@ -111,6 +111,8 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
           src={images[currentIndex]}
           alt={metadata?.[currentIndex]?.alt ?? `Gallery image ${currentIndex+1}`}
           className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+          loading="lazy"
+          decoding="async"
         />
       </div>
 

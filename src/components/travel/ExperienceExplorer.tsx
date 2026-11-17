@@ -140,6 +140,8 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
               alt={activeCategory.title}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-center sm:object-[center_25%] transition-all duration-500 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
             
@@ -171,6 +173,8 @@ export const ExperienceExplorer: React.FC<ExperienceExplorerProps> = ({ onExplor
                           alt={item.title}
                           referrerPolicy="no-referrer"
                           className="w-full h-full object-cover object-center group-hover/img:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                          decoding="async"
                         />
                       </div>
                     )}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { X, ArrowRight, Tag, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, ArrowRight, Tag, ShieldCheck } from 'lucide-react';
 import type { PromotionOffer } from '../../types/promotion';
 import { resolveAssetUrl } from '../../runtime/api';
 import {
@@ -141,6 +141,7 @@ export const PromotionalModal: React.FC<PromotionalModalProps> = ({
             alt={promotion.imageAlt || promotion.headline}
             className="w-full h-full object-cover object-center"
             loading="eager"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
 

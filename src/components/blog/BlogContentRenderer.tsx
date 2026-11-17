@@ -87,6 +87,7 @@ const renderBlock = (block: ArticleBlock, index: number) => {
             alt={block.imageAlt || 'Victoria Falls travel photography'}
             loading="lazy"
             className="w-full h-auto max-h-[480px] object-cover"
+            decoding="async"
           />
           {(block.imageCaption || block.imageCredit) && (
             <figcaption className="px-4 py-3 bg-[#FAF9F6] border-t border-gray-100 text-xs text-gray-600 flex flex-wrap justify-between gap-2">
