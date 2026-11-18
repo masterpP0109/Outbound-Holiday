@@ -253,6 +253,8 @@ export interface DirectEnquiryContext {
   roomType?: string;
   roomsCount?: number;
   mealPlan?: string;
+  ratePlanId?: string;
+  ratePlan?: string;
   offerId?: string;
   offerName?: string;
   visitorMarket?: string;
@@ -323,6 +325,9 @@ function appendOptionalDetails(lines: string[], ctx: DirectEnquiryContext): void
   }
   if (ctx.mealPlan && ctx.mealPlan.trim()) {
     details.push(`Meal Plan: ${ctx.mealPlan.trim()}`);
+  }
+  if (ctx.ratePlan && ctx.ratePlan.trim()) {
+    details.push(`Rate Plan: ${ctx.ratePlan.trim()}`);
   }
   if (ctx.offerName && ctx.offerName.trim()) {
     details.push(`Special Offer: ${ctx.offerName.trim()}`);

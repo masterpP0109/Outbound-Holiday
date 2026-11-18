@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   Compass,
@@ -84,9 +84,10 @@ export const SearchResultsPage: React.FC<SearchResultsPageProps> = ({
   promotions,
   onNavigate,
 }) => {
+  const normalizedInitialType: GlobalSearchType = initialType || 'all';
   const [inputValue, setInputValue] = useState(initialQuery);
   const [activeQuery, setActiveQuery] = useState(initialQuery);
-  const [activeType, setActiveType] = useState<GlobalSearchType>(initialType);
+  const [activeType, setActiveType] = useState<GlobalSearchType>(normalizedInitialType);
   const [sourceTab, setSourceTab] = useState<'cms' | 'google'>('cms');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -95,14 +96,17 @@ export const SearchResultsPage: React.FC<SearchResultsPageProps> = ({
   const [accumulatedResults, setAccumulatedResults] = useState<GlobalSearchResult[]>([]);
   const [googleScriptReady, setGoogleScriptReady] = useState(false);
 
+  const promotionsRef = useRef(promotions);
+  promotionsRef.current = promotions;
+
   const cseId = getWpConfig()?.googleCseId || GOOGLE_CSE_ID;
 
   useEffect(() => {
     setInputValue(initialQuery);
     setActiveQuery(initialQuery);
-    setActiveType(initialType);
+    setActiveType(normalizedInitialType);
     setPage(1);
-  }, [initialQuery, initialType]);
+  }, [initialQuery, normalizedInitialType]);
 
   const runSearch = useCallback(
     async (q: string, type: GlobalSearchType, targetPage: number, append: boolean) => {
@@ -126,7 +130,7 @@ export const SearchResultsPage: React.FC<SearchResultsPageProps> = ({
           type,
           page: targetPage,
           perPage: 12,
-          promotions,
+          promotions: promotionsRef.current,
           signal: controller.signal,
         });
         setData(res);
@@ -142,7 +146,7 @@ export const SearchResultsPage: React.FC<SearchResultsPageProps> = ({
         setLoading(false);
       }
     },
-    [promotions]
+    []
   );
 
   useEffect(() => {

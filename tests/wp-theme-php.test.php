@@ -105,6 +105,21 @@ if (!function_exists('add_action')) {
     function remove_action($hook, $cb, $prio = 10) { return true; }
     function admin_url($path = '', $scheme = 'admin') { return 'https://outboundholiday.com/wp-admin/' . ltrim((string) $path, '/'); }
     function is_email($email) { return (bool) filter_var((string) $email, FILTER_VALIDATE_EMAIL); }
+    if (!class_exists('WP_Error')) {
+        class WP_Error {
+            public string $code;
+            public string $message;
+            public array $data;
+            public function __construct($code = '', $message = '', $data = array()) {
+                $this->code = (string) $code;
+                $this->message = (string) $message;
+                $this->data = is_array($data) ? $data : array();
+            }
+        }
+    }
+    if (!function_exists('is_wp_error')) {
+        function is_wp_error($thing) { return $thing instanceof WP_Error; }
+    }
     function wp_mail($to, $subject, $message, $headers = array()) {
         $GLOBALS['__mock_wp_mail_calls'][] = array('to' => $to, 'subject' => $subject, 'headers' => $headers);
         return $GLOBALS['__mock_wp_mail_ok'] ?? true;
@@ -1162,7 +1177,9 @@ if (!function_exists('get_posts')) {
         return $c;
     }
     function wp_delete_object_term_relationships($post_id, $taxonomies) { return true; }
-    function is_wp_error($thing) { return false; }
+    if (!function_exists('is_wp_error')) {
+        function is_wp_error($thing) { return $thing instanceof WP_Error; }
+    }
     function wp_generate_password($length = 12, $special = true, $extra = false) {
         return substr(bin2hex(random_bytes(max(4, $length))), 0, $length);
     }
@@ -1783,7 +1800,7 @@ assert_true(
     'Legacy travel@ emails normalize to fungai@outboundholiday.com and enquiry dispatches use Outbound Holidays <fungai@outboundholiday.com>'
 );
 
-$GLOBALS['__mock_wp_options']['outbound_db_schema_version'] = '1.4.0';
+$GLOBALS['__mock_wp_options']['outbound_db_schema_version'] = '1.5.0';
 $GLOBALS['wpdb'] = new class {
     public string $prefix = 'wp_';
     public string $last_error = '';
@@ -1800,8 +1817,9 @@ $GLOBALS['wpdb'] = new class {
         }
         return 0;
     }
-    public function get_var($q) {
-        if (str_contains((string) $q, 'LAST_INSERT_ID')) {
+    public function get_var($prepared) {
+        $q = is_array($prepared) ? $prepared['query'] : (string) $prepared;
+        if (str_contains($q, 'LAST_INSERT_ID')) {
             return $this->seq;
         }
         return null;
@@ -1917,6 +1935,508 @@ assert_true(
     'Saving an Accommodation CPT clears stale featured_overrides and updates frontend snapshot title, rate, tagline, and rooms immediately'
 );
 outbound_permanently_delete_cms_post($ilala_id, true, 'accommodation');
+
+// H. Review fixes: undecided transfer wording, childAges & 15-day itineraries, search & blog helpers
+assert_true(
+    is_array($hb_quick_res['summary'] ?? null)
+    && strpos((string) ($hb_quick_res['summary']['transport'] ?? ''), 'To be quoted') !== false,
+    'Undecided transfer type formats clearly as To be quoted separately in PHP enquiry summary'
+);
+$multi_day_res = outbound_process_enquiry_submission(array(
+    'name'    => 'Kuda Ncube',
+    'email'   => 'kuda@example.com',
+    'source'  => 'holiday-builder',
+    'trip'    => array(
+        'entryMode'           => 'guided',
+        'adults'              => 2,
+        'children'            => 2,
+        'childAges'           => array('Under 11', '11+'),
+        'nights'              => 14,
+        'arrivalDate'         => '2026-10-01',
+        'departureDate'       => '2026-10-15',
+        'requestedRooms'      => 1,
+        'familyRoomRequested' => true,
+        'stayTierId'          => 'comfort-plus',
+        'transportType'       => 'undecided',
+        'itineraryDraft'      => array_map(
+            static fn($n) => array('day' => 'Day ' . $n, 'title' => 'Schedule ' . $n, 'description' => 'Custom'),
+            range(1, 15)
+        ),
+    ),
+), '127.0.0.3');
+assert_true(
+    is_array($multi_day_res)
+    && count((array) ($multi_day_res['summary']['itinerary_draft'] ?? array())) === 15
+    && ($multi_day_res['summary']['check_in_date'] ?? '') === '2026-10-01'
+    && !empty($multi_day_res['summary']['family_room_requested'])
+    && count((array) ($multi_day_res['summary']['child_ages'] ?? array())) === 2,
+    '15-day itineraries, arrival/departure dates, childAges, and familyRoomRequested preserve cleanly in PHP'
+);
+
+$opts_html_check = outbound_build_enquiry_options_html('holiday-builder', 2, 2, 14, (array) ($multi_day_res['summary'] ?? array()));
+assert_true(
+    strpos($opts_html_check, 'Family / Interleading Room requested') !== false
+    && strpos($opts_html_check, 'To be quoted separately') !== false
+    && strpos($opts_html_check, 'Day 15') !== false,
+    'Enquiry email options HTML renders Family Room, To be quoted transfers, and Day 15 itinerary'
+);
+
+// I. CMS Audit Priority 1-6 checks: Search lifecycle, Offer date validation, Builder exclusions/overrides, Navigation & Enquiry email tracking
+$exp_search_save = outbound_cms_save_item_record('experience', 0, 'publish', array(
+    'outbound_post' => array(
+        'post_title'   => 'Victoria Falls Moonlight Microflight',
+        'post_name'    => 'moonlight-microflight',
+        'post_excerpt' => 'Private dawn & dusk scenic microflight.',
+    ),
+    'outbound_meta' => array(
+        '_outbound_price_usd' => '195',
+        '_outbound_duration'  => '25 Mins',
+    ),
+));
+$exp_search_id = (int) ($exp_search_save['post_id'] ?? 0);
+outbound_invalidate_snapshot_cache();
+$sr_pub = outbound_execute_public_search(array('q' => 'Moonlight Microflight', 'type' => 'experiences'));
+assert_true(
+    (int) ($sr_pub['total'] ?? 0) >= 1 && strpos((string) ($sr_pub['results'][0]['title'] ?? ''), 'Moonlight Microflight') !== false,
+    'Newly published Experience appears immediately in WordPress public search'
+);
+
+// Renaming reflects in search
+outbound_cms_save_item_record('experience', $exp_search_id, 'publish', array(
+    'outbound_post' => array(
+        'post_title'   => 'Victoria Falls Sunrise Microlight',
+        'post_name'    => 'moonlight-microflight',
+        'post_excerpt' => 'Updated sunrise scenic microlight flight.',
+    ),
+    'outbound_meta' => array('_outbound_price_usd' => '210'),
+));
+$sr_renamed = outbound_execute_public_search(array('q' => 'Sunrise Microlight', 'type' => 'experiences'));
+assert_true(
+    (int) ($sr_renamed['total'] ?? 0) >= 1 && strpos((string) ($sr_renamed['results'][0]['title'] ?? ''), 'Sunrise Microlight') !== false,
+    'Renamed Experience appears under new title in WordPress public search'
+);
+
+// Unpublishing removes it from public search
+outbound_change_cms_post_status($exp_search_id, 'unpublish', 'experience');
+$sr_unpub = outbound_execute_public_search(array('q' => 'Sunrise Microlight', 'type' => 'experiences'));
+assert_true((int) ($sr_unpub['total'] ?? 0) === 0, 'Unpublished Experience disappears immediately from WordPress public search');
+outbound_permanently_delete_cms_post($exp_search_id, true, 'experience');
+
+// Builder patch with explicit Include in Builder, Suggest by default, Display order & Price Override
+$builder_patch = outbound_cms_sanitize_section_patch('builder', array(
+    'builder_config' => array(
+        'defaultStayTierId'  => 'premium-escape',
+        'defaultNights'      => '4',
+        'availableNightsCsv' => '2, 4, 6',
+    ),
+    'builder_activities' => array(
+        array(
+            'id'                   => 'act-sunset-cruise',
+            'experienceId'         => 'upper-zambezi-sunset-cruise',
+            'includeInBuilder'     => '1',
+            'suggestedByDefault'   => '1',
+            'displayOrder'         => '2',
+            'priceOverrideEnabled' => '1',
+            'priceUSD'             => '99',
+            'title'                => 'Sunset Cruise',
+            'duration'             => '2 Hours',
+        ),
+        array(
+            'id'               => 'act-guided-falls',
+            'experienceId'     => 'guided-tour-falls',
+            'displayOrder'     => '1',
+            'priceUSD'         => '40',
+            'title'            => 'Guided Falls',
+            'duration'         => '2 Hours',
+        ),
+    ),
+));
+outbound_publish_cms_changes($builder_patch, 'builder');
+$snap_builder = outbound_build_live_snapshot(true);
+$sunset_snap  = array_values(array_filter((array) ($snap_builder['builderActivities'] ?? array()), static fn($a) => ($a['id'] ?? '') === 'act-sunset-cruise'))[0] ?? null;
+$falls_snap   = array_values(array_filter((array) ($snap_builder['builderActivities'] ?? array()), static fn($a) => ($a['id'] ?? '') === 'act-guided-falls'))[0] ?? null;
+assert_true(
+    is_array($sunset_snap) && (float) $sunset_snap['priceUSD'] === 99.0 && ($sunset_snap['priceSource'] ?? '') === 'builder-override'
+    && $falls_snap === null
+    && (int) ($snap_builder['site']['builderConfig']['defaultNights'] ?? 0) === 4,
+    'Builder respects excluded Experience (no auto-re-add), explicit priceOverrideEnabled source, and builderConfig defaults'
+);
+delete_option('outbound_builder_activities');
+delete_option('outbound_builder_excluded_experiences');
+delete_option('outbound_builder_config');
+outbound_invalidate_snapshot_cache();
+
+// Header navigation & Hero CTA sanitation
+$hdr_patch = outbound_cms_sanitize_section_patch('header', array(
+    'header_cta_action' => '/contact',
+    'nav_items' => array(
+        array('id' => 'packages', 'label' => 'Safari Packages', 'destination' => '/victoria-falls-packages', 'order' => '1', 'showDesktop' => '1', 'showMobile' => '1'),
+        array('id' => 'contact', 'label' => 'Talk to Us', 'destination' => '/contact', 'order' => '2', 'showMobile' => '1'),
+    ),
+));
+outbound_publish_cms_changes($hdr_patch, 'header');
+$snap_hdr = outbound_build_live_snapshot(true);
+assert_true(
+    ($snap_hdr['site']['navigation']['primaryCtaAction'] ?? '') === '/contact'
+    && count((array) ($snap_hdr['site']['navigation']['headerItems'] ?? array())) === 2
+    && !empty($snap_hdr['site']['navigation']['headerItems'][0]['showDesktop'])
+    && empty($snap_hdr['site']['navigation']['headerItems'][1]['showDesktop']),
+    'Header Navigation Manager syncs labels, destinations, order, and desktop/mobile visibility to snapshot'
+);
+delete_option('outbound_site_navigation');
+
+// Enquiry email failure capture & per-recipient status recording
+$GLOBALS['__mock_wp_mail_ok'] = false;
+$mail_res = outbound_dispatch_enquiry_emails(
+    'OH-261118-999',
+    'accommodation-enquiry',
+    'Fungai Guest',
+    'guest@example.com',
+    '+263771112222',
+    2,
+    0,
+    3,
+    array('minimum' => 720, 'maximum' => 850),
+    'Rate plan handoff check',
+    (int) ($multi_day_res['reference'] ? ($GLOBALS['wpdb']->rows[0]['id'] ?? 1) : 1),
+    array('rate_plan_id' => 'rp_zim_q4', 'rate_plan_name' => 'Zimbabwe Resident Q4 Special')
+);
+$GLOBALS['__mock_wp_mail_ok'] = true;
+assert_true(
+    ($mail_res['office']['status'] ?? '') === 'failed'
+    && ($mail_res['customer']['status'] ?? '') === 'failed'
+    && ($mail_res['office']['error'] ?? '') !== ''
+    && ($mail_res['customer']['error'] ?? '') !== '',
+    'Enquiry email dispatcher captures wp_mail() failures separately for office and customer notifications'
+);
+
+// Server-side offer date validation rejects expired offers cleanly
+$expired_offer_err = outbound_validate_offer_enquiry_dates('ilala-lodge-hotel', 'nonexistent-check', '2026-11-20', '2026-11-22', '2026-11-17');
+assert_true($expired_offer_err === true, 'Unknown/removed historical offer ID does not block standard enquiry cleanly');
+
+// ---------------------------------------------------------------------------
+// Trip Planner Redesign Phase 2 & 3 Verification (PHP / CMS / Enquiries)
+// ---------------------------------------------------------------------------
+
+// A. Cruise-only WhatsApp-only enquiry saves cleanly without fake stayTier or fake nights
+$cruise_only_res = outbound_process_enquiry_submission(array(
+    'name'    => 'Tendai Cruiser',
+    'email'   => '',
+    'phone'   => '+263772345678',
+    'source'  => 'holiday-builder',
+    'message' => 'Sunset cruise on 14 Sept only please',
+    'trip'    => array(
+        'entryMode'            => 'guided',
+        'preferredContact'     => 'whatsapp',
+        'preferredReplyMethod' => 'whatsapp',
+        'timingMode'           => 'flexible',
+        'adults'               => 2,
+        'children'             => 0,
+        'stayArrangement'      => 'none',
+        'transferArrangement'  => 'none',
+        'activityIds'          => array('act-sunset-cruise'),
+        'selectedActivities'   => array(
+            array(
+                'id'            => 'act-sunset-cruise',
+                'title'         => 'Upper Zambezi Sunset Cruise',
+                'duration'      => '2 Hours',
+                'unitPriceUSD'  => 85,
+                'preferredDay'  => 'day-1',
+                'preferredTime' => 'sunset',
+                'priceBasis'    => 'per_person',
+            ),
+        ),
+        'itemizedEstimate'     => array(
+            'status'      => 'total',
+            'totalLabel'  => 'Trip estimate',
+            'subtotalUSD' => 170,
+            'lines'       => array(
+                array(
+                    'section'   => 'Activities',
+                    'title'     => 'Upper Zambezi Sunset Cruise',
+                    'basis'     => '2 Adults × US$85',
+                    'amountUSD' => 170,
+                    'status'    => 'estimated',
+                ),
+            ),
+        ),
+    ),
+), '127.0.0.10');
+$cruise_row_entry = end($GLOBALS['wpdb']->rows);
+$cruise_row = is_array($cruise_row_entry['data'] ?? null) ? $cruise_row_entry['data'] : array();
+$cruise_summary = $cruise_only_res['summary'] ?? array();
+assert_true(
+    is_array($cruise_only_res)
+    && !empty($cruise_only_res['reference'])
+    && ($cruise_row['stay_tier_id'] ?? 'FAIL') === ''
+    && (int) ($cruise_row['nights'] ?? -1) === 0
+    && ($cruise_summary['preferred_channel'] ?? '') === 'whatsapp'
+    && ($cruise_summary['stay_arrangement'] ?? '') === 'none'
+    && ($cruise_only_res['itemizedEstimate']['mode'] ?? '') === 'total',
+    'Cruise-only WhatsApp enquiry validates without email or fake nights/stays and preserves preferred reply channel'
+);
+
+// B. Transfer-only quick enquiry validates and saves transfer option cleanly
+$transfer_only_res = outbound_process_enquiry_submission(array(
+    'name'    => 'Tariro Transfer',
+    'email'   => 'tariro@example.com',
+    'phone'   => '',
+    'source'  => 'holiday-builder',
+    'message' => 'Return VFA airport transfer for 3 guests',
+    'trip'    => array(
+        'entryMode'            => 'quick',
+        'preferredContact'     => 'email',
+        'preferredReplyMethod' => 'email',
+        'timingMode'           => 'undecided',
+        'stayArrangement'      => 'none',
+        'transferArrangement'  => 'selected',
+        'transferId'           => 'tr_vfa_return',
+        'transferTitle'        => 'VFA Airport Return Private Transfer',
+        'transferRoute'        => 'VFA Airport <-> Victoria Falls Town',
+        'transferPriceUSD'     => 60,
+        'transferBasis'        => 'per_vehicle_return',
+    ),
+), '127.0.0.11');
+$tr_row_entry = end($GLOBALS['wpdb']->rows);
+$tr_row = is_array($tr_row_entry['data'] ?? null) ? $tr_row_entry['data'] : array();
+$tr_summary = $transfer_only_res['summary'] ?? array();
+assert_true(
+    is_array($transfer_only_res)
+    && !empty($transfer_only_res['reference'])
+    && ($tr_row['stay_tier_id'] ?? 'FAIL') === ''
+    && (int) ($tr_row['nights'] ?? -1) === 0
+    && ($tr_summary['transfer_id'] ?? '') === 'tr_vfa_return'
+    && ($tr_summary['transfer_basis'] ?? '') === 'per_vehicle_return',
+    'Transfer-only enquiry saves transfer route/basis cleanly without invented stays or nights'
+);
+
+// C. Itemized estimate marks missing child fare as "Child price on request" while keeping adult subtotal
+$partial_est = outbound_calculate_itemized_trip_estimate(
+    array(
+        'nights'              => 0,
+        'adults'              => 2,
+        'childAgeValues'      => array(9),
+        'stayArrangement'     => 'none',
+        'activityIds'         => array('exp-partial'),
+        'transferArrangement' => 'none',
+    ),
+    array(
+        'activities' => array(
+            array(
+                'id'         => 'exp-partial',
+                'title'      => 'Chobe Day Trip',
+                'priceUSD'   => 180,
+                'priceBasis' => 'per_adult',
+                'rateStatus' => 'provisional',
+            ),
+        ),
+    )
+);
+assert_true(
+    ($partial_est['mode'] ?? '') === 'subtotal'
+    && ($partial_est['headlineLabel'] ?? '') === 'Subtotal for priced items'
+    && (float) ($partial_est['subtotalUSD'] ?? 0) === 360.0
+    && count((array) ($partial_est['excludedItems'] ?? array())) >= 1
+    && stripos(implode(' | ', (array) $partial_est['excludedItems']), 'Child price on request') !== false,
+    'Missing child fare yields "Subtotal for priced items", preserves adult subtotal, and excludes child fare cleanly'
+);
+
+$partial_html = outbound_build_enquiry_options_html(
+    'holiday-builder',
+    2,
+    1,
+    0,
+    array(
+        'preferred_channel'   => 'whatsapp',
+        'stay_arrangement'    => 'already-arranged',
+        'child_ages'          => array('Child 1: age 9 (Under 11)'),
+        'itemized_estimate'   => $partial_est,
+        'selected_activities' => array(
+            array('title' => 'Chobe Day Trip', 'preferredDay' => 'day-2', 'preferredTime' => 'morning'),
+        ),
+    )
+);
+assert_true(
+    stripos($partial_html, 'Already arranged independently') !== false
+    && stripos($partial_html, 'Child price on request') !== false
+    && stripos($partial_html, 'US$360') !== false
+    && stripos($partial_html, 'Day 2') !== false,
+    'Options HTML renders itemized lines, excluded child fare note, arranged stay, and scheduled activity day/time'
+);
+
+// D. Experience builder flags (includeInBuilder=false, priceBasis, childRateUnder11USD, recommendedInBuilder, builderOrder) + Section 12 transfers round-trip
+$GLOBALS['__mock_wp_meta'] = array();
+outbound_save_structured_item_meta(303, 'experience', array(
+    'outbound_meta' => array(
+        '_outbound_price_usd'              => '95',
+        '_outbound_price_basis'            => 'per_person',
+        '_outbound_child_under11_usd'      => '45',
+        '_outbound_child_11plus_usd'       => '95',
+        '_outbound_rate_status'            => 'confirmed',
+        '_outbound_valid_from'             => '2026-01-01',
+        '_outbound_valid_to'               => '2026-12-31',
+        '_outbound_default_time_slot'      => 'sunset',
+        '_outbound_builder_order'          => '3',
+        '_outbound_recommended_in_builder' => '1',
+    ),
+    'outbound_exp_builder_flags_present' => '1',
+));
+assert_true(
+    get_post_meta(303, '_outbound_price_basis', true) === 'per_person'
+    && get_post_meta(303, '_outbound_child_under11_usd', true) === '45'
+    && get_post_meta(303, '_outbound_include_in_builder', true) === '0'
+    && get_post_meta(303, '_outbound_recommended_in_builder', true) === '1'
+    && get_post_meta(303, '_outbound_builder_order', true) === '3',
+    'Experience editor saves rate basis, child fares, validity window, and builder visibility/recommendation flags'
+);
+
+$tr_patch = outbound_cms_sanitize_section_patch('builder', array(
+    'builder_transfers' => array(
+        array(
+            'id'              => 'tr_vfa_oneway',
+            'title'           => 'VFA One-Way Private Transfer',
+            'route'           => 'VFA Airport -> Victoria Falls Hotel',
+            'priceUSD'        => '35',
+            'priceBasis'      => 'per_vehicle',
+            'visitorCategory' => 'all',
+            'rateStatus'      => 'confirmed',
+            'includeInBuilder'=> '1',
+            'displayOrder'    => '1',
+        ),
+    ),
+));
+outbound_publish_cms_changes($tr_patch, 'builder');
+$snap_tr = outbound_build_live_snapshot(true);
+assert_true(
+    count((array) ($snap_tr['site']['builderConfig']['transferOptions'] ?? array())) === 1
+    && ($snap_tr['site']['builderConfig']['transferOptions'][0]['route'] ?? '') === 'VFA Airport -> Victoria Falls Hotel',
+    'Section 12 transfer repeater saves and publishes transferOptions onto live builderConfig snapshot'
+);
+
+// E. Entry card copy, section visibility toggles, experience departureTimes CSV, and enquiry flight/pickup timing
+$entry_patch = outbound_cms_sanitize_section_patch('builder', array(
+    'builder_config' => array(
+        'entryCopy' => array(
+            'heading'       => 'How would you like to plan today?',
+            'helpCardTitle' => 'Get help planning',
+        ),
+        'enabledSectionsPresent' => '1',
+        'enabledSections'        => array(
+            'datesGuests' => '1',
+            'stay'        => '1',
+            'activities'  => '1',
+            'transfers'   => '',
+        ),
+    ),
+    'builder_activities' => array(
+        'act-sunset-cruise' => array(
+            'id'                => 'act-sunset-cruise',
+            'includeInBuilder'  => '1',
+            'title'             => 'Zambezi Sunset Cruise',
+            'priceAmount'       => '85',
+            'departureTimesCsv' => '4:00 pm, 4:30 pm',
+        ),
+    ),
+));
+outbound_publish_cms_changes($entry_patch, 'builder');
+$snap_entry = outbound_build_live_snapshot(true);
+$sunset_row = null;
+foreach ((array) ($snap_entry['builderActivities'] ?? array()) as $row_act) {
+    if (($row_act['id'] ?? '') === 'act-sunset-cruise') {
+        $sunset_row = $row_act;
+        break;
+    }
+}
+assert_true(
+    ($snap_entry['site']['builderConfig']['entryCopy']['heading'] ?? '') === 'How would you like to plan today?'
+    && ($snap_entry['site']['builderConfig']['enabledSections']['transfers'] ?? true) === false
+    && is_array($sunset_row)
+    && in_array('4:00 pm', (array) ($sunset_row['departureTimes'] ?? array()), true),
+    'Builder CMS publishes entryCopy, enabledSections toggles, and activity departureTimes array'
+);
+
+outbound_save_structured_item_meta(304, 'experience', array(
+    'outbound_meta' => array(
+        '_outbound_departure_times' => '8:00 am, 2:00 pm',
+    ),
+    'outbound_exp_builder_flags_present' => '1',
+));
+assert_true(
+    get_post_meta(304, '_outbound_departure_times', true) === '8:00 am, 2:00 pm',
+    'Experience editor persists _outbound_departure_times meta'
+);
+
+$tr_timing_snap = outbound_build_enquiry_snapshot(array(
+    'name'   => 'Flight Timing Guest',
+    'email'  => 'flight@example.com',
+    'source' => 'holiday-builder',
+    'trip'   => array(
+        'entryMode'           => 'guided',
+        'arrivalDate'         => '2026-12-19',
+        'departureDate'       => '2026-12-23',
+        'nights'              => 4,
+        'adults'              => 2,
+        'selectedActivities'  => array(
+            array(
+                'id'            => 'act-sunset-cruise',
+                'title'         => 'Sunset Cruise',
+                'activityDate'  => '2026-12-20',
+                'preferredTime' => '4:00 pm',
+            ),
+        ),
+        'transferArrangement' => 'recommend',
+        'transferDate'        => '2026-12-19',
+        'flightTime'          => '13:45',
+        'flightTimeUnknown'   => false,
+        'pickupTime'          => '14:30',
+    ),
+), outbound_get_enquiry_catalog_context());
+$tr_timing_html = outbound_build_enquiry_options_html(
+    'holiday-builder',
+    2,
+    0,
+    4,
+    $tr_timing_snap
+);
+assert_true(
+    $tr_timing_snap['flight_time'] === '13:45'
+    && $tr_timing_snap['pickup_time'] === '14:30'
+    && stripos($tr_timing_html, '13:45') !== false
+    && stripos($tr_timing_html, '14:30') !== false
+    && stripos($tr_timing_html, '2026-12-20') !== false,
+    'Enquiry snapshot & HTML preserve transfer flight time, separate pickup time, and activity date'
+);
+
+// F. Server-side validation enforces matching contact field for chosen reply method
+$bad_wa_res = outbound_process_enquiry_submission(array(
+    'name'   => 'No Phone Guest',
+    'email'  => 'guest@example.com',
+    'phone'  => '',
+    'source' => 'holiday-builder',
+    'trip'   => array(
+        'entryMode'            => 'quick',
+        'preferredReplyMethod' => 'whatsapp',
+    ),
+), 'holiday-builder');
+$bad_email_res = outbound_process_enquiry_submission(array(
+    'name'   => 'No Email Guest',
+    'email'  => '',
+    'phone'  => '+263771234567',
+    'source' => 'holiday-builder',
+    'trip'   => array(
+        'entryMode'            => 'quick',
+        'preferredReplyMethod' => 'email',
+    ),
+), 'holiday-builder');
+assert_true(
+    is_wp_error($bad_wa_res) && is_wp_error($bad_email_res),
+    'WordPress enquiry handler strictly requires phone for WhatsApp reply and email for Email reply'
+);
+
+delete_option('outbound_builder_config');
+delete_option('outbound_builder_activities');
+delete_option('outbound_builder_excluded_experiences');
+outbound_invalidate_snapshot_cache();
 
 echo "\nSummary: " . ($failures === 0 ? 'ALL PHP CHECKS PASSED' : "{$failures} CHECK(S) FAILED") . "\n";
 exit($failures === 0 ? 0 : 1);

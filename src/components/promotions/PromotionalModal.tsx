@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { X, ArrowRight, Tag, ShieldCheck } from 'lucide-react';
 import type { PromotionOffer } from '../../types/promotion';
 import { resolveAssetUrl } from '../../runtime/api';
@@ -26,6 +26,11 @@ export const PromotionalModal: React.FC<PromotionalModalProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const trackedImpressionRef = useRef(false);
+
+  const handleDismiss = useCallback(() => {
+    recordSessionPromotionDismissal();
+    onClose();
+  }, [onClose]);
 
   // Focus trap & Escape key dismissal
   useEffect(() => {
@@ -56,14 +61,9 @@ export const PromotionalModal: React.FC<PromotionalModalProps> = ({
       document.body.style.overflow = prevOverflow;
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, promotion.id]);
+  }, [isOpen, promotion.id, handleDismiss]);
 
   if (!isOpen) return null;
-
-  const handleDismiss = () => {
-    recordSessionPromotionDismissal();
-    onClose();
-  };
 
   const handlePrimaryClick = () => {
     trackPromotionEvent(promotion.id, 'cta_click');

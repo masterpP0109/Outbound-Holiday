@@ -5,6 +5,8 @@ import { PageLink } from '../common/PageLink';
 import { experiencePath,sectionPath } from '../../routes';
 import React,{ useEffect,useState } from 'react';
 import { ALL_EXPERIENCES,Experience } from '../../data/experiencesData';
+import type { Currency } from '../../types';
+import { formatCurrencyAmount } from '../../utils/currency';
 import {
 Sparkles,
 Clock,
@@ -31,6 +33,7 @@ MessageCircle,HelpCircle,Heart
 
 
 export interface ExperienceCategoryPageProps {
+  currency?: Currency;
   categoryId: string;
   onSelectExperience: (experience: Experience) => void;
   onSelectCategory: (catId: string) => void;
@@ -55,6 +58,7 @@ let CATEGORY_DETAILS: Record<string, CategoryDetail>;
 registerContent(() => { CATEGORY_DETAILS = editorialValue("travel/ExperienceCategoryPage.CATEGORY_DETAILS", {Sun,Binoculars,Zap,Waves,Utensils,Map,Heart}); });
 
 export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
+  currency = 'USD',
   categoryId,
   onSelectExperience,
   onSelectCategory,
@@ -228,7 +232,7 @@ export const ExperienceCategoryPage: React.FC<ExperienceCategoryPageProps> = ({
                     )}
 
                     <div className="absolute top-3 right-3 bg-[#0D2833]/90 text-white backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold border border-white/20 shadow-xs">
-                      {exp.fromPrice}
+                      {typeof exp.priceAmount === 'number' && exp.priceAmount > 0 ? `From ${formatCurrencyAmount(exp.priceAmount, currency)}` : exp.fromPrice}
                     </div>
 
                     <div className="absolute bottom-3 left-3 bg-white/95 text-[#0B5E8E] backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center gap-1 shadow-xs">

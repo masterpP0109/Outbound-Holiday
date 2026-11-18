@@ -57,10 +57,15 @@ Building,
 Clock
 } from 'lucide-react';
 
+import type { PreselectedStayDetails } from './PlanHolidayModal';
+
 interface AccommodationDetailPageProps {
   property: DetailedAccommodation;
   currency: Currency;
-  onOpenPlanHolidayWithProperty: (property: DetailedAccommodation) => void;
+  onOpenPlanHolidayWithProperty: (
+    property: DetailedAccommodation,
+    stayDetails?: PreselectedStayDetails
+  ) => void;
   onDirectEnquiry?: (context: DirectEnquiryContext) => void;
   onSelectExperience: (exp: Experience) => void;
   onSelectRelatedProperty: (prop: DetailedAccommodation) => void;
@@ -71,7 +76,7 @@ interface AccommodationDetailPageProps {
 export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = ({
   property,
   currency,
-  onOpenPlanHolidayWithProperty: _onOpenPlanHolidayWithProperty,
+  onOpenPlanHolidayWithProperty,
   onDirectEnquiry: _onDirectEnquiry,
   onSelectExperience,
   onSelectRelatedProperty,
@@ -330,6 +335,20 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span>Enquire About This Stay</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const matchedRoom =
+                      publishedRooms.find((r) => r.name === roomPreference) || null;
+                    onOpenPlanHolidayWithProperty(
+                      property,
+                      matchedRoom ? { roomId: matchedRoom.id || matchedRoom.name } : undefined
+                    );
+                  }}
+                  className="bg-white hover:bg-[#FAF9F6] text-[#0B5E8E] border border-[#0B5E8E]/30 font-bold text-sm py-4 px-6 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Add stay to my plan</span>
                 </button>
               </div>
 
@@ -1079,7 +1098,7 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
               }))}
               selectedRoomName={roomPreference}
               onSelectedRoomChange={setRoomPreference}
-              pricingBasis={/person/i.test(priceUnitLabel || '') ? 'per_person' : 'per_room'}
+              pricingBasis={/person|sharing/i.test(priceUnitLabel || '') ? 'per_person' : 'per_room'}
               whatsappButtonLabel="Enquire About Availability"
               emailButtonLabel="Send Stay Enquiry by Email"
             />
@@ -1249,12 +1268,31 @@ export const AccommodationDetailPage: React.FC<AccommodationDetailPageProps> = (
         room={detailRoom}
         currency={currency}
         onClose={() => setDetailRoom(null)}
+        onAddRoomToPlan={(room, prefill) => {
+          setDetailRoom(null);
+          setRoomPreference(room.name);
+          onOpenPlanHolidayWithProperty(property, {
+            roomId: room.id || room.name,
+            ratePlanId: prefill?.ratePlanId,
+            mealPlanId: prefill?.mealPlanId,
+            arrivalDate: prefill?.checkIn,
+            departureDate: prefill?.checkOut,
+            adults: prefill?.adults,
+            childAgesYears: prefill?.childrenCount
+              ? Array(prefill.childrenCount).fill(10)
+              : undefined,
+          });
+        }}
         onEnquireRoom={(room, prefill) => {
           setDetailRoom(null);
           setRoomPreference(room.name);
           setEnquiryTarget({
             property,
             room,
+            offer: prefill?.offer ?? null,
+            ratePlanId: prefill?.ratePlanId,
+            ratePlanLabel: prefill?.ratePlanLabel,
+            visitorMarket: prefill?.visitorMarket,
             checkIn: prefill?.checkIn,
             checkOut: prefill?.checkOut,
             adults: prefill?.adults,

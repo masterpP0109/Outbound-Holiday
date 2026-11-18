@@ -1,9 +1,7 @@
 import React from 'react';
 import { MessagesSquare, Map, Luggage, MessageCircle } from 'lucide-react';
 import { editorialOptional } from '../../runtime/catalog';
-
-const DEFAULT_WHATSAPP_URL =
-  "https://wa.me/263714701721?text=Hello%20Outbound%20Holidays%21%20I%27d%20like%20help%20planning%20a%20Victoria%20Falls%20holiday.";
+import { getWhatsAppUrl } from '../../utils/whatsapp';
 
 export const PlanYourHolidaySection: React.FC = () => {
   const eyebrow = editorialOptional(
@@ -28,7 +26,7 @@ export const PlanYourHolidaySection: React.FC = () => {
   );
   const whatsappUrl = editorialOptional(
     'travel/PlanYourHoliday.whatsappUrl',
-    DEFAULT_WHATSAPP_URL
+    getWhatsAppUrl("Hello Outbound Holidays! I'd like help planning a Victoria Falls holiday.")
   );
 
   const steps = [

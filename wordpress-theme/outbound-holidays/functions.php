@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('OUTBOUND_THEME_VERSION', '1.0.0');
-define('OUTBOUND_DB_SCHEMA_VERSION', '1.4.0');
+define('OUTBOUND_DB_SCHEMA_VERSION', '1.5.0');
 define('OUTBOUND_THEME_DIR', get_template_directory());
 define('OUTBOUND_THEME_URI', get_template_directory_uri());
 

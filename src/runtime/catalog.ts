@@ -15,6 +15,8 @@ export let FEATURED_HOMEPAGE_ACCOMMODATIONS: DetailedAccommodation[] = [];
 export let clientGalleryImages: string[] = [];
 export let ACTIVITIES_DATA: ActivityItem[] = [];
 export let STAY_TIERS: ContentSnapshot['stayTiers'] = [];
+export let BUILDER_CONFIG: ContentSnapshot['site']['builderConfig'] = undefined;
+export let SITE_NAVIGATION: ContentSnapshot['site']['navigation'] = undefined;
 export interface CurrencyMeta {
   mode: 'automatic' | 'manual';
   status: 'live' | 'cached' | 'manual' | 'unavailable';
@@ -92,7 +94,12 @@ export function installContent(next:ContentSnapshot, options?: { fromServer?: bo
   GUIDE_HUB_CATEGORIES=next.site.guideCategories;
   FEATURED_HOMEPAGE_ACCOMMODATIONS=next.site.featured.accommodationIds.map(id=>getAccommodationBySlug(id)).filter((item): item is NonNullable<typeof item> => Boolean(item));
   clientGalleryImages=next.albums.flatMap(a=>a.images.map(i=>i.url));
-  ACTIVITIES_DATA=mergeLiveBuilderActivities(next.builderActivities, next.experiences);STAY_TIERS=next.stayTiers;
+  const excludedIds = Array.isArray(next.site.legacy?.BUILDER_EXCLUDED_EXPERIENCE_IDS)
+    ? (next.site.legacy.BUILDER_EXCLUDED_EXPERIENCE_IDS as unknown[]).map((x) => String(x))
+    : [];
+  ACTIVITIES_DATA=mergeLiveBuilderActivities(next.builderActivities, next.experiences, excludedIds);STAY_TIERS=next.stayTiers;
+  BUILDER_CONFIG=next.site.builderConfig;
+  SITE_NAVIGATION=next.site.navigation;
   installCurrencyRates(next.site.currencyRates, next.site.currencyMeta, fromServer);
   TRUST_BUILDERS=next.site.legacy.TRUST_BUILDERS as any[];FEATURED_PACKAGES=next.site.legacy.FEATURED_PACKAGES as unknown as TravelPackage[];
   VIC_FALLS_SPOTS=next.site.legacy.VIC_FALLS_SPOTS as unknown as TravelSpot[];ACCOMMODATIONS=next.site.legacy.ACCOMMODATIONS as unknown as Accommodation[];TRAVEL_REVIEWS=next.site.legacy.TRAVEL_REVIEWS as unknown as Review[];

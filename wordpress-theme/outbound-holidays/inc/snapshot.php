@@ -480,6 +480,24 @@ function outbound_merge_wp_experiences(array $baseline, bool $include_drafts = f
         $why_rec    = (string) (get_post_meta($pid, '_outbound_why_recommend', true) ?: ($base['whyWeRecommend'] ?? 'Curated personally with licensed Victoria Falls guides.'));
         $expert_tip = (string) (get_post_meta($pid, '_outbound_expert_tip', true) ?: ($base['localExpertTip'] ?? ''));
 
+        $price_basis    = (string) (get_post_meta($pid, '_outbound_price_basis', true) ?: ($base['priceBasis'] ?? ''));
+        $child_u11_raw  = get_post_meta($pid, '_outbound_child_under11_usd', true);
+        $child_11p_raw  = get_post_meta($pid, '_outbound_child_11plus_usd', true);
+        $rate_status    = (string) (get_post_meta($pid, '_outbound_rate_status', true) ?: ($base['rateStatus'] ?? ''));
+        $valid_from     = (string) (get_post_meta($pid, '_outbound_valid_from', true) ?: ($base['validFrom'] ?? ''));
+        $valid_to       = (string) (get_post_meta($pid, '_outbound_valid_to', true) ?: ($base['validTo'] ?? ''));
+        $def_slot       = (string) (get_post_meta($pid, '_outbound_default_time_slot', true) ?: ($base['defaultTimeSlot'] ?? ''));
+        $dep_times_meta = (string) get_post_meta($pid, '_outbound_departure_times', true);
+        $dep_times      = array();
+        if ($dep_times_meta !== '') {
+            $dep_times = array_values(array_filter(array_map('trim', explode(',', $dep_times_meta))));
+        } elseif (!empty($base['departureTimes']) && is_array($base['departureTimes'])) {
+            $dep_times = array_values(array_filter(array_map('strval', $base['departureTimes'])));
+        }
+        $inc_builder    = get_post_meta($pid, '_outbound_include_in_builder', true);
+        $rec_builder    = get_post_meta($pid, '_outbound_recommended_in_builder', true);
+        $b_order        = get_post_meta($pid, '_outbound_builder_order', true);
+
         $rec = array(
             'id'               => (string) ($base['id'] ?? $slug),
             'slug'             => $slug,
@@ -499,6 +517,33 @@ function outbound_merge_wp_experiences(array $baseline, bool $include_drafts = f
             'faqs'             => $faqs,
             'relatedIds'       => array_values(array_map('strval', $related_ids)),
         );
+        if ($price_basis !== '') { $rec['priceBasis'] = $price_basis; }
+        if ($child_u11_raw !== '' && is_numeric($child_u11_raw)) {
+            $rec['childRateUnder11USD'] = (float) $child_u11_raw;
+        } elseif (isset($base['childRateUnder11USD']) && is_numeric($base['childRateUnder11USD'])) {
+            $rec['childRateUnder11USD'] = (float) $base['childRateUnder11USD'];
+        }
+        if ($child_11p_raw !== '' && is_numeric($child_11p_raw)) {
+            $rec['childRate11PlusUSD'] = (float) $child_11p_raw;
+        } elseif (isset($base['childRate11PlusUSD']) && is_numeric($base['childRate11PlusUSD'])) {
+            $rec['childRate11PlusUSD'] = (float) $base['childRate11PlusUSD'];
+        }
+        if ($rate_status === 'confirmed' || $rate_status === 'provisional') { $rec['rateStatus'] = $rate_status; }
+        if ($valid_from !== '') { $rec['validFrom'] = $valid_from; }
+        if ($valid_to !== '') { $rec['validTo'] = $valid_to; }
+        if ($def_slot !== '') { $rec['defaultTimeSlot'] = $def_slot; }
+        if (!empty($dep_times)) { $rec['departureTimes'] = $dep_times; }
+        if ($inc_builder === '0' || $inc_builder === 0 || $inc_builder === false) {
+            $rec['includeInBuilder'] = false;
+        } elseif ($inc_builder === '1' || $inc_builder === 1 || $inc_builder === true) {
+            $rec['includeInBuilder'] = true;
+        }
+        if ($rec_builder === '1' || $rec_builder === 1 || $rec_builder === true) {
+            $rec['recommendedInBuilder'] = true;
+        }
+        if ($b_order !== '' && is_numeric($b_order)) {
+            $rec['builderOrder'] = (int) $b_order;
+        }
         if ($subtitle !== '') { $rec['subtitle'] = $subtitle; }
         if ($badge !== '') { $rec['badge'] = $badge; }
         if ($location !== '') { $rec['location'] = $location; }
@@ -922,6 +967,9 @@ if (function_exists('add_action')) {
         'outbound_design_tokens',
         'outbound_builder_stay_tiers',
         'outbound_builder_activities',
+        'outbound_builder_excluded_experiences',
+        'outbound_builder_config',
+        'outbound_site_navigation',
     ) as $opt_key) {
         add_action('update_option_' . $opt_key, 'outbound_invalidate_snapshot_cache');
     }
@@ -1175,6 +1223,85 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
         if (!empty($reviews)) {
             $snapshot['site']['legacy']['TRAVEL_REVIEWS'] = array_values($reviews);
         }
+
+        // Apply Unified Header & Mobile Navigation configuration if configured.
+        $nav_cfg = (array) ($bundle['navigation'] ?? array());
+        $raw_nav_items = !empty($nav_cfg['headerItems']) && is_array($nav_cfg['headerItems'])
+            ? $nav_cfg['headerItems']
+            : array();
+        if (!empty($raw_nav_items) || !empty($nav_cfg['primaryCtaAction'])) {
+            $clean_nav = array();
+            foreach ($raw_nav_items as $nidx => $ni) {
+                if (!is_array($ni) || empty($ni['label'])) {
+                    continue;
+                }
+                $clean_nav[] = array(
+                    'id'          => (string) ($ni['id'] ?? ('nav-' . ($nidx + 1))),
+                    'label'       => (string) $ni['label'],
+                    'destination' => (string) ($ni['destination'] ?? '/'),
+                    'showDesktop' => !array_key_exists('showDesktop', $ni) || !empty($ni['showDesktop']),
+                    'showMobile'  => !array_key_exists('showMobile', $ni) || !empty($ni['showMobile']),
+                    'order'       => (int) ($ni['order'] ?? ($nidx + 1)),
+                );
+            }
+            usort($clean_nav, static fn($a, $b) => ((int) $a['order']) <=> ((int) $b['order']));
+            $nav_out = array();
+            if (!empty($clean_nav)) {
+                $nav_out['headerItems'] = $clean_nav;
+            }
+            if (!empty($nav_cfg['primaryCtaAction'])) {
+                $nav_out['primaryCtaAction'] = (string) $nav_cfg['primaryCtaAction'];
+            }
+            if (!empty($nav_out)) {
+                $snapshot['site']['navigation'] = $nav_out;
+            }
+        }
+
+        // Apply Holiday Builder defaults & configuration if configured.
+        $b_cfg = (array) ($bundle['builder_config'] ?? array());
+        if (!empty($b_cfg)) {
+            $bc_out = array();
+            if (!empty($b_cfg['defaultStayTierId'])) {
+                $bc_out['defaultStayTierId'] = (string) $b_cfg['defaultStayTierId'];
+            }
+            if (!empty($b_cfg['defaultNights']) && is_numeric($b_cfg['defaultNights'])) {
+                $bc_out['defaultNights'] = max(1, min(30, (int) $b_cfg['defaultNights']));
+            }
+            if (!empty($b_cfg['availableNights']) && is_array($b_cfg['availableNights'])) {
+                $bc_out['availableNights'] = array_values(array_map('intval', $b_cfg['availableNights']));
+            }
+            if (!empty($b_cfg['suggestedActivityIds']) && is_array($b_cfg['suggestedActivityIds'])) {
+                $bc_out['suggestedActivityIds'] = array_values(array_map('strval', $b_cfg['suggestedActivityIds']));
+            }
+            if (isset($b_cfg['transferOptions']) && is_array($b_cfg['transferOptions'])) {
+                $bc_out['transferOptions'] = array_values($b_cfg['transferOptions']);
+            }
+            if (!empty($b_cfg['entryCopy']) && is_array($b_cfg['entryCopy'])) {
+                $ec_clean = array();
+                foreach ($b_cfg['entryCopy'] as $eck => $ecv) {
+                    if (is_string($eck) && is_string($ecv) && $ecv !== '') {
+                        $ec_clean[$eck] = $ecv;
+                    }
+                }
+                if (!empty($ec_clean)) {
+                    $bc_out['entryCopy'] = $ec_clean;
+                }
+            }
+            if (!empty($b_cfg['enabledSections']) && is_array($b_cfg['enabledSections'])) {
+                $es_clean = array();
+                foreach (array('datesGuests', 'stay', 'activities', 'transfers') as $esk) {
+                    if (array_key_exists($esk, $b_cfg['enabledSections'])) {
+                        $es_clean[$esk] = (bool) $b_cfg['enabledSections'][$esk];
+                    }
+                }
+                if (!empty($es_clean)) {
+                    $bc_out['enabledSections'] = $es_clean;
+                }
+            }
+            if (!empty($bc_out)) {
+                $snapshot['site']['builderConfig'] = $bc_out;
+            }
+        }
     }
 
     // Merge WordPress CPTs cleanly onto the snapshot arrays (single batched query per post type).
@@ -1329,38 +1456,78 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
             $snapshot['stayTiers'] = $clean_tiers;
         }
     }
+    $excluded_exp_ids = array_values(array_unique(array_filter(array_map('strval', (array) ($bundle['builder_excluded_experiences'] ?? array())))));
+    $excluded_exp_lookup = array_fill_keys($excluded_exp_ids, true);
+
     if (!empty($bundle['builder_activities']) && is_array($bundle['builder_activities'])) {
         $base_acts = outbound_index_snapshot_records((array) ($snapshot['builderActivities'] ?? array()));
         $clean_acts = array();
-        foreach ($bundle['builder_activities'] as $act) {
+        foreach ($bundle['builder_activities'] as $aidx => $act) {
             if (!is_array($act) || empty($act['title'])) {
                 continue;
             }
             $aid  = (string) ($act['id'] ?? sanitize_title((string) $act['title']));
+            $exp_ref = (string) ($act['experienceId'] ?? '');
+            $included = !array_key_exists('includeInBuilder', $act) || !empty($act['includeInBuilder']);
+            if (!$included) {
+                $excluded_exp_lookup[$aid] = true;
+                if ($exp_ref !== '') {
+                    $excluded_exp_lookup[$exp_ref] = true;
+                }
+                continue;
+            }
             $base = (array) ($base_acts[$aid] ?? array());
             $price = isset($act['priceUSD']) ? (float) $act['priceUSD']
                 : (isset($act['priceAmount']) ? (float) $act['priceAmount'] : (float) ($base['priceUSD'] ?? 65));
-            $clean_acts[] = array_replace($base, array(
-                'id'           => $aid,
-                'title'        => (string) $act['title'],
-                'duration'     => (string) ($act['duration'] ?? ($base['duration'] ?? 'Half Day')),
-                'priceUSD'     => max(0, $price),
-                'imageUrl'     => (string) (!empty($act['imageUrl']) ? $act['imageUrl']
+            $override_on = !empty($act['priceOverrideEnabled']);
+            $dep_times_act = array();
+            if (!empty($act['departureTimes']) && is_array($act['departureTimes'])) {
+                $dep_times_act = array_values(array_filter(array_map('strval', $act['departureTimes'])));
+            } elseif (!empty($base['departureTimes']) && is_array($base['departureTimes'])) {
+                $dep_times_act = array_values(array_filter(array_map('strval', $base['departureTimes'])));
+            }
+            $clean_row = array_replace($base, array(
+                'id'                   => $aid,
+                'experienceId'         => $exp_ref !== '' ? $exp_ref : (string) ($base['experienceId'] ?? ''),
+                'includeInBuilder'     => true,
+                'suggestedByDefault'   => !empty($act['suggestedByDefault']),
+                'displayOrder'         => isset($act['displayOrder']) && is_numeric($act['displayOrder']) ? (int) $act['displayOrder'] : ($aidx + 1),
+                'priceOverrideEnabled' => $override_on,
+                'priceSource'          => $override_on ? 'builder-override' : 'experience-catalog',
+                'title'                => (string) $act['title'],
+                'duration'             => (string) ($act['duration'] ?? ($base['duration'] ?? 'Half Day')),
+                'priceUSD'             => max(0, $price),
+                'imageUrl'             => (string) (!empty($act['imageUrl']) ? $act['imageUrl']
                     : (!empty($act['image']) ? $act['image'] : ($base['imageUrl'] ?? outbound_get_media_fallback('falls')))),
-                'badge'        => (string) ($act['badge'] ?? ($base['badge'] ?? 'Recommended')),
-                'shortDesc'    => (string) ($act['shortDesc'] ?? ($base['shortDesc'] ?? 'Curated Victoria Falls experience.')),
-                'whyRecommend' => (string) ($act['whyRecommend'] ?? ($base['whyRecommend'] ?? 'Trusted local operator.')),
-                'idealFor'     => array_values(!empty($act['idealFor']) && is_array($act['idealFor'])
+                'badge'                => (string) ($act['badge'] ?? ($base['badge'] ?? 'Recommended')),
+                'shortDesc'            => (string) ($act['shortDesc'] ?? ($base['shortDesc'] ?? 'Curated Victoria Falls experience.')),
+                'whyRecommend'         => (string) ($act['whyRecommend'] ?? ($base['whyRecommend'] ?? 'Trusted local operator.')),
+                'idealFor'             => array_values(!empty($act['idealFor']) && is_array($act['idealFor'])
                     ? $act['idealFor']
                     : (array) ($base['idealFor'] ?? array('first-time'))),
             ));
+            foreach (array('priceBasis', 'rateStatus', 'validFrom', 'validTo', 'defaultTimeSlot') as $str_k) {
+                $v = (string) ($act[$str_k] ?? ($base[$str_k] ?? ''));
+                if ($v !== '') {
+                    $clean_row[$str_k] = $v;
+                }
+            }
+            foreach (array('childRateUnder11USD', 'childRate11PlusUSD') as $num_k) {
+                if (array_key_exists($num_k, $act) && $act[$num_k] !== null && is_numeric($act[$num_k])) {
+                    $clean_row[$num_k] = (float) $act[$num_k];
+                }
+            }
+            if (!empty($dep_times_act)) {
+                $clean_row['departureTimes'] = $dep_times_act;
+            }
+            $clean_acts[] = $clean_row;
         }
-        if (!empty($clean_acts)) {
+        if (!empty($clean_acts) || !empty($excluded_exp_lookup)) {
             $snapshot['builderActivities'] = $clean_acts;
         }
     }
 
-    // Sync Holiday Builder activities with live CMS Experiences (mirroring mergeLiveBuilderActivities in holidayCalculator.ts).
+    // Sync Holiday Builder activities with live CMS Experiences (Experience catalog = primary source; explicit builder override only when toggled on; excluded experiences stay excluded).
     if (!empty($snapshot['experiences']) && is_array($snapshot['experiences'])) {
         $legacy_map = array(
             'act-guided-falls'  => 'guided-tour-falls',
@@ -1388,23 +1555,71 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
         }
         $matched_exp_ids = array();
         $synced_acts     = array();
-        foreach ((array) ($snapshot['builderActivities'] ?? array()) as $act) {
+        foreach ((array) ($snapshot['builderActivities'] ?? array()) as $aidx => $act) {
             if (!is_array($act) || empty($act['id'])) {
                 continue;
             }
-            $aid        = (string) $act['id'];
-            $mapped     = $legacy_map[$aid] ?? '';
-            $matched    = ($mapped !== '' && isset($by_id_slug[$mapped]))
+            $aid     = (string) $act['id'];
+            $exp_ref = (string) ($act['experienceId'] ?? '');
+            $mapped  = $exp_ref !== '' ? $exp_ref : ($legacy_map[$aid] ?? '');
+            $matched = ($mapped !== '' && isset($by_id_slug[$mapped]))
                 ? $by_id_slug[$mapped]
                 : ($by_id_slug[$aid] ?? ($by_title[$normalize_key((string) ($act['title'] ?? ''))] ?? null));
+
             if (is_array($matched)) {
                 $matched_exp_ids[(string) $matched['id']] = true;
+                if (!empty($matched['slug'])) {
+                    $matched_exp_ids[(string) $matched['slug']] = true;
+                }
+                if (isset($excluded_exp_lookup[$aid]) || isset($excluded_exp_lookup[(string) $matched['id']]) || (!empty($matched['slug']) && isset($excluded_exp_lookup[(string) $matched['slug']])) || (array_key_exists('includeInBuilder', $matched) && $matched['includeInBuilder'] === false)) {
+                    continue;
+                }
+                $has_override = !empty($act['priceOverrideEnabled']);
                 $live_price = isset($matched['priceAmount']) && is_numeric($matched['priceAmount']) && (float) $matched['priceAmount'] > 0
                     ? (float) $matched['priceAmount']
                     : (float) ($act['priceUSD'] ?? 0);
-                $act['title']        = (string) ($matched['title'] ?? ($act['title'] ?? $aid));
-                $act['duration']     = (string) ($matched['duration'] ?? ($act['duration'] ?? 'Half Day'));
-                $act['priceUSD']     = $live_price;
+                $act['experienceId']         = (string) $matched['id'];
+                $act['includeInBuilder']     = true;
+                $act['suggestedByDefault']   = !empty($matched['recommendedInBuilder'])
+                    ? true
+                    : (array_key_exists('suggestedByDefault', $act) ? (bool) $act['suggestedByDefault'] : in_array($aid, array('act-guided-falls', 'act-sunset-cruise'), true));
+                $act['displayOrder']         = isset($matched['builderOrder']) && is_numeric($matched['builderOrder'])
+                    ? (int) $matched['builderOrder']
+                    : (isset($act['displayOrder']) && is_numeric($act['displayOrder']) ? (int) $act['displayOrder'] : ($aidx + 1));
+                $act['priceOverrideEnabled'] = $has_override;
+                $act['priceSource']          = $has_override ? 'builder-override' : 'experience-catalog';
+                $act['title']                = (string) ($matched['title'] ?? ($act['title'] ?? $aid));
+                $act['duration']             = (string) ($matched['duration'] ?? ($act['duration'] ?? 'Half Day'));
+                if (!$has_override) {
+                    $act['priceUSD'] = $live_price;
+                }
+                if (!empty($matched['priceBasis'])) {
+                    $act['priceBasis'] = (string) $matched['priceBasis'];
+                }
+                if (array_key_exists('childRateUnder11USD', $matched) && $matched['childRateUnder11USD'] !== null) {
+                    $act['childRateUnder11USD'] = (float) $matched['childRateUnder11USD'];
+                }
+                if (array_key_exists('childRate11PlusUSD', $matched) && $matched['childRate11PlusUSD'] !== null) {
+                    $act['childRate11PlusUSD'] = (float) $matched['childRate11PlusUSD'];
+                }
+                if (!empty($matched['rateStatus'])) {
+                    $act['rateStatus'] = (string) $matched['rateStatus'];
+                }
+                if (!empty($matched['validFrom'])) {
+                    $act['validFrom'] = (string) $matched['validFrom'];
+                }
+                if (!empty($matched['validTo'])) {
+                    $act['validTo'] = (string) $matched['validTo'];
+                }
+                if (!empty($matched['defaultTimeSlot'])) {
+                    $act['defaultTimeSlot'] = (string) $matched['defaultTimeSlot'];
+                }
+                if (!empty($matched['departureTimes']) && is_array($matched['departureTimes'])) {
+                    $act['departureTimes'] = array_values(array_map('strval', $matched['departureTimes']));
+                }
+                if (!empty($matched['categories']) && is_array($matched['categories'])) {
+                    $act['categories'] = array_values(array_map('strval', $matched['categories']));
+                }
                 if (!empty($matched['featuredImage'])) {
                     $act['imageUrl'] = (string) $matched['featuredImage'];
                 }
@@ -1417,11 +1632,31 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
                 if (!empty($matched['whyWeRecommend'])) {
                     $act['whyRecommend'] = (string) $matched['whyWeRecommend'];
                 }
+            } else {
+                if (isset($excluded_exp_lookup[$aid])) {
+                    continue;
+                }
+                $act['includeInBuilder']     = true;
+                $act['suggestedByDefault']   = !empty($act['suggestedByDefault']);
+                $act['displayOrder']         = isset($act['displayOrder']) && is_numeric($act['displayOrder']) ? (int) $act['displayOrder'] : ($aidx + 1);
+                $act['priceOverrideEnabled'] = !empty($act['priceOverrideEnabled']);
+                $act['priceSource']          = !empty($act['priceOverrideEnabled']) ? 'builder-override' : 'custom';
+                if (empty($act['experienceId'])) {
+                    unset($act['experienceId']);
+                }
             }
             $synced_acts[] = $act;
         }
-        foreach ($snapshot['experiences'] as $exp) {
-            if (!is_array($exp) || empty($exp['id']) || isset($matched_exp_ids[(string) $exp['id']])) {
+        foreach ($snapshot['experiences'] as $eidx => $exp) {
+            if (!is_array($exp) || empty($exp['id'])) {
+                continue;
+            }
+            $eid_str   = (string) $exp['id'];
+            $eslug_str = (string) ($exp['slug'] ?? '');
+            if (isset($matched_exp_ids[$eid_str]) || ($eslug_str !== '' && isset($matched_exp_ids[$eslug_str]))) {
+                continue;
+            }
+            if (isset($excluded_exp_lookup[$eid_str]) || ($eslug_str !== '' && isset($excluded_exp_lookup[$eslug_str]))) {
                 continue;
             }
             $pamt = isset($exp['priceAmount']) && is_numeric($exp['priceAmount']) ? (float) $exp['priceAmount'] : 0.0;
@@ -1430,20 +1665,28 @@ function outbound_build_live_snapshot(bool $bypass_cache = false, bool $force_pr
             }
             $cats = !empty($exp['categories']) && is_array($exp['categories']) ? array_values(array_map('strval', $exp['categories'])) : array('first-visit');
             $synced_acts[] = array(
-                'id'           => (string) $exp['id'],
-                'title'        => (string) ($exp['title'] ?? $exp['id']),
-                'duration'     => (string) ($exp['duration'] ?? 'Half Day'),
-                'priceUSD'     => $pamt,
-                'imageUrl'     => (string) ($exp['featuredImage'] ?? outbound_get_media_fallback('falls')),
-                'badge'        => (string) ($exp['badge'] ?? 'Experience'),
-                'shortDesc'    => (string) ($exp['shortDescription'] ?? ''),
-                'whyRecommend' => (string) ($exp['whyWeRecommend'] ?? ($exp['shortDescription'] ?? '')),
-                'idealFor'     => $cats,
+                'id'                   => $eid_str,
+                'experienceId'         => $eid_str,
+                'includeInBuilder'     => true,
+                'suggestedByDefault'   => false,
+                'displayOrder'         => count($synced_acts) + $eidx + 1,
+                'priceOverrideEnabled' => false,
+                'priceSource'          => 'experience-catalog',
+                'title'                => (string) ($exp['title'] ?? $eid_str),
+                'duration'             => (string) ($exp['duration'] ?? 'Half Day'),
+                'priceUSD'             => $pamt,
+                'imageUrl'             => (string) ($exp['featuredImage'] ?? outbound_get_media_fallback('falls')),
+                'badge'                => (string) ($exp['badge'] ?? 'Experience'),
+                'shortDesc'            => (string) ($exp['shortDescription'] ?? ''),
+                'whyRecommend'         => (string) ($exp['whyWeRecommend'] ?? ($exp['shortDescription'] ?? '')),
+                'idealFor'             => $cats,
             );
         }
-        if (!empty($synced_acts)) {
-            $snapshot['builderActivities'] = $synced_acts;
-        }
+        usort($synced_acts, static fn($a, $b) => ((int) ($a['displayOrder'] ?? 999)) <=> ((int) ($b['displayOrder'] ?? 999)));
+        $snapshot['builderActivities'] = $synced_acts;
+    }
+    if (!empty($excluded_exp_lookup) && isset($snapshot['site']['legacy'])) {
+        $snapshot['site']['legacy']['BUILDER_EXCLUDED_EXPERIENCE_IDS'] = array_values(array_keys($excluded_exp_lookup));
     }
 
     // Normalize relative asset paths across the snapshot when running inside WordPress.
@@ -1487,7 +1730,7 @@ function outbound_get_wp_blog_posts_payload(int $limit = 30): array {
         return array();
     }
 
-    $cache_key = 'outbound_wp_blog_posts_v1_' . $limit;
+    $cache_key = 'outbound_wp_blog_posts_v2_' . $limit;
     if (function_exists('get_transient')) {
         $cached_posts = get_transient($cache_key);
         if (is_array($cached_posts)) {
@@ -1512,6 +1755,13 @@ function outbound_get_wp_blog_posts_payload(int $limit = 30): array {
 
     $out = array();
     foreach ($posts as $post) {
+        $raw_slug  = strtolower(trim((string) ($post->post_name ?? '')));
+        $raw_title = strtolower(trim((string) ($post->post_title ?? '')));
+        $raw_body  = strtolower((string) ($post->post_content ?? ''));
+        // Exclude unmodified WordPress default "Hello world!" sample post from public blog listings and search.
+        if ($raw_slug === 'hello-world' || ($raw_title === 'hello world!' && str_contains($raw_body, 'welcome to wordpress'))) {
+            continue;
+        }
         $terms = array();
         if (function_exists('wp_get_post_categories')) {
             $cats = wp_get_post_categories((int) $post->ID, array('fields' => 'all'));

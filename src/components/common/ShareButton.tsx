@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Check, Copy, Mail, Share2, X } from 'lucide-react';
 import { WhatsAppIcon } from './WhatsAppButton';
+import { getWhatsAppShareUrl } from '../../utils/whatsapp';
 
 interface ShareButtonProps {
   title: string;
@@ -116,7 +117,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
 
             <div className="grid grid-cols-2 gap-2.5 text-xs font-bold">
               <a
-                href={`https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`}
+                href={getWhatsAppShareUrl(`${shareText}\n${shareUrl}`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="min-h-[44px] rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#128C7E] px-3 py-2.5 flex items-center justify-center gap-2"

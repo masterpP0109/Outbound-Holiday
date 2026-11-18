@@ -31,6 +31,7 @@ import {
   getRoomRatePlans,
   getRoomStartingPriceUSD,
   getRoomWings,
+  isOfferWithinDateWindow,
   isSingleEntireHomeProperty,
 } from '../src/utils/roomPricing';
 import { buildDirectEnquiryEmail, buildDirectEnquiryWhatsAppMessage } from '../src/utils/enquiry';
@@ -804,4 +805,152 @@ test('trashed units, trashed/archived offers, and deactivated rates are excluded
   });
   // Deactivated $150 seasonal rate must be ignored; active $380 seasonal rate applies (2 * $380 = $760)
   assert.equal(quote.totalUSD, 760);
+});
+
+test('enforces offer and rate plan validity dates and preserves rate plan context in direct enquiry messages', () => {
+  const sampleProp = publishedAccommodations[0];
+  const datedProp: DetailedAccommodation = {
+    ...sampleProp,
+    offers: [
+      {
+        id: 'off_expired',
+        title: 'Expired Early 2026 Offer',
+        validFrom: '2026-01-01',
+        validTo: '2026-05-31',
+        priceType: 'percentage_discount',
+        discountPercent: 20,
+        status: 'published',
+        applyToEntireProperty: true,
+      },
+      {
+        id: 'off_active',
+        title: 'Peak Dry Season Special',
+        validFrom: '2026-06-01',
+        validTo: '2026-12-31',
+        priceType: 'fixed_discount',
+        discountAmountUSD: 50,
+        status: 'published',
+        applyToEntireProperty: true,
+      },
+    ],
+    ratePlans: [
+      {
+        id: 'rp_zim_q4',
+        internalRateName: 'Zimbabwe Resident Q4 Special',
+        validFrom: '2026-10-01',
+        validTo: '2026-12-20',
+        amountUSD: 240,
+        priceBasis: 'per_room',
+        visitorMarket: 'zimbabwe_resident',
+        adultOrChildCategory: 'adult',
+        boardBasis: 'bed_and_breakfast',
+        rateStatus: 'confirmed',
+        isActive: true,
+        applicableUnitIds: ['u_dated'],
+      },
+      {
+        id: 'rp_expired',
+        internalRateName: 'Expired Q1 Plan',
+        validFrom: '2026-01-01',
+        validTo: '2026-03-31',
+        amountUSD: 190,
+        priceBasis: 'per_room',
+        visitorMarket: 'international',
+        adultOrChildCategory: 'adult',
+        boardBasis: 'room_only',
+        rateStatus: 'confirmed',
+        isActive: true,
+        applicableUnitIds: ['u_dated'],
+      },
+    ],
+    roomTypes: [
+      {
+        id: 'u_dated',
+        name: 'River Suite',
+        occupancy: '2 Adults',
+        description: 'Dated suite',
+        imageUrl: 'https://example.com/u_dated.jpg',
+        features: ['Wi-Fi'],
+        status: 'published',
+        pricing: {
+          baseNightlyRateUSD: 350,
+        },
+      },
+    ],
+  };
+
+  // Relative to 2026-11-17, off_expired and rp_expired must be excluded
+  const visibleOffers = getPublishedPropertyOffers(datedProp, 'u_dated', { referenceDate: '2026-11-17' });
+  assert.deepEqual(visibleOffers.map((o) => o.id), ['off_active']);
+
+  assert.equal(
+    isOfferWithinDateWindow(datedProp.offers![1], {
+      referenceDate: '2026-11-17',
+      checkIn: '2027-01-10',
+      checkOut: '2027-01-13',
+    }),
+    false,
+    'Offer outside customer stay dates must fail date window check'
+  );
+
+  const visiblePlans = getRoomRatePlans(datedProp.roomTypes[0], datedProp, { referenceDate: '2026-11-17' });
+  assert.deepEqual(visiblePlans.map((p) => p.id), ['rp_zim_q4']);
+
+  // Explicit ratePlanId inside validFrom..validTo computes exact plan rate ($240 * 2 = $480)
+  const validPlanQuote = calculateRoomStayQuote({
+    room: datedProp.roomTypes[0],
+    property: datedProp,
+    ratePlanId: 'rp_zim_q4',
+    checkIn: '2026-11-20',
+    checkOut: '2026-11-22',
+    guests: { adults: 2, children: [] },
+    referenceDate: '2026-11-17',
+  });
+  assert.equal(validPlanQuote.mode, 'quoted');
+  assert.equal(validPlanQuote.totalUSD, 480);
+
+  // Explicit ratePlanId outside its validity dates must NOT quote or fall back to base rate
+  const outOfWindowPlanQuote = calculateRoomStayQuote({
+    room: datedProp.roomTypes[0],
+    property: datedProp,
+    ratePlanId: 'rp_zim_q4',
+    checkIn: '2027-01-10',
+    checkOut: '2027-01-12',
+    guests: { adults: 2, children: [] },
+    referenceDate: '2026-11-17',
+  });
+  assert.equal(outOfWindowPlanQuote.mode, 'starting');
+  assert.equal(outOfWindowPlanQuote.totalUSD, null);
+  assert.match(outOfWindowPlanQuote.validityNotice || '', /outside its validity window/i);
+
+  // Explicit expired ratePlanId is flagged clearly
+  const expiredPlanQuote = calculateRoomStayQuote({
+    room: datedProp.roomTypes[0],
+    property: datedProp,
+    ratePlanId: 'rp_expired',
+    checkIn: '2026-11-20',
+    checkOut: '2026-11-22',
+    guests: { adults: 2, children: [] },
+    referenceDate: '2026-11-17',
+  });
+  assert.equal(expiredPlanQuote.totalUSD, null);
+  assert.match(expiredPlanQuote.validityNotice || '', /expired/i);
+
+  const waMsg = buildDirectEnquiryWhatsAppMessage({
+    category: 'room',
+    propertyName: datedProp.name,
+    roomId: 'u_dated',
+    roomType: 'River Suite',
+    ratePlanId: 'rp_zim_q4',
+    ratePlan: 'Zimbabwe Resident Q4 Special · Zimbabwe Resident · Bed & Breakfast Included',
+    visitorMarket: 'Zimbabwe Resident',
+    offerId: 'off_active',
+    offerName: 'Peak Dry Season Special',
+    checkInDate: '2026-11-20',
+    checkOutDate: '2026-11-22',
+    estimatedPrice: '$480 USD (2 nights)',
+  });
+  assert.match(waMsg, /Rate Plan: Zimbabwe Resident Q4 Special/);
+  assert.match(waMsg, /Visitor Market: Zimbabwe Resident/);
+  assert.match(waMsg, /Special Offer: Peak Dry Season Special/);
 });

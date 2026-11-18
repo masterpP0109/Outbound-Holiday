@@ -52,7 +52,7 @@ function outbound_build_public_search_index(bool $force_refresh = false): array 
     $cache_key = 'outbound_public_search_index_v1';
     if (!$force_refresh && function_exists('get_transient')) {
         $cached = get_transient($cache_key);
-        if (is_array($cached)) {
+        if (is_array($cached) && !empty($cached)) {
             $GLOBALS['__outbound_search_index_req_cache'] = $cached;
             return $cached;
         }
@@ -135,7 +135,7 @@ function outbound_build_public_search_index(bool $force_refresh = false): array 
                 continue;
             }
             $r_stat = strtolower((string) ($rm['status'] ?? 'published'));
-            if ($r_stat === 'draft' || $r_stat === 'archived') {
+            if ($r_stat === 'draft' || $r_stat === 'archived' || $r_stat === 'trashed') {
                 continue;
             }
             $room_id   = (string) ($rm['id'] ?? ('unit_' . sanitize_title((string) $rm['name']) . '_' . ($ridx + 1)));
@@ -212,13 +212,18 @@ function outbound_build_public_search_index(bool $force_refresh = false): array 
             'extraText'    => (string) ($acc['editorialOverview'] ?? '') . ' ' . (string) ($acc['whyWeRecommend'] ?? '') . ' ' . (string) ($acc['atAGlance']['bestFor'] ?? ''),
         ));
 
-        // Property-level Special Offers (published only, excluding draft/archived)
+        // Property-level Special Offers (published and non-expired only, excluding draft/archived/trashed)
+        $today_ymd = gmdate('Y-m-d');
         foreach ((array) ($acc['offers'] ?? array()) as $oidx => $off) {
             if (!is_array($off) || empty($off['title'])) {
                 continue;
             }
             $o_stat = strtolower((string) ($off['status'] ?? 'published'));
-            if ($o_stat === 'draft' || $o_stat === 'archived') {
+            if ($o_stat === 'draft' || $o_stat === 'archived' || $o_stat === 'trashed') {
+                continue;
+            }
+            $valid_to = trim((string) ($off['validTo'] ?? ''));
+            if ($valid_to !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $valid_to) && $valid_to < $today_ymd) {
                 continue;
             }
             $oid = (string) ($off['id'] ?? ('offer_' . ($oidx + 1)));
@@ -681,7 +686,7 @@ if (function_exists('add_action')) {
                     ));
                     $response = new WP_REST_Response($result, 200);
                     if (method_exists($response, 'header')) {
-                        $response->header('Cache-Control', 'public, max-age=60, must-revalidate');
+                        $response->header('Cache-Control', 'no-cache, must-revalidate');
                     }
                     return $response;
                 } catch (Throwable $e) {

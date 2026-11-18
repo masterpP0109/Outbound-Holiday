@@ -12,14 +12,24 @@ export function enquiryEmail(p: Record<string, any>, team: boolean) {
   const submittedDate = enquiryDateLabel(p.submittedAt, p.reference);
   if (submittedDate) sections.push(['Date submitted', submittedDate]);
   if (team) {
-    sections.push(['Customer Name', p.name], ['Customer Email', p.email]);
+    sections.push(['Customer Name', p.name]);
+    if (p.email) sections.push(['Customer Email', p.email]);
     if (p.phone) sections.push(['Telephone / WhatsApp', p.phone]);
     const trip = p.trip ?? {};
-    const fields = { travelDates: 'Requested Travel Dates', adults: 'Adults', children: 'Children', nights: 'Nights', partyType: 'Travelling as', intent: 'Holiday interests', preferredContact: 'Preferred contact', transportType: 'Transport' };
+    const fields = { travelDates: 'Requested Travel Dates', adults: 'Adults', children: 'Children', nights: 'Nights', partyType: 'Travelling as', intent: 'Holiday interests', preferredReplyMethod: 'Preferred reply method', preferredContact: 'Preferred contact', roomType: 'Room / Unit', ratePlanName: 'Rate plan', mealPlan: 'Meal plan', offerName: 'Special offer', transferTitle: 'Selected transfer', transportType: 'Transport' };
     for (const [key, label] of Object.entries(fields)) {
       if (trip[key] !== undefined && trip[key] !== '') sections.push([label, readable(trip[key])]);
     }
+    if (Array.isArray(trip.childAges) && trip.childAges.length) sections.push(['Children ages', trip.childAges.join(', ')]);
     if (trip.stayPreferences?.length) sections.push(['Stay preferences', trip.stayPreferences.join(', ')]);
+    const ie = trip.itemizedEstimate ?? p.selectionSnapshot?.itemizedEstimate;
+    if (ie && Array.isArray(ie.lines) && ie.lines.length) {
+      sections.push([ie.totalLabel || 'Trip estimate', typeof ie.subtotalUSD === 'number' ? `US$${Number(ie.subtotalUSD).toLocaleString('en-US')}` : 'Price on request']);
+      sections.push(['Itemised breakdown', ie.lines.map((l: any) => `${l.section}: ${l.title} — ${typeof l.amountUSD === 'number' ? `US$${l.amountUSD}` : l.basis}`).join('\n')]);
+      if (Array.isArray(ie.excludedItems) && ie.excludedItems.length) {
+        sections.push(['Items requiring specialist quote (Price on request)', ie.excludedItems.join(', ')]);
+      }
+    }
     const items = p.selectionSnapshot?.items ?? [];
     if (items.length) sections.push(['Selected Holiday Experiences', items.map((item: any) => item.title ?? item.id).join('\n')]);
     const estimate = p.selectionSnapshot?.estimate;
@@ -56,6 +66,11 @@ function customerEmail(p: Record<string, any>, subject: string) {
   if (trip.accommodationName) details.push(['Preferred property', String(trip.accommodationName)]);
   if (trip.packageTitle) details.push(['Selected package', String(trip.packageTitle)]);
   if (trip.transportType) details.push(['Transfers & logistics', readable(trip.transportType)]);
+  if (trip.transferTitle) details.push(['Transfer option', String(trip.transferTitle)]);
+  const ieCust = trip.itemizedEstimate ?? p.selectionSnapshot?.itemizedEstimate;
+  if (ieCust && Array.isArray(ieCust.lines) && ieCust.lines.length) {
+    details.push([ieCust.totalLabel || 'Trip estimate', typeof ieCust.subtotalUSD === 'number' ? `US$${Number(ieCust.subtotalUSD).toLocaleString('en-US')}` : 'Request a quote']);
+  }
   const selections = p.selectionSnapshot?.items ?? [];
   if (selections.length) details.push(['Your selected experiences', selections.map((item: any) => item.title ?? item.id).join('\n')]);
   if (trip.itineraryDraft?.length) details.push(['Draft itinerary', trip.itineraryDraft.map((day: any) => `${day.day}: ${day.title}`).join('\n')]);

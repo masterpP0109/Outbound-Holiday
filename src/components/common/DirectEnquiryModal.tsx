@@ -107,7 +107,7 @@ export const DirectEnquiryModal: React.FC<DirectEnquiryModalProps> = ({
               trackEnquiryEvent('enquiry_whatsapp_selected', {
                 category: context.category,
                 sourcePage,
-                itemLabel: itemLabel || undefined,
+                ...(itemLabel ? { itemLabel } : {}),
               });
             }}
             className="w-full min-h-[48px] inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#25D366] hover:bg-[#1ebd59] text-white font-bold text-sm sm:text-base px-5 py-3.5 shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5E8E]"
@@ -123,7 +123,7 @@ export const DirectEnquiryModal: React.FC<DirectEnquiryModalProps> = ({
                 trackEnquiryEvent('enquiry_email_selected', {
                   category: context.category,
                   sourcePage,
-                  itemLabel: itemLabel || undefined,
+                  ...(itemLabel ? { itemLabel } : {}),
                 });
               }}
               className="w-full min-h-[48px] inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-sm sm:text-base px-5 py-3.5 shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E67E22]"

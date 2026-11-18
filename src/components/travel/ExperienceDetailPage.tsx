@@ -11,6 +11,7 @@ import { getWhatsAppEnquiryUrl } from '../../utils/whatsapp';
 import { ShareButton } from '../common/ShareButton';
 import { UnifiedEnquiryPanel } from './UnifiedEnquiryPanel';
 import type { Currency } from '../../types';
+import { formatCurrencyAmount } from '../../utils/currency';
 import type { DirectEnquiryContext } from '../../utils/enquiry';
 import {
 Clock,
@@ -177,7 +178,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               </div>
               <div className="flex items-center gap-2 text-gray-200">
                 <ShieldCheck className="w-4 h-4 text-[#C9A66B] shrink-0" />
-                <span className="font-medium">{experience.fromPrice}</span>
+                <span className="font-medium">{typeof experience.priceAmount === 'number' && experience.priceAmount > 0 ? `From ${formatCurrencyAmount(experience.priceAmount, currency)}` : experience.fromPrice}</span>
               </div>
               <div className="flex items-center gap-2 text-gray-200">
                 <Star className="w-4 h-4 text-[#E5C989] shrink-0" />
@@ -444,7 +445,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                           decoding="async"
                         />
                         <div className="absolute top-2 right-2 bg-[#0D2833]/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md">
-                          {rel.fromPrice}
+                          {typeof rel.priceAmount === 'number' && rel.priceAmount > 0 ? `From ${formatCurrencyAmount(rel.priceAmount, currency)}` : rel.fromPrice}
                         </div>
                       </div>
                       <div className="p-4 space-y-1">
@@ -473,6 +474,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               basePriceUSD={experience.priceAmount || null}
               priceLabelPrefix={editorial("travel/ExperienceDetailPage.text24")}
               priceSuffix={editorial("travel/ExperienceDetailPage.text25")}
+              ageNotice="Child pricing rule: Under 11 selects child rates (confirmed with operator on enquiry). Ages 11+ (11 years or older) are priced at the standard adult/11+ activity rate."
               durationLabel={`${editorial("travel/ExperienceDetailPage.text26")}${experience.duration}`}
               extras={[
                 {
@@ -484,6 +486,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               trustTitle={editorial("travel/ExperienceDetailPage.text32")}
               trustBody={editorial("travel/ExperienceDetailPage.text33")}
               whatsappButtonLabel="Enquire About Availability"
+              buildHolidayLabel="Add activity to my plan"
               onBuildHoliday={onOpenPlanHoliday}
             />
           </aside>

@@ -416,6 +416,25 @@ function outbound_editor_render_experience_fields(WP_Post $post, bool $in_cms_hu
     $featured   = $post_id > 0 ? (bool) get_post_meta($post_id, '_outbound_featured', true) : false;
     $why_rec    = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_why_recommend', true) : '') ?: (string) ($base['whyWeRecommend'] ?? '');
     $expert_tip = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_expert_tip', true) : '') ?: (string) ($base['localExpertTip'] ?? '');
+    $price_basis    = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_price_basis', true) : '') ?: (string) ($base['priceBasis'] ?? 'per_adult');
+    $child_u11      = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_child_under11_usd', true) : '';
+    if ($child_u11 === '' && isset($base['childRateUnder11USD']) && $base['childRateUnder11USD'] !== null) { $child_u11 = (string) $base['childRateUnder11USD']; }
+    $child_11plus   = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_child_11plus_usd', true) : '';
+    if ($child_11plus === '' && isset($base['childRate11PlusUSD']) && $base['childRate11PlusUSD'] !== null) { $child_11plus = (string) $base['childRate11PlusUSD']; }
+    $rate_status    = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_rate_status', true) : '') ?: (string) ($base['rateStatus'] ?? 'provisional');
+    $valid_from     = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_valid_from', true) : '') ?: (string) ($base['validFrom'] ?? '');
+    $valid_to       = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_valid_to', true) : '') ?: (string) ($base['validTo'] ?? '');
+    $def_time_slot  = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_default_time_slot', true) : '') ?: (string) ($base['defaultTimeSlot'] ?? '');
+    $dep_times_raw  = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_departure_times', true) : '';
+    if ($dep_times_raw === '' && !empty($base['departureTimes']) && is_array($base['departureTimes'])) {
+        $dep_times_raw = implode(', ', array_map('strval', $base['departureTimes']));
+    }
+    $inc_builder    = $post_id > 0 ? get_post_meta($post_id, '_outbound_include_in_builder', true) : '';
+    $is_inc_builder = $inc_builder === '' ? ($base['includeInBuilder'] ?? true) : ($inc_builder !== '0');
+    $rec_builder    = $post_id > 0 ? get_post_meta($post_id, '_outbound_recommended_in_builder', true) : '';
+    $is_rec_builder = $rec_builder === '' ? !empty($base['recommendedInBuilder']) : ($rec_builder === '1');
+    $builder_order  = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_builder_order', true) : '');
+    if ($builder_order === '' && isset($base['builderOrder'])) { $builder_order = (string) $base['builderOrder']; }
 
     $cats = array();
     if ($post_id > 0 && function_exists('wp_get_post_terms')) {
@@ -457,8 +476,35 @@ function outbound_editor_render_experience_fields(WP_Post $post, bool $in_cms_hu
                 <p><label><strong>Subtitle / Hook</strong><br><input type="text" name="outbound_meta[_outbound_subtitle]" value="<?php echo outbound_cms_esc_attr($subtitle); ?>" class="widefat" /></label></p>
                 <p><label><strong>Badge Label (optional)</strong><br><input type="text" name="outbound_meta[_outbound_badge]" value="<?php echo outbound_cms_esc_attr($badge); ?>" class="widefat" placeholder="Guest Favourite" /></label></p>
                 <p><label><strong>Minimum Age (optional)</strong><br><input type="text" name="outbound_meta[_outbound_min_age]" value="<?php echo outbound_cms_esc_attr($min_age); ?>" class="widefat" placeholder="All Ages / 14+" /></label></p>
+                <p><label><strong>Rate Basis</strong><br>
+                    <select name="outbound_meta[_outbound_price_basis]" class="widefat">
+                        <option value="per_adult" <?php selected($price_basis, 'per_adult'); ?>>Per Adult (Child priced separately)</option>
+                        <option value="per_person" <?php selected($price_basis, 'per_person'); ?>>Per Person (Ages 11+ standard rate)</option>
+                        <option value="per_group" <?php selected($price_basis, 'per_group'); ?>>Per Group</option>
+                        <option value="per_vehicle" <?php selected($price_basis, 'per_vehicle'); ?>>Per Vehicle</option>
+                        <option value="on_request" <?php selected($price_basis, 'on_request'); ?>>Price on Request</option>
+                    </select>
+                </label></p>
+                <p><label><strong>Child Rate Under 11 (USD, optional)</strong><br><input type="number" step="1" min="0" name="outbound_meta[_outbound_child_under11_usd]" value="<?php echo outbound_cms_esc_attr($child_u11); ?>" class="widefat" placeholder="Blank = Child price on request" /></label></p>
+                <p><label><strong>Child Rate 11+ (USD, optional)</strong><br><input type="number" step="1" min="0" name="outbound_meta[_outbound_child_11plus_usd]" value="<?php echo outbound_cms_esc_attr($child_11plus); ?>" class="widefat" placeholder="Blank = Adult rate if per person" /></label></p>
+                <p><label><strong>Rate Status</strong><br>
+                    <select name="outbound_meta[_outbound_rate_status]" class="widefat">
+                        <option value="provisional" <?php selected($rate_status, 'provisional'); ?>>Estimated (Provisional)</option>
+                        <option value="confirmed" <?php selected($rate_status, 'confirmed'); ?>>Published Guide Rate</option>
+                    </select>
+                </label></p>
+                <p><label><strong>Valid From (optional)</strong><br><input type="date" name="outbound_meta[_outbound_valid_from]" value="<?php echo outbound_cms_esc_attr($valid_from); ?>" class="widefat" /></label></p>
+                <p><label><strong>Valid To (optional)</strong><br><input type="date" name="outbound_meta[_outbound_valid_to]" value="<?php echo outbound_cms_esc_attr($valid_to); ?>" class="widefat" /></label></p>
+                <p><label><strong>Typical / Default Time Slot</strong><br><input type="text" name="outbound_meta[_outbound_default_time_slot]" value="<?php echo outbound_cms_esc_attr($def_time_slot); ?>" class="widefat" placeholder="Sunset / Morning / Flexible" /></label></p>
+                <p><label><strong>Published Departure Times (comma-separated, optional)</strong><br><input type="text" name="outbound_meta[_outbound_departure_times]" value="<?php echo outbound_cms_esc_attr($dep_times_raw); ?>" class="widefat" placeholder="e.g. 4:00 pm, 4:30 pm" /></label></p>
+                <p><label><strong>Trip Planner Display Order</strong><br><input type="number" min="1" max="999" name="outbound_meta[_outbound_builder_order]" value="<?php echo outbound_cms_esc_attr($builder_order); ?>" class="widefat" placeholder="1" /></label></p>
             </div>
-            <p><label><input type="checkbox" name="outbound_meta[_outbound_featured]" value="1" <?php checked($featured, true); ?> /> <strong>Feature on Homepage &ldquo;Things to Do&rdquo; showcase</strong></label></p>
+            <input type="hidden" name="outbound_exp_builder_flags_present" value="1" />
+            <p style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:8px 0 12px;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;">
+                <label><input type="checkbox" name="outbound_meta[_outbound_featured]" value="1" <?php checked($featured, true); ?> /> <strong>Feature on Homepage &ldquo;Things to Do&rdquo;</strong></label>
+                <label><input type="checkbox" name="outbound_meta[_outbound_include_in_builder]" value="1" <?php checked($is_inc_builder, true); ?> /> <strong>Include in Trip Planner (Builder)</strong></label>
+                <label><input type="checkbox" name="outbound_meta[_outbound_recommended_in_builder]" value="1" <?php checked($is_rec_builder, true); ?> /> <strong>Recommended in Trip Planner</strong></label>
+            </p>
             <?php if ($in_cms_hub) : ?>
                 <p><strong>Experience Categories</strong></p>
                 <div class="outbound-related-grid" style="margin-bottom:14px;">
@@ -585,7 +631,10 @@ function outbound_editor_render_accommodation_fields(WP_Post $post, bool $in_cms
     $dist_air    = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_airport_distance', true) : '') ?: (string) ($base['airportDistance'] ?? '');
     $price_usd   = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_price_usd', true) : '');
     if ($price_usd === '' && isset($base['priceFromUSD'])) { $price_usd = (string) $base['priceFromUSD']; }
-    $price_basis = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_price_basis', true) : '') ?: (string) ($base['priceUnit'] ?? 'per night (sharing)');
+    $price_basis = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_price_basis', true) : '') ?: (string) ($base['priceUnit'] ?? 'per person sharing per night');
+    if (strcasecmp(trim($price_basis), 'per night (sharing)') === 0) {
+        $price_basis = 'per person sharing per night';
+    }
     $max_guests  = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_max_guests', true) : '') ?: (string) ($base['maxGuests'] ?? '2');
     $rating      = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_rating', true) : '') ?: (string) ($base['rating'] ?? '4.8');
     $review_cnt  = (string) ($post_id > 0 ? get_post_meta($post_id, '_outbound_review_count', true) : '') ?: (string) ($base['reviewCount'] ?? '24');
@@ -1694,6 +1743,12 @@ function outbound_save_structured_item_meta(int $post_id, string $post_type, arr
     }
 
     // 2. Taxonomy & Multi-checkbox fields
+    if ($post_type === 'experience' && !empty($input['outbound_exp_builder_flags_present'])) {
+        $inc_val = !empty($input['outbound_meta']['_outbound_include_in_builder']) ? '1' : '0';
+        $rec_val = !empty($input['outbound_meta']['_outbound_recommended_in_builder']) ? '1' : '0';
+        update_post_meta($post_id, '_outbound_include_in_builder', $inc_val);
+        update_post_meta($post_id, '_outbound_recommended_in_builder', $rec_val);
+    }
     if ($post_type === 'experience' && isset($input['outbound_tax_exp_cats']) && is_array($input['outbound_tax_exp_cats']) && function_exists('wp_set_object_terms')) {
         $cats = array_values(array_map('sanitize_title', $input['outbound_tax_exp_cats']));
         wp_set_object_terms($post_id, $cats, 'experience_category', false);

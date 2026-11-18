@@ -138,7 +138,9 @@ function outbound_calculate_holiday_estimate(array $input): array {
         default             => 0.0,
     };
 
-    $rooms = (int) ceil(($adults + $children) / 2);
+    $rooms = !empty($input['roomsCount']) && (int) $input['roomsCount'] >= 1
+        ? (int) $input['roomsCount']
+        : (int) ceil(($adults + $children) / 2);
     $stay_cost = $stay_rate * $nights * $rooms;
     $activity_cost = $activity_sum * ($adults + ($children * 0.8));
 
@@ -154,6 +156,288 @@ function outbound_calculate_holiday_estimate(array $input): array {
         'currency'      => 'USD',
         'rooms'         => $rooms,
         'disclaimer'    => 'Two guests per room; child activities estimated at 80% of adult rates; supplier rates, room allocation, age restrictions and availability require confirmation.',
+    );
+}
+
+/**
+ * Authoritative server-side itemized trip estimator supporting child ages, per-item bases,
+ * partial quotes ("Subtotal for priced items"), and configured builder transfer routes.
+ *
+ * @param array<string, mixed> $trip
+ * @param array<string, mixed> $catalog
+ * @return array<string, mixed>
+ */
+function outbound_calculate_itemized_trip_estimate(array $trip, array $catalog = array()): array {
+    $lines          = array();
+    $excluded_items = array();
+    $adults         = isset($trip['adults']) && is_numeric($trip['adults']) ? max(0, (int) $trip['adults']) : 0;
+    $nights         = isset($trip['nights']) && is_numeric($trip['nights']) ? max(0, (int) $trip['nights']) : 0;
+    $child_ages     = array();
+    if (!empty($trip['childAgeValues']) && is_array($trip['childAgeValues'])) {
+        foreach ($trip['childAgeValues'] as $cv) {
+            if (is_numeric($cv)) {
+                $child_ages[] = max(0, min(17, (int) $cv));
+            }
+        }
+    }
+    $visitor_cat    = (string) ($trip['visitorCategory'] ?? 'international');
+    $arrival_date   = (string) ($trip['arrivalDate'] ?? '');
+    $departure_date = (string) ($trip['departureDate'] ?? '');
+    $stay_arr       = (string) ($trip['stayArrangement'] ?? 'none');
+    $transfer_arr   = (string) ($trip['transferArrangement'] ?? 'none');
+
+    $in_range = static function (string $d, string $vf, string $vt): bool {
+        if ($d === '' || ($vf === '' && $vt === '')) {
+            return true;
+        }
+        if ($vf !== '' && $d < $vf) { return false; }
+        if ($vt !== '' && $d > $vt) { return false; }
+        return true;
+    };
+
+    if ($stay_arr === 'already-arranged') {
+        $lines[] = array('section' => 'Stay', 'title' => 'Accommodation already arranged', 'basis' => 'Arranged independently', 'amountUSD' => null, 'status' => 'arranged');
+    } elseif ($stay_arr === 'recommend') {
+        $lines[] = array('section' => 'Stay', 'title' => 'Accommodation recommendations requested', 'basis' => 'Price on request', 'amountUSD' => null, 'status' => 'on_request');
+        $excluded_items[] = 'Accommodation (recommendations requested)';
+    } elseif ($stay_arr === 'selected') {
+        $acc_id   = (string) ($trip['accommodationId'] ?? '');
+        $acc_name = (string) ($trip['accommodationName'] ?? '');
+        $room_id  = (string) ($trip['roomId'] ?? ($trip['roomType'] ?? ''));
+        $rooms    = max(1, (int) ($trip['requestedRooms'] ?? 1));
+        $matched_acc = null;
+        foreach ((array) ($catalog['accommodations'] ?? array()) as $acc) {
+            if (is_array($acc) && ((string) ($acc['id'] ?? '') === $acc_id || (string) ($acc['slug'] ?? '') === $acc_id)) {
+                $matched_acc = $acc;
+                break;
+            }
+        }
+        $client_stay_line = null;
+        if (!empty($trip['itemizedEstimate']['lines']) && is_array($trip['itemizedEstimate']['lines'])) {
+            foreach ($trip['itemizedEstimate']['lines'] as $cl) {
+                if (is_array($cl) && ($cl['section'] ?? '') === 'Stay') {
+                    $client_stay_line = $cl;
+                    break;
+                }
+            }
+        }
+        if ($matched_acc) {
+            $acc_name = (string) ($matched_acc['name'] ?? $acc_name);
+            $matched_room = null;
+            if ($room_id !== '') {
+                foreach ((array) ($matched_acc['roomTypes'] ?? array()) as $rm) {
+                    if (is_array($rm) && ((string) ($rm['id'] ?? '') === $room_id || (string) ($rm['name'] ?? '') === $room_id)) {
+                        $matched_room = $rm;
+                        break;
+                    }
+                }
+            }
+            $base_rate = 0.0;
+            if ($matched_room && !empty($matched_room['pricing'])) {
+                $rp_info = $matched_room['pricing'];
+                $base_rate = (float) ($rp_info['startingFromPriceUSD'] ?? ($rp_info['baseNightlyRateUSD'] ?? 0));
+            }
+            if ($base_rate <= 0) {
+                $base_rate = (float) ($matched_acc['priceFromUSD'] ?? 0);
+            }
+            if ($base_rate > 0 && $nights >= 1 && $adults >= 1) {
+                if ($client_stay_line && isset($client_stay_line['amountUSD']) && is_numeric($client_stay_line['amountUSD']) && $arrival_date !== '' && $departure_date !== '') {
+                    $lines[] = array(
+                        'section'   => 'Stay',
+                        'title'     => (string) ($client_stay_line['title'] ?? $acc_name),
+                        'basis'     => (string) ($client_stay_line['basis'] ?? 'Published room rate'),
+                        'amountUSD' => max(0, (int) round((float) $client_stay_line['amountUSD'])),
+                        'status'    => ($client_stay_line['status'] ?? 'estimated') === 'confirmed' ? 'confirmed' : 'estimated',
+                    );
+                } else {
+                    $is_pp   = preg_match('/person|sharing/i', (string) ($matched_acc['priceUnit'] ?? '')) === 1;
+                    $older   = count(array_filter($child_ages, static fn($a) => $a >= 11));
+                    $has_u11 = count(array_filter($child_ages, static fn($a) => $a < 11)) > 0;
+                    $amt     = $is_pp ? round($base_rate * $nights * ($adults + $older)) : round($base_rate * $nights * $rooms);
+                    $lines[] = array(
+                        'section'   => 'Stay',
+                        'title'     => $matched_room ? ($acc_name . ' — ' . (string) ($matched_room['name'] ?? '')) : $acc_name,
+                        'basis'     => $is_pp ? 'Estimated · per person sharing per night' : "Estimated · {$rooms} room(s) × {$nights} nights",
+                        'amountUSD' => (int) $amt,
+                        'status'    => 'estimated',
+                    );
+                    if ($is_pp && $has_u11) {
+                        $excluded_items[] = $acc_name . ' — Child (<11) sharing rate';
+                    }
+                }
+            } else {
+                $lines[] = array('section' => 'Stay', 'title' => $acc_name ?: 'Selected stay', 'basis' => 'Price on request', 'amountUSD' => null, 'status' => 'on_request');
+                $excluded_items[] = ($acc_name ?: 'Stay') . ' (price on request)';
+            }
+        } elseif (!empty($trip['stayTierId'])) {
+            $tier_id   = (string) $trip['stayTierId'];
+            $tier_name = (string) ($trip['stayTierName'] ?? $tier_id);
+            $tier_rate = 0.0;
+            foreach ((array) ($catalog['stayTiers'] ?? array()) as $t) {
+                if (is_array($t) && (string) ($t['id'] ?? '') === $tier_id) {
+                    $tier_name = (string) ($t['name'] ?? $tier_name);
+                    $tier_rate = (float) ($t['pricePerNightUSD'] ?? ($t['startingPrice'] ?? 0));
+                    break;
+                }
+            }
+            if ($tier_rate > 0 && $nights >= 1 && !empty($trip['requestedRooms'])) {
+                $lines[] = array(
+                    'section'   => 'Stay',
+                    'title'     => $tier_name,
+                    'basis'     => "Estimated tier guide · {$rooms} room(s) × {$nights} nights",
+                    'amountUSD' => (int) round($tier_rate * $nights * $rooms),
+                    'status'    => 'estimated',
+                );
+            } else {
+                $lines[] = array('section' => 'Stay', 'title' => $tier_name, 'basis' => 'Price on request', 'amountUSD' => null, 'status' => 'on_request');
+                $excluded_items[] = $tier_name . ' (needs dates & rooms)';
+            }
+        }
+    }
+
+    $act_by_id = array();
+    foreach ((array) ($catalog['activities'] ?? array()) as $act) {
+        if (is_array($act) && !empty($act['id'])) {
+            $act_by_id[(string) $act['id']] = $act;
+        }
+    }
+    $raw_act_ids = array_values(array_unique(array_map('strval', (array) ($trip['activityIds'] ?? array()))));
+    foreach ($raw_act_ids as $aid) {
+        $act = $act_by_id[$aid] ?? null;
+        if (!$act) {
+            continue;
+        }
+        $title  = (string) ($act['title'] ?? $aid);
+        $price  = (float) ($act['priceUSD'] ?? ($act['priceAmount'] ?? 0));
+        $basis  = (string) ($act['priceBasis'] ?? 'per_adult');
+        $status = ((string) ($act['rateStatus'] ?? 'provisional')) === 'confirmed' ? 'confirmed' : 'estimated';
+        $vf     = (string) ($act['validFrom'] ?? '');
+        $vt     = (string) ($act['validTo'] ?? '');
+        if (!$in_range($arrival_date, $vf, $vt)) {
+            $lines[] = array('section' => 'Activities', 'title' => $title, 'basis' => 'Outside validity — Price on request', 'amountUSD' => null, 'status' => 'on_request');
+            $excluded_items[] = $title;
+            continue;
+        }
+        if ($basis === 'on_request' || ($price <= 0 && $status !== 'confirmed')) {
+            $lines[] = array('section' => 'Activities', 'title' => $title, 'basis' => 'Price on request', 'amountUSD' => null, 'status' => 'on_request');
+            $excluded_items[] = $title;
+            continue;
+        }
+        if ($price == 0.0 && $status === 'confirmed') {
+            $lines[] = array('section' => 'Activities', 'title' => $title, 'basis' => 'Complimentary / Free', 'amountUSD' => 0, 'status' => 'free');
+            continue;
+        }
+        if ($basis === 'per_group' || $basis === 'per_vehicle') {
+            $lines[] = array('section' => 'Activities', 'title' => $title, 'basis' => ($status === 'confirmed' ? 'Confirmed' : 'Estimated') . ' · US$' . round($price) . ' ' . str_replace('_', ' ', $basis), 'amountUSD' => (int) round($price), 'status' => $status);
+            continue;
+        }
+        if ($adults < 1 && empty($child_ages)) {
+            $lines[] = array('section' => 'Activities', 'title' => $title, 'basis' => 'Add guests to price', 'amountUSD' => null, 'status' => 'on_request');
+            $excluded_items[] = $title . ' (add guests to price)';
+            continue;
+        }
+        $line_total    = $adults * $price;
+        $missing_child = false;
+        foreach ($child_ages as $age) {
+            if ($age < 11) {
+                if (isset($act['childRateUnder11USD']) && $act['childRateUnder11USD'] !== null) {
+                    $line_total += (float) $act['childRateUnder11USD'];
+                } else {
+                    $missing_child = true;
+                }
+            } else {
+                $r11 = isset($act['childRate11PlusUSD']) && $act['childRate11PlusUSD'] !== null
+                    ? (float) $act['childRate11PlusUSD']
+                    : ($basis === 'per_person' ? $price : null);
+                if ($r11 !== null) {
+                    $line_total += $r11;
+                } else {
+                    $missing_child = true;
+                }
+            }
+        }
+        if ($missing_child) {
+            $excluded_items[] = $title . ' (Child price on request)';
+        }
+        $lines[] = array(
+            'section'   => 'Activities',
+            'title'     => $title,
+            'basis'     => ($status === 'confirmed' && !$missing_child ? 'Guide rate' : 'Estimated') . ' · US$' . round($price) . '/adult' . ($missing_child ? ' · Child price on request' : ''),
+            'amountUSD' => (int) round($line_total),
+            'status'    => ($status === 'confirmed' && !$missing_child) ? 'confirmed' : 'estimated',
+        );
+    }
+
+    if ($transfer_arr === 'already-arranged') {
+        $lines[] = array('section' => 'Transfers', 'title' => 'Transport already arranged', 'basis' => 'Arranged independently', 'amountUSD' => null, 'status' => 'arranged');
+    } elseif ($transfer_arr === 'recommend') {
+        $lines[] = array('section' => 'Transfers', 'title' => 'Transfer options & pricing requested', 'basis' => 'Price on request', 'amountUSD' => null, 'status' => 'on_request');
+        $excluded_items[] = 'Transfers & route options';
+    } elseif ($transfer_arr === 'selected' && !empty($trip['transferId'])) {
+        $tid = (string) $trip['transferId'];
+        $tr  = null;
+        foreach ((function_exists('outbound_get_builder_transfers') ? outbound_get_builder_transfers() : array()) as $cand) {
+            if ((string) ($cand['id'] ?? '') === $tid) {
+                $tr = $cand;
+                break;
+            }
+        }
+        if ($tr) {
+            $tp    = isset($tr['priceUSD']) && $tr['priceUSD'] !== null ? (float) $tr['priceUSD'] : null;
+            $tb    = (string) ($tr['priceBasis'] ?? 'per_vehicle');
+            $tstat = ((string) ($tr['rateStatus'] ?? 'provisional')) === 'confirmed' ? 'confirmed' : 'estimated';
+            $tvcat = (string) ($tr['visitorCategory'] ?? 'all');
+            $tvf   = (string) ($tr['validFrom'] ?? '');
+            $tvt   = (string) ($tr['validTo'] ?? '');
+            if (($tvcat !== 'all' && $tvcat !== $visitor_cat) || !$in_range($arrival_date, $tvf, $tvt) || $tb === 'on_request' || ($tp === null && $tstat !== 'confirmed')) {
+                $lines[] = array('section' => 'Transfers', 'title' => (string) ($tr['title'] ?? $tid), 'basis' => 'Price on request', 'amountUSD' => null, 'status' => 'on_request');
+                $excluded_items[] = (string) ($tr['title'] ?? $tid);
+            } elseif ($tp === 0.0 && $tstat === 'confirmed') {
+                $lines[] = array('section' => 'Transfers', 'title' => (string) ($tr['title'] ?? $tid), 'basis' => 'Complimentary / Free', 'amountUSD' => 0, 'status' => 'free');
+            } elseif ($tp !== null) {
+                $total_tr = $tp;
+                $missing_tr_child = false;
+                if ($tb === 'per_person') {
+                    $total_tr = $adults * $tp;
+                    foreach ($child_ages as $age) {
+                        if ($age < 11) {
+                            if (isset($tr['childPriceUSD']) && $tr['childPriceUSD'] !== null) {
+                                $total_tr += (float) $tr['childPriceUSD'];
+                            } else {
+                                $missing_tr_child = true;
+                            }
+                        } else {
+                            $total_tr += isset($tr['child11PlusPriceUSD']) && $tr['child11PlusPriceUSD'] !== null ? (float) $tr['child11PlusPriceUSD'] : $tp;
+                        }
+                    }
+                    if ($missing_tr_child) {
+                        $excluded_items[] = (string) ($tr['title'] ?? $tid) . ' (Child price on request)';
+                    }
+                }
+                $lines[] = array(
+                    'section'   => 'Transfers',
+                    'title'     => (string) ($tr['title'] ?? $tid),
+                    'basis'     => str_replace('_', ' ', $tb) . ($missing_tr_child ? ' · Child price on request' : ''),
+                    'amountUSD' => (int) round($total_tr),
+                    'status'    => ($tstat === 'confirmed' && !$missing_tr_child) ? 'confirmed' : 'estimated',
+                );
+            }
+        }
+    }
+
+    $priced_lines = array_filter($lines, static fn($l) => $l['amountUSD'] !== null && ($l['status'] ?? '') !== 'free');
+    $on_req_lines = array_filter($lines, static fn($l) => ($l['status'] ?? '') === 'on_request');
+    $subtotal     = empty($priced_lines) ? null : (int) array_sum(array_map(static fn($l) => (int) $l['amountUSD'], $priced_lines));
+    $has_missing  = !empty($excluded_items) || !empty($on_req_lines);
+    $mode         = $subtotal === null ? 'on_request' : ($has_missing ? 'subtotal' : 'total');
+    $headline     = $mode === 'total' ? 'Trip estimate' : ($mode === 'subtotal' ? 'Subtotal for priced items' : 'Request a quote');
+
+    return array(
+        'mode'          => $mode,
+        'headlineLabel' => $headline,
+        'subtotalUSD'   => $subtotal,
+        'excludedItems' => array_values(array_unique($excluded_items)),
+        'lines'         => $lines,
     );
 }
 
@@ -605,12 +889,36 @@ function outbound_svg_icon(string $name, string $class = 'w-4 h-4'): string {
  *
  * @return array<int, array<string, mixed>>
  */
+function outbound_get_default_header_nav_items(array $strings = array()): array {
+    return array(
+        array('id' => 'guide',         'label' => trim((string) ($strings['common/Header.text5'] ?? '')) ?: 'Victoria Falls Guide', 'destination' => '/victoria-falls-guide',         'showDesktop' => true, 'showMobile' => true, 'order' => 1),
+        array('id' => 'experiences',   'label' => trim((string) ($strings['common/Header.text6'] ?? '')) ?: 'Things to Do',         'destination' => '/things-to-do-in-victoria-falls', 'showDesktop' => true, 'showMobile' => true, 'order' => 2),
+        array('id' => 'accommodation', 'label' => trim((string) ($strings['common/Header.text7'] ?? '')) ?: 'Where to Stay',        'destination' => '/victoria-falls-accommodation', 'showDesktop' => true, 'showMobile' => true, 'order' => 3),
+        array('id' => 'packages',      'label' => trim((string) ($strings['common/Header.text8'] ?? '')) ?: 'Packages',             'destination' => '/victoria-falls-packages',      'showDesktop' => true, 'showMobile' => true, 'order' => 4),
+        array('id' => 'gallery',       'label' => trim((string) ($strings['common/Header.text9'] ?? '')) ?: 'Client Gallery',       'destination' => '/client-gallery',               'showDesktop' => true, 'showMobile' => true, 'order' => 5),
+        array('id' => 'about',         'label' => trim((string) ($strings['common/Header.text10'] ?? '')) ?: 'About',               'destination' => '/about',                        'showDesktop' => true, 'showMobile' => true, 'order' => 6),
+        array('id' => 'blog',          'label' => 'Blog',                                                                           'destination' => '/blog',                         'showDesktop' => true, 'showMobile' => true, 'order' => 7),
+        array('id' => 'contact',       'label' => trim((string) ($strings['common/Header.text11'] ?? '')) ?: 'Contact',             'destination' => '/contact',                      'showDesktop' => true, 'showMobile' => true, 'order' => 8),
+    );
+}
+
+/**
+ * Helper to return builder stay tiers stored in WP option or live snapshot defaults.
+ *
+ * @return array<int, array<string, mixed>>
+ */
 function outbound_get_builder_stay_tiers(): array {
+    if (function_exists('outbound_build_live_snapshot')) {
+        $snap = outbound_build_live_snapshot();
+        if (!empty($snap['stayTiers']) && is_array($snap['stayTiers'])) {
+            return $snap['stayTiers'];
+        }
+    }
     $defaults = array(
-        array('id' => 'smart-value',    'name' => 'Smart Value Guest Houses & Town Stays', 'tagline' => 'Clean comfort near town & activities', 'startingPrice' => 145),
-        array('id' => 'comfort-plus',   'name' => 'Comfort Plus Hotels & Lodges',         'tagline' => 'Signature Victoria Falls hospitality',  'startingPrice' => 235),
-        array('id' => 'premium-escape', 'name' => 'Luxury River & Bush Sanctuaries',      'tagline' => 'Zambezi frontage, fine dining & suites','startingPrice' => 520),
-        array('id' => 'family-villa',   'name' => 'Family Apartments & Private Villas',   'tagline' => 'Spacious self-catering & multi-room',   'startingPrice' => 195),
+        array('id' => 'smart-value',    'name' => 'Town Hotels & Lodges',       'tagline' => 'Convenient, well-located comfort in Victoria Falls town', 'startingPrice' => 220),
+        array('id' => 'comfort-plus',   'name' => 'Comfort & Boutique Lodges',  'tagline' => 'Warm hospitality near the falls and Zambezi River',        'startingPrice' => 380),
+        array('id' => 'premium-escape', 'name' => 'Luxury River Sanctuaries',   'tagline' => 'Zambezi frontage, fine dining & luxury suites',           'startingPrice' => 750),
+        array('id' => 'family-villa',   'name' => 'Ultra-Luxury Private Villas','tagline' => 'Exclusive-use bush & island villas',                      'startingPrice' => 1250),
     );
     if (function_exists('get_option')) {
         $stored = get_option('outbound_builder_stay_tiers', null);
@@ -622,11 +930,35 @@ function outbound_get_builder_stay_tiers(): array {
 }
 
 /**
- * Helper to return builder activities stored in WP option or queried from Experiences CPT.
+ * Helper to return builder activities synced with live Experiences / CMS snapshot.
  *
  * @return array<int, array<string, mixed>>
  */
 function outbound_get_builder_activities(): array {
+    if (function_exists('outbound_build_live_snapshot')) {
+        $snap = outbound_build_live_snapshot();
+        if (!empty($snap['builderActivities']) && is_array($snap['builderActivities'])) {
+            $out = array();
+            foreach ($snap['builderActivities'] as $act) {
+                if (!is_array($act) || empty($act['id'])) {
+                    continue;
+                }
+                if (isset($act['includeInBuilder']) && $act['includeInBuilder'] === false) {
+                    continue;
+                }
+                $out[] = array(
+                    'id'          => (string) $act['id'],
+                    'title'       => (string) ($act['title'] ?? $act['id']),
+                    'duration'    => (string) ($act['duration'] ?? 'Half Day'),
+                    'priceAmount' => (float) ($act['priceUSD'] ?? ($act['priceAmount'] ?? 0)),
+                    'image'       => (string) ($act['imageUrl'] ?? ($act['image'] ?? '')),
+                );
+            }
+            if (!empty($out)) {
+                return $out;
+            }
+        }
+    }
     if (function_exists('get_option')) {
         $stored = get_option('outbound_builder_activities', null);
         if (is_array($stored) && !empty($stored)) {
@@ -636,7 +968,7 @@ function outbound_get_builder_activities(): array {
     if (function_exists('get_posts')) {
         $posts = get_posts(array(
             'post_type'      => 'experience',
-            'posts_per_page' => 12,
+            'posts_per_page' => 24,
             'post_status'    => 'publish',
         ));
         if (!empty($posts)) {
@@ -654,13 +986,34 @@ function outbound_get_builder_activities(): array {
         }
     }
     return array(
-        array('id' => 'act-guided-falls', 'title' => 'Guided Tour of the Victoria Falls', 'duration' => '2.5 Hours', 'priceAmount' => 45, 'image' => outbound_get_media_fallback('falls')),
-        array('id' => 'act-sunset-cruise', 'title' => 'Zambezi Sunset Boat Cruise', 'duration' => '3 Hours', 'priceAmount' => 65, 'image' => outbound_get_media_fallback('hero')),
-        array('id' => 'act-helicopter', 'title' => '15-Minute Flight of Angels Helicopter', 'duration' => '15 Mins', 'priceAmount' => 165, 'image' => outbound_get_media_fallback('falls')),
-        array('id' => 'act-chobe', 'title' => 'Chobe Full Day Safari (Botswana)', 'duration' => 'Full Day', 'priceAmount' => 195, 'image' => outbound_get_media_fallback('safari')),
-        array('id' => 'act-boma', 'title' => 'The Boma Dinner & Drum Show', 'duration' => 'Evening', 'priceAmount' => 65, 'image' => outbound_get_media_fallback('family')),
-        array('id' => 'act-bungee', 'title' => 'Victoria Falls Bridge Bungee Jump', 'duration' => '2 Hours', 'priceAmount' => 168, 'image' => outbound_get_media_fallback('hero')),
+        array('id' => 'act-guided-falls', 'title' => 'Guided Tour of the Falls', 'duration' => '2-3 Hours', 'priceAmount' => 55, 'image' => outbound_get_media_fallback('falls')),
+        array('id' => 'act-sunset-cruise', 'title' => 'Upper Zambezi Sunset Cruise', 'duration' => '2-3 Hours', 'priceAmount' => 85, 'image' => outbound_get_media_fallback('hero')),
+        array('id' => 'act-helicopter', 'title' => 'Flight of Angels Helicopter (12-13 min)', 'duration' => '12-13 Mins', 'priceAmount' => 150, 'image' => outbound_get_media_fallback('falls')),
+        array('id' => 'act-chobe-safari', 'title' => 'Chobe Full Day Safari (Botswana)', 'duration' => 'Full Day', 'priceAmount' => 185, 'image' => outbound_get_media_fallback('safari')),
+        array('id' => 'act-boma-dinner', 'title' => 'The Boma Dinner & Drum Show', 'duration' => 'Evening (Approx 3 hrs)', 'priceAmount' => 55, 'image' => outbound_get_media_fallback('family')),
     );
+}
+
+/**
+ * Helper to return configured Holiday Builder transfer routes & bases.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function outbound_get_builder_transfers(): array {
+    if (function_exists('outbound_build_live_snapshot')) {
+        $snap = outbound_build_live_snapshot();
+        $trs  = $snap['site']['builderConfig']['transferOptions'] ?? null;
+        if (is_array($trs)) {
+            return array_values($trs);
+        }
+    }
+    if (function_exists('get_option')) {
+        $cfg = get_option('outbound_builder_config', array());
+        if (is_array($cfg) && !empty($cfg['transferOptions']) && is_array($cfg['transferOptions'])) {
+            return array_values($cfg['transferOptions']);
+        }
+    }
+    return array();
 }
 
 /**
@@ -764,17 +1117,20 @@ function outbound_get_published_cms_bundle(): array {
     }
 
     return array(
-        'site_options'         => $site_options,
-        'editorial_strings'    => $editorial_strings,
-        'editorial_structures' => $get('outbound_editorial_struct_overrides', array()),
-        'featured'             => $get('outbound_featured_overrides', array()),
-        'featured_overrides'   => $get('outbound_featured_item_overrides', array()),
-        'route_seo'            => $get('outbound_route_seo_overrides', array()),
-        'currency_rates'       => $get('outbound_currency_rates_override', array()),
-        'reviews'              => $get('outbound_reviews_override', array()),
-        'builder_stay_tiers'   => $get('outbound_builder_stay_tiers', array()),
-        'builder_activities'   => $get('outbound_builder_activities', array()),
-        'design_tokens'        => $get('outbound_design_tokens', array()),
+        'site_options'                 => $site_options,
+        'editorial_strings'            => $editorial_strings,
+        'editorial_structures'         => $get('outbound_editorial_struct_overrides', array()),
+        'featured'                     => $get('outbound_featured_overrides', array()),
+        'featured_overrides'           => $get('outbound_featured_item_overrides', array()),
+        'route_seo'                    => $get('outbound_route_seo_overrides', array()),
+        'currency_rates'               => $get('outbound_currency_rates_override', array()),
+        'reviews'                      => $get('outbound_reviews_override', array()),
+        'builder_stay_tiers'           => $get('outbound_builder_stay_tiers', array()),
+        'builder_activities'           => $get('outbound_builder_activities', array()),
+        'builder_excluded_experiences' => $get('outbound_builder_excluded_experiences', array()),
+        'builder_config'               => $get('outbound_builder_config', array()),
+        'navigation'                   => $get('outbound_site_navigation', array()),
+        'design_tokens'                => $get('outbound_design_tokens', array()),
     );
 }
 
@@ -791,9 +1147,10 @@ function outbound_get_effective_cms_bundle(bool $include_draft = false): array {
         if (!empty($draft['site_options']) && is_array($draft['site_options'])) {
             $bundle['site_options'] = array_replace_recursive($bundle['site_options'], $draft['site_options']);
         }
-        foreach (array('editorial_strings', 'editorial_structures', 'route_seo', 'currency_rates', 'design_tokens') as $map_key) {
+        foreach (array('editorial_strings', 'editorial_structures', 'route_seo', 'currency_rates', 'design_tokens', 'builder_config', 'navigation') as $map_key) {
             if (isset($draft[$map_key]) && is_array($draft[$map_key])) {
-                $bundle[$map_key] = array_replace($bundle[$map_key], $draft[$map_key]);
+                $existing = isset($bundle[$map_key]) && is_array($bundle[$map_key]) ? $bundle[$map_key] : array();
+                $bundle[$map_key] = array_replace($existing, $draft[$map_key]);
             }
         }
         if (isset($draft['featured']) && is_array($draft['featured'])) {
@@ -807,7 +1164,7 @@ function outbound_get_effective_cms_bundle(bool $include_draft = false): array {
             $existing_fo = isset($bundle['featured_overrides']) && is_array($bundle['featured_overrides']) ? $bundle['featured_overrides'] : array();
             $bundle['featured_overrides'] = array_replace_recursive($existing_fo, $draft['featured_overrides']);
         }
-        foreach (array('reviews', 'builder_stay_tiers', 'builder_activities') as $list_key) {
+        foreach (array('reviews', 'builder_stay_tiers', 'builder_activities', 'builder_excluded_experiences') as $list_key) {
             if (array_key_exists($list_key, $draft) && is_array($draft[$list_key])) {
                 $bundle[$list_key] = array_values($draft[$list_key]);
             }
@@ -860,7 +1217,7 @@ function outbound_save_cms_draft_patch(array $patch, string $section_id = ''): a
         $existing_site = isset($draft['site_options']) && is_array($draft['site_options']) ? $draft['site_options'] : array();
         $draft['site_options'] = array_replace_recursive($existing_site, $patch['site_options']);
     }
-    foreach (array('editorial_strings', 'editorial_structures', 'route_seo', 'currency_rates', 'design_tokens') as $map_key) {
+    foreach (array('editorial_strings', 'editorial_structures', 'route_seo', 'currency_rates', 'design_tokens', 'builder_config', 'navigation') as $map_key) {
         if (isset($patch[$map_key]) && is_array($patch[$map_key])) {
             $existing_map = isset($draft[$map_key]) && is_array($draft[$map_key]) ? $draft[$map_key] : array();
             $draft[$map_key] = array_replace($existing_map, $patch[$map_key]);
@@ -879,7 +1236,7 @@ function outbound_save_cms_draft_patch(array $patch, string $section_id = ''): a
         $existing_fo = isset($draft['featured_overrides']) && is_array($draft['featured_overrides']) ? $draft['featured_overrides'] : array();
         $draft['featured_overrides'] = array_replace_recursive($existing_fo, $patch['featured_overrides']);
     }
-    foreach (array('reviews', 'builder_stay_tiers', 'builder_activities') as $list_key) {
+    foreach (array('reviews', 'builder_stay_tiers', 'builder_activities', 'builder_excluded_experiences') as $list_key) {
         if (array_key_exists($list_key, $patch) && is_array($patch[$list_key])) {
             $draft[$list_key] = array_values($patch[$list_key]);
         }
@@ -920,6 +1277,9 @@ function outbound_publish_cms_changes(array $patch = array(), string $section_id
         update_option('outbound_reviews_override', $effective['reviews'], false);
         update_option('outbound_builder_stay_tiers', $effective['builder_stay_tiers'], false);
         update_option('outbound_builder_activities', $effective['builder_activities'], false);
+        update_option('outbound_builder_excluded_experiences', $effective['builder_excluded_experiences'] ?? array(), false);
+        update_option('outbound_builder_config', $effective['builder_config'] ?? array(), false);
+        update_option('outbound_site_navigation', $effective['navigation'] ?? array(), false);
         update_option('outbound_design_tokens', $effective['design_tokens'], false);
         if (function_exists('delete_option')) {
             delete_option('outbound_cms_draft_state');

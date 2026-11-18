@@ -3,6 +3,7 @@ import { X, Send, CheckCircle2, ShieldCheck, MessageSquare, Calendar, Users, Pho
 import type { PromotionOffer } from '../../types/promotion';
 import { useSubmission } from '../common/SubmissionSafety';
 import { trackPromotionEvent, parseUtmParams } from '../../data/promotionsData';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
 
 interface PromotionEnquiryModalProps {
   promotion: PromotionOffer;
@@ -132,7 +133,7 @@ export const PromotionEnquiryModal: React.FC<PromotionEnquiryModalProps> = ({
   const getWhatsAppFollowupUrl = () => {
     const refText = successReference ? ` (Ref: ${successReference})` : '';
     const message = `Hello Outbound Holidays, I just submitted an enquiry for the "${promotion.headline}" offer${refText}. Please could you share availability and details?`;
-    return `https://wa.me/263714701721?text=${encodeURIComponent(message)}`;
+    return getWhatsAppUrl(message);
   };
 
   return (

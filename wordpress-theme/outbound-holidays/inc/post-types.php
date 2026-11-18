@@ -144,6 +144,7 @@ function outbound_register_post_types_and_taxonomies(): void {
     add_rewrite_rule('^bungee-jump/?$', 'index.php?experience=bungee-jump', 'top');
     add_rewrite_rule('^newsletter-confirmed/?$', 'index.php?outbound_virtual_route=newsletter-confirmed', 'top');
     add_rewrite_rule('^newsletter/confirmed/?$', 'index.php?outbound_virtual_route=newsletter-confirmed', 'top');
+    add_rewrite_rule('^search/?$', 'index.php?outbound_virtual_route=spa-search', 'top');
 }
 add_action('init', 'outbound_register_post_types_and_taxonomies', 10);
 
@@ -163,6 +164,13 @@ add_filter('template_include', static function (string $template): string {
             return $custom;
         }
     }
+    if ($virtual === 'spa-search') {
+        $search_template = OUTBOUND_THEME_DIR . '/search.php';
+        if (file_exists($search_template)) {
+            return $search_template;
+        }
+    }
+
     if ($virtual === 'spa-shell') {
         $custom = OUTBOUND_THEME_DIR . '/page.php';
         if (file_exists($custom)) {

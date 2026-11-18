@@ -20,7 +20,12 @@ import {
 } from '../../utils/enquiry';
 import {
   calculateRoomStayQuote,
+  formatBoardBasisLabel,
+  formatPriceBasisLabel,
+  formatVisitorMarketLabel,
   getPublishedRoomTypes,
+  getRoomRatePlans,
+  isOfferWithinDateWindow,
   isSingleEntireHomeProperty,
 } from '../../utils/roomPricing';
 import { WhatsAppIcon } from '../common/WhatsAppButton';
@@ -30,6 +35,8 @@ export interface RoomEnquiryInitialState {
   property: DetailedAccommodation;
   room: RoomType | null;
   offer?: AccommodationOffer | null;
+  ratePlanId?: string;
+  ratePlanLabel?: string;
   visitorMarket?: string;
   checkIn?: string;
   checkOut?: string;
@@ -70,6 +77,8 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
   const [childAges, setChildAges] = useState<string[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState('');
   const [selectedMealPlanId, setSelectedMealPlanId] = useState('');
+  const [selectedRatePlanId, setSelectedRatePlanId] = useState('');
+  const [activeOffer, setActiveOffer] = useState<AccommodationOffer | null>(null);
   const [specialRequests, setSpecialRequests] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
@@ -91,6 +100,8 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
     setChildAges(Array.from({ length: cCount }, () => ''));
     setSelectedRoomId(target.room?.id || target.room?.name || '');
     setSelectedMealPlanId(target.mealPlanId || '');
+    setSelectedRatePlanId(target.ratePlanId || '');
+    setActiveOffer(target.offer ?? null);
     setFormError(null);
     setSubmittedRef(null);
     setIdempotencyKey(
@@ -136,6 +147,16 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
     return target.room;
   }, [target, selectedRoomId]);
 
+  const availableRatePlans = useMemo(() => {
+    if (!target || !activeRoom) return [];
+    return getRoomRatePlans(activeRoom, target.property);
+  }, [target, activeRoom]);
+
+  const activeRatePlan = useMemo(
+    () => availableRatePlans.find((rp) => rp.id === selectedRatePlanId),
+    [availableRatePlans, selectedRatePlanId]
+  );
+
   const quote = useMemo(() => {
     if (!target) return null;
     if (activeRoom) {
@@ -155,7 +176,8 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
           }),
         },
         mealPlanId: selectedMealPlanId || undefined,
-        visitorMarket: target.visitorMarket,
+        ratePlanId: selectedRatePlanId || undefined,
+        visitorMarket: activeRatePlan?.visitorMarket || target.visitorMarket,
         currency,
       });
     }
@@ -170,11 +192,24 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
       minStayNotice: null,
       validityNotice: null,
     };
-  }, [target, activeRoom, checkInDate, checkOutDate, adults, childAges, selectedMealPlanId, currency]);
+  }, [target, activeRoom, checkInDate, checkOutDate, adults, childAges, selectedMealPlanId, selectedRatePlanId, activeRatePlan, currency]);
 
   if (!target) return null;
 
-  const { property, offer, visitorMarket } = target;
+  const { property } = target;
+  const offer = activeOffer;
+  const effectiveVisitorMarket = activeRatePlan
+    ? formatVisitorMarketLabel(activeRatePlan.visitorMarket, activeRatePlan.customMarketLabel)
+    : target.visitorMarket;
+  const effectiveRatePlanLabel = activeRatePlan
+    ? [
+        activeRatePlan.internalRateName,
+        formatVisitorMarketLabel(activeRatePlan.visitorMarket, activeRatePlan.customMarketLabel),
+        formatBoardBasisLabel(activeRatePlan.boardBasis),
+      ]
+        .filter(Boolean)
+        .join(' · ')
+    : target.ratePlanLabel;
   const room = activeRoom;
   const availableUnits = getPublishedRoomTypes(property);
   const singleHome = isSingleEntireHomeProperty(property);
@@ -210,9 +245,11 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
     roomId: room?.id,
     roomType: roomName,
     mealPlan: selectedMealPlanName || undefined,
+    ratePlanId: selectedRatePlanId || activeRatePlan?.id || undefined,
+    ratePlan: effectiveRatePlanLabel || undefined,
     offerId: offer?.id,
     offerName: offer?.title,
-    visitorMarket,
+    visitorMarket: effectiveVisitorMarket,
     dates: formattedDates,
     checkInDate: checkInDate || undefined,
     checkOutDate: checkOutDate || undefined,
@@ -229,6 +266,9 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
   const validateDates = (): string | null => {
     if (checkInDate && checkOutDate && checkOutDate <= checkInDate) {
       return 'Check-out date must be after check-in date.';
+    }
+    if (offer && !isOfferWithinDateWindow(offer, { checkIn: checkInDate || undefined, checkOut: checkOutDate || undefined })) {
+      return `The offer "${offer.title}" is valid ${offer.validFrom || 'now'} to ${offer.validTo || 'further notice'} and does not cover the selected dates.`;
     }
     return null;
   };
@@ -268,10 +308,13 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
     accommodationId: property.slug || property.id,
     roomId: room?.id || '',
     roomType: roomName,
+    mealPlanId: selectedMealPlanId || '',
     mealPlan: selectedMealPlanName,
+    ratePlanId: selectedRatePlanId || activeRatePlan?.id || '',
+    ratePlanName: effectiveRatePlanLabel || '',
     offerId: offer?.id || '',
     offerName: offer?.title || '',
-    visitorMarket: visitorMarket || '',
+    visitorMarket: effectiveVisitorMarket || '',
     checkInDate,
     checkOutDate,
     estimatedPriceLabel: quote?.label || 'Price on enquiry',
@@ -379,12 +422,29 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
           {/* Selected Unit + Displayed Pricing Banner */}
           <div className="rounded-2xl bg-[#FAF9F6] border border-gray-200 p-4 space-y-1.5">
             {offer && (
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#E67E22]">
-                Special Offer: {offer.title}
+              <div className="flex items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-[#E67E22]">
+                <span>Special Offer: {offer.title}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveOffer(null);
+                    setFormError(null);
+                  }}
+                  className="text-[10px] underline font-semibold text-gray-500 hover:text-gray-800 normal-case cursor-pointer"
+                >
+                  Remove offer
+                </button>
               </div>
             )}
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span className="font-bold text-[#0B5E8E]">{roomName}</span>
+              <div>
+                <span className="font-bold text-[#0B5E8E] block">{roomName}</span>
+                {effectiveRatePlanLabel && (
+                  <span className="text-[11px] text-gray-600 block">
+                    Rate Plan: {effectiveRatePlanLabel}
+                  </span>
+                )}
+              </div>
               <span className="font-serif font-bold text-base text-[#0B5E8E]">
                 {quote?.label || 'Price on enquiry'}
               </span>
@@ -615,6 +675,39 @@ export const RoomEnquiryModal: React.FC<RoomEnquiryModalProps> = ({
                       </label>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {availableRatePlans.length > 0 && (
+                <div>
+                  <label
+                    htmlFor="room-enq-rateplan"
+                    className="block font-bold text-gray-700 mb-1"
+                  >
+                    Rate Plan / Visitor Market
+                  </label>
+                  <select
+                    id="room-enq-rateplan"
+                    value={selectedRatePlanId}
+                    onChange={(e) => setSelectedRatePlanId(e.target.value)}
+                    className="w-full min-h-[42px] px-3 py-2 rounded-xl border border-gray-300 bg-white"
+                  >
+                    <option value="">Standard unit rate</option>
+                    {availableRatePlans.map((rp) => {
+                      const market = formatVisitorMarketLabel(rp.visitorMarket, rp.customMarketLabel);
+                      const board = formatBoardBasisLabel(rp.boardBasis);
+                      const basis = formatPriceBasisLabel(rp.priceBasis, rp.customBasisLabel);
+                      const amt =
+                        typeof rp.amountUSD === 'number' && rp.amountUSD > 0
+                          ? `${formatCurrencyAmount(rp.amountUSD, currency)} ${basis}`
+                          : 'Rate on enquiry';
+                      return (
+                        <option key={rp.id} value={rp.id}>
+                          {[rp.internalRateName, market, board, amt].filter(Boolean).join(' · ')}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
               )}
 

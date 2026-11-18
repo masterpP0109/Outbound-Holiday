@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Loader2, Search, X } from 'lucide-react';
 import { resolveAssetUrl } from '../../runtime/api';
 import { editorialOptional } from '../../runtime/catalog';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { searchPath } from '../../routes';
 import type { PromotionOffer } from '../../types/promotion';
 import { executeGlobalSearch, type GlobalSearchResult } from '../../utils/globalSearch';
@@ -122,12 +123,36 @@ export const TravelHero: React.FC<TravelHeroProps> = ({
   );
 
   const handleCtaClick = () => {
-    if (ctaDest === 'packages' && onBrowsePackages) {
+    const dest = (ctaDest || 'modal').trim();
+    if (dest === 'whatsapp') {
+      const waUrl = getWhatsAppUrl(
+        "Hello Outbound Holidays! I'd like help planning a Victoria Falls holiday."
+      );
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if (dest === 'packages' && onBrowsePackages) {
       onBrowsePackages();
       return;
     }
-    if (ctaDest && ctaDest !== 'modal' && (ctaDest.startsWith('http') || ctaDest.startsWith('/'))) {
-      window.location.href = ctaDest;
+    if (dest === 'contact') {
+      navigateTo('/contact');
+      return;
+    }
+    if (dest === '/experiences') {
+      navigateTo('/things-to-do-in-victoria-falls');
+      return;
+    }
+    if (dest === '/accommodation') {
+      navigateTo('/victoria-falls-accommodation');
+      return;
+    }
+    if (/^https?:\/\//i.test(dest)) {
+      window.open(dest, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if (dest.startsWith('/')) {
+      navigateTo(dest);
       return;
     }
     onOpenPlanHoliday();

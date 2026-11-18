@@ -175,9 +175,14 @@ export const GuestSelectionModal: React.FC<GuestSelectionModalProps> = ({
         {/* Dynamic Individual Child Age Category Selectors */}
         {value.children.length > 0 && (
           <div className="space-y-3 rounded-2xl bg-[#FAF9F6] border border-gray-200/80 p-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0B5E8E]">
-              Child Age Categories
-            </p>
+            <div className="space-y-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#0B5E8E]">
+                Child Age Categories
+              </p>
+              <p className="text-[11px] text-gray-600 leading-snug">
+                <strong>How 11-year-olds &amp; children are priced:</strong> Select <em>Under 11</em> (ages 0–10) for child operator rates confirmed on enquiry, or <em>11 years or older</em> for standard 11+ / adult activity tiers. Package deals noting Under 12 rates are confirmed by your specialist for ages 10, 11, and 12.
+              </p>
+            </div>
             <div className="space-y-2.5">
               {value.children.map((child, idx) => (
                 <div

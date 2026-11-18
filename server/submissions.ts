@@ -10,9 +10,10 @@ export const consentVersion='travel-club-2026-10';
 export async function selectTrip(tx:Prisma.TransactionClient,trip:Prisma.JsonObject){
  const legacyActMap:Record<string,string>={'act-guided-falls':'guided-tour-falls','act-sunset-cruise':'upper-zambezi-sunset-cruise','act-boma-dinner':'boma-dinner-show','act-helicopter':'flight-of-angels','act-chobe-safari':'chobe-day-safari','act-gorge-swing':'gorge-swing'};
  const wanted:[string,string][]=[];
- if(trip.accommodationId)wanted.push(['accommodation',String(trip.accommodationId)]);
+ const stayArr=String(trip.stayArrangement||'');
+ if(trip.accommodationId&&(stayArr===''||stayArr==='selected'))wanted.push(['accommodation',String(trip.accommodationId)]);
  if(trip.packageId)wanted.push(['package',String(trip.packageId)]);
- if(trip.stayTierId)wanted.push(['stayTier',String(trip.stayTierId)]);
+ if(trip.stayTierId&&(stayArr===''||stayArr==='selected')&&!trip.accommodationId)wanted.push(['stayTier',String(trip.stayTierId)]);
  const seenActs=new Set<string>();
  for(const id of (trip.activityIds??[]) as string[]){
   const expSlug=legacyActMap[id]??id;
@@ -34,6 +35,11 @@ export async function selectTrip(tx:Prisma.TransactionClient,trip:Prisma.JsonObj
   selected.push({id,kind:resolvedKind,title:record.title,startingPrice:record.startingPrice?.toNumber()??null,currency:record.currency,priceBasis:record.priceBasis,payload:record.payload});
  }
  const tier=selected.find(s=>s.kind==='stayTier');const stay=selected.find(s=>s.kind==='accommodation');const adults=Number(trip.adults??1),children=Number(trip.children??0),nights=Number(trip.nights??1);
+ if(trip.itemizedEstimate&&typeof trip.itemizedEstimate==='object'){
+  const ie=trip.itemizedEstimate as Record<string,unknown>;
+  const sub=typeof ie.subtotalUSD==='number'&&Number.isFinite(ie.subtotalUSD)?Math.round(ie.subtotalUSD):0;
+  return {items:selected,itemizedEstimate:ie,estimate:{minimumUSD:sub,maximumUSD:sub,estimated:true,assumptions:'Itemised supplier guide estimate using published rates; unpriced or bespoke items are listed separately as Price on request.'}};
+ }
  let stayNightRate=stay?.startingPrice??null;
  if((stayNightRate===null||stayNightRate<=0)&&stay?.payload&&typeof stay.payload==='object'){
   const rooms=((stay.payload as Record<string,unknown>).roomTypes as Array<Record<string,unknown>>|undefined)??[];

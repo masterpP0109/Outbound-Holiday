@@ -11,6 +11,11 @@ interface DateRangeCalendarProps {
   onChange: (next: DateRangeValue) => void;
   unavailableDates?: string[];
   label?: string;
+  singleDateMode?: boolean;
+  placeholder?: string;
+  dialogTitle?: string;
+  applyButtonLabel?: string;
+  onApply?: (next: DateRangeValue) => void;
 }
 
 function toIsoDate(d: Date): string {
@@ -44,6 +49,29 @@ export function formatDisplayDate(iso: string): string {
   });
 }
 
+export function formatCompactCalendarRangeSummary(
+  checkIn: string,
+  checkOut: string,
+  singleDateMode = false
+): string {
+  const start = parseIsoDate(checkIn);
+  if (!start) return '';
+  if (singleDateMode || !checkOut) {
+    return start.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  const end = parseIsoDate(checkOut);
+  if (!end) return '';
+  const nights = calculateNights(checkIn, checkOut);
+  const nightText = nights > 0 ? ` · ${nights} ${nights === 1 ? 'night' : 'nights'}` : '';
+  if (start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth()) {
+    const monthName = start.toLocaleDateString('en-GB', { month: 'long' });
+    return `${start.getDate()}–${end.getDate()} ${monthName}${nightText}`;
+  }
+  const sStr = start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const eStr = end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  return `${sStr} – ${eStr}${nightText}`;
+}
+
 const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
@@ -51,6 +79,11 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
   onChange,
   unavailableDates,
   label = 'Check-in & Check-out Dates',
+  singleDateMode = false,
+  placeholder,
+  dialogTitle,
+  applyButtonLabel = 'Apply dates',
+  onApply,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoverIso, setHoverIso] = useState<string | null>(null);
@@ -65,6 +98,20 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
     const initial = parseIsoDate(value.checkIn) || today;
     return new Date(initial.getFullYear(), initial.getMonth(), 1);
   });
+
+  const monthShortcutOptions = useMemo(() => {
+    const opts: Array<{ key: string; year: number; month: number; label: string }> = [];
+    for (let i = 0; i < 24; i++) {
+      const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+      opts.push({
+        key: `${d.getFullYear()}-${d.getMonth()}`,
+        year: d.getFullYear(),
+        month: d.getMonth(),
+        label: d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      });
+    }
+    return opts;
+  }, [today]);
 
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const unavailableSet = useMemo(
@@ -88,10 +135,15 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
     };
   }, [isOpen]);
 
-  const nights = calculateNights(value.checkIn, value.checkOut);
+  const nights = singleDateMode ? 0 : calculateNights(value.checkIn, value.checkOut);
+  const compactRangeLabel = formatCompactCalendarRangeSummary(value.checkIn, value.checkOut, singleDateMode);
 
   const handleSelectDay = (iso: string) => {
     if (iso < todayIso || unavailableSet.has(iso)) return;
+    if (singleDateMode) {
+      onChange({ checkIn: iso, checkOut: '' });
+      return;
+    }
     if (!value.checkIn || (value.checkIn && value.checkOut)) {
       onChange({ checkIn: iso, checkOut: '' });
       return;
@@ -199,7 +251,7 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
 
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-bold text-gray-700">{label}</label>
+      {label && <label className="block text-xs font-bold text-gray-700">{label}</label>}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
@@ -209,10 +261,12 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
           <CalendarIcon className="w-4 h-4 text-[#0B5E8E] shrink-0" />
           <span className="truncate font-medium text-gray-800">
             {value.checkIn
-              ? `${formatDisplayDate(value.checkIn)} → ${
-                  value.checkOut ? formatDisplayDate(value.checkOut) : 'Check-out'
-                }`
-              : 'Select check-in & check-out'}
+              ? singleDateMode
+                ? formatDisplayDate(value.checkIn)
+                : `${formatDisplayDate(value.checkIn)} → ${
+                    value.checkOut ? formatDisplayDate(value.checkOut) : 'Check-out'
+                  }`
+              : placeholder || (singleDateMode ? 'Choose an activity date' : 'Add travel dates')}
           </span>
         </span>
         {nights > 0 && (
@@ -231,21 +285,23 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Select check-in and check-out dates"
+            aria-label={dialogTitle || (singleDateMode ? 'Choose an activity date' : 'Select check-in and check-out dates')}
             onClick={(e) => e.stopPropagation()}
-            className="w-full sm:max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl border border-gray-200 shadow-2xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto space-y-5"
+            className="w-full sm:max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl border border-gray-200 shadow-2xl p-4 sm:p-6 max-h-[90vh] overflow-y-auto space-y-4"
           >
             <div className="flex items-center justify-between gap-3 border-b border-gray-100 pb-3">
               <div>
                 <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0B5E8E]">
-                  Select Your Stay Dates
+                  {dialogTitle || (singleDateMode ? 'Choose an activity date' : 'Select travel dates')}
                 </h3>
                 <p className="text-xs text-gray-500">
-                  {nights > 0
-                    ? `${formatDisplayDate(value.checkIn)} – ${formatDisplayDate(value.checkOut)} (${nights} ${nights === 1 ? 'night' : 'nights'})`
+                  {compactRangeLabel
+                    ? compactRangeLabel
+                    : singleDateMode
+                    ? 'Tap a date on the calendar.'
                     : value.checkIn
-                    ? `Check-in: ${formatDisplayDate(value.checkIn)}. Now select check-out.`
-                    : 'Choose your arrival date, then your departure date.'}
+                    ? `Arrival: ${formatDisplayDate(value.checkIn)}. Now tap your departure date.`
+                    : 'Tap your arrival date, then your departure date.'}
                 </p>
               </div>
               <button
@@ -259,8 +315,8 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
               </button>
             </div>
 
-            {/* Month navigation */}
-            <div className="flex items-center justify-between">
+            {/* Month navigation + Month & Year shortcut */}
+            <div className="flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={() =>
@@ -273,18 +329,39 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
                   baseMonth.getMonth() <= today.getMonth()
                 }
                 aria-label="Previous month"
-                className="w-10 h-10 rounded-full border border-gray-200 hover:border-[#0B5E8E] flex items-center justify-center text-gray-700 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                className="w-10 h-10 shrink-0 rounded-full border border-gray-200 hover:border-[#0B5E8E] flex items-center justify-center text-gray-700 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button
-                type="button"
-                onClick={() => onChange({ checkIn: '', checkOut: '' })}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-[#0B5E8E] cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset dates</span>
-              </button>
+
+              <div className="flex items-center gap-2">
+                <select
+                  aria-label="Jump to month and year"
+                  value={`${baseMonth.getFullYear()}-${baseMonth.getMonth()}`}
+                  onChange={(e) => {
+                    const [yy, mm] = e.target.value.split('-').map(Number);
+                    if (Number.isFinite(yy) && Number.isFinite(mm)) {
+                      setBaseMonth(new Date(yy, mm, 1));
+                    }
+                  }}
+                  className="min-h-[38px] px-2.5 py-1.5 rounded-xl border border-gray-300 bg-white text-xs font-bold text-[#0B5E8E]"
+                >
+                  {monthShortcutOptions.map((opt) => (
+                    <option key={opt.key} value={opt.key}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => onChange({ checkIn: '', checkOut: '' })}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-[#0B5E8E] cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Reset</span>
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={() =>
@@ -293,24 +370,30 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
                   )
                 }
                 aria-label="Next month"
-                className="w-10 h-10 rounded-full border border-gray-200 hover:border-[#0B5E8E] flex items-center justify-center text-gray-700 cursor-pointer"
+                className="w-10 h-10 shrink-0 rounded-full border border-gray-200 hover:border-[#0B5E8E] flex items-center justify-center text-gray-700 cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className={`grid grid-cols-1 ${singleDateMode ? '' : 'md:grid-cols-2'} gap-6`}>
               {renderMonth(0)}
-              <div className="hidden md:block">{renderMonth(1)}</div>
+              {!singleDateMode && <div className="hidden md:block">{renderMonth(1)}</div>}
             </div>
 
-            <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-gray-100 pt-3">
+              <div className="text-xs font-bold text-[#0B5E8E]">
+                {compactRangeLabel || (value.checkIn ? formatDisplayDate(value.checkIn) : 'Select dates above')}
+              </div>
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  setIsOpen(false);
+                  onApply?.(value);
+                }}
                 className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-[#0B5E8E] hover:bg-[#08486e] text-white font-bold text-sm transition-colors cursor-pointer"
               >
-                Apply Dates
+                {applyButtonLabel}
               </button>
             </div>
           </div>

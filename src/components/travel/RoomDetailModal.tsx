@@ -34,6 +34,7 @@ import {
   getRoomRatePlans,
   getRoomStartingPriceUSD,
   getUnitAvailabilityBadge,
+  isOfferWithinDateWindow,
 } from '../../utils/roomPricing';
 import { DateRangeCalendar, type DateRangeValue } from './DateRangeCalendar';
 import { GalleryLightbox } from './GalleryLightbox';
@@ -44,10 +45,24 @@ interface RoomDetailModalProps {
   room: RoomType | null;
   currency: Currency;
   onClose: () => void;
+  onAddRoomToPlan?: (
+    room: RoomType,
+    prefill?: {
+      offer?: AccommodationOffer | null;
+      ratePlanId?: string;
+      mealPlanId?: string;
+      checkIn?: string;
+      checkOut?: string;
+      adults?: number;
+      childrenCount?: number;
+    }
+  ) => void;
   onEnquireRoom: (
     room: RoomType,
     prefill?: {
       offer?: AccommodationOffer | null;
+      ratePlanId?: string;
+      ratePlanLabel?: string;
       visitorMarket?: string;
       checkIn?: string;
       checkOut?: string;
@@ -63,6 +78,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   room,
   currency,
   onClose,
+  onAddRoomToPlan,
   onEnquireRoom,
 }) => {
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -136,6 +152,15 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   const unitOffers = getPublishedPropertyOffers(property, room.id);
   const availBadge = getUnitAvailabilityBadge(room);
   const activeRatePlan = ratePlans.find((rp) => rp.id === selectedRatePlanId);
+  const activeRatePlanLabel = activeRatePlan
+    ? [
+        activeRatePlan.internalRateName,
+        formatVisitorMarketLabel(activeRatePlan.visitorMarket, activeRatePlan.customMarketLabel),
+        formatBoardBasisLabel(activeRatePlan.boardBasis),
+      ]
+        .filter(Boolean)
+        .join(' · ')
+    : undefined;
   const inclusions = Array.from(
     new Set([...(room.inclusions ?? []), ...(room.pricing?.inclusions ?? [])].filter(Boolean))
   );
@@ -669,7 +694,13 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#E67E22] block">
                     Eligible Special Offers
                   </span>
-                  {unitOffers.map((off) => (
+                  {unitOffers.map((off) => {
+                    const datesSelected = Boolean(dateRange.checkIn && dateRange.checkOut);
+                    const offerMatchesDates = !datesSelected || isOfferWithinDateWindow(off, {
+                      checkIn: dateRange.checkIn,
+                      checkOut: dateRange.checkOut,
+                    });
+                    return (
                     <div
                       key={off.id}
                       className="rounded-xl bg-amber-50/70 border border-amber-200 p-3 space-y-1.5 text-xs"
@@ -681,25 +712,44 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                         </span>
                       </div>
                       {off.description && <p className="text-gray-700">{off.description}</p>}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onEnquireRoom(room, {
-                            offer: off,
-                            visitorMarket: activeRatePlan?.visitorMarket,
-                            checkIn: dateRange.checkIn,
-                            checkOut: dateRange.checkOut,
-                            adults,
-                            childrenCount,
-                            mealPlanId: selectedMealPlanId || undefined,
-                          })
-                        }
-                        className="text-[11px] font-bold text-[#0B5E8E] hover:text-[#E67E22] underline cursor-pointer"
-                      >
-                        {off.ctaLabel || 'Enquire About This Offer'} &rarr;
-                      </button>
+                      {(off.validFrom || off.validTo) && (
+                        <p className="text-[10px] text-gray-500">
+                          Valid {off.validFrom || 'now'} to {off.validTo || 'further notice'}
+                        </p>
+                      )}
+                      {!offerMatchesDates ? (
+                        <p className="text-[11px] font-semibold text-amber-800">
+                          Not valid for {dateRange.checkIn} to {dateRange.checkOut}. Adjust dates or enquire on standard rates below.
+                        </p>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onEnquireRoom(room, {
+                              offer: off,
+                              ratePlanId: activeRatePlan?.id || (selectedRatePlanId || undefined),
+                              ratePlanLabel: activeRatePlanLabel,
+                              visitorMarket: activeRatePlan
+                                ? formatVisitorMarketLabel(
+                                    activeRatePlan.visitorMarket,
+                                    activeRatePlan.customMarketLabel
+                                  )
+                                : undefined,
+                              checkIn: dateRange.checkIn,
+                              checkOut: dateRange.checkOut,
+                              adults,
+                              childrenCount,
+                              mealPlanId: selectedMealPlanId || undefined,
+                            })
+                          }
+                          className="text-[11px] font-bold text-[#0B5E8E] hover:text-[#E67E22] underline cursor-pointer"
+                        >
+                          {off.ctaLabel || 'Enquire About This Offer'} &rarr;
+                        </button>
+                      )}
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               )}
 
@@ -707,7 +757,14 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 type="button"
                 onClick={() =>
                   onEnquireRoom(room, {
-                    visitorMarket: activeRatePlan?.visitorMarket,
+                    ratePlanId: activeRatePlan?.id || (selectedRatePlanId || undefined),
+                    ratePlanLabel: activeRatePlanLabel,
+                    visitorMarket: activeRatePlan
+                      ? formatVisitorMarketLabel(
+                          activeRatePlan.visitorMarket,
+                          activeRatePlan.customMarketLabel
+                        )
+                      : undefined,
                     checkIn: dateRange.checkIn,
                     checkOut: dateRange.checkOut,
                     adults,
@@ -723,6 +780,25 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     (room.isEntireProperty ? 'Enquire About This Stay' : 'Enquire About This Room')}
                 </span>
               </button>
+
+              {onAddRoomToPlan && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    onAddRoomToPlan(room, {
+                      ratePlanId: activeRatePlan?.id || (selectedRatePlanId || undefined),
+                      mealPlanId: selectedMealPlanId || undefined,
+                      checkIn: dateRange.checkIn || undefined,
+                      checkOut: dateRange.checkOut || undefined,
+                      adults,
+                      childrenCount,
+                    })
+                  }
+                  className="w-full min-h-[44px] bg-white hover:bg-[#FAF9F6] text-[#0B5E8E] border border-[#0B5E8E]/30 font-bold text-xs py-2.5 px-5 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>{room.isEntireProperty ? 'Add stay to my plan' : 'Add this room to my plan'}</span>
+                </button>
+              )}
 
               <p className="text-[11px] text-center text-gray-500 flex items-center justify-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#3F6B3C]" />

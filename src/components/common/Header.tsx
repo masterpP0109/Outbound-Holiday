@@ -11,7 +11,7 @@ import {
 } from '../../utils/globalSearch';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Currency } from '../../types';
-import { CURRENCY_RATES } from '../../runtime/catalog';
+import { CURRENCY_RATES, SITE_NAVIGATION } from '../../runtime/catalog';
 import { getCurrencyStatusSummary } from '../../utils/currency';
 import {
   Search,
@@ -51,9 +51,12 @@ interface HeaderProps {
 
 interface NavItem {
   id: string;
-  section: string;
+  href: string;
+  section?: string;
   label: string;
   active: boolean;
+  showDesktop: boolean;
+  showMobile: boolean;
 }
 
 export const Header = ({
@@ -263,16 +266,102 @@ export const Header = ({
     };
   }, []);
 
-  const navItems: NavItem[] = [
-    { id: 'guide', section: 'travel-guide', label: editorial("common/Header.text5"), active: isGuideActive },
-    { id: 'experiences', section: 'travel-experiences', label: editorial("common/Header.text6"), active: isExperiencesActive },
-    { id: 'accommodation', section: 'accommodation', label: editorial("common/Header.text7"), active: isAccommodationActive },
-    { id: 'packages', section: 'travel-packages', label: editorial("common/Header.text8"), active: isPackagesActive },
-    { id: 'gallery', section: 'client-gallery', label: editorial("common/Header.text9"), active: isGalleryActive },
-    { id: 'about', section: 'about', label: editorial("common/Header.text10"), active: isAboutActive },
-    { id: 'blog', section: 'blog', label: 'Blog', active: isBlogActive },
-    { id: 'contact', section: 'contact-us', label: editorial("common/Header.text11").trim(), active: isContactActive },
+  const defaultNavItems: NavItem[] = [
+    { id: 'guide', href: sectionPath('travel-guide'), section: 'travel-guide', label: editorial("common/Header.text5"), active: isGuideActive, showDesktop: true, showMobile: true },
+    { id: 'experiences', href: sectionPath('travel-experiences'), section: 'travel-experiences', label: editorial("common/Header.text6"), active: isExperiencesActive, showDesktop: true, showMobile: true },
+    { id: 'accommodation', href: sectionPath('accommodation'), section: 'accommodation', label: editorial("common/Header.text7"), active: isAccommodationActive, showDesktop: true, showMobile: true },
+    { id: 'packages', href: sectionPath('travel-packages'), section: 'travel-packages', label: editorial("common/Header.text8"), active: isPackagesActive, showDesktop: true, showMobile: true },
+    { id: 'gallery', href: sectionPath('client-gallery'), section: 'client-gallery', label: editorial("common/Header.text9"), active: isGalleryActive, showDesktop: true, showMobile: true },
+    { id: 'about', href: sectionPath('about'), section: 'about', label: editorial("common/Header.text10"), active: isAboutActive, showDesktop: true, showMobile: true },
+    { id: 'blog', href: sectionPath('blog'), section: 'blog', label: 'Blog', active: isBlogActive, showDesktop: true, showMobile: true },
+    { id: 'contact', href: sectionPath('contact-us'), section: 'contact-us', label: editorial("common/Header.text11").trim(), active: isContactActive, showDesktop: true, showMobile: true },
   ];
+
+  const isPathActive = (dest: string): boolean => {
+    const clean = dest.split('#')[0].split('?')[0].replace(/\/+$/, '') || '/';
+    if (clean === '/') return isHomepage;
+    if (clean === '/victoria-falls-guide') return isGuideActive;
+    if (clean === '/things-to-do-in-victoria-falls' || clean === '/experiences') return isExperiencesActive;
+    if (clean === '/victoria-falls-accommodation' || clean === '/accommodation') return isAccommodationActive;
+    if (clean === '/victoria-falls-packages') return isPackagesActive;
+    if (clean === '/client-gallery') return isGalleryActive;
+    if (clean === '/about') return isAboutActive;
+    if (clean === '/blog') return isBlogActive;
+    if (clean === '/contact') return isContactActive;
+    return typeof window !== 'undefined' && (window.location.pathname.replace(/\/+$/, '') || '/') === clean;
+  };
+
+  const normalizeNavHref = (dest: string): string => {
+    const raw = (dest || '/').trim();
+    if (raw === '/experiences') return '/things-to-do-in-victoria-falls';
+    if (raw === '/accommodation') return '/victoria-falls-accommodation';
+    return raw;
+  };
+
+  const navItems: NavItem[] =
+    Array.isArray(SITE_NAVIGATION?.headerItems) && SITE_NAVIGATION.headerItems.length > 0
+      ? [...SITE_NAVIGATION.headerItems]
+          .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+          .map((item) => {
+            const href = normalizeNavHref(item.destination);
+            return {
+              id: item.id,
+              href,
+              label: item.label,
+              active: isPathActive(href),
+              showDesktop: item.showDesktop !== false,
+              showMobile: item.showMobile !== false,
+            };
+          })
+      : defaultNavItems;
+
+  const desktopNavItems = navItems.filter((item) => item.showDesktop);
+  const mobileNavItems = navItems.filter((item) => item.showMobile);
+
+  const handleNavClick = (item: NavItem) => {
+    setMobileMenuOpen(false);
+    if (item.href === 'whatsapp') {
+      window.open(getWhatsAppUrl("Hello Outbound Holidays, I'd like to enquire about Victoria Falls travel."), '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if (item.section && !SITE_NAVIGATION?.headerItems?.length) {
+      onNavigateSection(item.section);
+      return;
+    }
+    if (onNavigate) {
+      onNavigate(item.href);
+      return;
+    }
+    window.history.pushState({}, '', item.href);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  const primaryCtaAction = (SITE_NAVIGATION?.primaryCtaAction || 'modal').trim();
+  const handlePrimaryCtaClick = () => {
+    setMobileMenuOpen(false);
+    if (primaryCtaAction === 'whatsapp') {
+      window.open(getWhatsAppUrl("Hello Outbound Holidays, I'd like help planning a Victoria Falls holiday."), '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if (primaryCtaAction === 'contact' || primaryCtaAction === '/contact') {
+      if (onNavigate) onNavigate('/contact');
+      else onNavigateSection('contact-us');
+      return;
+    }
+    if (/^https?:\/\//i.test(primaryCtaAction)) {
+      window.open(primaryCtaAction, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if (primaryCtaAction.startsWith('/')) {
+      if (onNavigate) onNavigate(primaryCtaAction);
+      else {
+        window.history.pushState({}, '', primaryCtaAction);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+      return;
+    }
+    onOpenPlanHoliday();
+  };
 
   const isDefaultLogo = !outboundLogo || /outbound-holidays-logo/i.test(String(outboundLogo));
   const logoSrc = isDefaultLogo
@@ -333,27 +422,44 @@ export const Header = ({
             }`}
           >
             <nav aria-label="Primary Navigation" className="flex items-center gap-0.5">
-              {navItems.map((item) => (
-                <PageLink
-                  key={item.id}
-                  href={sectionPath(item.section)}
-                  onClick={() => onNavigateSection(item.section)}
-                  aria-current={item.active ? 'page' : undefined}
-                  className={`relative px-2 2xl:px-2.5 py-2 rounded-full text-[12.5px] 2xl:text-[13.5px] font-medium whitespace-nowrap transition-all duration-200 motion-reduce:transition-none flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
-                    item.active
-                      ? 'bg-white/18 text-white font-semibold shadow-[inset_0_0_0_1px_rgba(255,255,255,0.22)]'
-                      : 'text-white/92 hover:text-white hover:bg-white/12'
-                  }`}
-                >
-                  {item.active && (
-                    <span
-                      aria-hidden="true"
-                      className="w-1.5 h-1.5 rounded-full bg-[#3F6B3C] ring-2 ring-white/80 shrink-0"
-                    />
-                  )}
-                  <span>{item.label}</span>
-                </PageLink>
-              ))}
+              {desktopNavItems.map((item) => {
+                const isExternal = /^https?:\/\//i.test(item.href);
+                const itemCls = `relative px-2 2xl:px-2.5 py-2 rounded-full text-[12.5px] 2xl:text-[13.5px] font-medium whitespace-nowrap transition-all duration-200 motion-reduce:transition-none flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
+                  item.active
+                    ? 'bg-white/18 text-white font-semibold shadow-[inset_0_0_0_1px_rgba(255,255,255,0.22)]'
+                    : 'text-white/92 hover:text-white hover:bg-white/12'
+                }`;
+                if (isExternal || item.href === 'whatsapp') {
+                  return (
+                    <a
+                      key={item.id}
+                      href={isExternal ? item.href : getWhatsAppUrl("Hello Outbound Holidays, I'd like help planning a Victoria Falls holiday.")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={itemCls}
+                    >
+                      <span>{item.label}</span>
+                    </a>
+                  );
+                }
+                return (
+                  <PageLink
+                    key={item.id}
+                    href={item.href}
+                    onClick={() => handleNavClick(item)}
+                    aria-current={item.active ? 'page' : undefined}
+                    className={itemCls}
+                  >
+                    {item.active && (
+                      <span
+                        aria-hidden="true"
+                        className="w-1.5 h-1.5 rounded-full bg-[#3F6B3C] ring-2 ring-white/80 shrink-0"
+                      />
+                    )}
+                    <span>{item.label}</span>
+                  </PageLink>
+                );
+              })}
             </nav>
 
             <span aria-hidden="true" className="h-5 w-px bg-white/20 mx-0.5 shrink-0" />
@@ -585,7 +691,7 @@ export const Header = ({
             {/* Primary Planning CTA */}
             <button
               type="button"
-              onClick={onOpenPlanHoliday}
+              onClick={handlePrimaryCtaClick}
               className="min-h-[42px] 2xl:min-h-[44px] bg-[#E67E22] hover:bg-[#d36e17] active:bg-[#c25f10] text-white font-bold text-[12.5px] 2xl:text-[13.5px] px-3.5 2xl:px-4.5 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-200 motion-reduce:transition-none whitespace-nowrap flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <CalendarCheck className="w-4 h-4 shrink-0" />
@@ -733,41 +839,53 @@ export const Header = ({
 
             {/* Navigation Links */}
             <nav aria-label="Mobile Navigation" className="grid grid-cols-1 gap-1.5 font-medium text-[15px]">
-              {navItems.map((item) => (
-                <PageLink
-                  key={item.id}
-                  href={sectionPath(item.section)}
-                  onClick={() => {
-                    onNavigateSection(item.section);
-                    setMobileMenuOpen(false);
-                  }}
-                  aria-current={item.active ? 'page' : undefined}
-                  className={`min-h-[46px] px-4 py-2.5 rounded-2xl flex items-center justify-between transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
-                    item.active
-                      ? 'bg-white/16 text-white font-bold border-l-4 border-[#3F6B3C]'
-                      : 'text-white/92 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  <span className="flex items-center gap-2.5">
-                    {item.active && <span className="w-2 h-2 rounded-full bg-[#3F6B3C] ring-2 ring-white/80" />}
-                    <span>{item.label}</span>
-                  </span>
-                  {item.active && (
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C9A66B]">
-                      Current
+              {mobileNavItems.map((item) => {
+                const isExternal = /^https?:\/\//i.test(item.href);
+                const mobCls = `min-h-[46px] px-4 py-2.5 rounded-2xl flex items-center justify-between transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
+                  item.active
+                    ? 'bg-white/16 text-white font-bold border-l-4 border-[#3F6B3C]'
+                    : 'text-white/92 hover:bg-white/10 hover:text-white'
+                }`;
+                if (isExternal || item.href === 'whatsapp') {
+                  return (
+                    <a
+                      key={item.id}
+                      href={isExternal ? item.href : getWhatsAppUrl("Hello Outbound Holidays, I'd like help planning a Victoria Falls holiday.")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={mobCls}
+                    >
+                      <span>{item.label}</span>
+                    </a>
+                  );
+                }
+                return (
+                  <PageLink
+                    key={item.id}
+                    href={item.href}
+                    onClick={() => handleNavClick(item)}
+                    aria-current={item.active ? 'page' : undefined}
+                    className={mobCls}
+                  >
+                    <span className="flex items-center gap-2.5">
+                      {item.active && <span className="w-2 h-2 rounded-full bg-[#3F6B3C] ring-2 ring-white/80" />}
+                      <span>{item.label}</span>
                     </span>
-                  )}
-                </PageLink>
-              ))}
+                    {item.active && (
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C9A66B]">
+                        Current
+                      </span>
+                    )}
+                  </PageLink>
+                );
+              })}
             </nav>
 
             {/* Prominent Plan My Holiday CTA */}
             <button
               type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenPlanHoliday();
-              }}
+              onClick={handlePrimaryCtaClick}
               className="w-full min-h-[48px] bg-[#E67E22] hover:bg-[#d36e17] active:bg-[#c25f10] text-white font-bold text-sm px-5 py-3 rounded-full shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <CalendarCheck className="w-4 h-4 shrink-0" />

@@ -23,6 +23,7 @@ import { PromotionsSection } from './components/promotions/PromotionsSection';
 import type { PromotionOffer } from './types/promotion';
 import { fetchActivePromotions, canShowPromotionPopup } from './data/promotionsData';
 import { MobileStickyCta } from './components/common/MobileStickyCta';
+import { PlanHolidayModal } from './components/travel/PlanHolidayModal';
 import { getEnquiryItemLabel, type DirectEnquiryContext } from './utils/enquiry';
 import { trackEnquiryEvent } from './utils/analytics';
 import { Newsletter } from './components/common/Newsletter';
@@ -46,7 +47,6 @@ const BomaExperiencePage = lazy(() => import('./components/travel/BomaExperience
 const BungeeExperiencePage = lazy(() => import('./components/travel/BungeeExperiencePage').then((m) => ({ default: m.BungeeExperiencePage })));
 const OfferDetailPage = lazy(() => import('./components/promotions/OfferDetailPage').then((m) => ({ default: m.OfferDetailPage })));
 const NewsletterAdmin = lazy(() => import('./components/admin/NewsletterAdmin').then((m) => ({ default: m.NewsletterAdmin })));
-const PlanHolidayModal = lazy(() => import('./components/travel/PlanHolidayModal').then((m) => ({ default: m.PlanHolidayModal })));
 const PromotionalModal = lazy(() => import('./components/promotions/PromotionalModal').then((m) => ({ default: m.PromotionalModal })));
 const PromotionEnquiryModal = lazy(() => import('./components/promotions/PromotionEnquiryModal').then((m) => ({ default: m.PromotionEnquiryModal })));
 const DirectEnquiryModal = lazy(() => import('./components/common/DirectEnquiryModal').then((m) => ({ default: m.DirectEnquiryModal })));
@@ -70,10 +70,16 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
   const selectedPackage = route.package;
   const selectedAccommodation = route.accommodation;
   const [currency, setCurrency] = useState<Currency>('USD');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const sp = new URLSearchParams(window.location.search);
+    return sp.get('q') || sp.get('s') || '';
+  });
 
   useEffect(() => {
     const onPopState = () => {
+      const sp = new URLSearchParams(window.location.search);
+      setSearchQuery(sp.get('q') || sp.get('s') || '');
       setRoute(resolveRoute(window.location.pathname));
       window.scrollTo({ top: 0 });
     };
@@ -81,18 +87,43 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  const scrollToCurrentHash = () => {
+    const hash = window.location.hash;
+    if (!hash) return undefined;
+    const targetId = hash.slice(1);
+    let attempts = 0;
+    let timerId: number | undefined;
+    const tryScroll = () => {
+      const el = document.getElementById(targetId) || (targetId === 'practical-faqs' ? document.getElementById('faq-section') : null);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      attempts += 1;
+      if (attempts < 15) {
+        timerId = window.setTimeout(tryScroll, 100);
+      }
+    };
+    const frame = requestAnimationFrame(tryScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      if (timerId !== undefined) window.clearTimeout(timerId);
+    };
+  };
+
   useEffect(() => {
-    if (window.location.hash) {
-      const frame = requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }));
-      return () => cancelAnimationFrame(frame);
-    }
+    return scrollToCurrentHash();
   }, [route]);
 
   const navigate = (path: string) => {
     setHasClientNavigated(true);
-    if (window.location.pathname + window.location.hash !== path) window.history.pushState({}, '', path);
+    const currentFull = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentFull !== path) window.history.pushState({}, '', path);
     setRoute(resolveRoute(window.location.pathname));
-    if (!window.location.hash) {
+    if (window.location.hash) {
+      window.dispatchEvent(new CustomEvent('outbound:hashchange', { detail: { hash: window.location.hash } }));
+      scrollToCurrentHash();
+    } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -431,6 +462,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
           />
         ) : activeView === 'experiences' ? (
           <ExperiencesDirectoryPage
+            currency={currency}
             onSelectExperience={handleSelectExperience}
             onSelectCategory={handleSelectCategory}
             onOpenPlanHoliday={() => {
@@ -441,6 +473,7 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
         ) : activeView === 'experience-category' && selectedCategory ? (
           <ExperienceCategoryPage
             categoryId={selectedCategory}
+            currency={currency}
             onSelectExperience={handleSelectExperience}
             onSelectCategory={handleSelectCategory}
             onOpenPlanHoliday={() => {
@@ -559,8 +592,12 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
           />
         ) : activeView === 'search' ? (
           <SearchResultsPage
-            initialQuery={searchQuery || (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('q') || '' : '')}
-            initialType={(typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('type') : undefined) as never}
+            initialQuery={
+              (typeof window !== 'undefined'
+                ? new URLSearchParams(window.location.search).get('q') || new URLSearchParams(window.location.search).get('s')
+                : null) || searchQuery || ''
+            }
+            initialType={((typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('type') : null) || 'all') as never}
             promotions={promotions}
             onNavigate={navigate}
           />
@@ -728,21 +765,13 @@ export default function App({ initialPath,contentVersion }: { initialPath?: stri
 
       {/* Holiday Builder Modal */}
       {planHolidayOpen && (
-        <Suspense
-          fallback={
-            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center" aria-busy="true">
-              <div className="w-9 h-9 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-            </div>
-          }
-        >
-          <PlanHolidayModal
-            isOpen={planHolidayOpen}
-            onClose={() => setPlanHolidayOpen(false)}
-            preselectedActivity={preselectedActivity}
-            preselectedPackage={preselectedPackage}
-            preselectedAccommodation={preselectedAccommodation}
-          />
-        </Suspense>
+        <PlanHolidayModal
+          isOpen={planHolidayOpen}
+          onClose={() => setPlanHolidayOpen(false)}
+          preselectedActivity={preselectedActivity}
+          preselectedPackage={preselectedPackage}
+          preselectedAccommodation={preselectedAccommodation}
+        />
       )}
 
       {directEnquiryContext && (

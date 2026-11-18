@@ -5,6 +5,8 @@ import { installContent } from '../src/runtime/catalog';
 import { resolveRoute, searchPath } from '../src/routes';
 import type { PromotionOffer } from '../src/types/promotion';
 import {
+  buildSearchRequestUrl,
+  executeGlobalSearch,
   executeLocalCatalogSearch,
   GOOGLE_CSE_ID,
   SEARCH_FILTER_TABS,
@@ -253,4 +255,75 @@ test('category filter tabs, pagination, and query highlighting work consistently
 
   const segments = splitHighlightSegments('Sunset Cruise on the Zambezi', 'sunset');
   assert.ok(segments.some((s) => s.match && s.text.toLowerCase() === 'sunset'));
+});
+
+test('executeGlobalSearch preserves existing query params like ?ver= when calling WP REST searchUrl', async () => {
+  const prevWin = (globalThis as { window?: unknown }).window;
+  const prevFetch = globalThis.fetch;
+  let capturedUrl = '';
+
+  (globalThis as { window?: unknown }).window = {
+    __OUTBOUND_WP_CONFIG__: {
+      isWordPress: true,
+      searchUrl: 'https://outboundholiday.com/wp-json/outbound/v1/search?ver=1.7.0',
+    },
+  };
+  globalThis.fetch = (async (input: URL | RequestInfo) => {
+    capturedUrl = String(input);
+    return {
+      ok: true,
+      json: async () => ({
+        query: 'sunset cruise',
+        type: 'all',
+        total: 1,
+        page: 1,
+        perPage: 12,
+        totalPages: 1,
+        typeCounts: { all: 1, accommodation: 0, experiences: 1, packages: 0, blogs: 0, offers: 0, pages: 0 },
+        results: [
+          {
+            id: 'exp:upper-zambezi-sunset-cruise',
+            title: 'Upper Zambezi Sunset Cruise',
+            type: 'experiences',
+            typeLabel: 'Thing to Do',
+            url: '/things-to-do/upper-zambezi-sunset-cruise',
+            description: 'Sunset river cruise.',
+          },
+        ],
+        source: 'wordpress-cms',
+      }),
+    } as Response;
+  }) as typeof fetch;
+
+  try {
+    const res = await executeGlobalSearch({ q: 'sunset cruise', type: 'all' });
+    assert.ok(capturedUrl.includes('?ver=1.7.0&q=sunset+cruise'), `Expected & separator after ?ver=, got: ${capturedUrl}`);
+    assert.equal((capturedUrl.match(/\?/g) || []).length, 1, 'URL must contain only a single ?');
+    assert.equal(res.total, 1);
+  } finally {
+    globalThis.fetch = prevFetch;
+    if (prevWin === undefined) {
+      delete (globalThis as { window?: unknown }).window;
+    } else {
+      (globalThis as { window?: unknown }).window = prevWin;
+    }
+  }
+});
+
+test('buildSearchRequestUrl handles plain permalinks and repairs malformed double-question-mark URLs', () => {
+  const plainUrl = buildSearchRequestUrl(
+    'https://outboundholiday.com/index.php?rest_route=/outbound/v1/search&ver=20261117',
+    { q: 'sunset cruise', type: 'all', page: 1, perPage: 6 }
+  );
+  assert.equal((plainUrl.match(/\?/g) || []).length, 1);
+  assert.ok(plainUrl.includes('rest_route=%2Foutbound%2Fv1%2Fsearch'));
+  assert.ok(plainUrl.includes('ver=20261117'));
+  assert.ok(plainUrl.includes('q=sunset+cruise'));
+
+  const repairedUrl = buildSearchRequestUrl(
+    'https://outboundholiday.com/wp-json/outbound/v1/search?ver=123?foo=bar',
+    { q: 'ilala', type: 'accommodation', page: 2, perPage: 12 }
+  );
+  assert.equal((repairedUrl.match(/\?/g) || []).length, 1);
+  assert.ok(repairedUrl.includes('ver=123&foo=bar&q=ilala&type=accommodation&page=2&per_page=12'));
 });

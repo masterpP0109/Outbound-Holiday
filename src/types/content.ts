@@ -266,6 +266,17 @@ export interface Experience {
   location?: string;
   fromPrice: string;
   priceAmount: number;
+  priceBasis?: 'per_adult' | 'per_person' | 'per_child' | 'per_group' | 'per_vehicle' | 'on_request';
+  childRateUnder11USD?: number | null;
+  childRate11PlusUSD?: number | null;
+  rateStatus?: 'provisional' | 'confirmed';
+  validFrom?: string;
+  validTo?: string;
+  defaultTimeSlot?: string;
+  departureTimes?: string[];
+  includeInBuilder?: boolean;
+  builderOrder?: number;
+  recommendedInBuilder?: boolean;
   featuredImage: string;
   galleryImages: string[];
   highlights: string[];
@@ -385,4 +396,19 @@ export interface ActivityItem {
   shortDesc: string;
   whyRecommend: string;
   idealFor: string[];
+  experienceId?: string;
+  includeInBuilder?: boolean;
+  suggestedByDefault?: boolean;
+  displayOrder?: number;
+  priceOverrideEnabled?: boolean;
+  priceSource?: 'experience-catalog' | 'builder-override' | 'custom';
+  categories?: string[];
+  priceBasis?: 'per_adult' | 'per_person' | 'per_child' | 'per_group' | 'per_vehicle' | 'on_request';
+  childRateUnder11USD?: number | null;
+  childRate11PlusUSD?: number | null;
+  rateStatus?: 'provisional' | 'confirmed';
+  validFrom?: string;
+  validTo?: string;
+  defaultTimeSlot?: string;
+  departureTimes?: string[];
 }

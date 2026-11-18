@@ -198,7 +198,7 @@ function buildLocalSearchIndex(promotions: PromotionOffer[] = []): IndexedEntry[
           propertyName: rawAcc.name,
           unitName: rm.name,
           unitId,
-          wing: rm.wing,
+          ...(rm.wing ? { wing: rm.wing } : {}),
           category: rawAcc.category,
           location: rawAcc.location,
           description: rm.shortDescription || rm.description || rawAcc.shortDescription,
@@ -680,6 +680,36 @@ export function executeLocalCatalogSearch(params: {
   };
 }
 
+export function buildSearchRequestUrl(
+  endpointBase: string,
+  params: { q: string; type?: GlobalSearchType; page?: number; perPage?: number }
+): string {
+  const origin =
+    typeof window !== 'undefined' && window.location?.origin
+      ? window.location.origin
+      : 'https://outboundholiday.com';
+  const cleanBase = String(endpointBase || '').trim();
+  // Repair any legacy double-'?' query strings such as /search?ver=123?q=...
+  const firstQ = cleanBase.indexOf('?');
+  const normalizedBase =
+    firstQ === -1
+      ? cleanBase
+      : cleanBase.slice(0, firstQ + 1) + cleanBase.slice(firstQ + 1).replace(/\?/g, '&');
+
+  const url = /^https?:\/\//i.test(normalizedBase)
+    ? new URL(normalizedBase)
+    : new URL(normalizedBase.startsWith('/') ? normalizedBase : `/${normalizedBase}`, origin);
+
+  url.searchParams.set('q', params.q);
+  url.searchParams.set('type', params.type || 'all');
+  url.searchParams.set('page', String(params.page ?? 1));
+  url.searchParams.set('per_page', String(params.perPage ?? 12));
+
+  return /^https?:\/\//i.test(normalizedBase)
+    ? url.toString()
+    : `${url.pathname}${url.search}`;
+}
+
 export async function executeGlobalSearch(params: {
   q: string;
   type?: GlobalSearchType;
@@ -698,15 +728,16 @@ export async function executeGlobalSearch(params: {
 
   if (endpointBase) {
     try {
-      const qs = new URLSearchParams({
+      const requestUrl = buildSearchRequestUrl(endpointBase, {
         q: cleanQ,
-        type: params.type || 'all',
-        page: String(params.page ?? 1),
-        per_page: String(params.perPage ?? 12),
+        ...(params.type !== undefined ? { type: params.type } : {}),
+        ...(params.page !== undefined ? { page: params.page } : {}),
+        ...(params.perPage !== undefined ? { perPage: params.perPage } : {}),
       });
-      const resp = await fetch(`${endpointBase}?${qs.toString()}`, {
+      const resp = await fetch(requestUrl, {
         headers: { Accept: 'application/json' },
-        signal: params.signal,
+        cache: 'no-cache',
+        ...(params.signal ? { signal: params.signal } : {}),
       });
       if (resp.ok) {
         const data = (await resp.json()) as GlobalSearchResponse;

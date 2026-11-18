@@ -1,11 +1,10 @@
 import { loadPublishedContent } from './load-content';
-import { installContent,editorialFormat } from '../src/runtime/catalog';
+import { installContent } from '../src/runtime/catalog';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import ts from 'typescript';
 import App from '../src/App';
 import { PAGE_ROUTES } from '../src/routes';
 import { WHATSAPP_NUMBER, PHONE_URL, getWhatsAppUrl, getWhatsAppEnquiryUrl, getWhatsAppSpecialistUrl } from '../src/utils/whatsapp';
@@ -45,17 +44,36 @@ checkMarkup(renderToString(<GuideHubView onSelectArticle={noop} onOpenPlanHolida
 checkMarkup(renderToString(<MobileStickyCta onOpenPlanHoliday={noop} experienceName={message} />));
 
 // Exercise the actual builder message code, including reserved URL characters.
-const builderSource = await readFile('src/components/travel/HolidayBuilderModal.tsx', 'utf8');
-const sourceFile = ts.createSourceFile('builder.tsx', builderSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-let builderBody = '';
-function findBuilder(node: ts.Node) {
-  if (ts.isVariableDeclaration(node) && node.name.getText(sourceFile) === 'buildWhatsAppLink' && node.initializer && ts.isArrowFunction(node.initializer)) builderBody = node.initializer.body.getText(sourceFile);
-  ts.forEachChild(node, findBuilder);
-}
-findBuilder(sourceFile);
-assert.ok(builderBody);
-const buildLink = new Function('editorialFormat','getWhatsAppUrl', 'selectedActivitiesList', 'selectedStayTierObj', 'adultsCount', 'kidsCount', 'partyType', 'nightsCount', 'estimatedMinUSD', 'estimatedMaxUSD', 'travelSeason', 'fullName', builderBody);
-const builderUrl = new URL(buildLink(editorialFormat,getWhatsAppUrl, [{ title: 'Cruise & Safari' }], { name: 'Comfort' }, 2, 1, 'family', 3, 1000, 1180, 'December', message));
+import { buildQuickHelpWhatsAppUrl, buildPlannerPlanWhatsAppUrl, createEmptyTripPlanDraft, resolveTripPlanContext } from '../src/utils/tripPlanBuilder';
+const quickUrl = new URL(buildQuickHelpWhatsAppUrl({ name: message, notes: 'Cruise & Safari', replyMethod: 'whatsapp' }));
+assert.equal(quickUrl.pathname, `/${WHATSAPP_NUMBER}`);
+assert.equal([...quickUrl.searchParams.keys()].join(','), 'text');
+assert.ok(quickUrl.searchParams.get('text')?.includes(message));
+assert.ok(quickUrl.searchParams.get('text')?.includes('Cruise & Safari'));
+assert.ok(!quickUrl.searchParams.get('text')?.includes('%0A'));
+
+const checkDraft = createEmptyTripPlanDraft();
+checkDraft.adults = 2;
+checkDraft.nights = 3;
+checkDraft.selectedActivities = [{ id: 'act-cruise', preferredDay: 'day-1', preferredTime: 'sunset' }];
+const checkCtx = resolveTripPlanContext({
+  draft: checkDraft,
+  accommodations: [],
+  stayTiers: [],
+  allActivities: [{
+    id: 'act-cruise',
+    title: 'Cruise & Safari',
+    duration: '2 Hours',
+    priceUSD: 85,
+    imageUrl: '/cruise.jpg',
+    badge: 'Cruise',
+    shortDesc: 'Cruise',
+    whyRecommend: 'Cruise',
+    idealFor: ['first-time'],
+  }],
+  transferOptions: [],
+});
+const builderUrl = new URL(buildPlannerPlanWhatsAppUrl({ ctx: checkCtx, name: message, replyMethod: 'whatsapp' }));
 assert.equal(builderUrl.pathname, `/${WHATSAPP_NUMBER}`);
 assert.equal([...builderUrl.searchParams.keys()].join(','), 'text');
 assert.ok(builderUrl.searchParams.get('text')?.includes(message));

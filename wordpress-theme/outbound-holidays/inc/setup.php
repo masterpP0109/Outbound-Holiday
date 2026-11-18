@@ -117,17 +117,29 @@ function outbound_resolve_wp_initial_route_path(): string {
 function outbound_get_frontend_runtime_config(): array {
     $turnstile  = outbound_get_turnstile_config();
     $site_url   = function_exists('home_url') ? rtrim((string) home_url('/'), '/') : 'https://outboundholiday.com';
+    $append_qs = static function (string $url, array $params): string {
+        $filtered = array();
+        foreach ($params as $k => $v) {
+            if ($v !== '' && $v !== null) {
+                $filtered[] = rawurlencode((string) $k) . '=' . rawurlencode((string) $v);
+            }
+        }
+        if (empty($filtered)) {
+            return $url;
+        }
+        return $url . (str_contains($url, '?') ? '&' : '?') . implode('&', $filtered);
+    };
+
     $rest_base  = function_exists('rest_url') ? rtrim((string) rest_url('outbound/v1'), '/') : '/wp-json/outbound/v1';
     $is_preview = function_exists('outbound_is_preview_request') && outbound_is_preview_request();
 
     $snap_ver = function_exists('get_option') ? (string) get_option('outbound_cms_snapshot_version', OUTBOUND_THEME_VERSION) : OUTBOUND_THEME_VERSION;
-    $ver_qs   = $snap_ver !== '' ? ('ver=' . rawurlencode($snap_ver)) : '';
-    $snap_qs  = array();
+    $snap_params = array();
     if ($is_preview) {
-        $snap_qs[] = 'outbound_preview=1';
+        $snap_params['outbound_preview'] = '1';
     }
-    if ($ver_qs !== '') {
-        $snap_qs[] = $ver_qs;
+    if ($snap_ver !== '') {
+        $snap_params['ver'] = $snap_ver;
     }
 
     $cfg = array(
@@ -137,9 +149,9 @@ function outbound_get_frontend_runtime_config(): array {
         'siteUrl'          => $site_url,
         'themeUri'         => defined('OUTBOUND_THEME_URI') ? rtrim((string) OUTBOUND_THEME_URI, '/') : '/wp-content/themes/outbound-holidays',
         'restUrl'          => $rest_base,
-        'snapshotUrl'      => $rest_base . '/snapshot' . (!empty($snap_qs) ? ('?' . implode('&', $snap_qs)) : ''),
-        'postsUrl'         => $rest_base . '/posts' . ($ver_qs !== '' ? ('?' . $ver_qs) : ''),
-        'searchUrl'        => $rest_base . '/search' . ($ver_qs !== '' ? ('?' . $ver_qs) : ''),
+        'snapshotUrl'      => $append_qs($rest_base . '/snapshot', $snap_params),
+        'postsUrl'         => $append_qs($rest_base . '/posts', $snap_ver !== '' ? array('ver' => $snap_ver) : array()),
+        'searchUrl'        => $append_qs($rest_base . '/search', $snap_ver !== '' ? array('ver' => $snap_ver) : array()),
         'googleCseId'      => '04ba449966f8744d2',
         'nonce'            => function_exists('wp_create_nonce') ? wp_create_nonce('wp_rest') : '',
         'heroFallbackUrl'  => outbound_get_media_fallback('hero'),

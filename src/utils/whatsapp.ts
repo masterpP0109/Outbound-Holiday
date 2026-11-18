@@ -12,6 +12,11 @@ export function getWhatsAppUrl(message: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
+/** Build a recipient-free WhatsApp share URL for social sharing dialogs. */
+export function getWhatsAppShareUrl(message: string): string {
+  return `https://wa.me/?text=${encodeURIComponent(message)}`;
+}
+
 /**
  * Generates a pre-filled WhatsApp enquiry URL for a specific experience.
  * Message format required:

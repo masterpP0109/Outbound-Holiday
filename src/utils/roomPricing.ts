@@ -138,16 +138,89 @@ export function formatBoardBasisLabel(board?: string): string {
   }
 }
 
+export function getTodayIsoDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function isRatePlanValidForDates(
+  rp: AccommodationRatePlan,
+  options?: { referenceDate?: string; checkIn?: string; checkOut?: string }
+): boolean {
+  if (!rp || rp.isActive === false) return false;
+  const refDate = options?.referenceDate || getTodayIsoDate();
+  if (rp.validTo && /^\d{4}-\d{2}-\d{2}$/.test(rp.validTo) && rp.validTo < refDate) {
+    return false;
+  }
+  const checkIn = options?.checkIn || '';
+  const checkOut = options?.checkOut || '';
+  if (checkIn && checkOut) {
+    const startDt = parseIsoDate(checkIn);
+    const endDt = parseIsoDate(checkOut);
+    if (startDt && endDt && endDt.getTime() > startDt.getTime()) {
+      const lastNight = toIsoUtc(new Date(endDt.getTime() - 86400000));
+      if (rp.validFrom && checkIn < rp.validFrom) return false;
+      if (rp.validTo && lastNight > rp.validTo) return false;
+    }
+  } else if (checkIn) {
+    if (rp.validFrom && checkIn < rp.validFrom) return false;
+    if (rp.validTo && checkIn > rp.validTo) return false;
+  }
+  return true;
+}
+
+export function isOfferWithinDateWindow(
+  offer: AccommodationOffer,
+  options?: { referenceDate?: string; checkIn?: string; checkOut?: string }
+): boolean {
+  if (!offer) return false;
+  if (offer.status === 'draft' || offer.status === 'archived' || offer.status === 'trashed') {
+    return false;
+  }
+  const refDate = options?.referenceDate || getTodayIsoDate();
+  if (offer.validTo && /^\d{4}-\d{2}-\d{2}$/.test(offer.validTo) && offer.validTo < refDate) {
+    return false;
+  }
+  const checkIn = options?.checkIn || '';
+  const checkOut = options?.checkOut || '';
+  if (checkIn && checkOut) {
+    const startDt = parseIsoDate(checkIn);
+    const endDt = parseIsoDate(checkOut);
+    if (startDt && endDt && endDt.getTime() > startDt.getTime()) {
+      const lastNight = toIsoUtc(new Date(endDt.getTime() - 86400000));
+      if (offer.validFrom && /^\d{4}-\d{2}-\d{2}$/.test(offer.validFrom) && checkIn < offer.validFrom) {
+        return false;
+      }
+      if (offer.validTo && /^\d{4}-\d{2}-\d{2}$/.test(offer.validTo) && lastNight > offer.validTo) {
+        return false;
+      }
+    }
+  } else if (checkIn) {
+    if (offer.validFrom && /^\d{4}-\d{2}-\d{2}$/.test(offer.validFrom) && checkIn < offer.validFrom) {
+      return false;
+    }
+    if (offer.validTo && /^\d{4}-\d{2}-\d{2}$/.test(offer.validTo) && checkIn > offer.validTo) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function getRoomRatePlans(
   room: RoomType,
-  property?: DetailedAccommodation
+  property?: DetailedAccommodation,
+  options?: { referenceDate?: string; includeExpired?: boolean }
 ): AccommodationRatePlan[] {
   const byId = new Map<string, AccommodationRatePlan>();
   const roomId = room.id || '';
   const linkedIds = new Set(room.ratePlanIds ?? []);
+  const includeExpired = options?.includeExpired === true;
+  const refDate = options?.referenceDate || getTodayIsoDate();
 
   for (const rp of property?.ratePlans ?? []) {
     if (!rp || !rp.id || rp.isActive === false) continue;
+    if (!includeExpired && rp.validTo && /^\d{4}-\d{2}-\d{2}$/.test(rp.validTo) && rp.validTo < refDate) {
+      continue;
+    }
     const applies =
       linkedIds.has(rp.id) ||
       (roomId !== '' && Array.isArray(rp.applicableUnitIds) && rp.applicableUnitIds.includes(roomId));
@@ -156,19 +229,22 @@ export function getRoomRatePlans(
     }
   }
   for (const rp of room.pricing?.ratePlans ?? []) {
-    if (rp && rp.id && rp.isActive !== false) {
-      byId.set(rp.id, rp);
+    if (!rp || !rp.id || rp.isActive === false) continue;
+    if (!includeExpired && rp.validTo && /^\d{4}-\d{2}-\d{2}$/.test(rp.validTo) && rp.validTo < refDate) {
+      continue;
     }
+    byId.set(rp.id, rp);
   }
   return Array.from(byId.values());
 }
 
 export function getPublishedPropertyOffers(
   property: DetailedAccommodation,
-  unitId?: string
+  unitId?: string,
+  options?: { referenceDate?: string; checkIn?: string; checkOut?: string }
 ): AccommodationOffer[] {
   return (property.offers ?? []).filter((offer) => {
-    if (offer.status === 'draft' || offer.status === 'archived' || offer.status === 'trashed') return false;
+    if (!isOfferWithinDateWindow(offer, options)) return false;
     if (!unitId) return true;
     if (offer.applyToEntireProperty) return true;
     if (!offer.applicableUnitIds || offer.applicableUnitIds.length === 0) return true;
@@ -420,15 +496,24 @@ export function calculateRoomStayQuote(params: {
   mealPlanId?: string;
   visitorMarket?: string;
   ratePlanId?: string;
+  referenceDate?: string;
   currency?: Currency;
 }): RoomQuoteResult {
   const { room, property, checkIn = '', checkOut = '', guests, mealPlanId, visitorMarket, ratePlanId } = params;
   const roomsCount = Math.max(1, params.roomsCount ?? 1);
   const currency = params.currency || 'USD';
+  const refDate = params.referenceDate || getTodayIsoDate();
   const pricing = room.pricing;
-  const linkedPlans = getRoomRatePlans(room, property);
+  const allLinkedPlansIncludingExpired = getRoomRatePlans(room, property, {
+    referenceDate: refDate,
+    includeExpired: true,
+  });
+  const linkedPlans = getRoomRatePlans(room, property, {
+    referenceDate: refDate,
+    includeExpired: false,
+  });
   const activePlan =
-    (ratePlanId ? linkedPlans.find((rp) => rp.id === ratePlanId) : undefined) ||
+    (ratePlanId ? allLinkedPlansIncludingExpired.find((rp) => rp.id === ratePlanId) : undefined) ||
     (visitorMarket
       ? linkedPlans.find(
           (rp) =>
@@ -439,7 +524,11 @@ export function calculateRoomStayQuote(params: {
         )
       : undefined);
 
-  const startingPriceUSD = activePlan && typeof activePlan.amountUSD === 'number' && activePlan.amountUSD > 0
+  const isExplicitPlanExpired = Boolean(
+    activePlan?.validTo && /^\d{4}-\d{2}-\d{2}$/.test(activePlan.validTo) && activePlan.validTo < refDate
+  );
+
+  const startingPriceUSD = !isExplicitPlanExpired && activePlan && typeof activePlan.amountUSD === 'number' && activePlan.amountUSD > 0
     ? activePlan.amountUSD
     : getRoomStartingPriceUSD(room, property);
   const effectiveStatus = activePlan?.rateStatus || pricing?.rateStatus;
@@ -453,6 +542,21 @@ export function calculateRoomStayQuote(params: {
     rateStatus === 'confirmed'
       ? 'Subject to live room availability — enquiry only, not a confirmed booking.'
       : 'Provisional guide rate — final availability and rates confirmed by our specialists.';
+
+  if (ratePlanId && activePlan && isExplicitPlanExpired) {
+    return {
+      mode: startingPriceUSD !== null ? 'starting' : 'enquiry',
+      nightlyAverageUSD: startingPriceUSD,
+      totalUSD: null,
+      nights: 0,
+      startingPriceUSD,
+      rateStatus,
+      label: startingLabel,
+      disclaimer: statusNote,
+      minStayNotice: null,
+      validityNotice: `The "${activePlan.internalRateName || formatVisitorMarketLabel(activePlan.visitorMarket, activePlan.customMarketLabel)}" rate plan expired on ${activePlan.validTo}; selected dates require an active rate plan or custom confirmation.`,
+    };
+  }
 
   const startDt = parseIsoDate(checkIn);
   const endDt = parseIsoDate(checkOut);
@@ -474,6 +578,39 @@ export function calculateRoomStayQuote(params: {
   const nights = Math.round((endDt.getTime() - startDt.getTime()) / (1000 * 60 * 60 * 24));
   const checkOutLastNight = new Date(endDt.getTime() - 86400000);
   const lastNightIso = toIsoUtc(checkOutLastNight);
+
+  // Enforce validity dates on explicitly selected rate plans BEFORE pricing nights
+  if (activePlan && (ratePlanId || visitorMarket)) {
+    const planLabel = activePlan.internalRateName || formatVisitorMarketLabel(activePlan.visitorMarket, activePlan.customMarketLabel);
+    if (activePlan.validFrom && checkIn < activePlan.validFrom) {
+      return {
+        mode: startingPriceUSD !== null ? 'starting' : 'enquiry',
+        nightlyAverageUSD: startingPriceUSD,
+        totalUSD: null,
+        nights,
+        startingPriceUSD,
+        rateStatus,
+        label: startingLabel,
+        disclaimer: statusNote,
+        minStayNotice: null,
+        validityNotice: `Rate plan "${planLabel}" begins ${activePlan.validFrom}; selected dates fall outside its validity window.`,
+      };
+    }
+    if (activePlan.validTo && lastNightIso > activePlan.validTo) {
+      return {
+        mode: startingPriceUSD !== null ? 'starting' : 'enquiry',
+        nightlyAverageUSD: startingPriceUSD,
+        totalUSD: null,
+        nights,
+        startingPriceUSD,
+        rateStatus,
+        label: startingLabel,
+        disclaimer: statusNote,
+        minStayNotice: null,
+        validityNotice: `Rate plan "${planLabel}" is valid until ${activePlan.validTo}; selected dates fall outside its validity window.`,
+      };
+    }
+  }
 
   // Check validity period if configured on this room
   if (pricing?.rateValidFrom && checkIn < pricing.rateValidFrom) {
@@ -540,8 +677,15 @@ export function calculateRoomStayQuote(params: {
     const wk = getWeekdayKey(cur);
     const isWeekend = (weekendDays as readonly string[]).includes(wk);
 
-    // Explicit ratePlanId or visitorMarket selection overrides unit seasonal/base fallback
-    if ((ratePlanId || visitorMarket) && activePlan && typeof activePlan.amountUSD === 'number' && activePlan.amountUSD > 0) {
+    // Explicit ratePlanId or visitorMarket selection overrides unit seasonal/base fallback ONLY within plan validity dates
+    if (
+      (ratePlanId || visitorMarket) &&
+      activePlan &&
+      typeof activePlan.amountUSD === 'number' &&
+      activePlan.amountUSD > 0 &&
+      (!activePlan.validFrom || iso >= activePlan.validFrom) &&
+      (!activePlan.validTo || iso <= activePlan.validTo)
+    ) {
       if (activePlan.minStayNights && (!effectiveMinStay || activePlan.minStayNights > effectiveMinStay)) {
         effectiveMinStay = activePlan.minStayNights;
       }

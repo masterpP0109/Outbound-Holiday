@@ -85,7 +85,31 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
       articleTitle: article.title,
     });
 
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    const activateHashTarget = (scrollIfPresent: boolean) => {
+      const hash = typeof window !== 'undefined' ? window.location.hash : '';
+      if (hash === '#practical-faqs' || hash === '#faq-section') {
+        setActiveMainTab('faqs');
+        setOpenFaqIndices([0, 1, 2]);
+        if (scrollIfPresent) {
+          requestAnimationFrame(() => {
+            const el = document.getElementById('practical-faqs') || document.getElementById('faq-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          });
+        }
+        return true;
+      }
+      return false;
+    };
+
+    if (!activateHashTarget(true)) {
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    }
+
+    const onHashUpdate = () => {
+      activateHashTarget(true);
+    };
+    window.addEventListener('hashchange', onHashUpdate);
+    window.addEventListener('outbound:hashchange', onHashUpdate);
 
     // Build JSON-LD Structured Data
     const articleSchema = {
@@ -164,6 +188,8 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
     scriptElem.textContent = JSON.stringify([articleSchema, breadcrumbSchema, faqSchema]);
 
     return () => {
+      window.removeEventListener('hashchange', onHashUpdate);
+      window.removeEventListener('outbound:hashchange', onHashUpdate);
       const elem = document.getElementById(scriptId);
       if (elem) elem.remove();
     };
@@ -907,7 +933,8 @@ export const GuideArticleTemplate: React.FC<GuideArticleTemplateProps> = ({
         )}
 
         {/* 6. Restored FAQ Section with Search, Filter Tabs, and Accordions */}
-        <section id="faq-section" className="mt-12 bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-10 shadow-xs space-y-8">
+        <section id="faq-section" className="mt-12 bg-white rounded-3xl border border-gray-200/90 p-6 sm:p-10 shadow-xs space-y-8 scroll-mt-28">
+          <div id="practical-faqs" className="scroll-mt-28" />
           
           {/* FAQ Header */}
           <div className="space-y-3 border-b border-gray-100 pb-6 text-center sm:text-left">

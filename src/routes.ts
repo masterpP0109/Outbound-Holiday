@@ -101,6 +101,7 @@ export function sectionPath(section: string): string {
   const paths: Record<string, string> = {
     hero: '/', home: '/', contact: '/contact', 'contact-us': '/contact', about: '/about', 'about-us': '/about', 'client-gallery': '/client-gallery', 'travel-guide': '/victoria-falls-guide', guide: '/victoria-falls-guide',
     blog: '/blog', 'travel-blog': '/blog',
+    faqs: '/victoria-falls-guide#practical-faqs', 'practical-faqs': '/victoria-falls-guide#practical-faqs',
     'travel-experiences': '/things-to-do-in-victoria-falls', experiences: '/things-to-do-in-victoria-falls',
     accommodation: '/victoria-falls-accommodation', accommodations: '/victoria-falls-accommodation', 'where-to-stay': '/victoria-falls-accommodation',
     'travel-packages': '/victoria-falls-packages', packages: '/victoria-falls-packages', boma: '/things-to-do/boma-dinner', 'boma-dinner': '/things-to-do/boma-dinner',

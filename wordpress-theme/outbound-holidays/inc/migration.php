@@ -72,7 +72,7 @@ function outbound_map_accommodation_migration_record(array $item): array {
             '_outbound_distance_falls'          => (string) ($item['distanceFromFalls'] ?? ''),
             '_outbound_airport_distance'        => (string) ($item['airportDistance'] ?? ''),
             '_outbound_price_usd'               => (string) ((int) ($item['priceFromUSD'] ?? ($item['startingPrice'] ?? 0))),
-            '_outbound_price_basis'             => (string) ($item['priceUnit'] ?? ($item['priceBasis'] ?? 'per night (sharing)')),
+            '_outbound_price_basis'             => (string) ($item['priceUnit'] ?? ($item['priceBasis'] ?? 'per person sharing per night')),
             '_outbound_max_guests'              => (string) ((int) ($item['maxGuests'] ?? 2)),
             '_outbound_rating'                  => (string) ($item['rating'] ?? '4.8'),
             '_outbound_review_count'            => (string) ((int) ($item['reviewCount'] ?? 24)),

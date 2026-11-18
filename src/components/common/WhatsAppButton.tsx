@@ -32,7 +32,11 @@ export const WhatsAppEnquiryButton: React.FC<WhatsAppEnquiryButtonProps> = ({
   showIcon = true,
   onClick
 }) => {
-  const url = getWhatsAppEnquiryUrl(experienceName, { date, guests, additionalNotes });
+  const url = getWhatsAppEnquiryUrl(experienceName, {
+    ...(date !== undefined ? { date } : {}),
+    ...(guests !== undefined ? { guests } : {}),
+    ...(additionalNotes !== undefined ? { additionalNotes } : {}),
+  });
 
   let baseStyle = "font-bold text-sm py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md transform hover:-translate-y-0.5 active:translate-y-0";
 

@@ -955,6 +955,11 @@ export const PackageDetailPage: React.FC<PackageDetailPageProps> = ({
               basePriceUSD={packageData.priceUSD || null}
               priceLabelPrefix="Indicative Package Rate"
               priceSuffix="per adult sharing"
+              ageNotice={
+                /under\s*12|child/i.test(packageData.pricingDetails?.basis || '')
+                  ? `Child rate rule: ${packageData.pricingDetails?.basis} Individual activity suppliers typically use Under 11 vs 11+ brackets — our specialist confirms exact child rates for ages 10, 11, and 12 in your quote.`
+                  : 'Child rate rule: Package child rates depend on exact age at travel (Under 11 vs 11–12+). Our specialist confirms exact family room and activity pricing for each child age.'
+              }
               durationLabel={packageData.duration}
               fixedDurationNights={
                 (() => {

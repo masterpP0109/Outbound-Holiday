@@ -39,7 +39,7 @@ function outbound_maybe_install_schema(bool $force = false): void {
     }
 
     $current = (string) get_option('outbound_db_schema_version', '0');
-    $target_version = defined('OUTBOUND_DB_SCHEMA_VERSION') ? OUTBOUND_DB_SCHEMA_VERSION : '1.4.0';
+    $target_version = defined('OUTBOUND_DB_SCHEMA_VERSION') ? OUTBOUND_DB_SCHEMA_VERSION : '1.5.0';
     if (!$force && version_compare($current, $target_version, '>=')) {
         return;
     }
@@ -48,7 +48,13 @@ function outbound_maybe_install_schema(bool $force = false): void {
     $charset = $wpdb->get_charset_collate();
     $tables  = outbound_get_table_names();
 
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    if (!function_exists('dbDelta')) {
+        $upgrade_file = defined('ABSPATH') ? ABSPATH . 'wp-admin/includes/upgrade.php' : '';
+        if ($upgrade_file === '' || !file_exists($upgrade_file)) {
+            return;
+        }
+        require_once $upgrade_file;
+    }
 
     $sql_subscribers = "CREATE TABLE {$tables['subscribers']} (
         id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -134,7 +140,15 @@ function outbound_maybe_install_schema(bool $force = false): void {
         payload_json longtext NOT NULL,
         status varchar(32) NOT NULL DEFAULT 'new',
         assigned_consultant varchar(120) DEFAULT NULL,
+        follow_up_date date DEFAULT NULL,
         admin_notes longtext DEFAULT NULL,
+        office_mail_status varchar(24) NOT NULL DEFAULT 'pending',
+        office_mail_error text DEFAULT NULL,
+        office_mail_sent_at datetime DEFAULT NULL,
+        customer_mail_status varchar(24) NOT NULL DEFAULT 'pending',
+        customer_mail_error text DEFAULT NULL,
+        customer_mail_sent_at datetime DEFAULT NULL,
+        activity_log_json longtext DEFAULT NULL,
         promotion_id bigint(20) unsigned DEFAULT NULL,
         promotion_name varchar(255) DEFAULT NULL,
         ip_address varchar(64) DEFAULT NULL,

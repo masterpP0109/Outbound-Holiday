@@ -51,7 +51,11 @@ export function trackGuideEvent(eventType: GuideEventType, payload?: GuideEventP
 export type EnquiryAnalyticsEventType =
   | 'enquiry_cta_clicked'
   | 'enquiry_whatsapp_selected'
-  | 'enquiry_email_selected';
+  | 'enquiry_email_selected'
+  | 'builder_opened'
+  | 'builder_section_viewed'
+  | 'builder_whatsapp_opened'
+  | 'builder_enquiry_saved';
 
 export interface EnquiryAnalyticsPayload {
   category: string;

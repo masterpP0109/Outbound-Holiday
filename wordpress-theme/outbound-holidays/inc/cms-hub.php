@@ -405,7 +405,77 @@ function outbound_cms_sanitize_section_patch(string $section, array $raw): array
                 $patch['currency_rates'] = $clean_rates;
             }
         }
+    } elseif ($section === 'header') {
+        $nav_out = array();
+        if (isset($raw['nav_items']) && is_array($raw['nav_items'])) {
+            $clean_nav = array();
+            $legacy_ed_map = array(
+                'guide'         => 'common/Header.text5',
+                'experiences'   => 'common/Header.text6',
+                'accommodation' => 'common/Header.text7',
+                'packages'      => 'common/Header.text8',
+                'gallery'       => 'common/Header.text9',
+                'about'         => 'common/Header.text10',
+                'contact'       => 'common/Header.text11',
+            );
+            foreach ($raw['nav_items'] as $nidx => $ni) {
+                if (!is_array($ni)) {
+                    continue;
+                }
+                $label = outbound_cms_sanitize_text((string) ($ni['label'] ?? ''));
+                if ($label === '') {
+                    continue;
+                }
+                $nid  = sanitize_title((string) ($ni['id'] ?? $label)) ?: ('nav-' . ($nidx + 1));
+                $dest = trim((string) ($ni['destination'] ?? '/'));
+                if ($dest === '__custom__') {
+                    $dest = trim((string) ($ni['customDestination'] ?? '/'));
+                } elseif (!empty($ni['customDestination']) && ($dest === '' || $dest === '__custom__')) {
+                    $dest = trim((string) $ni['customDestination']);
+                }
+                if ($dest === '/experiences') {
+                    $dest = '/things-to-do-in-victoria-falls';
+                } elseif ($dest === '/accommodation') {
+                    $dest = '/victoria-falls-accommodation';
+                }
+                if ($dest !== 'whatsapp' && !preg_match('/^https?:\/\//i', $dest)) {
+                    $dest = '/' . ltrim($dest, '/');
+                    if ($dest === '//') {
+                        $dest = '/';
+                    }
+                }
+                $clean_nav[] = array(
+                    'id'          => $nid,
+                    'label'       => $label,
+                    'destination' => $dest,
+                    'showDesktop' => !empty($ni['showDesktop']),
+                    'showMobile'  => !empty($ni['showMobile']),
+                    'order'       => isset($ni['order']) && is_numeric($ni['order']) ? (int) $ni['order'] : ($nidx + 1),
+                );
+                if (isset($legacy_ed_map[$nid])) {
+                    $patch['editorial_strings'][$legacy_ed_map[$nid]] = $label;
+                }
+            }
+            usort($clean_nav, static fn($a, $b) => ((int) $a['order']) <=> ((int) $b['order']));
+            if (!empty($clean_nav)) {
+                $nav_out['headerItems'] = $clean_nav;
+            }
+        }
+        if (isset($raw['header_cta_action'])) {
+            $cta_act = trim((string) $raw['header_cta_action']);
+            if ($cta_act === '/experiences') {
+                $cta_act = '/things-to-do-in-victoria-falls';
+            } elseif ($cta_act === '/accommodation') {
+                $cta_act = '/victoria-falls-accommodation';
+            }
+            $nav_out['primaryCtaAction'] = $cta_act !== '' ? $cta_act : 'modal';
+        }
+        if (!empty($nav_out)) {
+            $patch['navigation'] = $nav_out;
+        }
     } elseif ($section === 'builder') {
+        $suggested_ids = array();
+        $excluded_ids  = array();
         if (isset($raw['stay_tiers']) && is_array($raw['stay_tiers'])) {
             $tiers = array();
             foreach ($raw['stay_tiers'] as $idx => $t) {
@@ -444,20 +514,140 @@ function outbound_cms_sanitize_section_patch(string $section, array $raw): array
                 if ($title === '') {
                     continue;
                 }
+                $act_seq = count($acts) + 1;
+                $raw_id  = (string) ($a['id'] ?? (is_string($idx) ? $idx : $title));
+                $aid     = sanitize_title($raw_id) ?: ('act-' . $act_seq);
+                $exp_id  = outbound_cms_sanitize_text((string) ($a['experienceId'] ?? ''));
+                $include = !empty($a['includeInBuilder']);
+                $suggest = $include && !empty($a['suggestedByDefault']);
+                $order   = isset($a['displayOrder']) && is_numeric($a['displayOrder']) ? (int) $a['displayOrder'] : $act_seq;
+                $ovr_on  = !empty($a['priceOverrideEnabled']);
+
+                if (!$include) {
+                    $excluded_ids[] = $aid;
+                    if ($exp_id !== '') {
+                        $excluded_ids[] = $exp_id;
+                    }
+                }
+                if ($suggest) {
+                    $suggested_ids[] = $aid;
+                }
+
                 $acts[] = array(
-                    'id'           => sanitize_title((string) ($a['id'] ?? $title)) ?: ('act-' . ($idx + 1)),
-                    'title'        => $title,
-                    'duration'     => outbound_cms_sanitize_text((string) ($a['duration'] ?? 'Half Day')),
-                    'priceUSD'     => max(0, (float) ($a['priceUSD'] ?? ($a['priceAmount'] ?? 65))),
-                    'imageUrl'     => outbound_cms_sanitize_url((string) ($a['imageUrl'] ?? ($a['image'] ?? ''))) ?: outbound_get_media_fallback('falls'),
-                    'badge'        => outbound_cms_sanitize_text((string) ($a['badge'] ?? 'Popular')),
-                    'shortDesc'    => outbound_cms_sanitize_textarea((string) ($a['shortDesc'] ?? '')),
+                    'id'                   => $aid,
+                    'experienceId'         => $exp_id,
+                    'includeInBuilder'     => $include,
+                    'suggestedByDefault'   => $suggest,
+                    'displayOrder'         => $order,
+                    'priceOverrideEnabled' => $ovr_on,
+                    'priceSource'          => $ovr_on ? 'builder-override' : 'experience-catalog',
+                    'priceBasis'           => in_array((string) ($a['priceBasis'] ?? ''), array('per_adult', 'per_person', 'per_child', 'per_group', 'per_vehicle', 'on_request'), true) ? (string) $a['priceBasis'] : 'per_adult',
+                    'childRateUnder11USD'  => isset($a['childRateUnder11USD']) && $a['childRateUnder11USD'] !== '' && is_numeric($a['childRateUnder11USD']) ? max(0, (float) $a['childRateUnder11USD']) : null,
+                    'childRate11PlusUSD'   => isset($a['childRate11PlusUSD']) && $a['childRate11PlusUSD'] !== '' && is_numeric($a['childRate11PlusUSD']) ? max(0, (float) $a['childRate11PlusUSD']) : null,
+                    'rateStatus'           => ((string) ($a['rateStatus'] ?? 'provisional')) === 'confirmed' ? 'confirmed' : 'provisional',
+                    'validFrom'            => outbound_cms_sanitize_text((string) ($a['validFrom'] ?? '')),
+                    'validTo'              => outbound_cms_sanitize_text((string) ($a['validTo'] ?? '')),
+                    'defaultTimeSlot'      => in_array((string) ($a['defaultTimeSlot'] ?? ''), array('morning', 'afternoon', 'sunset', 'evening', 'to-be-arranged'), true) ? (string) $a['defaultTimeSlot'] : 'to-be-arranged',
+                    'departureTimes'       => !empty($a['departureTimesCsv'])
+                        ? array_values(array_filter(array_map('outbound_cms_sanitize_text', explode(',', (string) $a['departureTimesCsv']))))
+                        : (!empty($a['departureTimes'])
+                            ? array_values(array_filter(array_map('outbound_cms_sanitize_text', is_array($a['departureTimes']) ? $a['departureTimes'] : explode(',', (string) $a['departureTimes']))))
+                            : array()),
+                    'title'                => $title,
+                    'duration'             => outbound_cms_sanitize_text((string) ($a['duration'] ?? 'Half Day')),
+                    'priceUSD'             => max(0, (float) ($a['priceUSD'] ?? ($a['priceAmount'] ?? 65))),
+                    'imageUrl'             => outbound_cms_sanitize_url((string) ($a['imageUrl'] ?? ($a['image'] ?? ''))) ?: outbound_get_media_fallback('falls'),
+                    'badge'                => outbound_cms_sanitize_text((string) ($a['badge'] ?? 'Popular')),
+                    'shortDesc'            => outbound_cms_sanitize_textarea((string) ($a['shortDesc'] ?? '')),
                 );
             }
-            if (!empty($acts)) {
-                $patch['builder_activities'] = $acts;
+            usort($acts, static fn($x, $y) => ((int) ($x['displayOrder'] ?? 999)) <=> ((int) ($y['displayOrder'] ?? 999)));
+            $patch['builder_activities'] = $acts;
+            $patch['builder_excluded_experiences'] = array_values(array_unique(array_filter($excluded_ids)));
+        }
+        $transfers_out = null;
+        if (isset($raw['builder_transfers']) && is_array($raw['builder_transfers'])) {
+            $transfers_out = array();
+            foreach ($raw['builder_transfers'] as $tidx => $tr) {
+                if (!is_array($tr)) {
+                    continue;
+                }
+                $ttitle = outbound_cms_sanitize_text((string) ($tr['title'] ?? ''));
+                if ($ttitle === '') {
+                    continue;
+                }
+                $tid = sanitize_title((string) ($tr['id'] ?? $ttitle)) ?: ('tr-' . ($tidx + 1));
+                $raw_price = $tr['priceUSD'] ?? '';
+                $tbasis = (string) ($tr['priceBasis'] ?? 'per_vehicle');
+                if (!in_array($tbasis, array('per_vehicle', 'per_vehicle_return', 'per_person', 'per_group', 'on_request'), true)) {
+                    $tbasis = 'per_vehicle';
+                }
+                $tvcat = (string) ($tr['visitorCategory'] ?? 'all');
+                if (!in_array($tvcat, array('all', 'international', 'zimbabwe_resident', 'sadc_resident'), true)) {
+                    $tvcat = 'all';
+                }
+                $transfers_out[] = array(
+                    'id'                  => $tid,
+                    'title'               => $ttitle,
+                    'badge'               => outbound_cms_sanitize_text((string) ($tr['badge'] ?? 'Transfer')) ?: 'Transfer',
+                    'desc'                => outbound_cms_sanitize_textarea((string) ($tr['desc'] ?? ($tr['route'] ?? 'Victoria Falls transfer'))),
+                    'route'               => outbound_cms_sanitize_text((string) ($tr['route'] ?? '')),
+                    'priceUSD'            => ($raw_price !== '' && is_numeric($raw_price)) ? max(0, (float) $raw_price) : null,
+                    'priceBasis'          => $tbasis,
+                    'childPriceUSD'       => isset($tr['childPriceUSD']) && $tr['childPriceUSD'] !== '' && is_numeric($tr['childPriceUSD']) ? max(0, (float) $tr['childPriceUSD']) : null,
+                    'child11PlusPriceUSD' => isset($tr['child11PlusPriceUSD']) && $tr['child11PlusPriceUSD'] !== '' && is_numeric($tr['child11PlusPriceUSD']) ? max(0, (float) $tr['child11PlusPriceUSD']) : null,
+                    'visitorCategory'     => $tvcat,
+                    'validFrom'           => outbound_cms_sanitize_text((string) ($tr['validFrom'] ?? '')),
+                    'validTo'             => outbound_cms_sanitize_text((string) ($tr['validTo'] ?? '')),
+                    'rateStatus'          => ((string) ($tr['rateStatus'] ?? 'provisional')) === 'confirmed' ? 'confirmed' : 'provisional',
+                    'includeInBuilder'    => !empty($tr['includeInBuilder']),
+                    'displayOrder'        => isset($tr['displayOrder']) && is_numeric($tr['displayOrder']) ? (int) $tr['displayOrder'] : ($tidx + 1),
+                );
+            }
+            usort($transfers_out, static fn($x, $y) => ((int) ($x['displayOrder'] ?? 999)) <=> ((int) ($y['displayOrder'] ?? 999)));
+        }
+        $bc_raw = isset($raw['builder_config']) && is_array($raw['builder_config']) ? $raw['builder_config'] : array();
+        $avail_nights = array();
+        if (!empty($bc_raw['availableNightsCsv'])) {
+            foreach (explode(',', (string) $bc_raw['availableNightsCsv']) as $chunk) {
+                $n = (int) trim($chunk);
+                if ($n >= 1 && $n <= 30 && !in_array($n, $avail_nights, true)) {
+                    $avail_nights[] = $n;
+                }
             }
         }
+        $bc_out = array(
+            'defaultStayTierId'    => sanitize_title((string) ($bc_raw['defaultStayTierId'] ?? 'comfort-plus')) ?: 'comfort-plus',
+            'defaultNights'        => max(1, min(30, (int) ($bc_raw['defaultNights'] ?? 3))),
+            'availableNights'      => !empty($avail_nights) ? $avail_nights : array(2, 3, 4, 5),
+            'suggestedActivityIds' => array_values(array_unique($suggested_ids)),
+        );
+        if (isset($bc_raw['entryCopy']) && is_array($bc_raw['entryCopy'])) {
+            $ec_raw = $bc_raw['entryCopy'];
+            $ec_out = array();
+            foreach (array('heading', 'helpCardTitle', 'helpCardDesc', 'whatsappCtaLabel', 'quickEnquiryCtaLabel', 'itineraryCardTitle', 'itineraryCardDesc', 'itineraryCtaLabel') as $eck) {
+                $ecv = outbound_cms_sanitize_text((string) ($ec_raw[$eck] ?? ''));
+                if ($ecv !== '') {
+                    $ec_out[$eck] = $ecv;
+                }
+            }
+            if (!empty($ec_out)) {
+                $bc_out['entryCopy'] = $ec_out;
+            }
+        }
+        if (!empty($bc_raw['enabledSectionsPresent'])) {
+            $es_raw = isset($bc_raw['enabledSections']) && is_array($bc_raw['enabledSections']) ? $bc_raw['enabledSections'] : array();
+            $bc_out['enabledSections'] = array(
+                'datesGuests' => !empty($es_raw['datesGuests']),
+                'stay'        => !empty($es_raw['stay']),
+                'activities'  => !empty($es_raw['activities']),
+                'transfers'   => !empty($es_raw['transfers']),
+            );
+        }
+        if (is_array($transfers_out)) {
+            $bc_out['transferOptions'] = $transfers_out;
+        }
+        $patch['builder_config'] = $bc_out;
     } elseif ($section === 'design') {
         $d = isset($raw['design']) && is_array($raw['design']) ? $raw['design'] : array();
         $patch['design_tokens'] = array(
@@ -1879,7 +2069,7 @@ function outbound_render_cms_hub_page(): void {
                         outbound_cms_render_section_about_contact($snapshot, $cms_opts);
                         break;
                     case 'header':
-                        outbound_cms_render_section_header($snapshot);
+                        outbound_cms_render_section_header($snapshot, $bundle);
                         break;
                     case 'footer':
                         outbound_cms_render_section_footer($snapshot, $cms_opts);
@@ -2057,12 +2247,23 @@ function outbound_cms_render_section_homepage(array $snapshot, array $bundle, ar
                 <tr>
                     <th><label for="ed_hero_dest">Primary CTA Action</label></th>
                     <td>
+                        <?php
+                        $hero_dest_norm = match ($hero_dest) {
+                            '/experiences'   => '/things-to-do-in-victoria-falls',
+                            '/accommodation' => '/victoria-falls-accommodation',
+                            'packages'       => '/victoria-falls-packages',
+                            'contact'        => '/contact',
+                            default          => $hero_dest,
+                        };
+                        ?>
                         <select id="ed_hero_dest" name="cms[ed][travel/TravelHero.ctaDestination]">
-                            <option value="modal" <?php selected($hero_dest, 'modal'); ?>>Open Plan My Holiday Builder Modal (Default)</option>
-                            <option value="packages" <?php selected($hero_dest, 'packages'); ?>>Browse Holiday Packages</option>
-                            <option value="/experiences" <?php selected($hero_dest, '/experiences'); ?>>Go to Experiences Page (/experiences)</option>
-                            <option value="/accommodation" <?php selected($hero_dest, '/accommodation'); ?>>Go to Accommodation Page (/accommodation)</option>
-                            <option value="/contact" <?php selected($hero_dest, '/contact'); ?>>Go to Contact Page (/contact)</option>
+                            <option value="modal" <?php selected($hero_dest_norm, 'modal'); ?>>Open Optional Holiday Builder Modal (Default)</option>
+                            <option value="whatsapp" <?php selected($hero_dest_norm, 'whatsapp'); ?>>Chat Directly on WhatsApp</option>
+                            <option value="/contact" <?php selected($hero_dest_norm, '/contact'); ?>>Open Contact Enquiry Form (/contact)</option>
+                            <option value="/victoria-falls-packages" <?php selected($hero_dest_norm, '/victoria-falls-packages'); ?>>Browse Holiday Packages (/victoria-falls-packages)</option>
+                            <option value="/things-to-do-in-victoria-falls" <?php selected($hero_dest_norm, '/things-to-do-in-victoria-falls'); ?>>Browse Things to Do (/things-to-do-in-victoria-falls)</option>
+                            <option value="/victoria-falls-accommodation" <?php selected($hero_dest_norm, '/victoria-falls-accommodation'); ?>>Browse Where to Stay (/victoria-falls-accommodation)</option>
+                            <option value="/victoria-falls-guide" <?php selected($hero_dest_norm, '/victoria-falls-guide'); ?>>Read Victoria Falls Guide (/victoria-falls-guide)</option>
                         </select>
                     </td>
                 </tr>
@@ -2793,47 +2994,107 @@ function outbound_cms_render_section_about_contact(array $snapshot, array $cms_o
     <?php
 }
 
-function outbound_cms_render_section_header(array $snapshot): void {
+function outbound_cms_render_section_header(array $snapshot, array $bundle = array()): void {
     $logo = outbound_cms_get_ed($snapshot, 'common/Header.outboundLogo', outbound_get_logo_url());
+    $strings = (array) ($snapshot['site']['editorial']['strings'] ?? array());
+    $nav_cfg = (array) ($bundle['navigation'] ?? ($snapshot['site']['navigation'] ?? array()));
+    $nav_items = !empty($nav_cfg['headerItems']) && is_array($nav_cfg['headerItems'])
+        ? array_values($nav_cfg['headerItems'])
+        : outbound_get_default_header_nav_items($strings);
+    $cta_action = (string) ($nav_cfg['primaryCtaAction'] ?? 'modal');
+    $canonical_routes = array(
+        '/victoria-falls-guide'           => 'Victoria Falls Guide (/victoria-falls-guide)',
+        '/things-to-do-in-victoria-falls' => 'Things to Do (/things-to-do-in-victoria-falls)',
+        '/victoria-falls-accommodation'   => 'Where to Stay (/victoria-falls-accommodation)',
+        '/victoria-falls-packages'        => 'Holiday Packages (/victoria-falls-packages)',
+        '/client-gallery'                 => 'Client Gallery (/client-gallery)',
+        '/about'                          => 'About Us (/about)',
+        '/blog'                           => 'Travel Blog (/blog)',
+        '/contact'                        => 'Contact Us (/contact)',
+        '/search'                         => 'Site Search (/search)',
+        '/'                               => 'Homepage (/)',
+        'whatsapp'                        => 'Direct WhatsApp Chat',
+    );
     ?>
     <div class="outbound-admin-card">
-        <h2>Brand Logo & Top Announcement Bar</h2>
+        <h2>Brand Logo &amp; Top Announcement Bar</h2>
         <table class="form-table">
             <tr><th>Primary Header Logo</th><td><?php outbound_cms_render_media_input('cms[ed][common/Header.outboundLogo]', $logo, 'outbound_header_logo'); ?></td></tr>
-            <tr><th>Top Bar Badge & Tagline</th><td>
+            <tr><th>Top Bar Badge &amp; Tagline</th><td>
                 <input type="text" name="cms[ed][common/Header.text1]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text1')); ?>" class="regular-text" />
                 <input type="text" name="cms[ed][common/Header.text2]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text2')); ?>" class="large-text" />
             </td></tr>
             <tr><th>WhatsApp Strip Prefix</th><td><input type="text" name="cms[ed][common/Header.text3]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text3')); ?>" class="regular-text" /></td></tr>
+            <tr><th>Search Placeholder</th><td><input type="text" name="cms[ed][common/Header.text12]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text12')); ?>" class="regular-text" /></td></tr>
         </table>
     </div>
 
     <div class="outbound-admin-card">
-        <h2>Navigation Link Labels & Header CTA</h2>
-        <p class="description">WordPress menus can also be structured in <a href="<?php echo outbound_cms_esc_url(admin_url('nav-menus.php')); ?>">Appearance → Menus</a>.</p>
-        <div class="outbound-meta-grid">
-            <p><label>Guide Link<br><input type="text" name="cms[ed][common/Header.text5]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text5')); ?>" class="regular-text" /></label></p>
-            <p><label>Experiences Link<br><input type="text" name="cms[ed][common/Header.text6]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text6')); ?>" class="regular-text" /></label></p>
-            <p><label>Where to Stay Link<br><input type="text" name="cms[ed][common/Header.text7]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text7')); ?>" class="regular-text" /></label></p>
-            <p><label>Packages Link<br><input type="text" name="cms[ed][common/Header.text8]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text8')); ?>" class="regular-text" /></label></p>
-            <p><label>Gallery Link<br><input type="text" name="cms[ed][common/Header.text9]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text9')); ?>" class="regular-text" /></label></p>
-            <p><label>About Link<br><input type="text" name="cms[ed][common/Header.text10]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text10')); ?>" class="regular-text" /></label></p>
-            <p><label>Contact Link<br><input type="text" name="cms[ed][common/Header.text11]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text11')); ?>" class="regular-text" /></label></p>
-            <p><label>Primary CTA Button<br><input type="text" name="cms[ed][common/Header.text13]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text13')); ?>" class="regular-text" /></label></p>
-            <p><label>Search Placeholder<br><input type="text" name="cms[ed][common/Header.text12]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text12')); ?>" class="regular-text" /></label></p>
-        </div>
+        <h2>Primary Header CTA Button</h2>
+        <table class="form-table">
+            <tr>
+                <th>CTA Label</th>
+                <td><input type="text" name="cms[ed][common/Header.text13]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text13', 'Plan My Holiday')); ?>" class="regular-text" /></td>
+            </tr>
+            <tr>
+                <th>CTA Destination / Action</th>
+                <td>
+                    <select name="cms[header_cta_action]">
+                        <option value="modal" <?php selected($cta_action, 'modal'); ?>>Open Optional Holiday Builder Modal (Default)</option>
+                        <option value="/contact" <?php selected($cta_action, '/contact'); ?>>Open Contact Enquiry Form (/contact)</option>
+                        <option value="whatsapp" <?php selected($cta_action, 'whatsapp'); ?>>Chat Directly on WhatsApp</option>
+                        <option value="/victoria-falls-packages" <?php selected($cta_action, '/victoria-falls-packages'); ?>>Browse Holiday Packages (/victoria-falls-packages)</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div class="outbound-admin-card">
-        <h2>Mobile Menu Navigation Labels</h2>
-        <div class="outbound-meta-grid">
-            <p><label>Mobile Guide Label<br><input type="text" name="cms[ed][common/Header.text15]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text15')); ?>" class="regular-text" /></label></p>
-            <p><label>Mobile Experiences Label<br><input type="text" name="cms[ed][common/Header.text17]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text17')); ?>" class="regular-text" /></label></p>
-            <p><label>Mobile Where to Stay<br><input type="text" name="cms[ed][common/Header.text18]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text18')); ?>" class="regular-text" /></label></p>
-            <p><label>Mobile Packages Label<br><input type="text" name="cms[ed][common/Header.text19]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text19')); ?>" class="regular-text" /></label></p>
-            <p><label>Mobile Gallery Label<br><input type="text" name="cms[ed][common/Header.text20]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text20')); ?>" class="regular-text" /></label></p>
-            <p><label>Mobile About Label<br><input type="text" name="cms[ed][common/Header.text22]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text22')); ?>" class="regular-text" /></label></p>
-            <p><label>Mobile Contact Button<br><input type="text" name="cms[ed][common/Header.text24]" value="<?php echo outbound_cms_esc_attr(outbound_cms_get_ed($snapshot, 'common/Header.text24')); ?>" class="regular-text" /></label></p>
+        <h2>Desktop &amp; Mobile Navigation Menu (Single Source of Truth)</h2>
+        <p class="description">Manage link labels, canonical routes, display order, and desktop/mobile visibility directly here. Changes immediately control both the desktop navigation capsule and the mobile drawer.</p>
+        <div class="outbound-repeater" data-repeater="nav-items">
+            <div class="outbound-repeater-list">
+                <?php foreach ($nav_items as $nidx => $nitem) :
+                    $nid      = (string) ($nitem['id'] ?? ('nav-' . ($nidx + 1)));
+                    $nlabel   = (string) ($nitem['label'] ?? '');
+                    $ndest    = (string) ($nitem['destination'] ?? '/');
+                    $norder   = (int) ($nitem['order'] ?? ($nidx + 1));
+                    $show_dt  = !array_key_exists('showDesktop', $nitem) || !empty($nitem['showDesktop']);
+                    $show_mob = !array_key_exists('showMobile', $nitem) || !empty($nitem['showMobile']);
+                    $is_std   = array_key_exists($ndest, $canonical_routes);
+                ?>
+                    <div class="outbound-repeater-row">
+                        <div class="outbound-repeater-head">
+                            <strong>Menu Link #<span class="outbound-row-num"><?php echo $nidx + 1; ?></span> — <?php echo outbound_cms_esc_html($nlabel); ?></strong>
+                            <div class="outbound-repeater-actions">
+                                <button type="button" class="button button-small outbound-row-up">Up</button>
+                                <button type="button" class="button button-small outbound-row-down">Down</button>
+                                <button type="button" class="button-link-delete outbound-row-remove">Remove</button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="cms[nav_items][<?php echo $nidx; ?>][id]" value="<?php echo outbound_cms_esc_attr($nid); ?>" />
+                        <div class="outbound-meta-grid">
+                            <p><label>Link Label<br><input type="text" name="cms[nav_items][<?php echo $nidx; ?>][label]" value="<?php echo outbound_cms_esc_attr($nlabel); ?>" class="regular-text" required /></label></p>
+                            <p><label>Destination Route<br>
+                                <select name="cms[nav_items][<?php echo $nidx; ?>][destination]">
+                                    <?php foreach ($canonical_routes as $rpath => $rlabel) : ?>
+                                        <option value="<?php echo outbound_cms_esc_attr($rpath); ?>" <?php selected($is_std ? $ndest : '__custom__', $rpath); ?>><?php echo outbound_cms_esc_html($rlabel); ?></option>
+                                    <?php endforeach; ?>
+                                    <option value="__custom__" <?php selected(!$is_std); ?>>Custom Path or External URL</option>
+                                </select>
+                            </label></p>
+                            <p><label>Custom URL (if selected)<br><input type="text" name="cms[nav_items][<?php echo $nidx; ?>][customDestination]" value="<?php echo outbound_cms_esc_attr(!$is_std ? $ndest : ''); ?>" placeholder="/victoria-falls-guide#practical-faqs or https://..." class="regular-text code" /></label></p>
+                            <p><label>Order<br><input type="number" min="1" max="99" name="cms[nav_items][<?php echo $nidx; ?>][order]" value="<?php echo (int) $norder; ?>" style="width:80px;" /></label></p>
+                        </div>
+                        <p style="margin-top:6px;">
+                            <label style="margin-right:18px;"><input type="checkbox" name="cms[nav_items][<?php echo $nidx; ?>][showDesktop]" value="1" <?php checked($show_dt); ?> /> Show on Desktop</label>
+                            <label><input type="checkbox" name="cms[nav_items][<?php echo $nidx; ?>][showMobile]" value="1" <?php checked($show_mob); ?> /> Show on Mobile</label>
+                        </p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <button type="button" class="button outbound-row-add">+ Add Navigation Link</button>
         </div>
     </div>
     <?php
@@ -2985,9 +3246,89 @@ function outbound_cms_render_section_footer(array $snapshot, array $cms_opts): v
 }
 
 function outbound_cms_render_section_builder(array $snapshot, array $bundle): void {
-    $tiers = (array) ($snapshot['stayTiers'] ?? array());
-    $acts  = (array) ($snapshot['builderActivities'] ?? array());
+    $tiers      = (array) ($snapshot['stayTiers'] ?? array());
+    $acts       = (array) ($snapshot['builderActivities'] ?? array());
+    $saved_acts = (array) ($bundle['builder_activities'] ?? array());
+    $excluded   = array_fill_keys(array_map('strval', (array) ($bundle['builder_excluded_experiences'] ?? array())), true);
+    $bcfg       = (array) ($bundle['builder_config'] ?? ($snapshot['site']['builderConfig'] ?? array()));
+    $def_tier   = (string) ($bcfg['defaultStayTierId'] ?? 'comfort-plus');
+    $def_nights = (int) ($bcfg['defaultNights'] ?? 3);
+    $avail_csv  = !empty($bcfg['availableNights']) && is_array($bcfg['availableNights'])
+        ? implode(', ', array_map('intval', $bcfg['availableNights']))
+        : '2, 3, 4, 5';
+
+    // Index live Experience catalog so admins see live catalog prices and can re-enable excluded experiences cleanly.
+    $exp_by_key = array();
+    foreach ((array) ($snapshot['experiences'] ?? array()) as $exp) {
+        if (!is_array($exp) || empty($exp['id'])) {
+            continue;
+        }
+        $exp_by_key[(string) $exp['id']] = $exp;
+        if (!empty($exp['slug'])) {
+            $exp_by_key[(string) $exp['slug']] = $exp;
+        }
+    }
+
+    // Build combined editor list: active synced items first, followed by any saved/excluded items so nothing ever disappears silently or gets re-added unexpectedly.
+    $editor_rows = array();
+    $seen_ids    = array();
+    foreach ($acts as $a) {
+        if (!is_array($a) || empty($a['id'])) {
+            continue;
+        }
+        $aid = (string) $a['id'];
+        $seen_ids[$aid] = true;
+        $editor_rows[] = $a;
+    }
+    foreach ($saved_acts as $sa) {
+        if (!is_array($sa) || empty($sa['id'])) {
+            continue;
+        }
+        $sid = (string) $sa['id'];
+        if (!isset($seen_ids[$sid])) {
+            $seen_ids[$sid] = true;
+            $editor_rows[] = $sa;
+        }
+    }
     ?>
+    <?php
+        $entry_copy = isset($bcfg['entryCopy']) && is_array($bcfg['entryCopy']) ? $bcfg['entryCopy'] : array();
+        $enabled_sec = isset($bcfg['enabledSections']) && is_array($bcfg['enabledSections']) ? $bcfg['enabledSections'] : array();
+    ?>
+    <div class="outbound-admin-card">
+        <h2>Holiday Builder — Entry Screen Cards, Visible Sections &amp; Default Trip Rules</h2>
+        <p class="description">Customize the two opening choice cards, choose which planner sections appear inside <strong>Your trip plan</strong>, and configure default trip rules.</p>
+        <div class="outbound-meta-grid">
+            <p><label>Opening Choice Heading<br><input type="text" name="cms[builder_config][entryCopy][heading]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['heading'] ?? '')); ?>" placeholder="How would you like to plan?" class="regular-text" /></label></p>
+            <p><label>Specialist Card Title<br><input type="text" name="cms[builder_config][entryCopy][helpCardTitle]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['helpCardTitle'] ?? '')); ?>" placeholder="Get help planning" class="regular-text" /></label></p>
+            <p><label>Specialist Card Description<br><input type="text" name="cms[builder_config][entryCopy][helpCardDesc]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['helpCardDesc'] ?? '')); ?>" placeholder="A local specialist can help with stays, activities, and transfers." class="large-text" /></label></p>
+            <p><label>WhatsApp Button Label<br><input type="text" name="cms[builder_config][entryCopy][whatsappCtaLabel]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['whatsappCtaLabel'] ?? '')); ?>" placeholder="Chat on WhatsApp" class="regular-text" /></label></p>
+            <p><label>Quick Enquiry Link Label<br><input type="text" name="cms[builder_config][entryCopy][quickEnquiryCtaLabel]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['quickEnquiryCtaLabel'] ?? '')); ?>" placeholder="Send a quick enquiry" class="regular-text" /></label></p>
+            <p><label>Itinerary Card Title<br><input type="text" name="cms[builder_config][entryCopy][itineraryCardTitle]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['itineraryCardTitle'] ?? '')); ?>" placeholder="Build my itinerary" class="regular-text" /></label></p>
+            <p><label>Itinerary Card Description<br><input type="text" name="cms[builder_config][entryCopy][itineraryCardDesc]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['itineraryCardDesc'] ?? '')); ?>" placeholder="Choose what you'd like to do and see a trip estimate." class="large-text" /></label></p>
+            <p><label>Itinerary Button Label<br><input type="text" name="cms[builder_config][entryCopy][itineraryCtaLabel]" value="<?php echo outbound_cms_esc_attr((string) ($entry_copy['itineraryCtaLabel'] ?? '')); ?>" placeholder="Build my itinerary" class="regular-text" /></label></p>
+        </div>
+        <input type="hidden" name="cms[builder_config][enabledSectionsPresent]" value="1" />
+        <p style="background:#f8fafc;padding:10px 12px;border-radius:6px;border:1px solid #e2e8f0;display:flex;flex-wrap:wrap;gap:16px;align-items:center;">
+            <strong>Visible Planner Sections:</strong>
+            <label><input type="checkbox" name="cms[builder_config][enabledSections][datesGuests]" value="1" <?php checked(!array_key_exists('datesGuests', $enabled_sec) || !empty($enabled_sec['datesGuests'])); ?> /> Dates &amp; guests</label>
+            <label><input type="checkbox" name="cms[builder_config][enabledSections][stay]" value="1" <?php checked(!array_key_exists('stay', $enabled_sec) || !empty($enabled_sec['stay'])); ?> /> Stay</label>
+            <label><input type="checkbox" name="cms[builder_config][enabledSections][activities]" value="1" <?php checked(!array_key_exists('activities', $enabled_sec) || !empty($enabled_sec['activities'])); ?> /> Activities</label>
+            <label><input type="checkbox" name="cms[builder_config][enabledSections][transfers]" value="1" <?php checked(!array_key_exists('transfers', $enabled_sec) || !empty($enabled_sec['transfers'])); ?> /> Transfers</label>
+        </p>
+        <div class="outbound-meta-grid">
+            <p><label>Default Stay Tier<br>
+                <select name="cms[builder_config][defaultStayTierId]">
+                    <?php foreach ($tiers as $t) : $tid = (string) ($t['id'] ?? ''); ?>
+                        <option value="<?php echo outbound_cms_esc_attr($tid); ?>" <?php selected($def_tier, $tid); ?>><?php echo outbound_cms_esc_html((string) ($t['name'] ?? $tid)); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label></p>
+            <p><label>Default Stay Nights<br><input type="number" min="1" max="30" name="cms[builder_config][defaultNights]" value="<?php echo (int) $def_nights; ?>" style="width:90px;" /></label></p>
+            <p><label>Available Night Options (comma-separated)<br><input type="text" name="cms[builder_config][availableNightsCsv]" value="<?php echo outbound_cms_esc_attr($avail_csv); ?>" class="regular-text code" placeholder="2, 3, 4, 5" /></label></p>
+        </div>
+    </div>
+
     <div class="outbound-admin-card">
         <h2>Holiday Builder — Accommodation Stay Tiers</h2>
         <div class="outbound-repeater" data-repeater="stay-tiers">
@@ -3022,16 +3363,108 @@ function outbound_cms_render_section_builder(array $snapshot, array $bundle): vo
     </div>
 
     <div class="outbound-admin-card">
-        <h2>Holiday Builder — Curated Activities & Rates</h2>
+        <h2>Holiday Builder — Activities, Default Suggestions &amp; Pricing Source</h2>
+        <p class="description"><strong>Experiences</strong> are the primary editor for titles, durations, images, descriptions, and catalog pricing. Use the controls below to include/exclude activities from the Holiday Builder, mark defaults as <em>Suggest by default</em>, set <em>Display order</em>, or opt into an explicit <em>Builder Price Override</em>.</p>
         <div class="outbound-repeater" data-repeater="builder-acts">
             <div class="outbound-repeater-list">
-                <?php foreach ($acts as $idx => $act) :
-                    $act_price = $act['priceUSD'] ?? ($act['priceAmount'] ?? 65);
-                    $act_img   = $act['imageUrl'] ?? ($act['image'] ?? '');
+                <?php foreach ($editor_rows as $idx => $act) :
+                    $aid         = (string) ($act['id'] ?? '');
+                    $exp_id      = (string) ($act['experienceId'] ?? '');
+                    $matched_exp = $exp_id !== '' && isset($exp_by_key[$exp_id])
+                        ? $exp_by_key[$exp_id]
+                        : ($exp_by_key[$aid] ?? null);
+                    $cat_price   = is_array($matched_exp) && isset($matched_exp['priceAmount']) ? (float) $matched_exp['priceAmount'] : null;
+                    $act_price   = $act['priceUSD'] ?? ($act['priceAmount'] ?? ($cat_price ?? 65));
+                    $act_img     = $act['imageUrl'] ?? ($act['image'] ?? '');
+                    $is_included = (!array_key_exists('includeInBuilder', $act) || !empty($act['includeInBuilder'])) && !isset($excluded[$aid]) && ($exp_id === '' || !isset($excluded[$exp_id]));
+                    $is_suggest  = !empty($act['suggestedByDefault']);
+                    $disp_order  = isset($act['displayOrder']) && is_numeric($act['displayOrder']) ? (int) $act['displayOrder'] : ($idx + 1);
+                    $ovr_enabled = !empty($act['priceOverrideEnabled']);
+                    $src_badge   = $ovr_enabled
+                        ? 'Source: Custom Builder Price Override ($' . number_format((float) $act_price) . ' USD)'
+                        : ($cat_price !== null
+                            ? 'Source: Experience Catalog ($' . number_format($cat_price) . ' USD)'
+                            : 'Source: Custom Builder Entry');
                 ?>
                     <div class="outbound-repeater-row">
                         <div class="outbound-repeater-head">
-                            <strong>Activity #<span class="outbound-row-num"><?php echo $idx + 1; ?></span></strong>
+                            <strong>
+                                Activity #<span class="outbound-row-num"><?php echo $idx + 1; ?></span>
+                                &mdash; <?php echo outbound_cms_esc_html((string) ($act['title'] ?? $aid)); ?>
+                                <span class="outbound-badge <?php echo $ovr_enabled ? 'outbound-badge-amber' : 'outbound-badge-green'; ?>" style="margin-left:8px;">
+                                    <?php echo outbound_cms_esc_html($src_badge); ?>
+                                </span>
+                                <?php if (!$is_included) : ?>
+                                    <span class="outbound-badge outbound-badge-red" style="margin-left:6px;">Excluded from Builder</span>
+                                <?php endif; ?>
+                            </strong>
+                            <div class="outbound-repeater-actions">
+                                <button type="button" class="button button-small outbound-row-up">Up</button>
+                                <button type="button" class="button button-small outbound-row-down">Down</button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="cms[builder_activities][<?php echo $idx; ?>][experienceId]" value="<?php echo outbound_cms_esc_attr($exp_id); ?>" />
+                        <p style="background:#f8fafc;padding:8px 12px;border-radius:6px;border:1px solid #e2e8f0;display:flex;flex-wrap:wrap;gap:16px;align-items:center;">
+                            <label><input type="checkbox" name="cms[builder_activities][<?php echo $idx; ?>][includeInBuilder]" value="1" <?php checked($is_included); ?> /> <strong>Include in Builder</strong></label>
+                            <label><input type="checkbox" name="cms[builder_activities][<?php echo $idx; ?>][suggestedByDefault]" value="1" <?php checked($is_suggest); ?> /> Recommend in builder ("Show me suggestions")</label>
+                            <label>Display Order <input type="number" min="1" max="999" name="cms[builder_activities][<?php echo $idx; ?>][displayOrder]" value="<?php echo (int) $disp_order; ?>" style="width:70px;" /></label>
+                            <label><input type="checkbox" name="cms[builder_activities][<?php echo $idx; ?>][priceOverrideEnabled]" value="1" <?php checked($ovr_enabled); ?> /> Use Builder Price Override (below)</label>
+                        </p>
+                        <div class="outbound-meta-grid">
+                            <p><label>ID<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][id]" value="<?php echo outbound_cms_esc_attr($aid); ?>" class="regular-text code" /></label></p>
+                            <p><label>Title<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][title]" value="<?php echo outbound_cms_esc_attr((string) ($act['title'] ?? '')); ?>" class="regular-text" /></label></p>
+                            <p><label>Duration<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][duration]" value="<?php echo outbound_cms_esc_attr((string) ($act['duration'] ?? '')); ?>" class="regular-text" /></label></p>
+                            <p><label>Builder Price USD <?php echo $ovr_enabled ? '(Active Override)' : '(Ignored unless Override checked)'; ?><br><input type="number" step="1" min="0" name="cms[builder_activities][<?php echo $idx; ?>][priceUSD]" value="<?php echo outbound_cms_esc_attr((string) $act_price); ?>" style="width:110px;" /></label></p>
+                            <p><label>Badge<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][badge]" value="<?php echo outbound_cms_esc_attr((string) ($act['badge'] ?? '')); ?>" class="regular-text" /></label></p>
+                            <p><label>Rate Basis<br>
+                                <select name="cms[builder_activities][<?php echo $idx; ?>][priceBasis]">
+                                    <?php foreach (array('per_adult' => 'Per Adult', 'per_person' => 'Per Person', 'per_child' => 'Per Child', 'per_group' => 'Per Group', 'per_vehicle' => 'Per Vehicle', 'on_request' => 'On Request') as $bk => $bl) : ?>
+                                        <option value="<?php echo outbound_cms_esc_attr($bk); ?>" <?php selected((string) ($act['priceBasis'] ?? 'per_adult'), $bk); ?>><?php echo outbound_cms_esc_html($bl); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </label></p>
+                            <p><label>Child (&lt;11) Rate USD<br><input type="number" step="1" min="0" name="cms[builder_activities][<?php echo $idx; ?>][childRateUnder11USD]" value="<?php echo isset($act['childRateUnder11USD']) && $act['childRateUnder11USD'] !== null ? outbound_cms_esc_attr((string) $act['childRateUnder11USD']) : ''; ?>" placeholder="On req" style="width:90px;" /></label></p>
+                            <p><label>Child (11+) Rate USD<br><input type="number" step="1" min="0" name="cms[builder_activities][<?php echo $idx; ?>][childRate11PlusUSD]" value="<?php echo isset($act['childRate11PlusUSD']) && $act['childRate11PlusUSD'] !== null ? outbound_cms_esc_attr((string) $act['childRate11PlusUSD']) : ''; ?>" placeholder="On req" style="width:90px;" /></label></p>
+                            <p><label>Rate Status<br>
+                                <select name="cms[builder_activities][<?php echo $idx; ?>][rateStatus]">
+                                    <option value="provisional" <?php selected((string) ($act['rateStatus'] ?? 'provisional'), 'provisional'); ?>>Provisional</option>
+                                    <option value="confirmed" <?php selected((string) ($act['rateStatus'] ?? ''), 'confirmed'); ?>>Confirmed Guide</option>
+                                </select>
+                            </label></p>
+                            <p><label>Default Time Slot<br>
+                                <select name="cms[builder_activities][<?php echo $idx; ?>][defaultTimeSlot]">
+                                    <?php foreach (array('to-be-arranged' => 'Time to be arranged', 'morning' => 'Morning', 'afternoon' => 'Afternoon', 'sunset' => 'Sunset', 'evening' => 'Evening') as $sk => $sl) : ?>
+                                        <option value="<?php echo outbound_cms_esc_attr($sk); ?>" <?php selected((string) ($act['defaultTimeSlot'] ?? 'to-be-arranged'), $sk); ?>><?php echo outbound_cms_esc_html($sl); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </label></p>
+                            <p><label>Published Departure Times<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][departureTimesCsv]" value="<?php echo outbound_cms_esc_attr(implode(', ', (array) ($act['departureTimes'] ?? ($matched_exp['departureTimes'] ?? array())))); ?>" placeholder="e.g. 4:00 pm, 4:30 pm" class="regular-text" /></label></p>
+                        </div>
+                        <p><label>Short Summary<br><textarea rows="2" name="cms[builder_activities][<?php echo $idx; ?>][shortDesc]" class="large-text"><?php echo outbound_cms_esc_html((string) ($act['shortDesc'] ?? '')); ?></textarea></label></p>
+                        <?php outbound_cms_render_media_input("cms[builder_activities][{$idx}][imageUrl]", (string) $act_img, 'b_act_img_' . $idx); ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <button type="button" class="button outbound-row-add">+ Add Custom Builder Activity</button>
+        </div>
+    </div>
+
+    <?php
+        $transfer_rows = !empty($bcfg['transferOptions']) && is_array($bcfg['transferOptions'])
+            ? array_values($bcfg['transferOptions'])
+            : array(
+                array('id' => 'vfa-airport-return', 'title' => 'VFA Airport Return Private Transfer', 'route' => 'VFA Airport <-> Victoria Falls Town', 'priceUSD' => 60, 'priceBasis' => 'per_vehicle_return', 'visitorCategory' => 'all', 'rateStatus' => 'provisional', 'includeInBuilder' => true, 'displayOrder' => 1),
+            );
+    ?>
+    <div class="outbound-admin-card">
+        <h2>Holiday Builder — Transfers, Routes &amp; Rate Bases</h2>
+        <p class="description">Configure Victoria Falls airport &amp; regional transfer routes shown in the planner’s Transfers section. Set <em>Per Vehicle</em>, <em>Per Vehicle Return</em>, <em>Per Person</em>, or <em>On Request</em> (blank price = quote separately).</p>
+        <div class="outbound-repeater" data-repeater="builder-transfers">
+            <div class="outbound-repeater-list">
+                <?php foreach ($transfer_rows as $tidx => $tr) : ?>
+                    <div class="outbound-repeater-row">
+                        <div class="outbound-repeater-head">
+                            <strong>Transfer #<span class="outbound-row-num"><?php echo $tidx + 1; ?></span> &mdash; <?php echo outbound_cms_esc_html((string) ($tr['title'] ?? '')); ?></strong>
                             <div class="outbound-repeater-actions">
                                 <button type="button" class="button button-small outbound-row-up">Up</button>
                                 <button type="button" class="button button-small outbound-row-down">Down</button>
@@ -3039,18 +3472,41 @@ function outbound_cms_render_section_builder(array $snapshot, array $bundle): vo
                             </div>
                         </div>
                         <div class="outbound-meta-grid">
-                            <p><label>ID<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][id]" value="<?php echo outbound_cms_esc_attr((string) ($act['id'] ?? '')); ?>" class="regular-text code" /></label></p>
-                            <p><label>Title<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][title]" value="<?php echo outbound_cms_esc_attr((string) ($act['title'] ?? '')); ?>" class="regular-text" /></label></p>
-                            <p><label>Duration<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][duration]" value="<?php echo outbound_cms_esc_attr((string) ($act['duration'] ?? '')); ?>" class="regular-text" /></label></p>
-                            <p><label>Price USD<br><input type="number" step="1" min="0" name="cms[builder_activities][<?php echo $idx; ?>][priceUSD]" value="<?php echo outbound_cms_esc_attr((string) $act_price); ?>" style="width:110px;" /></label></p>
-                            <p><label>Badge<br><input type="text" name="cms[builder_activities][<?php echo $idx; ?>][badge]" value="<?php echo outbound_cms_esc_attr((string) ($act['badge'] ?? '')); ?>" class="regular-text" /></label></p>
+                            <p><label>Transfer ID<br><input type="text" name="cms[builder_transfers][<?php echo $tidx; ?>][id]" value="<?php echo outbound_cms_esc_attr((string) ($tr['id'] ?? '')); ?>" class="regular-text code" /></label></p>
+                            <p><label>Title<br><input type="text" name="cms[builder_transfers][<?php echo $tidx; ?>][title]" value="<?php echo outbound_cms_esc_attr((string) ($tr['title'] ?? '')); ?>" class="regular-text" /></label></p>
+                            <p><label>Route<br><input type="text" name="cms[builder_transfers][<?php echo $tidx; ?>][route]" value="<?php echo outbound_cms_esc_attr((string) ($tr['route'] ?? '')); ?>" class="regular-text" placeholder="VFA Airport <-> Victoria Falls Town" /></label></p>
+                            <p><label>Price USD (blank = On request)<br><input type="number" step="1" min="0" name="cms[builder_transfers][<?php echo $tidx; ?>][priceUSD]" value="<?php echo isset($tr['priceUSD']) && $tr['priceUSD'] !== null ? outbound_cms_esc_attr((string) $tr['priceUSD']) : ''; ?>" style="width:110px;" /></label></p>
+                            <p><label>Basis<br>
+                                <select name="cms[builder_transfers][<?php echo $tidx; ?>][priceBasis]">
+                                    <?php foreach (array('per_vehicle' => 'Per Vehicle (One-way)', 'per_vehicle_return' => 'Per Vehicle Return', 'per_person' => 'Per Person', 'per_group' => 'Per Group', 'on_request' => 'On Request') as $tbk => $tbl) : ?>
+                                        <option value="<?php echo outbound_cms_esc_attr($tbk); ?>" <?php selected((string) ($tr['priceBasis'] ?? 'per_vehicle'), $tbk); ?>><?php echo outbound_cms_esc_html($tbl); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </label></p>
+                            <p><label>Visitor Market<br>
+                                <select name="cms[builder_transfers][<?php echo $tidx; ?>][visitorCategory]">
+                                    <?php foreach (array('all' => 'All Visitors', 'international' => 'International', 'zimbabwe_resident' => 'Zimbabwe Resident', 'sadc_resident' => 'SADC Resident') as $tvk => $tvl) : ?>
+                                        <option value="<?php echo outbound_cms_esc_attr($tvk); ?>" <?php selected((string) ($tr['visitorCategory'] ?? 'all'), $tvk); ?>><?php echo outbound_cms_esc_html($tvl); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </label></p>
+                            <p><label>Rate Status<br>
+                                <select name="cms[builder_transfers][<?php echo $tidx; ?>][rateStatus]">
+                                    <option value="provisional" <?php selected((string) ($tr['rateStatus'] ?? 'provisional'), 'provisional'); ?>>Provisional</option>
+                                    <option value="confirmed" <?php selected((string) ($tr['rateStatus'] ?? ''), 'confirmed'); ?>>Confirmed Guide</option>
+                                </select>
+                            </label></p>
+                            <p><label>Order<br><input type="number" min="1" max="999" name="cms[builder_transfers][<?php echo $tidx; ?>][displayOrder]" value="<?php echo (int) ($tr['displayOrder'] ?? ($tidx + 1)); ?>" style="width:70px;" /></label></p>
                         </div>
-                        <p><label>Short Summary<br><textarea rows="2" name="cms[builder_activities][<?php echo $idx; ?>][shortDesc]" class="large-text"><?php echo outbound_cms_esc_html((string) ($act['shortDesc'] ?? '')); ?></textarea></label></p>
-                        <?php outbound_cms_render_media_input("cms[builder_activities][{$idx}][imageUrl]", (string) $act_img, 'b_act_img_' . $idx); ?>
+                        <p style="display:flex;gap:16px;align-items:center;">
+                            <label><input type="checkbox" name="cms[builder_transfers][<?php echo $tidx; ?>][includeInBuilder]" value="1" <?php checked(!array_key_exists('includeInBuilder', $tr) || !empty($tr['includeInBuilder'])); ?> /> Include in Builder</label>
+                            <label>Badge <input type="text" name="cms[builder_transfers][<?php echo $tidx; ?>][badge]" value="<?php echo outbound_cms_esc_attr((string) ($tr['badge'] ?? 'Transfer')); ?>" style="width:120px;" /></label>
+                            <label>Summary <input type="text" name="cms[builder_transfers][<?php echo $tidx; ?>][desc]" value="<?php echo outbound_cms_esc_attr((string) ($tr['desc'] ?? '')); ?>" class="regular-text" /></label>
+                        </p>
                     </div>
                 <?php endforeach; ?>
             </div>
-            <button type="button" class="button outbound-row-add">+ Add Builder Activity</button>
+            <button type="button" class="button outbound-row-add">+ Add Transfer Route</button>
         </div>
     </div>
     <?php

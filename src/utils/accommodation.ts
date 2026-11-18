@@ -274,7 +274,12 @@ export function getKeyAmenitiesForCard(property: DetailedAccommodation, max = 3)
 }
 
 export function getPriceUnitLabel(property: DetailedAccommodation): string {
-  return property.priceUnit?.trim() || 'per night';
+  const raw = property.priceUnit?.trim();
+  if (!raw) return 'per night';
+  if (/^per\s*night\s*\(sharing\)$/i.test(raw) || /per\s*person.*sharing/i.test(raw)) {
+    return 'per person sharing per night';
+  }
+  return raw;
 }
 
 export function isPublishedAccommodation(property: DetailedAccommodation): boolean {

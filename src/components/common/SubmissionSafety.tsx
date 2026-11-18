@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ShieldCheck, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { submitForm } from '../../runtime/api';
 
@@ -12,6 +12,8 @@ export function useSubmission(path: 'enquiries' | 'newsletter') {
     submittedAt?: string;
     status?: string;
     confirmationDelivery?: string;
+    rateChanged?: boolean;
+    itemizedEstimate?: unknown;
   } | null>(null);
   const [website, setWebsite] = useState('');
   const [token, setToken] = useState('');

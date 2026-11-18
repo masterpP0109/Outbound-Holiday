@@ -5,6 +5,8 @@ import { PageLink } from '../common/PageLink';
 import { categoryPath,experiencePath } from '../../routes';
 import React,{ useState,useEffect } from 'react';
 import { ALL_EXPERIENCES,Experience } from '../../data/experiencesData';
+import type { Currency } from '../../types';
+import { formatCurrencyAmount } from '../../utils/currency';
 import {
 Sparkles,
 Clock,
@@ -43,12 +45,14 @@ registerContent(() => { heroVictoriaFalls = editorialValue("travel/ExperiencesDi
 
 
 interface ExperiencesDirectoryPageProps {
+  currency?: Currency;
   onSelectExperience: (experience: Experience) => void;
   onSelectCategory: (categoryId: string) => void;
   onOpenPlanHoliday: () => void;
 }
 
 export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> = ({
+  currency = 'USD',
   onSelectExperience,
   onSelectCategory,
   onOpenPlanHoliday,
@@ -236,7 +240,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {searchResults.map(exp => (
-                <ExperienceCard key={exp.id} experience={exp} onSelect={() => onSelectExperience(exp)} />
+                <ExperienceCard key={exp.id} experience={exp} currency={currency} onSelect={() => onSelectExperience(exp)} />
               ))}
             </div>
           )}
@@ -269,7 +273,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {featuredExperiences.map((exp) => (
-                  <ExperienceCard key={exp.id} experience={exp} onSelect={() => onSelectExperience(exp)} />
+                  <ExperienceCard key={exp.id} experience={exp} currency={currency} onSelect={() => onSelectExperience(exp)} />
                 ))}
               </div>
             </div>
@@ -397,7 +401,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
               {/* Grid of Experiences */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {directoryExperiences.map((exp) => (
-                  <ExperienceCard key={exp.id} experience={exp} onSelect={() => onSelectExperience(exp)} />
+                  <ExperienceCard key={exp.id} experience={exp} currency={currency} onSelect={() => onSelectExperience(exp)} />
                 ))}
               </div>
             </div>
@@ -584,7 +588,7 @@ export const ExperiencesDirectoryPage: React.FC<ExperiencesDirectoryPageProps> =
 };
 
 /* Simplified Experience Card Subcomponent */
-const ExperienceCard: React.FC<{ experience: Experience; onSelect: () => void }> = ({ experience, onSelect }) => {
+const ExperienceCard: React.FC<{ experience: Experience; currency?: Currency; onSelect: () => void }> = ({ experience, currency = 'USD', onSelect }) => {
   return (
     <div
       onClick={onSelect}
@@ -608,7 +612,7 @@ const ExperienceCard: React.FC<{ experience: Experience; onSelect: () => void }>
           )}
 
           <div className="absolute top-3 right-3 bg-[#0D2833]/90 text-white backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold border border-white/20 shadow-xs">
-            {experience.fromPrice}
+            {typeof experience.priceAmount === 'number' && experience.priceAmount > 0 ? `From ${formatCurrencyAmount(experience.priceAmount, currency)}` : experience.fromPrice}
           </div>
 
           <div className="absolute bottom-3 left-3 bg-white/95 text-[#0B5E8E] backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center gap-1 shadow-xs">
