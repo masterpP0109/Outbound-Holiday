@@ -1,6 +1,11 @@
 import { spawn } from 'node:child_process';
 const base = 'https://br-icy-darkness-b4agzqde-api.compute.c-6.us-east-2.aws.neon.tech/api/v1';
-const env = { ...process.env, VITE_API_BASE_URL: base, PRERENDER_API_BASE_URL: base };
+const isReview = process.env.VERCEL_ENV === 'preview'
+  || process.env.VERCEL_GIT_COMMIT_REF === 'staging'
+  || process.argv.includes('--review');
+const env = isReview
+  ? { ...process.env, VITE_REVIEW_BUILD: 'true', VITE_API_BASE_URL: '/api/v1', PRERENDER_API_BASE_URL: '' }
+  : { ...process.env, VITE_REVIEW_BUILD: 'false', VITE_API_BASE_URL: base, PRERENDER_API_BASE_URL: base };
 async function run(args) {
   await new Promise((resolve, reject) => {
     const child = spawn(process.execPath, args, { env, stdio: 'inherit', windowsHide: true });

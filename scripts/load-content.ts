@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { SnapshotSchema } from '../shared/content-schema';
+import publishedContent from '../src/runtime/published-content.json';
 export async function loadPublishedContent(){
+ if (process.env.VITE_REVIEW_BUILD === 'true') return SnapshotSchema.parse(publishedContent);
  const base=process.env.PRERENDER_API_BASE_URL??process.env.VITE_API_BASE_URL??'https://br-icy-darkness-b4agzqde-api.compute.c-6.us-east-2.aws.neon.tech/api/v1';
  if(!base)throw new Error('Set PRERENDER_API_BASE_URL or VITE_API_BASE_URL to the backend /api/v1 address.');
  const url=new URL(base);if(!['localhost','127.0.0.1'].includes(url.hostname)&&url.protocol!=='https:')throw new Error('The hosted content API must use HTTPS.');

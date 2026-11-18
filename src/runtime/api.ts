@@ -58,6 +58,7 @@ export function seedInitialContentCache(snapshot:ContentSnapshot, fromServer:boo
  cachedAt=Date.now();
 }
 export async function fetchContent(force=false):Promise<ContentSnapshot>{
+ if (import.meta.env?.VITE_REVIEW_BUILD === 'true') return cached ?? SnapshotSchema.parse(publishedContent);
  const wpCfg = getWpConfig();
  const isPreview = Boolean(wpCfg?.isPreview);
  if(!force&&!isPreview&&cached&&Date.now()-cachedAt<60000)return cached;if(inFlight)return inFlight;
@@ -82,6 +83,7 @@ export async function fetchCurrencyRates(): Promise<{
  rates: Record<string, { symbol: string; rate: number }>;
  meta: { mode: 'automatic' | 'manual'; status: 'live' | 'cached' | 'manual' | 'unavailable'; provider: string; effectiveDate?: string | null; fetchedAt?: string | null };
 } | null> {
+ if (import.meta.env?.VITE_REVIEW_BUILD === 'true') return null;
  const wpCfg = getWpConfig();
  const endpoint = wpCfg?.restUrl
   ? `${wpCfg.restUrl.replace(/\/$/, '')}/currency-rates`
@@ -117,6 +119,9 @@ export async function fetchCurrencyRates(): Promise<{
  }
 }
 export async function submitForm(path:'enquiries'|'newsletter',payload:unknown,key:string){
+ if (import.meta.env?.VITE_REVIEW_BUILD === 'true') {
+  throw new Error('This is a staging preview. Forms are available for review, and submissions are disabled.');
+ }
  const wpCfg = getWpConfig();
  const endpoint = wpCfg?.restUrl ? `${wpCfg.restUrl.replace(/\/$/, '')}/${path}` : `${API_BASE_URL}/${path}`;
  const headers: Record<string, string> = {'Content-Type':'application/json','Idempotency-Key':key};
