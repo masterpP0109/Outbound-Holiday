@@ -19,7 +19,7 @@ $logo_url    = $theme_uri . '/assets/media/outbound-holidays-logo-dark.webp';
 <!-- Pre-Hydration Elegant Loading Screen -->
 <div id="outbound-initial-loader" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FAF9F6; font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif; padding: 24px; text-align: center;">
     <div style="max-width: 320px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-        <img src="<?php echo esc_url($logo_url); ?>" alt="Outbound Holidays" style="width: 170px; max-width: 72%; height: auto; opacity: 0.95; display: block;" />
+        <img src="<?php echo esc_url($logo_url); ?>" alt="Outbound Holidays" style="width: 220px; max-width: 80%; height: auto; opacity: 0.95; display: block;" />
         
         <div style="width: 140px; height: 3px; background: rgba(11, 94, 142, 0.15); border-radius: 999px; overflow: hidden; position: relative;">
             <div style="position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: linear-gradient(90deg, #0B5E8E, #C9A66B); border-radius: 999px; animation: outbound-pulse-bar 1.5s ease-in-out infinite;"></div>
