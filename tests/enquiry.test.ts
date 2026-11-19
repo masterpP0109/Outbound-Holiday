@@ -39,6 +39,7 @@ import {
   buildPlannerSubmissionPayload,
   buildQuickHelpWhatsAppUrl,
   createEmptyTripPlanDraft,
+  getApplicableActivityTimeOptions,
   getDefaultTimeForActivity,
   getTripCalendarDays,
   hasMeaningfulDraftContent,
@@ -838,7 +839,11 @@ test('Booking-style calendar summary, single departure time prefill, shifted dat
   // Published departure times & flexible slot labels
   assert.equal(getDefaultTimeForActivity({ departureTimes: ['4:00 pm'] }), '4:00 pm');
   assert.equal(
-    getDefaultTimeForActivity({ departureTimes: ['4:00 pm', '4:30 pm'], defaultTimeSlot: 'sunset' }),
+    getDefaultTimeForActivity({ departureTimes: ['4:00 pm', '4:30 pm'] }),
+    'to-be-arranged'
+  );
+  assert.equal(
+    getDefaultTimeForActivity({ defaultTimeSlot: 'sunset' }),
     'sunset'
   );
   assert.equal(formatTimeSlotDisplayLabel('any-time'), 'Any time');
@@ -1008,7 +1013,26 @@ test('EnquirySchema strictly enforces matching reply-method contact field, and p
   });
   assert.equal(noGuestsCtx.itemized.headlineLabel, 'Add guests to see your total');
   assert.equal(noGuestsCtx.itemized.needsGuestCount, true);
+  assert.equal(noGuestsCtx.itemized.excludedItems.length, 0, 'Single item needing guest count does not duplicate in excludedItems');
   assert.match(noGuestsCtx.itemized.lines[0].basis, /Add guests to see your total/);
+
+  // Adding an unpriced transfer alongside a priced cruise shows partial subtotal and excludes only unpriced transfer
+  const partialDraft = createEmptyTripPlanDraft();
+  partialDraft.adults = 2;
+  partialDraft.selectedActivities = [
+    { id: 'act-sunset-cruise', preferredDay: 'to-be-scheduled', preferredTime: '4:00 pm' },
+  ];
+  partialDraft.transferArrangement = 'recommend';
+  const partialCtx = resolveTripPlanContext({
+    draft: partialDraft,
+    accommodations: [],
+    stayTiers: [],
+    allActivities: [cruiseOnlyAct],
+    transferOptions: [],
+  });
+  assert.equal(partialCtx.itemized.mode, 'partial');
+  assert.equal(partialCtx.itemized.subtotalUSD, 170);
+  assert.ok(partialCtx.itemized.excludedItems.some((item) => /Transfers & route options/i.test(item)));
 
   // WhatsApp draft opened before entering contact details includes trip details & Dates not chosen
   const waUrlNoContact = buildPlannerPlanWhatsAppUrl({ ctx: noGuestsCtx });
@@ -1016,4 +1040,58 @@ test('EnquirySchema strictly enforces matching reply-method contact field, and p
   assert.match(waTextNoContact, /Dates: Dates not chosen/);
   assert.match(waTextNoContact, /Upper Zambezi Sunset Cruise/);
   assert.doesNotMatch(waTextNoContact, /Preferred reply method:/);
+
+  // Applicable activity time options: Sunset cruise excludes unrelated Morning/Afternoon; single CMS time shows Suggested time
+  const sunsetTimeOpts = getApplicableActivityTimeOptions(cruiseOnlyAct);
+  assert.equal(sunsetTimeOpts.options.some((o) => o.id === 'morning' || o.id === 'afternoon'), false);
+  assert.equal(sunsetTimeOpts.options.some((o) => o.id === 'sunset' && /Suggested/i.test(o.label)), true);
+  assert.equal(sunsetTimeOpts.options.some((o) => o.id === 'to-be-arranged' && o.label === 'Time to be arranged'), true);
+
+  const singleCmsTimeOpts = getApplicableActivityTimeOptions({
+    ...cruiseOnlyAct,
+    departureTimes: ['4:00 pm'],
+  });
+  assert.deepEqual(
+    singleCmsTimeOpts.options.map((o) => o.label),
+    ['4:00 pm · Suggested time', 'Time to be arranged']
+  );
+
+  // Shifted out-of-range activity emits "Date to be arranged" in WhatsApp draft & website submission payload (not stale Nov date)
+  const shiftedPlanDraft = createEmptyTripPlanDraft();
+  shiftedPlanDraft.timingMode = 'exact-dates';
+  shiftedPlanDraft.arrivalDate = '2026-12-19';
+  shiftedPlanDraft.departureDate = '2026-12-23';
+  shiftedPlanDraft.nights = 4;
+  shiftedPlanDraft.adults = 2;
+  shiftedPlanDraft.selectedActivities = [
+    {
+      id: 'act-sunset-cruise',
+      preferredDay: 'day-1',
+      preferredTime: 'sunset',
+      activityDate: '2026-11-27',
+    },
+  ];
+  const shiftedPlanCtx = resolveTripPlanContext({
+    draft: shiftedPlanDraft,
+    accommodations: [],
+    stayTiers: [],
+    allActivities: [cruiseOnlyAct],
+    transferOptions: [],
+  });
+  const shiftedWaText = new URL(buildPlannerPlanWhatsAppUrl({ ctx: shiftedPlanCtx })).searchParams.get('text') || '';
+  assert.match(shiftedWaText, /Date to be arranged/);
+  assert.doesNotMatch(shiftedWaText, /2026-11-27|27 Nov/);
+
+  const shiftedPayload = buildPlannerSubmissionPayload({
+    mode: 'guided',
+    ctx: shiftedPlanCtx,
+    name: 'Test Traveller',
+    email: 'test@example.com',
+    phone: '',
+    replyMethod: 'email',
+    notes: '',
+    marketingConsent: false,
+  });
+  assert.equal(shiftedPayload.trip?.selectedActivities?.[0]?.preferredDay, 'Date to be arranged');
+  assert.equal(shiftedPayload.trip?.selectedActivities?.[0]?.activityDate, undefined);
 });

@@ -5,6 +5,7 @@ import type { EnquiryInput } from '../../shared/submission-schema';
 import {
   buildDynamicHolidayItinerary,
   calculateItemizedTripEstimate,
+  formatTimeSlotDisplayLabel,
   type BuilderTransferOption,
   type DynamicItineraryDay,
   type ItemizedTripEstimateResult,
@@ -108,14 +109,99 @@ export function hasMeaningfulDraftContent(draft: TripPlanDraft): boolean {
   );
 }
 
-export function getDefaultTimeForActivity(act?: Partial<ActivityItem> | null): string {
+export function getApplicableActivityTimeOptions(act?: Partial<ActivityItem> | null): {
+  label: string;
+  options: Array<{ id: string; label: string; isSuggested?: boolean }>;
+  suggestedTime: string;
+} {
   const pubTimes = Array.isArray(act?.departureTimes)
-    ? act!.departureTimes.map((t) => String(t).trim()).filter(Boolean)
+    ? act.departureTimes.map((t) => String(t).trim()).filter(Boolean)
     : [];
   if (pubTimes.length === 1) {
-    return pubTimes[0];
+    return {
+      label: 'Preferred departure time',
+      options: [
+        { id: pubTimes[0], label: `${pubTimes[0]} · Suggested time`, isSuggested: true },
+        { id: 'to-be-arranged', label: 'Time to be arranged' },
+      ],
+      suggestedTime: pubTimes[0],
+    };
   }
-  return act?.defaultTimeSlot?.trim() || 'to-be-arranged';
+  if (pubTimes.length > 1) {
+    return {
+      label: 'Preferred departure time',
+      options: [
+        ...pubTimes.map((t) => ({ id: t, label: t })),
+        { id: 'any-time', label: 'Any time' },
+      ],
+      suggestedTime: 'to-be-arranged',
+    };
+  }
+  const cmsSlot = (act?.defaultTimeSlot || '').trim();
+  if (cmsSlot && cmsSlot !== 'to-be-arranged') {
+    return {
+      label: 'Suggested time',
+      options: [
+        { id: cmsSlot, label: `${formatTimeSlotDisplayLabel(cmsSlot)} (Suggested)`, isSuggested: true },
+        { id: 'to-be-arranged', label: 'Time to be arranged' },
+      ],
+      suggestedTime: cmsSlot,
+    };
+  }
+  const titleHint = `${act?.id || ''} ${act?.title || ''}`;
+  if (/sunset/i.test(titleHint)) {
+    return {
+      label: 'Suggested time',
+      options: [
+        { id: 'sunset', label: 'Sunset (Suggested)', isSuggested: true },
+        { id: 'to-be-arranged', label: 'Time to be arranged' },
+      ],
+      suggestedTime: 'sunset',
+    };
+  }
+  if (/sunrise|breakfast\s*cruise/i.test(titleHint)) {
+    return {
+      label: 'Suggested time',
+      options: [
+        { id: 'morning', label: 'Morning (Suggested)', isSuggested: true },
+        { id: 'to-be-arranged', label: 'Time to be arranged' },
+      ],
+      suggestedTime: 'morning',
+    };
+  }
+  if (/dinner|boma|evening|simunye/i.test(titleHint)) {
+    return {
+      label: 'Suggested time',
+      options: [
+        { id: 'evening', label: 'Evening (Suggested)', isSuggested: true },
+        { id: 'to-be-arranged', label: 'Time to be arranged' },
+      ],
+      suggestedTime: 'evening',
+    };
+  }
+  if (/full[-\s]?day|chobe|hwange/i.test(titleHint)) {
+    return {
+      label: 'Suggested time',
+      options: [
+        { id: 'morning', label: 'Morning (Suggested)', isSuggested: true },
+        { id: 'to-be-arranged', label: 'Time to be arranged' },
+      ],
+      suggestedTime: 'morning',
+    };
+  }
+  return {
+    label: 'Preferred time',
+    options: [
+      { id: 'to-be-arranged', label: 'Time to be arranged' },
+      { id: 'morning', label: 'Morning' },
+      { id: 'afternoon', label: 'Afternoon' },
+    ],
+    suggestedTime: 'to-be-arranged',
+  };
+}
+
+export function getDefaultTimeForActivity(act?: Partial<ActivityItem> | null): string {
+  return getApplicableActivityTimeOptions(act).suggestedTime;
 }
 
 export function getTripCalendarDays(
@@ -528,13 +614,17 @@ export function buildPlannerPlanWhatsAppUrl(params: {
   if (ctx.activities.length > 0) {
     const actSummaries = ctx.activities.map((act) => {
       const sel = draft.selectedActivities.find((s) => s.id === act.id);
-      const dayPart = sel?.activityDate
+      const outOfRange = sel ? isActivityDateOutsideTrip(sel, draft.arrivalDate, draft.departureDate) : false;
+      const dayPart = outOfRange
+        ? 'Date to be arranged'
+        : sel?.activityDate
         ? formatShortIsoDay(sel.activityDate)
         : sel?.preferredDay && sel.preferredDay !== 'to-be-scheduled'
         ? sel.preferredDay.replace(/^day-/i, 'Day ')
-        : 'Day flexible';
-      const timePart = sel?.preferredTime || getDefaultTimeForActivity(act);
-      return `${act.title} (${dayPart}, ${timePart === 'to-be-arranged' ? 'Time to be arranged' : timePart})`;
+        : 'Date to be arranged';
+      const rawTime = sel?.preferredTime || getDefaultTimeForActivity(act);
+      const timeLabel = formatTimeSlotDisplayLabel(rawTime);
+      return `${act.title} (${dayPart}, ${timeLabel})`;
     });
     details.push(`Activities: ${actSummaries.join('; ')}`);
   }
@@ -629,13 +719,18 @@ export function buildPlannerSubmissionPayload(params: {
 
   const mappedSelectedActs = activities.map((act) => {
     const sel = draft.selectedActivities.find((s) => s.id === act.id);
+    const outOfRange = sel ? isActivityDateOutsideTrip(sel, draft.arrivalDate, draft.departureDate) : false;
     return {
       id: act.id,
       title: act.title,
       duration: act.duration || '',
       unitPriceUSD: Number.isFinite(act.priceUSD) && act.priceUSD >= 0 ? act.priceUSD : 0,
-      ...(sel?.preferredDay && sel.preferredDay !== 'to-be-scheduled' ? { preferredDay: sel.preferredDay } : {}),
-      ...(sel?.activityDate ? { activityDate: sel.activityDate } : {}),
+      ...(outOfRange
+        ? { preferredDay: 'Date to be arranged' }
+        : {
+            ...(sel?.preferredDay && sel.preferredDay !== 'to-be-scheduled' ? { preferredDay: sel.preferredDay } : {}),
+            ...(sel?.activityDate ? { activityDate: sel.activityDate } : {}),
+          }),
       ...(sel?.preferredTime && sel.preferredTime !== 'to-be-arranged'
         ? { preferredTime: sel.preferredTime }
         : act.defaultTimeSlot

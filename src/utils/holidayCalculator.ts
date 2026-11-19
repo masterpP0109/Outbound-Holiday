@@ -520,6 +520,7 @@ function buildGuestSelectionForPricing(adults: number, childAgesYears: number[])
 export function calculateItemizedTripEstimate(input: ItemizedTripEstimateInput): ItemizedTripEstimateResult {
   const lines: ItemizedEstimateLine[] = [];
   const excludedItems: string[] = [];
+  const guestNeededItems: string[] = [];
   let needsGuestCount = false;
   const adults = typeof input.adults === 'number' && input.adults >= 1 ? Math.round(input.adults) : 0;
   const childAgesYears = Array.isArray(input.childAgesYears) ? input.childAgesYears : [];
@@ -642,13 +643,15 @@ export function calculateItemizedTripEstimate(input: ItemizedTripEstimateInput):
             amountUSD: null,
             status: 'on_request',
           });
-          excludedItems.push(
-            missingGuests
-              ? `${prop.name} (add guests)`
-              : hasStayUnitRate && nights < 1
-              ? `${prop.name} (needs dates)`
-              : `${prop.name}`
-          );
+          if (missingGuests) {
+            guestNeededItems.push(`${prop.name} (needs guests)`);
+          } else {
+            excludedItems.push(
+              hasStayUnitRate && nights < 1
+                ? `${prop.name} (needs dates)`
+                : `${prop.name}`
+            );
+          }
         }
       }
     } else if (input.stayTier) {
@@ -747,7 +750,7 @@ export function calculateItemizedTripEstimate(input: ItemizedTripEstimateInput):
         amountUSD: null,
         status: 'on_request',
       });
-      excludedItems.push(`${act.title} (add guests to see total)`);
+      guestNeededItems.push(`${act.title} (needs guests)`);
       continue;
     }
 
@@ -881,7 +884,7 @@ export function calculateItemizedTripEstimate(input: ItemizedTripEstimateInput):
           amountUSD: null,
           status: 'on_request',
         });
-        excludedItems.push(`${tr.title} (add guests to see total)`);
+        guestNeededItems.push(`${tr.title} (needs guests)`);
       } else {
         let total = adults * tr.priceUSD;
         let missingChild = false;
@@ -919,6 +922,8 @@ export function calculateItemizedTripEstimate(input: ItemizedTripEstimateInput):
   );
   const hasProvisionalRates = pricedLines.some((l) => l.status === 'estimated');
 
+  const allExcluded = [...excludedItems, ...guestNeededItems];
+
   if (pricedLines.length === 0) {
     return {
       mode: 'quote-only',
@@ -932,7 +937,7 @@ export function calculateItemizedTripEstimate(input: ItemizedTripEstimateInput):
   }
 
   const subtotalUSD = pricedLines.reduce((sum, l) => sum + (l.amountUSD ?? 0), 0);
-  if (excludedItems.length > 0) {
+  if (allExcluded.length > 0) {
     return {
       mode: 'partial',
       headlineLabel: 'Subtotal for priced items',
@@ -940,7 +945,7 @@ export function calculateItemizedTripEstimate(input: ItemizedTripEstimateInput):
       subtotalUSD,
       hasProvisionalRates,
       lines,
-      excludedItems,
+      excludedItems: allExcluded,
     };
   }
 
@@ -1009,19 +1014,24 @@ export function buildDynamicHolidayItinerary(input: DynamicItineraryInput): Dyna
     const out: DynamicItineraryDay[] = [];
     if (activities.length > 0) {
       activities.forEach((act) => {
-        const dayText =
-          act.activityDate && /^\d{4}-\d{2}-\d{2}$/.test(act.activityDate)
-            ? formatIsoDisplayDate(act.activityDate, 0) || act.activityDate
-            : act.preferredDay && act.preferredDay !== 'flexible' && act.preferredDay !== 'to-be-scheduled'
-            ? act.preferredDay.replace(/^day-/i, 'Day ')
-            : 'To be scheduled';
+        const outOfRangeNoStay =
+          Boolean(act.activityDate && input.arrivalDate && input.departureDate) &&
+          (act.activityDate! < input.arrivalDate! || act.activityDate! > input.departureDate!);
+        const dayText = outOfRangeNoStay
+          ? 'Date to be arranged'
+          : act.activityDate && /^\d{4}-\d{2}-\d{2}$/.test(act.activityDate)
+          ? formatIsoDisplayDate(act.activityDate, 0) || act.activityDate
+          : act.preferredDay && act.preferredDay !== 'flexible' && act.preferredDay !== 'to-be-scheduled'
+          ? act.preferredDay.replace(/^day-/i, 'Day ')
+          : 'Date to be arranged';
         out.push({
-          day:
-            act.activityDate
-              ? dayText
-              : input.arrivalDate
-              ? `${dayText} (${input.arrivalDate})`
-              : dayText,
+          day: outOfRangeNoStay
+            ? 'Date to be arranged'
+            : act.activityDate
+            ? dayText
+            : input.arrivalDate
+            ? `${dayText} (${input.arrivalDate})`
+            : dayText,
           title: act.title,
           description: `${formatActivityTimeNote(act)}${input.stayArrangement === 'already-arranged' ? ' — pickup from your booked Victoria Falls accommodation.' : '.'}`,
         });
@@ -1062,7 +1072,7 @@ export function buildDynamicHolidayItinerary(input: DynamicItineraryInput): Dyna
       }
       unscheduledActs.push({
         ...act,
-        title: `${act.title} (was ${formatIsoDisplayDate(act.activityDate, 0) || act.activityDate} — Choose a new day)`,
+        title: `${act.title} (Date to be arranged · Choose a new day)`,
       });
       continue;
     }

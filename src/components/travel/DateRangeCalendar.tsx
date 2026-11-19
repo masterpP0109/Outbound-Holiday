@@ -16,6 +16,7 @@ interface DateRangeCalendarProps {
   dialogTitle?: string;
   applyButtonLabel?: string;
   onApply?: (next: DateRangeValue) => void;
+  openRequestKey?: number;
 }
 
 function toIsoDate(d: Date): string {
@@ -84,8 +85,15 @@ export const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
   dialogTitle,
   applyButtonLabel = 'Apply dates',
   onApply,
+  openRequestKey,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof openRequestKey === 'number' && openRequestKey > 0) {
+      setIsOpen(true);
+    }
+  }, [openRequestKey]);
   const [hoverIso, setHoverIso] = useState<string | null>(null);
   const today = useMemo(() => {
     const d = new Date();

@@ -57,6 +57,7 @@ import {
   computeNightsBetweenDates,
   createEmptyTripPlanDraft,
   formatShortIsoDay,
+  getApplicableActivityTimeOptions,
   getDefaultTimeForActivity,
   getTripCalendarDays,
   hasMeaningfulDraftContent,
@@ -115,13 +116,6 @@ const ACTIVITY_CATEGORIES = [
   { id: 'day-trips', label: 'Day Trips' },
 ];
 
-const FLEXIBLE_TIME_SLOTS = [
-  { id: 'morning', label: 'Morning' },
-  { id: 'afternoon', label: 'Afternoon' },
-  { id: 'sunset', label: 'Sunset' },
-  { id: 'any-time', label: 'Any time' },
-];
-
 export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   isOpen,
   onClose,
@@ -167,6 +161,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   const [planValidationMsg, setPlanValidationMsg] = useState<string>('');
   const [planSubmitted, setPlanSubmitted] = useState<boolean>(false);
   const [showReviewEnquiryForm, setShowReviewEnquiryForm] = useState<boolean>(false);
+  const [calendarOpenKey, setCalendarOpenKey] = useState<number>(0);
 
   const submission = useSubmission('enquiries');
   const modalRootRef = useRef<HTMLDivElement>(null);
@@ -200,18 +195,18 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
   const entryCopy = useMemo(() => {
     const c = BUILDER_CONFIG?.entryCopy;
     return {
-      heading: c?.heading || 'How would you like to plan?',
+      heading: c?.heading || 'How would you like to plan your trip?',
       helpCardTitle: c?.helpCardTitle || 'Get help planning',
       helpCardDesc:
         c?.helpCardDesc ||
-        'A local specialist can help with stays, activities, and transfers.',
-      whatsappCtaLabel: c?.whatsappCtaLabel || 'Chat on WhatsApp',
-      quickEnquiryCtaLabel: c?.quickEnquiryCtaLabel || 'Send a quick enquiry',
-      itineraryCardTitle: c?.itineraryCardTitle || 'Build my itinerary',
+        'Tell us what you need and we’ll help plan your trip.',
+      whatsappCtaLabel: c?.whatsappCtaLabel || 'Talk to a local specialist',
+      quickEnquiryCtaLabel: c?.quickEnquiryCtaLabel || 'Quick enquiry',
+      itineraryCardTitle: c?.itineraryCardTitle || 'Build my trip',
       itineraryCardDesc:
         c?.itineraryCardDesc ||
-        'Choose what you’d like to do and see a trip estimate.',
-      itineraryCtaLabel: c?.itineraryCtaLabel || 'Build my itinerary',
+        'Pick a stay, activities, or transfers and see an estimate.',
+      itineraryCtaLabel: c?.itineraryCtaLabel || 'Start planning',
     };
   }, []);
 
@@ -241,6 +236,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     setPlanValidationMsg('');
     setEditingFromReview(false);
     setShowReviewEnquiryForm(false);
+    setCalendarOpenKey(0);
     setExpandedReviewActivityId(null);
     setMobileEstimateOpen(false);
     setShowSuggestions(false);
@@ -404,6 +400,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     setEditingFromReview(fromReview);
     setExpandedReviewActivityId(null);
     setMobileEstimateOpen(false);
+    setCalendarOpenKey(0);
     setPlanValidationMsg('');
     if (section !== 'review') {
       setShowReviewEnquiryForm(false);
@@ -461,7 +458,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       return { section: 'dates-guests', label: 'Add dates and guests', isReady: false };
     }
     if (enabledSections.activities) {
-      return { section: 'activities', label: 'Browse activities', isReady: false };
+      return { section: 'activities', label: 'Add activity', isReady: false };
     }
     if (enabledSections.stay) {
       return { section: 'stay', label: 'Add a stay', isReady: false };
@@ -469,7 +466,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     if (enabledSections.transfers) {
       return { section: 'transfers', label: 'Add a transfer', isReady: false };
     }
-    return { section: 'review', label: 'Review my plan', isReady: false };
+    return { section: 'review', label: 'Review my trip', isReady: false };
   };
 
   const canReview =
@@ -677,9 +674,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
     sel: SelectedPlanActivity,
     contextPrefix: string
   ) => {
-    const publishedTimes = Array.isArray(act.departureTimes)
-      ? act.departureTimes.map((t) => String(t).trim()).filter(Boolean)
-      : [];
+    const timeCfg = getApplicableActivityTimeOptions(act);
     const outsideTrip = isActivityDateOutsideTrip(sel, planDraft.arrivalDate, planDraft.departureDate);
 
     return (
@@ -773,65 +768,26 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
         <div>
           <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1.5">
-            {publishedTimes.length > 0 ? 'Preferred departure time' : 'Preferred time'}
+            {timeCfg.label}
           </label>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label={`${contextPrefix} time for ${act.title}`}>
-            {publishedTimes.length > 0 ? (
-              <>
-                {publishedTimes.map((timeStr) => {
-                  const active = sel.preferredTime === timeStr;
-                  return (
-                    <button
-                      key={timeStr}
-                      type="button"
-                      onClick={() => updateActivitySchedule(act.id, { preferredTime: timeStr })}
-                      className={`min-h-[34px] px-3 py-1 rounded-lg border text-[11px] font-bold cursor-pointer ${
-                        active
-                          ? 'border-[#0D5C75] bg-[#0D5C75] text-white'
-                          : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {timeStr}
-                    </button>
-                  );
-                })}
-                {publishedTimes.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => updateActivitySchedule(act.id, { preferredTime: 'any-time' })}
-                    className={`min-h-[34px] px-3 py-1 rounded-lg border text-[11px] font-bold cursor-pointer ${
-                      sel.preferredTime === 'any-time'
-                        ? 'border-[#0D5C75] bg-[#0D5C75] text-white'
-                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    Any time
-                  </button>
-                )}
-              </>
-            ) : (
-              FLEXIBLE_TIME_SLOTS.map((ts) => {
-                const active = sel.preferredTime === ts.id;
-                return (
-                  <button
-                    key={ts.id}
-                    type="button"
-                    onClick={() =>
-                      updateActivitySchedule(act.id, {
-                        preferredTime: active ? 'to-be-arranged' : ts.id,
-                      })
-                    }
-                    className={`min-h-[34px] px-3 py-1 rounded-lg border text-[11px] font-bold cursor-pointer ${
-                      active
-                        ? 'border-[#0D5C75] bg-[#0D5C75] text-white'
-                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    {ts.label}
-                  </button>
-                );
-              })
-            )}
+            {timeCfg.options.map((opt) => {
+              const active = sel.preferredTime === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => updateActivitySchedule(act.id, { preferredTime: opt.id })}
+                  className={`min-h-[34px] px-3 py-1 rounded-lg border text-[11px] font-bold cursor-pointer ${
+                    active
+                      ? 'border-[#0D5C75] bg-[#0D5C75] text-white'
+                      : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -863,13 +819,13 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
           />
         </div>
 
-        <h1 id="outbound-builder-title" className="text-xs sm:text-sm font-bold tracking-wide text-white/95 hidden sm:block">
+        <span className="text-xs sm:text-sm font-bold tracking-wide text-white/95 hidden sm:block">
           {viewMode === 'entry'
-            ? entryCopy.heading
+            ? 'Plan your trip'
             : viewMode === 'quick-form'
-            ? entryCopy.helpCardTitle
+            ? entryCopy.quickEnquiryCtaLabel
             : 'Your trip'}
-        </h1>
+        </span>
 
         <button
           ref={closeBtnRef}
@@ -886,65 +842,69 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
       {viewMode === 'entry' && (
         <main className="flex-1 overflow-y-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-8">
           <div className="max-w-4xl mx-auto space-y-3 sm:space-y-6">
-            <h2 className="text-lg sm:text-3xl font-bold font-serif text-[#0D5C75] text-center">
+            <h1 id="outbound-builder-title" className="text-lg sm:text-3xl font-bold font-serif text-[#0D5C75] text-center">
               {entryCopy.heading}
-            </h2>
+            </h1>
 
             {/* Two compact side-by-side cards on desktop; stacked on mobile fitting cleanly above the fold */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 items-stretch">
               {/* CARD 1: GET HELP PLANNING */}
               <section className="bg-white rounded-2xl sm:rounded-3xl border-2 border-[#0D5C75] p-3.5 sm:p-6 shadow-sm flex flex-col justify-between gap-2.5 sm:gap-4">
                 <div className="space-y-1">
-                  <h3 className="text-base sm:text-xl font-serif font-bold text-[#0D5C75]">
+                  <h2 className="text-base sm:text-xl font-serif font-bold text-[#0D5C75]">
                     {entryCopy.helpCardTitle}
-                  </h3>
+                  </h2>
                   <p className="text-xs sm:text-sm text-gray-600 leading-snug">
                     {entryCopy.helpCardDesc}
                   </p>
                 </div>
 
-                <div className="space-y-1.5 sm:space-y-2 text-center">
-                  <a
-                    href={quickWhatsAppUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() =>
-                      trackEnquiryEvent('builder_whatsapp_opened', {
-                        category: 'quick-entry',
-                        sourcePage: 'first-screen',
-                      })
-                    }
-                    className="w-full min-h-[42px] sm:min-h-[48px] bg-[#25D366] hover:bg-[#1fb857] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors"
-                  >
-                    <MessageSquare className="w-4 h-4 shrink-0" />
-                    <span>{entryCopy.whatsappCtaLabel}</span>
-                  </a>
-
+                <div className="grid grid-cols-2 gap-2 items-start">
                   <button
                     type="button"
                     onClick={() => {
                       setQuickSubmitted(false);
                       setViewMode('quick-form');
                     }}
-                    className="inline-block text-xs font-bold text-[#0B5E8E] hover:underline py-1 cursor-pointer"
+                    className="w-full min-h-[42px] sm:min-h-[48px] bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-[11px] sm:text-sm py-2 px-2.5 sm:px-4 rounded-xl shadow-xs flex items-center justify-center gap-1.5 text-center leading-tight cursor-pointer transition-colors"
                   >
-                    {entryCopy.quickEnquiryCtaLabel}
+                    <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <span>{entryCopy.quickEnquiryCtaLabel}</span>
                   </button>
+
+                  <div className="text-center">
+                    <a
+                      href={quickWhatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() =>
+                        trackEnquiryEvent('builder_whatsapp_opened', {
+                          category: 'quick-entry',
+                          sourcePage: 'first-screen',
+                        })
+                      }
+                      className="w-full min-h-[42px] sm:min-h-[48px] bg-[#25D366] hover:bg-[#1fb857] text-white font-bold text-[11px] sm:text-sm py-2 px-2.5 sm:px-4 rounded-xl shadow-xs flex items-center justify-center gap-1.5 text-center leading-tight transition-colors"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                      <span>{entryCopy.whatsappCtaLabel}</span>
+                    </a>
+                    <span className="block text-[10px] text-gray-500 mt-0.5">Opens WhatsApp</span>
+                  </div>
                 </div>
               </section>
 
-              {/* CARD 2: BUILD MY ITINERARY */}
+              {/* CARD 2: BUILD MY TRIP */}
               <section className="bg-white rounded-2xl sm:rounded-3xl border border-gray-200 p-3.5 sm:p-6 shadow-xs flex flex-col justify-between gap-2.5 sm:gap-4">
                 <div className="space-y-1">
-                  <h3 className="text-base sm:text-xl font-serif font-bold text-[#0D5C75]">
+                  <h2 className="text-base sm:text-xl font-serif font-bold text-[#0D5C75]">
                     {entryCopy.itineraryCardTitle}
-                  </h3>
+                  </h2>
                   <p className="text-xs sm:text-sm text-gray-600 leading-snug">
                     {entryCopy.itineraryCardDesc}
                   </p>
                 </div>
 
-                <div className="space-y-1.5 sm:space-y-2 text-center">
+                <div className="space-y-1 sm:space-y-2 text-center">
                   <button
                     type="button"
                     onClick={() => {
@@ -953,7 +913,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       setActiveSection(firstSec);
                       setViewMode('planner');
                     }}
-                    className="w-full min-h-[42px] sm:min-h-[48px] bg-white hover:bg-[#0D5C75]/5 text-[#0D5C75] border-2 border-[#0D5C75] font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="w-full min-h-[42px] sm:min-h-[48px] bg-white hover:bg-[#0D5C75]/5 text-[#0D5C75] border-2 border-[#0D5C75] font-bold text-xs sm:text-sm py-2 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <span>{entryCopy.itineraryCtaLabel}</span>
                     <ArrowRight className="w-4 h-4 shrink-0" />
@@ -968,7 +928,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         setActiveSection('review');
                         setViewMode('planner');
                       }}
-                      className="inline-block text-xs font-bold text-[#0B5E8E] hover:underline py-1 cursor-pointer"
+                      className="inline-block text-xs font-bold text-[#0B5E8E] hover:underline py-0.5 cursor-pointer"
                     >
                       Resume my plan
                     </button>
@@ -1000,17 +960,20 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
             <section className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-7 shadow-sm space-y-4">
               <div className="space-y-1">
-                <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#0D5C75]">
-                  {entryCopy.helpCardTitle}
-                </h2>
+                <h1 id="outbound-builder-title" className="text-xl sm:text-2xl font-serif font-bold text-[#0D5C75]">
+                  {entryCopy.quickEnquiryCtaLabel}
+                </h1>
                 <p className="text-xs sm:text-sm text-gray-600">{entryCopy.helpCardDesc}</p>
               </div>
 
               {quickSubmitted ? (
                 <div className="p-4 rounded-2xl bg-[#3F6B3C]/10 border border-[#3F6B3C]/25 space-y-3 text-center">
-                  <h3 className="font-serif font-bold text-lg text-[#0D5C75]">
-                    Enquiry received
-                  </h3>
+                  <h2 className="font-serif font-bold text-lg text-[#0D5C75]">
+                    Enquiry sent
+                  </h2>
+                  <p className="text-xs font-semibold text-[#2F5230]">
+                    We’ll reply by {quickReplyMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}.
+                  </p>
                   <EnquiryConfirmation result={submission.result} />
                   <div className="flex flex-wrap items-center justify-center gap-4 pt-1">
                     <button
@@ -1037,7 +1000,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                     <div>
                       <label htmlFor="quick-name" className="block text-xs font-bold text-gray-700 mb-1">
-                        Your Name <span className="text-red-500">*</span>
+                        Your name <span className="text-red-500">*</span>
                       </label>
                       <input
                         id="quick-name"
@@ -1165,7 +1128,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                     <div>
                       <label htmlFor="quick-notes" className="block text-xs font-bold text-gray-700 mb-1">
-                        What are you hoping to do or stay in? <span className="text-gray-400 font-normal">(optional)</span>
+                        What can we help with? <span className="text-gray-400 font-normal">(optional)</span>
                       </label>
                       <textarea
                         id="quick-notes"
@@ -1289,7 +1252,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         onClick={() => navigateSection('review', false)}
                         className="min-h-[38px] px-4 py-1.5 rounded-xl bg-[#E67E22] hover:bg-[#d36e17] text-white text-xs font-bold cursor-pointer"
                       >
-                        Review my plan
+                        Review my trip
                       </button>
                     )}
                     {canReview && recommendedNext.nextOptional && (
@@ -1369,10 +1332,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       Dates &amp; guests
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                      Add dates and guests
+                      When are you travelling?
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                      Enter what you know now — exact dates, an approximate month, or flexible timing. Dates and guests flow automatically to Stays, Activities, and Transfers.
+                      Enter what you know now — exact dates, a month, or flexible timing. Dates and guests flow automatically to Stays, Activities, and Transfers.
                     </p>
                   </div>
 
@@ -1380,17 +1343,22 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   <div ref={datesPanelRef} id="dates-section-panel" className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
                     <div className="flex flex-wrap gap-2">
                       {[
-                        { id: 'exact-dates', label: 'Add travel dates' },
+                        { id: 'exact-dates', label: 'Choose dates' },
                         { id: 'approx-month', label: 'I know the month' },
-                        { id: 'flexible', label: 'My dates are flexible' },
+                        { id: 'flexible', label: 'I’m flexible' },
                         { id: 'undecided', label: 'Not decided yet' },
                       ].map((t) => (
                         <button
                           key={t.id}
                           type="button"
-                          onClick={() =>
-                            updateDraft((prev) => ({ ...prev, timingMode: t.id as TimingMode }))
-                          }
+                          onClick={() => {
+                            updateDraft((prev) => ({ ...prev, timingMode: t.id as TimingMode }));
+                            if (t.id === 'exact-dates') {
+                              setCalendarOpenKey((k) => k + 1);
+                            } else {
+                              setCalendarOpenKey(0);
+                            }
+                          }}
                           className={`min-h-[40px] px-4 py-2 rounded-xl border text-xs font-bold cursor-pointer transition-colors ${
                             planDraft.timingMode === t.id
                               ? 'border-[#0D5C75] bg-[#0D5C75] text-white'
@@ -1406,9 +1374,11 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       <div className="space-y-3 pt-1">
                         <DateRangeCalendar
                           label="Travel dates"
-                          placeholder="Add travel dates"
+                          placeholder="Choose dates"
                           dialogTitle="Select arrival and departure dates"
                           applyButtonLabel="Apply dates"
+                          openRequestKey={calendarOpenKey}
+                          onApply={() => setCalendarOpenKey(0)}
                           value={{ checkIn: planDraft.arrivalDate, checkOut: planDraft.departureDate }}
                           onChange={(range) =>
                             updateDraft((prev) => ({
@@ -1494,6 +1464,9 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                   {/* Guests & Child Ages */}
                   <div ref={guestsPanelRef} id="guests-section-panel" className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+                    <h3 className="text-base font-serif font-bold text-[#0D5C75]">
+                      Who’s coming?
+                    </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="flex items-center justify-between">
                         <div>
@@ -1652,10 +1625,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       Accommodation
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                      Choose your Victoria Falls stay
+                      Where would you like to stay?
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                      Add a specific hotel or room, tell us accommodation is already arranged, or ask our specialists for tailored recommendations.
+                      Add a specific hotel or room, ask our specialists to recommend options, or skip stay if you already have somewhere booked.
                     </p>
                   </div>
 
@@ -1663,8 +1636,8 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                       { id: 'selected', label: 'Add a stay or room', desc: 'Pick a property, room & rate plan' },
-                      { id: 'already-arranged', label: 'I already have a stay', desc: 'Keep activities & transfers in plan' },
-                      { id: 'recommend', label: 'Ask us to recommend a stay', desc: 'Specialist picks based on your dates' },
+                      { id: 'recommend', label: 'Recommend a stay', desc: 'Specialist picks based on your dates' },
+                      { id: 'already-arranged', label: 'Skip stay', desc: 'Already booked · keep activities & transfers' },
                     ].map((opt) => (
                       <button
                         key={opt.id}
@@ -1966,7 +1939,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       Experiences
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                      Choose your Victoria Falls activities
+                      What would you like to do?
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-600 mt-1">
                       Search or filter experiences, pick your preferred day or time if known, or add a single cruise without adding a stay.
@@ -2149,7 +2122,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                                 ) : (
                                   <>
                                     <Plus className="w-3.5 h-3.5" />
-                                    <span>Add to my plan</span>
+                                    <span>Add activity</span>
                                   </>
                                 )}
                               </button>
@@ -2170,12 +2143,12 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       Transfers &amp; Logistics
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                      Airport &amp; regional transfers
+                      Do you need a transfer?
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-600 mt-1">
                       {transferOptions.length > 0
-                        ? 'Choose from published transfer routes and prices below, ask us for custom options, or mark transport already arranged.'
-                        : 'Ask our local team to quote airport or regional transfer options, or mark that transport is already arranged.'}
+                        ? 'Choose from transfer routes below, ask us for a custom quote, or mark transport already arranged.'
+                        : 'Tell us where you’re going and we’ll quote your transfer, or mark transport already arranged.'}
                     </p>
                   </div>
 
@@ -2183,7 +2156,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
-                          { id: 'recommend', label: 'Request transfer options', desc: 'Our local team will quote airport & lodge transfers' },
+                          { id: 'recommend', label: 'Get a transfer quote', desc: 'Tell us where you’re going and we’ll quote your transfer.' },
                           { id: 'already-arranged', label: 'Transport already arranged', desc: 'Excluded from your estimate' },
                         ].map((opt) => (
                           <button
@@ -2211,15 +2184,15 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         ))}
                       </div>
                       <p className="text-xs text-gray-500 bg-white rounded-xl border border-gray-200 px-4 py-3">
-                        Published fixed transfer routes will appear here once added in WordPress CMS. Tap <strong>Request transfer options</strong> above to include airport or regional transfer assistance in your quote.
+                        Tell us where you’re going and we’ll quote your transfer — tap <strong>Get a transfer quote</strong> above and share your flight or pickup time if you have it.
                       </p>
                     </div>
                   ) : (
                     <>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {[
-                          { id: 'selected', label: 'Select a published route', desc: 'Pick a route & rate below' },
-                          { id: 'recommend', label: 'Request transfer options', desc: 'Quoted per route & party' },
+                          { id: 'selected', label: 'Select a transfer route', desc: 'Pick a route & rate below' },
+                          { id: 'recommend', label: 'Get a transfer quote', desc: 'Tell us where you’re going' },
                           { id: 'already-arranged', label: 'Transport already arranged', desc: 'Excluded from estimate' },
                         ].map((opt) => (
                           <button
@@ -2449,12 +2422,15 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         <Check className="w-7 h-7" />
                       </div>
                       <h2 className="text-2xl font-serif font-bold text-[#0D5C75]">
-                        Enquiry received
+                        Enquiry sent
                       </h2>
+                      <p className="text-xs font-semibold text-[#2F5230]">
+                        We’ll reply by {replyMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}.
+                      </p>
                       <EnquiryConfirmation result={submission.result} />
                       {submission.result?.rateChanged && (
                         <p className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-3">
-                          Note: Published WordPress rates updated during review — our specialist has received the latest verified breakdown.
+                          Note: Published guide rates updated during review — our specialist has received the latest breakdown.
                         </p>
                       )}
                       <div className="flex flex-col sm:flex-row gap-3 pt-2 max-w-md mx-auto">
@@ -2471,7 +2447,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                           className="flex-1 bg-[#25D366] hover:bg-[#1fb857] text-white font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2"
                         >
                           <MessageSquare className="w-4 h-4" />
-                          <span>Share plan on WhatsApp</span>
+                          <span>Share my plan on WhatsApp</span>
                         </a>
                         <button
                           type="button"
@@ -2486,10 +2462,10 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     <>
                       <div>
                         <span className="text-[11px] font-bold uppercase tracking-wider text-[#D97706]">
-                          Review your selections
+                          Your trip
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#0D5C75]">
-                          Review my plan
+                          Review your trip
                         </h2>
                       </div>
 
@@ -2508,7 +2484,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                                   onClick={() => navigateSection('dates-guests', true, 'dates')}
                                   className="text-[#0B5E8E] font-bold hover:underline cursor-pointer"
                                 >
-                                  Change dates
+                                  Edit dates
                                 </button>
                                 <button
                                   type="button"
@@ -2704,7 +2680,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                                     ? tripCalendarDays.find((d) => d.dateIso === sel.activityDate)
                                     : undefined;
                                   const dayLabel = isOutOfRange
-                                    ? `Outside trip dates (${formatShortIsoDay(sel?.activityDate || sel?.preferredDay || '')})`
+                                    ? `New date needed (was ${formatShortIsoDay(sel?.activityDate || sel?.preferredDay || '')})`
                                     : matchedTripDay
                                     ? matchedTripDay.label
                                     : sel?.activityDate
@@ -2785,11 +2761,13 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-gray-100">
                           <div>
                             <span className="text-xs font-bold uppercase tracking-wider text-[#0D5C75] block">
-                              {ctx.itemized.headlineLabel}
+                              {ctx.itemized.subtotalUSD === null && ctx.itemized.needsGuestCount
+                                ? 'Your trip'
+                                : ctx.itemized.headlineLabel}
                             </span>
                             {ctx.itemized.hasProvisionalRates && (
                               <span className="text-[11px] text-gray-500">
-                                Includes provisional/estimated supplier rates confirmed on quotation
+                                Includes provisional rates confirmed on quotation
                               </span>
                             )}
                           </div>
@@ -2797,7 +2775,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                             {ctx.itemized.subtotalUSD !== null
                               ? `US$${ctx.itemized.subtotalUSD.toLocaleString('en-US')}`
                               : ctx.itemized.needsGuestCount
-                              ? 'Add guests to see your total'
+                              ? '—'
                               : 'Get a quote'}
                           </span>
                         </div>
@@ -2818,7 +2796,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                                     : line.status === 'arranged'
                                     ? 'Arranged'
                                     : line.basis.includes('Add guests to see your total')
-                                    ? 'Add guests'
+                                    ? '—'
                                     : 'Price on request'}
                                 </span>
                               </div>
@@ -2857,34 +2835,39 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
 
                       {/* 4. SEND THE PLAN: Two clear actions below summary; website form revealed only when requested */}
                       <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
-                        <div className="flex flex-col sm:flex-row gap-3">
-                          <a
-                            href={buildPlannerPlanWhatsAppUrl({
-                              ctx,
-                              name: showReviewEnquiryForm ? fullName : undefined,
-                              replyMethod,
-                              includeReplyMethod: showReviewEnquiryForm,
-                              notes: showReviewEnquiryForm ? notes : undefined,
-                            })}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() =>
-                              trackEnquiryEvent('builder_whatsapp_opened', {
-                                category: 'review-share',
-                                sourcePage: 'review',
-                              })
-                            }
-                            className="flex-1 min-h-[48px] bg-[#25D366] hover:bg-[#1fb857] text-white font-bold text-sm py-3 px-5 rounded-xl flex items-center justify-center gap-2"
-                          >
-                            <MessageSquare className="w-4 h-4" />
-                            <span>Send on WhatsApp</span>
-                          </a>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+                          <div className="text-center space-y-1">
+                            <a
+                              href={buildPlannerPlanWhatsAppUrl({
+                                ctx,
+                                name: showReviewEnquiryForm ? fullName : undefined,
+                                replyMethod,
+                                includeReplyMethod: showReviewEnquiryForm,
+                                notes: showReviewEnquiryForm ? notes : undefined,
+                              })}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() =>
+                                trackEnquiryEvent('builder_whatsapp_opened', {
+                                  category: 'review-share',
+                                  sourcePage: 'review',
+                                })
+                              }
+                              className="w-full min-h-[48px] bg-[#25D366] hover:bg-[#1fb857] text-white font-bold text-sm py-3 px-5 rounded-xl flex items-center justify-center gap-2"
+                            >
+                              <MessageSquare className="w-4 h-4" />
+                              <span>Share my plan on WhatsApp</span>
+                            </a>
+                            <span className="block text-[11px] text-gray-500">
+                              WhatsApp opens with your trip details ready to send.
+                            </span>
+                          </div>
 
                           {!showReviewEnquiryForm && (
                             <button
                               type="button"
                               onClick={() => setShowReviewEnquiryForm(true)}
-                              className="flex-1 min-h-[48px] bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-3 px-5 rounded-xl shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                              className="w-full min-h-[48px] bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-3 px-5 rounded-xl shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                             >
                               <Send className="w-4 h-4" />
                               <span>Send an enquiry</span>
@@ -3022,7 +3005,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                               className="w-full min-h-[48px] bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-sm py-3 px-5 rounded-xl shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                             >
                               <Send className="w-4 h-4" />
-                              <span>{submission.pending ? 'Sending...' : 'Get a quote'}</span>
+                              <span>{submission.pending ? 'Sending...' : 'Send my enquiry'}</span>
                             </button>
                           </form>
                         )}
@@ -3055,7 +3038,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#0D5C75] hover:bg-[#09475c] text-white text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer"
                     >
                       <Check className="w-4 h-4" />
-                      <span>Save and return to review</span>
+                      <span>Save and review</span>
                     </button>
                   ) : canReview ? (
                     <div className="flex flex-wrap items-center gap-2">
@@ -3075,7 +3058,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                         onClick={() => navigateSection('review', false)}
                         className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#E67E22] hover:bg-[#d36e17] text-white text-xs sm:text-sm font-bold flex items-center gap-2 cursor-pointer"
                       >
-                        <span>Review my plan</span>
+                        <span>Review my trip</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -3194,7 +3177,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     onClick={() => navigateSection('review', false)}
                     className="w-full min-h-[44px] bg-[#E67E22] hover:bg-[#d36e17] text-white font-bold text-xs py-2.5 px-4 rounded-xl cursor-pointer disabled:opacity-40"
                   >
-                    Review my plan
+                    Review my trip
                   </button>
                 )}
               </aside>
@@ -3304,7 +3287,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                       onClick={() => navigateSection('review', false)}
                       className="w-full min-h-[40px] rounded-xl bg-[#0D5C75] text-white font-bold text-xs cursor-pointer disabled:opacity-40"
                     >
-                      Review my plan
+                      Review my trip
                     </button>
                   )}
                 </div>
@@ -3330,7 +3313,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     onClick={() => navigateSection('review', false)}
                     className="flex-1 min-h-[44px] px-4 rounded-xl bg-[#0D5C75] text-white text-xs font-bold cursor-pointer"
                   >
-                    Save &amp; return to review
+                    Save and review
                   </button>
                 ) : activeSection !== 'review' ? (
                   <button
@@ -3342,7 +3325,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
                     }
                     className="flex-1 min-h-[44px] px-4 rounded-xl bg-[#E67E22] text-white text-xs font-bold cursor-pointer"
                   >
-                    {canReview ? 'Review my plan' : recommendedNext.label}
+                    {canReview ? 'Review my trip' : recommendedNext.label}
                   </button>
                 ) : (
                   <span className="text-xs font-bold text-[#0D5C75] px-2">Review ready</span>
