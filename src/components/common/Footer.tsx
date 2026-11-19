@@ -57,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({
                   width={1170}
                   height={352}
                   alt={editorial("common/Footer.text2")}
-                  className={`w-[210px] sm:w-[235px] lg:w-[250px] h-auto object-contain opacity-100 ${
+                  className={`w-[165px] sm:w-[180px] lg:w-[195px] h-auto object-contain opacity-100 ${
                     isDefaultLogo ? '' : 'brightness-0 invert'
                   }`}
                   onError={() => {

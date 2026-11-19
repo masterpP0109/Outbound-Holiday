@@ -815,7 +815,7 @@ export const HolidayBuilderModal: React.FC<HolidayBuilderModalProps> = ({
             width={1170}
             height={352}
             alt={editorial('travel/HolidayBuilderModal.text61')}
-            className="w-[108px] sm:w-[155px] h-auto object-contain"
+            className="w-[88px] sm:w-[120px] h-auto object-contain"
           />
         </div>
 

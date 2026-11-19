@@ -44,7 +44,7 @@
 .header-logo-hero::before {
   content: "";
   position: absolute;
-  inset: -14px -22px;
+  inset: -10px -16px;
   z-index: -1;
   pointer-events: none;
   background: linear-gradient(
@@ -76,7 +76,7 @@
 
 .site-logo-img {
   display: block;
-  width: clamp(220px, 19vw, 305px);
+  width: clamp(175px, 14vw, 210px);
   max-width: 100%;
   height: auto;
   object-fit: contain;
@@ -95,7 +95,7 @@
     gap: 36px;
   }
   .site-logo-img {
-    width: clamp(280px, 20vw, 310px);
+    width: clamp(195px, 14vw, 220px);
   }
 }
 
@@ -104,7 +104,7 @@
     padding-inline: 28px;
   }
   .site-logo-img {
-    width: clamp(220px, 22vw, 255px);
+    width: clamp(160px, 16vw, 190px);
   }
 }
 
@@ -113,29 +113,29 @@
     padding-inline: 24px;
   }
   .site-logo-img {
-    width: clamp(165px, 22vw, 190px);
+    width: clamp(135px, 17vw, 155px);
   }
 }
 
 @media (max-width: 767px) {
   .site-header-inner {
-    min-height: 64px;
+    min-height: 60px;
     padding-inline: 16px;
     gap: 12px;
   }
   .site-logo-img {
-    width: 130px;
+    width: 110px;
   }
 }
 
 @media (max-width: 374px) {
   .site-header-inner {
-    min-height: 60px;
+    min-height: 56px;
     padding-inline: 12px;
     gap: 8px;
   }
   .site-logo-img {
-    width: 115px;
+    width: 98px;
   }
 }
 
