@@ -479,14 +479,13 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               extras={[
                 {
                   id: 'transfers',
-                  label: editorial("travel/ExperienceDetailPage.text29"),
-                  pricePerPersonUSD: 15,
+                  label: 'Request return hotel transfer quote (if not already included)',
                 },
               ]}
               trustTitle={editorial("travel/ExperienceDetailPage.text32")}
               trustBody={editorial("travel/ExperienceDetailPage.text33")}
-              whatsappButtonLabel="Enquire About Availability"
-              buildHolidayLabel="Add activity to my plan"
+              whatsappButtonLabel="Enquire on WhatsApp"
+              buildHolidayLabel="Add to My Holiday Plan"
               onBuildHoliday={onOpenPlanHoliday}
             />
           </aside>

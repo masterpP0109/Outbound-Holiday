@@ -100,6 +100,16 @@ export function formatPriceBasisLabel(basis?: string, customLabel?: string): str
       return 'per unit / night';
     case 'per_room':
       return 'per room / night';
+    case 'per_lodge':
+      return 'per lodge / night';
+    case 'per_villa':
+      return 'per villa / night';
+    case 'per_bed':
+      return 'per bed / night';
+    case 'per_campsite':
+      return 'per campsite / night';
+    case 'on_request':
+      return 'quote on request';
     default:
       return basis ? basis.replace(/_/g, ' ') : 'per night';
   }

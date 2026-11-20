@@ -873,10 +873,15 @@
         html += '    <p><label><strong>Weekend Nightly Rate (USD)</strong><br><input type="number" step="0.01" min="0" class="widefat outbound-u-field" data-type="number" data-path="pricing.weekendRateUSD" value="' + (pr.weekendRateUSD !== null && pr.weekendRateUSD !== undefined ? escHtml(pr.weekendRateUSD) : '') + '" placeholder="Optional weekend rate" /></label></p>';
         html += '    <p><label><strong>Pricing Basis</strong><br><select class="widefat outbound-u-field" data-path="pricing.priceBasis">';
         html += '      <option value="per_room" ' + (pr.priceBasis === 'per_room' ? 'selected' : '') + '>Per Room / Night</option>';
-        html += '      <option value="per_unit" ' + (pr.priceBasis === 'per_unit' ? 'selected' : '') + '>Per Unit (Lodge/Apartment/Villa) / Night</option>';
+        html += '      <option value="per_unit" ' + (pr.priceBasis === 'per_unit' ? 'selected' : '') + '>Per Unit / Night</option>';
+        html += '      <option value="per_lodge" ' + (pr.priceBasis === 'per_lodge' ? 'selected' : '') + '>Per Lodge / Night</option>';
+        html += '      <option value="per_villa" ' + (pr.priceBasis === 'per_villa' ? 'selected' : '') + '>Per Villa / Night</option>';
+        html += '      <option value="per_bed" ' + (pr.priceBasis === 'per_bed' ? 'selected' : '') + '>Per Bed / Night</option>';
+        html += '      <option value="per_campsite" ' + (pr.priceBasis === 'per_campsite' ? 'selected' : '') + '>Per Campsite / Night</option>';
         html += '      <option value="per_person_sharing" ' + (pr.priceBasis === 'per_person_sharing' ? 'selected' : '') + '>Per Person Sharing / Night</option>';
         html += '      <option value="per_person_single" ' + (pr.priceBasis === 'per_person_single' ? 'selected' : '') + '>Per Person Single / Night</option>';
         html += '      <option value="per_person" ' + (pr.priceBasis === 'per_person' ? 'selected' : '') + '>Per Person / Night</option>';
+        html += '      <option value="on_request" ' + (pr.priceBasis === 'on_request' ? 'selected' : '') + '>Quote on Request</option>';
         html += '    </select></label></p>';
         html += '    <p><label><strong>Rate Status</strong><br><select class="widefat outbound-u-field" data-path="pricing.rateStatus">';
         html += '      <option value="provisional" ' + (pr.rateStatus !== 'confirmed' ? 'selected' : '') + '>Provisional Guide Rate</option>';

@@ -1564,7 +1564,7 @@ function outbound_sanitize_room_types_payload(
         $pricing['rateStatus'] = in_array($r_status, array('provisional', 'confirmed'), true) ? $r_status : 'provisional';
 
         $p_basis = (string) ($pr_raw['priceBasis'] ?? 'per_room');
-        $pricing['priceBasis'] = in_array($p_basis, array('per_room', 'per_unit', 'per_person', 'per_person_sharing', 'per_person_single'), true) ? $p_basis : 'per_room';
+        $pricing['priceBasis'] = in_array($p_basis, array('per_room', 'per_unit', 'per_person', 'per_person_sharing', 'per_person_single', 'per_lodge', 'per_villa', 'per_bed', 'per_campsite', 'on_request'), true) ? $p_basis : 'per_room';
 
         $seasonal = array();
         if (!empty($pr_raw['seasonalRates']) && is_array($pr_raw['seasonalRates'])) {

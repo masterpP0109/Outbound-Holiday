@@ -106,7 +106,7 @@ export interface RoomPricing {
   rateValidFrom?: string;
   rateValidTo?: string;
   rateStatus?: 'provisional' | 'confirmed';
-  priceBasis?: 'per_room' | 'per_unit' | 'per_person' | 'per_person_sharing' | 'per_person_single';
+  priceBasis?: 'per_room' | 'per_unit' | 'per_person' | 'per_person_sharing' | 'per_person_single' | 'per_lodge' | 'per_villa' | 'per_bed' | 'per_campsite' | 'on_request';
   seasonalRates?: RoomSeasonalRate[];
   dateSpecificRates?: RoomDateRate[];
   mealPlanRates?: RoomMealPlanRate[];

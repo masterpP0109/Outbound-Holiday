@@ -104,7 +104,7 @@ export const RoomPricingSchema = z.object({
   rateValidFrom: z.string().optional(),
   rateValidTo: z.string().optional(),
   rateStatus: z.enum(['provisional', 'confirmed']).optional(),
-  priceBasis: z.enum(['per_room', 'per_unit', 'per_person', 'per_person_sharing', 'per_person_single']).optional(),
+  priceBasis: z.enum(['per_room', 'per_unit', 'per_person', 'per_person_sharing', 'per_person_single', 'per_lodge', 'per_villa', 'per_bed', 'per_campsite', 'on_request']).optional(),
   seasonalRates: z.array(RoomSeasonalRateSchema).optional(),
   dateSpecificRates: z.array(RoomDateRateSchema).optional(),
   mealPlanRates: z.array(RoomMealPlanRateSchema).optional(),

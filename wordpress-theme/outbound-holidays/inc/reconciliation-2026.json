@@ -1,0 +1,3767 @@
+{
+  "generatedAt": "2026-11-20",
+  "experiences": [
+    {
+      "slug": "guided-tour-falls",
+      "title": "Guided Tour of Victoria Falls",
+      "subtitle": "Explore the Zimbabwean side of Victoria Falls on a guided rainforest walk",
+      "duration": "2–2.5 Hours (confirm itinerary & transfers)",
+      "location": "Victoria Falls Rainforest, Zimbabwe",
+      "shortDescription": "Explore the Zimbabwean side of Victoria Falls on a guided rainforest walk with interpretation of the waterfall, history, and local significance.",
+      "fullOverview": "Explore the Zimbabwean side of Victoria Falls on a guided rainforest walk. Your guide explains the waterfall, its landscape, history, and local significance while guests stop at viewpoints along the marked paths.",
+      "whyWeRecommend": "A locally guided introduction to Mosi-oa-Tunya helps visitors understand the geology, ecology, and viewpoints at their own pace.",
+      "highlights": [
+        "Guided interpretation of the Falls and rainforest",
+        "Views of the cataracts and gorge along marked paths",
+        "Opportunities for waterfall photography",
+        "Locally guided introduction to Mosi-oa-Tunya"
+      ],
+      "whatsIncluded": [
+        "Guided rainforest walk with local guide (Shearwater product)",
+        "Victoria Falls accommodation transfers (advertised on Shearwater guided tour)"
+      ],
+      "whatsExcluded": [
+        "Victoria Falls National Park (ZimParks) rainforest entrance fee (separate on Shearwater guided product)",
+        "Food, beverages, and discretionary personal expenses",
+        "Optional raincoat loan or bottled water unless confirmed on selected product"
+      ],
+      "goodToKnow": [
+        "Wear non-slip shoes and bring a waterproof jacket or poncho for heavy spray.",
+        "Some viewpoints can be slippery; discuss mobility access requirements in advance.",
+        "Number of viewpoints visited depends on selected route, accessibility, conditions, and time.",
+        "Exact ZimParks entrance fees and resident categories change and must be confirmed before booking."
+      ],
+      "faqs": [
+        {
+          "q": "Is the rainforest entrance fee included?",
+          "a": "No, not on the referenced Shearwater guided tour. Confirm the appropriate current visitor-category entrance fee with ZimParks before booking."
+        },
+        {
+          "q": "Does the tour visit all 16 viewpoints?",
+          "a": "The rainforest has multiple viewpoints, but the number visited depends on the selected route, accessibility, spray conditions, and time."
+        }
+      ],
+      "localExpertTip": "Bring a waterproof phone pouch or rain jacket during high-water season when spray from the cataracts is heaviest.",
+      "relatedIds": [
+        "flight-of-angels",
+        "upper-zambezi-sunset-cruise",
+        "livingstone-zambia-tour"
+      ],
+      "verification": {
+        "supplierName": "Shearwater Victoria Falls (documented example)",
+        "productVariant": "Guided Tour of the Falls",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/tours-hikes/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Reconcile Outbound selling rate with dated supplier quote; confirm whether bottled water or raincoat loan is included; confirm current ZimParks international/SADC/resident entry tariffs."
+      }
+    },
+    {
+      "slug": "upper-zambezi-sunset-cruise",
+      "title": "Upper Zambezi Luxury Sunset Cruise",
+      "subtitle": "Leisurely evening cruise on the Upper Zambezi above Victoria Falls",
+      "duration": "Approx. 2 Hours on river (~3 Hours with transfers)",
+      "location": "Upper Zambezi River, Victoria Falls",
+      "shortDescription": "Enjoy a leisurely evening cruise on the Upper Zambezi above Victoria Falls, looking out for river wildlife and birds as the sun sets.",
+      "fullOverview": "Enjoy a leisurely evening cruise on the Upper Zambezi above Victoria Falls. Look out for river wildlife and birds while the sun sets over the water. Hospitality and refreshments depend on the specific vessel and cruise tier.",
+      "whyWeRecommend": "A relaxed way to end the day on the Upper Zambezi with scenic river views and potential wildlife sightings.",
+      "highlights": [
+        "Upper Zambezi sunset scenery",
+        "Possible sightings of hippos, crocodiles, elephants, and birdlife",
+        "Relaxed photography and sightseeing",
+        "Refreshments and snacks according to selected cruise tier"
+      ],
+      "whatsIncluded": [
+        "Return Victoria Falls town transfers (on cited Shearwater Riversong / Wild Horizons Zambezi Royal)",
+        "Selected drinks and canapés or hors d’oeuvres (varies by vessel and cruise tier)"
+      ],
+      "whatsExcluded": [
+        "National park / river usage fees (extra on cited premium operator pages; confirm current levy)",
+        "Special drinks or services not listed by the chosen vessel"
+      ],
+      "goodToKnow": [
+        "Confirm the specific vessel and cruise tier before booking, as hospitality and deck layout vary.",
+        "Wildlife viewing is never guaranteed.",
+        "Bring a light jumper in winter, sunscreen, insect repellent, and a camera; follow onboard safety briefings.",
+        "Exact pickup times are seasonal."
+      ],
+      "faqs": [
+        {
+          "q": "Are drinks and snacks included?",
+          "a": "On the cited Shearwater Riversong and Wild Horizons Zambezi Royal premium cruises, yes, subject to the published drinks selection."
+        },
+        {
+          "q": "Is the river fee included?",
+          "a": "No, on the cited premium examples the current river/park fee is quoted separately or must be explicitly prepaid."
+        }
+      ],
+      "localExpertTip": "Confirm your exact vessel name at booking and bring a warm layer for the return transfer in winter evenings.",
+      "relatedIds": [
+        "luxury-pontoon-cruise",
+        "breakfast-cruise",
+        "guided-tour-falls"
+      ],
+      "verification": {
+        "supplierName": "Shearwater (Riversong) or Wild Horizons (Zambezi Royal)",
+        "productVariant": "Unconfirmed specific vessel — potential overlap with Zambezi Royal Luxury Pontoon Cruise",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/river-cruise/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Choose and assign an exact named vessel/supplier to differentiate from Zambezi Royal Luxury Pontoon Cruise (avoid duplicate products); verify current river/park levy and exact inclusion list."
+      }
+    },
+    {
+      "slug": "chobe-day-safari",
+      "title": "Chobe National Park Day Safari (Botswana)",
+      "subtitle": "Full-day cross-border river safari and game drive in Chobe",
+      "duration": "Full Day (approx. 9.5 Hours; border-dependent)",
+      "location": "Chobe National Park, Botswana (from Victoria Falls)",
+      "shortDescription": "Travel from Victoria Falls into Botswana for a full day of wildlife viewing in the Chobe River area, combining river and land safaris.",
+      "fullOverview": "Travel from Victoria Falls into Botswana for a full day of wildlife viewing in the Chobe River area. The referenced Wild Horizons classic product combines a morning river safari, lunch ashore, and an afternoon open-vehicle game drive.",
+      "whyWeRecommend": "Combines two distinct wildlife-viewing perspectives—boat cruise on the Chobe River and 4x4 game drive—in a single day trip.",
+      "highlights": [
+        "Chobe River boat safari",
+        "Open-vehicle game viewing in Chobe National Park",
+        "Possibility of seeing elephants, hippos, crocodiles, and birdlife",
+        "Cross-border safari experience from Victoria Falls"
+      ],
+      "whatsIncluded": [
+        "Return transfers from Victoria Falls (Wild Horizons Classic Chobe Day Trip)",
+        "Morning Chobe River boat cruise and afternoon open-vehicle game drive",
+        "Lunch ashore (Classic variant)",
+        "Chobe National Park fees (included on Classic variant only — excluded on Lunch Cruise variant)"
+      ],
+      "whatsExcluded": [
+        "Chobe National Park fees on the separate \"Day Trip with Lunch Cruise\" variant",
+        "Visa and re-entry expenses where applicable",
+        "Transfers outside Victoria Falls and personal purchases"
+      ],
+      "goodToKnow": [
+        "A valid passport is required for Botswana entry and Zimbabwe re-entry.",
+        "Visa and re-entry requirements depend on nationality and itinerary; do not assume KAZA Univisa covers every traveller.",
+        "Children may require additional cross-border documentation.",
+        "Border processing times affect total trip duration; wildlife sightings cannot be guaranteed."
+      ],
+      "faqs": [
+        {
+          "q": "Is the Chobe National Park fee included?",
+          "a": "Yes on the referenced Wild Horizons Classic Day Trip. No on its separate \"Day Trip with Lunch Cruise\" variant—these two variants must not be mixed."
+        },
+        {
+          "q": "Will I see elephants?",
+          "a": "Elephants are frequently encountered in the Chobe area, though wild animal sightings cannot be guaranteed."
+        }
+      ],
+      "localExpertTip": "Confirm whether your quote is for the Classic Day Trip (park fees included, lunch ashore) or the Lunch Cruise variant (park fees separate).",
+      "relatedIds": [
+        "hwange-day-safari",
+        "game-drive-zambezi",
+        "livingstone-zambia-tour"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons",
+        "productVariant": "Classic Chobe Day Trip (distinct from Day Trip with Lunch Cruise)",
+        "country": "Botswana / Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "varies_by_variant",
+        "sourceUrl": "https://wildhorizons.co.za/experiences/chobe-day-trip/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm which Wild Horizons variant (Classic vs Lunch Cruise) Outbound sells at US$185 and keep park-fee inclusions explicit on quotation."
+      }
+    },
+    {
+      "slug": "flight-of-angels",
+      "title": "Flight of Angels Helicopter Flight",
+      "subtitle": "Aerial views of Victoria Falls, the Zambezi River, and Batoka Gorge",
+      "duration": "12–13 Mins (short flight) / up to ~25 Mins (extended)",
+      "location": "Victoria Falls Helipad, Zimbabwe",
+      "shortDescription": "See Victoria Falls and the Zambezi River from a helicopter, with short Flight of Angels and extended scenic route options.",
+      "fullOverview": "See Victoria Falls and the Zambezi River from a helicopter. The short Flight of Angels focuses on the waterfall and surrounding gorge, while longer routes allow more extensive sightseeing depending on the flight package.",
+      "whyWeRecommend": "Provides an unforgettable aerial perspective of the full width of the Falls and the zigzagging Batoka Gorge.",
+      "highlights": [
+        "Aerial views of Victoria Falls",
+        "Views of the Zambezi River and Batoka Gorge",
+        "Short and extended scenic flight options",
+        "Unique aerial photographic opportunities"
+      ],
+      "whatsIncluded": [
+        "Pilot and scenic helicopter flight for selected route duration",
+        "Victoria Falls-area return transfers (per Shearwater stated terms)"
+      ],
+      "whatsExcluded": [
+        "Government, park, and fuel-related surcharges (may be charged separately; confirm total payable)",
+        "Optional flight video or photography packages"
+      ],
+      "goodToKnow": [
+        "Shearwater short Flight of Angels is approximately 12–13 minutes actual flight time; extended options run up to about 25 minutes.",
+        "Ground briefing, waiting, and transfers add to total excursion time.",
+        "Flights are subject to weather and civil aviation requirements.",
+        "Seating is determined by aircraft weight-and-balance and safety procedures; specific window seats cannot be guaranteed."
+      ],
+      "faqs": [
+        {
+          "q": "Is it a 15-minute flight?",
+          "a": "The referenced Shearwater short Flight of Angels is approximately 12–13 minutes actual flight time; extended routes run longer."
+        },
+        {
+          "q": "Are helicopter park and fuel fees included?",
+          "a": "Government, park, and fuel surcharges may be charged separately; confirm the latest total payable in your quotation."
+        }
+      ],
+      "localExpertTip": "Allow extra time for check-in, safety briefing, and transfers beyond the airborne flight minutes.",
+      "relatedIds": [
+        "guided-tour-falls",
+        "bungee-jump",
+        "upper-zambezi-sunset-cruise"
+      ],
+      "verification": {
+        "supplierName": "Shearwater Scenic Flights (documented example)",
+        "productVariant": "12–13 Min Flight of Angels vs ~22–25 Min Extended Flight",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/helicopter-experience/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm exact operator, flight duration variant (12–13 min vs extended), and current government/park/fuel surcharges before publishing final total."
+      }
+    },
+    {
+      "slug": "boma-dinner-show",
+      "title": "The Boma – Dinner & Drum Show",
+      "subtitle": "Evening dining, cultural performances, and interactive drumming",
+      "duration": "Approx. 3 Hours (19:00–22:00 daily)",
+      "location": "Victoria Falls Safari Lodge Estate (~3 km from town)",
+      "shortDescription": "Enjoy an evening of dining and live entertainment at The Boma – Dinner & Drum Show on the Victoria Falls Safari Lodge estate.",
+      "fullOverview": "Enjoy an evening of dining and live entertainment at The Boma – Dinner & Drum Show on the Victoria Falls Safari Lodge estate. The experience features a varied buffet, cultural performances, and interactive drumming.",
+      "whyWeRecommend": "A lively, family- and group-friendly cultural dining evening operated by Victoria Falls Safari Collection.",
+      "highlights": [
+        "Buffet dinner with Zimbabwean and international options",
+        "Live dance and cultural entertainment",
+        "Interactive drumming session",
+        "Lively group-friendly evening atmosphere"
+      ],
+      "whatsIncluded": [
+        "Buffet dinner and the venue’s live entertainment programme"
+      ],
+      "whatsExcluded": [
+        "Beverages and bar tabs (unless explicitly confirmed in package)",
+        "Hotel transfers (only included if arranged and confirmed in your Outbound Holidays package)"
+      ],
+      "goodToKnow": [
+        "Official venue operating hours are 19:00–22:00 daily.",
+        "Located about 3 km from Victoria Falls city centre on the Victoria Falls Safari Lodge estate.",
+        "Advance booking is recommended; vegetarian dishes are offered (advise special dietary needs in advance)."
+      ],
+      "faqs": [
+        {
+          "q": "What time is The Boma open?",
+          "a": "The official venue FAQ states 7:00 pm to 10:00 pm (19:00–22:00) daily."
+        },
+        {
+          "q": "Are vegetarian meals available?",
+          "a": "Yes, the venue explicitly confirms vegetarian options; please advise dietary requirements when enquiring."
+        }
+      ],
+      "localExpertTip": "Let us know in advance if you need return hotel transfers or have dietary requirements so we can confirm both with the venue.",
+      "relatedIds": [
+        "simunye-theatre-show",
+        "upper-zambezi-sunset-cruise",
+        "guided-tour-falls"
+      ],
+      "verification": {
+        "supplierName": "Victoria Falls Safari Collection (The Boma)",
+        "productVariant": "Dinner & Drum Show (19:00–22:00)",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://victoria-falls-safari-collection.com/en-US/wine-and-dine/The-Boma-Dinner-Drum-Show",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm current commercial agreement, child rates, and whether transfers are bundled in Outbound Holidays selling price."
+      }
+    },
+    {
+      "slug": "lookout-cafe",
+      "title": "Lookout Café & Batoka Gorge Dining",
+      "subtitle": "Scenic dining perched on the rim of Batoka Gorge",
+      "duration": "Flexible (typically 1–2 Hours; open 08:00–21:30)",
+      "location": "Batoka Gorge Rim, Victoria Falls",
+      "shortDescription": "Dine or enjoy drinks at The Lookout Café on the rim of Batoka Gorge with views of the river gorge and Victoria Falls Bridge.",
+      "fullOverview": "Dine or have a drink at The Lookout Café on the rim of Batoka Gorge, with views of the river gorge and the Victoria Falls Bridge. The café offers contemporary, international, and local dishes with a scenic terrace.",
+      "whyWeRecommend": "An iconic gorge-rim dining spot where guests can relax over breakfast, lunch, or dinner while watching nearby high-wire activities.",
+      "highlights": [
+        "Batoka Gorge and Victoria Falls Bridge views",
+        "Breakfast, lunch, drinks, or dinner service",
+        "Watch nearby high-wire activities from the terrace",
+        "Vegetarian, vegan, and gluten-free options available"
+      ],
+      "whatsIncluded": [
+        "Table reservation where arranged in advance (restaurant venue; food and drinks ordered from menu unless a curated meal package is booked)"
+      ],
+      "whatsExcluded": [
+        "Food and beverages (charged per menu unless a specific meal package is confirmed)",
+        "Hotel transfers unless separately arranged"
+      ],
+      "goodToKnow": [
+        "Official listed hours are 08:00–21:30 (last dinner orders 19:30).",
+        "The venue is wheelchair-accessible and offers parking and Wi-Fi.",
+        "The terrace overlooks Batoka Gorge and the Victoria Falls Bridge—not the face of the actual waterfall.",
+        "No fixed admission ticket is required to dine; any package rate must specify what meal or transfer is included."
+      ],
+      "faqs": [
+        {
+          "q": "Can I see the actual waterfall from the table?",
+          "a": "The published view is of the Batoka Gorge, Zambezi River, and Victoria Falls Bridge rather than a direct face-on waterfall view."
+        },
+        {
+          "q": "Is there an entrance ticket fee?",
+          "a": "No fixed entry ticket is established; this is a restaurant. Any quoted package amount specifies the dining or transfer arrangement included."
+        }
+      ],
+      "localExpertTip": "Book ahead for lunch or sunset terrace tables, especially if pairing with Wild Horizons high-wire activities next door.",
+      "relatedIds": [
+        "zip-line",
+        "gorge-swing",
+        "canopy-tour"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons (The Lookout Café)",
+        "productVariant": "Restaurant reservation / optional meal package",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://wildhorizons.co.za/the-lookout-cafe/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Clarify whether US$25 in source data represents a curated meal voucher or transfer/reservation fee; do not display as an admission ticket."
+      }
+    },
+    {
+      "slug": "rhino-tracking-safari",
+      "title": "Rhino Conservation & Tracking Experience",
+      "subtitle": "Guided rhino conservation experience in the Victoria Falls area",
+      "duration": "Approx. 3–4 Hours (confirm format with supplier)",
+      "location": "Protected Private Reserve, Victoria Falls Area",
+      "shortDescription": "Learn about rhinoceros conservation through an expert-led experience in the Victoria Falls area; format depends on the reserve and guide.",
+      "fullOverview": "Learn about rhinoceros conservation through an expert-led experience in the Victoria Falls area. The location, species encountered, and whether guests track on foot or from a vehicle depend on the particular protected reserve and licensed guide.",
+      "whyWeRecommend": "Supports conservation-focused wildlife interpretation with specialist guides.",
+      "highlights": [
+        "Conservation-focused interpretation",
+        "Expert guided wildlife experience",
+        "Opportunity to learn about rhino behaviour and protection",
+        "Potential sighting under controlled conditions (never guaranteed)"
+      ],
+      "whatsIncluded": [
+        "Exact inclusions (guide/ranger, reserve entry, walking or vehicle format, and transfers) are confirmed with the specific operator on quotation"
+      ],
+      "whatsExcluded": [
+        "Conservation, reserve, transfer, or guide fees unless expressly confirmed on your quotation"
+      ],
+      "goodToKnow": [
+        "Exact arrangements, reserve, species, and whether tracking is on foot or by 4x4 vehicle are confirmed with your quotation.",
+        "Walking near wild rhinos requires specialist guiding and operator-specific age, fitness, and insurance checks.",
+        "Wildlife sightings cannot be guaranteed."
+      ],
+      "faqs": [
+        {
+          "q": "Is this definitely a walking tour?",
+          "a": "Format depends on the contracted reserve and operator—some programmes are 4x4 conservation drives while others include guided walking. We confirm the exact format on enquiry."
+        },
+        {
+          "q": "Will we see black and white rhinos?",
+          "a": "Neither species nor a sighting can be guaranteed; species present depend on the specific reserve."
+        }
+      ],
+      "localExpertTip": "Enquire early so we can confirm the exact reserve, whether the current programme is on foot or by vehicle, and any age/fitness rules.",
+      "relatedIds": [
+        "game-drive-zambezi",
+        "hwange-day-safari",
+        "elephant-interaction"
+      ],
+      "verification": {
+        "supplierName": "Unconfirmed (Stanley & Livingstone Reserve offers rhino conservation drives)",
+        "productVariant": "Walking vs 4x4 conservation drive unconfirmed",
+        "country": "Zimbabwe",
+        "confidence": "C",
+        "verificationStatus": "supplier_unidentified",
+        "parkFeeStatus": "unknown",
+        "sourceUrl": "https://www.ghadiscovery.com/anantara/anantara-stanley-livingstone-victoria-falls-hotel/experiences/exclusive-rhino-experience",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "HIGH PRIORITY: Identify exact operating supplier and reserve; confirm whether walking rhino tracking is actually contracted or if product should be renamed/sold as a 4x4 rhino conservation drive."
+      }
+    },
+    {
+      "slug": "game-drive-zambezi",
+      "title": "Zambezi National Park Game Drive",
+      "subtitle": "Guided 4x4 safari drive through riverine and bush habitats",
+      "duration": "Approx. 3–3.5 Hours (morning drive)",
+      "location": "Zambezi National Park / Victoria Falls Area",
+      "shortDescription": "Join a guided 4x4 game drive through bush and riverine habitats around Victoria Falls, looking for elephants, buffalo, antelope, and birdlife.",
+      "fullOverview": "Join a guided 4×4 game drive through the bush and riverine habitats around Victoria Falls, looking for elephants, buffalo, antelope, birdlife, and other wild animals with an experienced safari guide.",
+      "whyWeRecommend": "A classic half-day safari close to Victoria Falls town, ideal for morning or afternoon wildlife viewing.",
+      "highlights": [
+        "Game viewing in a 4×4 safari vehicle",
+        "Zambezi riverine and woodland habitats",
+        "Birdwatching and landscape interpretation",
+        "Opportunities to photograph wildlife"
+      ],
+      "whatsIncluded": [
+        "Return Victoria Falls town transfers (Shearwater morning game drive)",
+        "Guided 4×4 safari drive",
+        "Light breakfast or refreshments (on Shearwater morning package)"
+      ],
+      "whatsExcluded": [
+        "National park entry fees (listed separately by Shearwater; exact rates depend on visitor category)"
+      ],
+      "goodToKnow": [
+        "Bring a jacket for cool mornings, a hat, sun protection, and a camera.",
+        "Animal sightings, including predators such as lions or leopards, cannot be guaranteed.",
+        "Confirm park/reserve and child suitability for the selected departure."
+      ],
+      "faqs": [
+        {
+          "q": "Will we see lions or leopards?",
+          "a": "Predators may occur in the area, but sightings of lions or leopards are never guaranteed on a game drive."
+        },
+        {
+          "q": "Are national park fees included?",
+          "a": "Shearwater’s referenced game drive lists national park fees as additional; confirm exact visitor-category rates when booking."
+        }
+      ],
+      "localExpertTip": "Early morning drives are cooler and great for birdlife; bring a light windproof layer.",
+      "relatedIds": [
+        "hwange-day-safari",
+        "chobe-day-safari",
+        "upper-zambezi-sunset-cruise"
+      ],
+      "verification": {
+        "supplierName": "Shearwater Victoria Falls (documented example)",
+        "productVariant": "Morning Game Drive (3–3.5 hours)",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/victoria-falls-safari/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm exact operator, afternoon/night drive availability, child age policy, and current Zambezi National Park fees."
+      }
+    },
+    {
+      "slug": "elephant-interaction",
+      "title": "Elephant Sanctuary & Conservation Experience",
+      "subtitle": "Guided educational elephant encounter at a local sanctuary",
+      "duration": "Approx. 2.5–3 Hours (Wild Horizons Elephant Encounter)",
+      "location": "Victoria Falls Wildlife Sanctuary",
+      "shortDescription": "Learn about elephants and the conservation and welfare work supporting them during a guided encounter at a designated sanctuary.",
+      "fullOverview": "Learn about elephants and the conservation and welfare work supporting them during a guided encounter at a designated sanctuary. The experience format varies between suppliers and may involve guided bush trails or observation from a viewing platform.",
+      "whyWeRecommend": "An educational conservation encounter focused on elephant behaviour, welfare, and individual histories.",
+      "highlights": [
+        "Learn about elephants and their individual histories",
+        "Conservation education from specialist guides",
+        "Time in a wildlife sanctuary or observation setting",
+        "Bush scenery and photographic opportunities"
+      ],
+      "whatsIncluded": [
+        "Scheduled hotel transfers (Wild Horizons Elephant Encounter)",
+        "Guided sanctuary walk and refreshments adapted to time of day (Wild Horizons)"
+      ],
+      "whatsExcluded": [
+        "Photos/videos, third-party fees, or extra experiences not expressly listed by the selected sanctuary"
+      ],
+      "goodToKnow": [
+        "Wear closed shoes, sun protection, and comfortable clothing.",
+        "This is NOT an elephant-riding product.",
+        "Exact sanctuary, observation vs contact rules, and whether meals are included depend on the chosen operator (Wild Horizons Elephant Encounter vs Shearwater eleCREW)."
+      ],
+      "faqs": [
+        {
+          "q": "Do we ride elephants?",
+          "a": "No. Neither referenced programme is marketed as an elephant-riding product."
+        },
+        {
+          "q": "Is this the same as Shearwater eleCREW?",
+          "a": "No. Shearwater eleCREW observation and Wild Horizons Elephant Encounter are different supplier programmes with distinct formats."
+        }
+      ],
+      "localExpertTip": "Ask us to confirm which sanctuary programme is booked so you know whether it is platform observation or a guided bush walk.",
+      "relatedIds": [
+        "game-drive-zambezi",
+        "guided-tour-falls",
+        "chobe-day-safari"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons (Elephant Encounter) or Shearwater (eleCREW)",
+        "productVariant": "Pick one supplier: Wild Horizons Elephant Encounter vs Shearwater eleCREW",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "unknown",
+        "sourceUrl": "https://wildhorizons.co.za/experiences/elephant-encounter/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Select exact contracted supplier (Wild Horizons vs Shearwater eleCREW), clarify sanctuary rules and meal inclusions, and avoid unverified ethical claims."
+      }
+    },
+    {
+      "slug": "white-water-rafting",
+      "title": "White Water Rafting on the Zambezi",
+      "subtitle": "Full-day guided rafting expedition through Batoka Gorge",
+      "duration": "Full Day (approx. 07:30–15:00, water-level dependent)",
+      "location": "Batoka Gorge, Zambezi River",
+      "shortDescription": "Join a professionally guided rafting expedition through the Zambezi River’s Batoka Gorge below Victoria Falls.",
+      "fullOverview": "Join a professionally guided rafting expedition through the Zambezi River’s Batoka Gorge below Victoria Falls. The itinerary and rapids depend on river level and the operator’s seasonal route.",
+      "whyWeRecommend": "Led by qualified river guides with full safety equipment and post-trip refreshments.",
+      "highlights": [
+        "Exciting white-water rapids in Batoka Gorge",
+        "Dramatic canyon scenery below Victoria Falls",
+        "Qualified river guides and comprehensive safety briefing",
+        "Active full-day adventure on the Zambezi"
+      ],
+      "whatsIncluded": [
+        "Hotel transfers within Victoria Falls (Shearwater terms)",
+        "Rafting equipment and professional river guides",
+        "Post-trip lunch and drinks (stated in Shearwater package terms)"
+      ],
+      "whatsExcluded": [
+        "National park fees (may be additional; confirm exact quote)",
+        "Optional action photos and videos"
+      ],
+      "goodToKnow": [
+        "Minimum age is 15 years on Shearwater’s referenced rafting product.",
+        "Requires reasonable fitness for steep gorge access, steps, and paddling.",
+        "Operating sections change with seasonal water levels; not all rapids are run year-round."
+      ],
+      "faqs": [
+        {
+          "q": "Can younger children raft?",
+          "a": "Not on Shearwater’s referenced product, which states a minimum age of 15."
+        },
+        {
+          "q": "Can I book for any date?",
+          "a": "River levels and safety decisions affect which gorge sections operate and when; confirm seasonal routing before booking."
+        }
+      ],
+      "localExpertTip": "Low-water season (typically Aug–Dec) and high-water season run different gorge sections—we will confirm the active route for your dates.",
+      "relatedIds": [
+        "jet-boat-gorge",
+        "bungee-jump",
+        "gorge-swing"
+      ],
+      "verification": {
+        "supplierName": "Shearwater Victoria Falls",
+        "productVariant": "One-Day White Water Rafting (07:30–15:00)",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/white-water-rafting/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm exact route for travel dates, client medical/fitness exclusions, and current national park fee amount."
+      }
+    },
+    {
+      "slug": "gorge-swing",
+      "title": "Batoka Gorge Swing & Tandem Jump",
+      "subtitle": "Freefall and pendulum swing from the Batoka Gorge rim",
+      "duration": "Short swing (check-in & briefing time applies)",
+      "location": "Batoka Gorge Rim (near Lookout Café), Zimbabwe",
+      "shortDescription": "Experience a harnessed leap from the gorge rim above the Zambezi, followed by a freefall and pendulum swing, solo or tandem.",
+      "fullOverview": "Experience a harnessed leap from the gorge rim above the Zambezi, followed by a freefall and pendulum swing. Solo and tandem options may be available subject to operator rules.",
+      "whyWeRecommend": "Offers an exhilarating ~70m advertised freefall above Batoka Gorge with solo and tandem options.",
+      "highlights": [
+        "Approximately 70 m advertised freefall on Wild Horizons gorge swing",
+        "Broad Batoka Gorge views",
+        "Professional safety fitting and briefings",
+        "Solo or tandem options where operator permits"
+      ],
+      "whatsIncluded": [
+        "Safety briefing, harness, and supervised gorge-swing activity on the selected Wild Horizons product"
+      ],
+      "whatsExcluded": [
+        "Optional video and photo products",
+        "Hotel transfers or local levies unless explicitly listed as included"
+      ],
+      "goodToKnow": [
+        "Wild Horizons published listings refer to minimum age 6 and maximum weight 140 kg on some gorge-swing options; tandem restrictions can differ.",
+        "This is located at the gorge-rim activity site near Lookout Café—NOT the Victoria Falls Bridge swing.",
+        "Request written confirmation of current age/weight requirements for solo vs tandem."
+      ],
+      "faqs": [
+        {
+          "q": "Is this a bridge swing?",
+          "a": "No. The Wild Horizons gorge swing is based at the gorge-rim activity site near Lookout Café; a swing launched from Victoria Falls Bridge is a different product."
+        },
+        {
+          "q": "Can two people go together?",
+          "a": "Wild Horizons offers a tandem gorge swing, subject to combined weight and suitability rules."
+        }
+      ],
+      "localExpertTip": "Combine with the Batoka Zip Line, Flying Fox, or lunch at the adjacent Lookout Café.",
+      "relatedIds": [
+        "zip-line",
+        "flying-fox",
+        "lookout-cafe"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons (Gorge Swing at Lookout Café)",
+        "productVariant": "Solo & Tandem Gorge Swing (distinct from Bridge Swing)",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "unknown",
+        "sourceUrl": "https://wildhorizons.co.za/experiences/gorge-swing/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Audit gallery images to remove any Bridge-Swing photos; confirm exact solo/tandem weight & age limits and transfer/levy terms."
+      }
+    },
+    {
+      "slug": "bungee-jump",
+      "title": "Victoria Falls Bridge Bungee Jump",
+      "subtitle": "111 m bungee jump from the historic Victoria Falls Bridge",
+      "duration": "Approx. 1 Hour bridge turnaround (excl. transfers)",
+      "location": "Victoria Falls Bridge, Zimbabwe / Zambia Border",
+      "shortDescription": "Jump from the historic Victoria Falls Bridge above the Zambezi River, with a safety briefing and supervised jump from the bridge platform.",
+      "fullOverview": "Jump from the historic Victoria Falls Bridge above the Zambezi River, with a safety briefing and supervised jump from the bridge platform.",
+      "whyWeRecommend": "An iconic ~111 m bridge-to-river jump supervised by Shearwater’s Victoria Falls Bridge team.",
+      "highlights": [
+        "Approximately 111 m bridge-to-river height",
+        "Historic cross-border bridge setting",
+        "Professionally supervised jump",
+        "Views of the Batoka Gorge"
+      ],
+      "whatsIncluded": [
+        "Bungee jump experience, safety briefing, and required jump equipment"
+      ],
+      "whatsExcluded": [
+        "Hotel transport (not included by default in Shearwater bridge terms)",
+        "Photos and videos (sold separately)",
+        "Any applicable bridge/border or park fees"
+      ],
+      "goodToKnow": [
+        "Shearwater bungee terms: minimum age 14; weight 40–120 kg (bridge swing has different limits).",
+        "Physical passport is required for bridge access; border/visa advice is nationality-specific.",
+        "Wear comfortable clothing and closed-toe shoes."
+      ],
+      "faqs": [
+        {
+          "q": "What is the weight limit?",
+          "a": "Shearwater’s bungee-specific terms state a minimum of 40 kg and a maximum of 120 kg."
+        },
+        {
+          "q": "Do I need a passport?",
+          "a": "Yes, Shearwater requires a physical passport to access the bridge. Whether a visa is needed depends on your nationality and immigration movements."
+        }
+      ],
+      "localExpertTip": "Bring your physical passport and closed lace-up shoes; allow extra time for border post clearance onto the bridge.",
+      "relatedIds": [
+        "gorge-swing",
+        "white-water-rafting",
+        "flight-of-angels"
+      ],
+      "verification": {
+        "supplierName": "Shearwater / Victoria Falls Bridge Adventures",
+        "productVariant": "111m Bridge Bungee Jump (40–120 kg)",
+        "country": "Zimbabwe / Zambia",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "unknown",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/victoria-falls-bridge-adventures/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm whether any certificate or photo add-on is included in Outbound rate, and confirm current border/bridge pass procedures."
+      }
+    },
+    {
+      "slug": "zip-line",
+      "title": "High-Wire Batoka Zip Line",
+      "subtitle": "High-wire cable crossing across the Batoka Gorge",
+      "duration": "Brief ride (total outing depends on briefing & transfers)",
+      "location": "Batoka Gorge (Lookout Café site), Victoria Falls",
+      "shortDescription": "Ride a harnessed high-wire cable across the Batoka Gorge above the Zambezi River, with a safety team assisting at both ends.",
+      "fullOverview": "Ride a harnessed high-wire cable across the Batoka Gorge above the Zambezi River, with a safety team assisting at both ends.",
+      "whyWeRecommend": "Wild Horizons’ 425 m span across Batoka Gorge reaches speeds up to approximately 106 km/h.",
+      "highlights": [
+        "425 m cable crossing above Batoka Gorge",
+        "Views of the Zambezi River and gorge cliffs",
+        "High-wire adrenaline experience (up to ~106 km/h)",
+        "Photographic opportunities from viewing area"
+      ],
+      "whatsIncluded": [
+        "Zipline ride, harness, and safety briefing on the referenced Wild Horizons product"
+      ],
+      "whatsExcluded": [
+        "Photos and videos",
+        "Hotel transfers and optional additions unless explicitly confirmed"
+      ],
+      "goodToKnow": [
+        "Wild Horizons advertises a 425 m span and speeds up to approximately 106 km/h.",
+        "Age and weight rules for solo and tandem tickets are not identical; confirm eligibility for your ticket type.",
+        "Different from the multi-slide Canopy Tour."
+      ],
+      "faqs": [
+        {
+          "q": "Can children go?",
+          "a": "Some Wild Horizons zipline variants allow children with adult supervision or tandem equipment, but eligibility depends on the specific ticket type."
+        },
+        {
+          "q": "Is it the same as the canopy tour?",
+          "a": "No. The zipline is a single high-wire gorge crossing; the canopy tour is a series of nine forest slides and a cable bridge."
+        }
+      ],
+      "localExpertTip": "Ask about solo vs tandem requirements when travelling with children.",
+      "relatedIds": [
+        "flying-fox",
+        "gorge-swing",
+        "canopy-tour"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons",
+        "productVariant": "High-Wire Batoka Zipline (Solo vs Tandem)",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://wildhorizons.co.za/experiences/zipline-in-victoria-falls/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm solo vs tandem minimum age and 140 kg max weight on current booking listing, plus transfer inclusions."
+      }
+    },
+    {
+      "slug": "flying-fox",
+      "title": "Batoka Flying Fox Cable Slide",
+      "subtitle": "Horizontal cable glide suspended above the Batoka Gorge",
+      "duration": "Brief ride (outing duration depends on briefing & transfers)",
+      "location": "Batoka Gorge (Lookout Café site), Victoria Falls",
+      "shortDescription": "Glide across the Batoka Gorge suspended horizontally in a harness, giving a face-forward view down into the Zambezi gorge.",
+      "fullOverview": "Glide across the Batoka Gorge suspended horizontally in a harness, giving a face-forward view down into the Zambezi gorge.",
+      "whyWeRecommend": "A gentler horizontal cable glide compared to the faster high-wire zipline.",
+      "highlights": [
+        "Horizontal \"flying\" harness position",
+        "Panoramic gorge and river views",
+        "Short, accessible adventure ride",
+        "Safety supervision at the high-wire site"
+      ],
+      "whatsIncluded": [
+        "Flying Fox crossing, safety briefing, and harness for the chosen product"
+      ],
+      "whatsExcluded": [
+        "Optional photos and videos",
+        "Non-included transfers or local fees"
+      ],
+      "goodToKnow": [
+        "Wild Horizons’ booking listing describes a 140 kg maximum weight; child and tandem eligibility must be confirmed in writing with the operator.",
+        "Generally gentler than the high-wire zipline."
+      ],
+      "faqs": [
+        {
+          "q": "Is it as fast as the zipline?",
+          "a": "No. The Flying Fox is generally a gentler horizontal crossing, while the high-wire zipline is a faster ride."
+        },
+        {
+          "q": "What is the minimum age for children?",
+          "a": "Child and tandem eligibility must be confirmed directly with Wild Horizons before booking."
+        }
+      ],
+      "localExpertTip": "Great option for guests who want the gorge-crossing view without the high-speed drop of the gorge swing.",
+      "relatedIds": [
+        "zip-line",
+        "gorge-swing",
+        "lookout-cafe"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons",
+        "productVariant": "Flying Fox",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://wildhorizons.activitar.com/services/4229",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm actual minimum age for children (listing shows anomalous 0) and whether tandem equipment is needed."
+      }
+    },
+    {
+      "slug": "jet-boat-gorge",
+      "title": "Extreme Jet Boat Batoka Rapids",
+      "subtitle": "High-speed jetboat manoeuvres deep inside Batoka Gorge",
+      "duration": "Approx. 2.5 Hours total (35–45 Mins on the boat)",
+      "location": "Batoka Gorge / Boiling Pot, Victoria Falls",
+      "shortDescription": "Take a powerful jetboat through the Zambezi’s Batoka Gorge near the Boiling Pot with trained captains.",
+      "fullOverview": "Take a powerful jetboat through the Zambezi’s Batoka Gorge near the Boiling Pot, with trained captains navigating fast-flowing water and changing river conditions.",
+      "whyWeRecommend": "Delivers high-speed thrills inside Batoka Gorge without a full-day rafting commitment.",
+      "highlights": [
+        "High-speed jetboat manoeuvres",
+        "Views from deep inside Batoka Gorge",
+        "Dramatic close-up river experience",
+        "Guided safety-focused adventure"
+      ],
+      "whatsIncluded": [
+        "Victoria Falls town hotel transfers (Shearwater)",
+        "Helmet and life jacket",
+        "Specialist jetboat crew"
+      ],
+      "whatsExcluded": [
+        "National park fee (extra; confirm current amount)",
+        "Optional photos and videos"
+      ],
+      "goodToKnow": [
+        "Minimum age 10 years (must fit the smallest life jacket).",
+        "Access requires a steep hike and stairways into and out of the gorge.",
+        "Shearwater identifies several medical/fitness exclusions; operation can pause in high or very low water."
+      ],
+      "faqs": [
+        {
+          "q": "Is there a steep walk?",
+          "a": "Yes. Shearwater warns of a steep hike and stairways into and out of the gorge."
+        },
+        {
+          "q": "Does it operate year-round?",
+          "a": "No. Shearwater notes periods of suspension around high and very low water; confirm dates before booking."
+        }
+      ],
+      "localExpertTip": "Wear secure water shoes or trainers for the steep gorge hike and expect to get splashed.",
+      "relatedIds": [
+        "white-water-rafting",
+        "bungee-jump",
+        "gorge-swing"
+      ],
+      "verification": {
+        "supplierName": "Shearwater Adventure Jetboat",
+        "productVariant": "Batoka Gorge Jetboat",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/jetboat-experience/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm seasonal operating dates (high/low water suspensions) and current national park fee."
+      }
+    },
+    {
+      "slug": "canopy-tour",
+      "title": "Victoria Falls Canopy Tour",
+      "subtitle": "Nine cable slides and a rope bridge in wooded Batoka Gorge",
+      "duration": "Approx. 2–2.5 Hours",
+      "location": "Wooded Batoka Gorge, Victoria Falls",
+      "shortDescription": "Follow a series of nine cable slides, walking trails, and a rope bridge through the wooded Batoka Gorge area with guides.",
+      "fullOverview": "Follow a series of cable slides, walking trails, and a rope bridge through the wooded Batoka Gorge area, accompanied by guides and safety equipment.",
+      "whyWeRecommend": "A supervised multi-slide canopy adventure suited to many families and active travellers.",
+      "highlights": [
+        "Nine cable slides through forested gorge terrain",
+        "One cable bridge walkway",
+        "Forest and birdlife views",
+        "Supervised adventure suited to many families"
+      ],
+      "whatsIncluded": [
+        "Guided canopy experience and safety gear (Wild Horizons)",
+        "Return transfers from Victoria Falls town hotels (Wild Horizons)"
+      ],
+      "whatsExcluded": [
+        "Personal purchases and extra video footage",
+        "Transport outside Victoria Falls town"
+      ],
+      "goodToKnow": [
+        "Located in the wooded Batoka Gorge, NOT inside the fenced Victoria Falls National Park rainforest.",
+        "Tie back long hair, wear closed shoes, and use sun/insect protection.",
+        "Confirm exact minimum age, body size, and fitness requirements with Wild Horizons."
+      ],
+      "faqs": [
+        {
+          "q": "How many slides are there?",
+          "a": "Wild Horizons specifies nine slides plus a cable bridge walkway."
+        },
+        {
+          "q": "Is it the same as one long zipline?",
+          "a": "No. The canopy tour consists of multiple shorter cables and trails through a forested gorge setting."
+        }
+      ],
+      "localExpertTip": "Note that the canopy tour takes place in the wooded Batoka Gorge—distinct from the fenced Victoria Falls rainforest entrance.",
+      "relatedIds": [
+        "zip-line",
+        "lookout-cafe",
+        "guided-tour-falls"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons",
+        "productVariant": "Victoria Falls Canopy Tour (9 slides + 1 bridge)",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://wildhorizons.co.za/experiences/canopy-tour/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm exact minimum age, weight/harness size, and fitness requirements with Wild Horizons."
+      }
+    },
+    {
+      "slug": "luxury-pontoon-cruise",
+      "title": "Zambezi Royal Luxury Pontoon Cruise",
+      "subtitle": "Premium sunset cruise with gourmet canapés and cocktails",
+      "duration": "Approx. 2 Hours on river (seasonal departures)",
+      "location": "Upper Zambezi River, Victoria Falls",
+      "shortDescription": "Sail the upper Zambezi on the Zambezi Royal, a premium sunset cruise with gourmet canapés, cocktails, and wildlife viewing.",
+      "fullOverview": "Sail the upper Zambezi on the Zambezi Royal, a premium sunset cruise with gourmet canapés, cocktails, and the chance to observe wildlife along the riverbanks.",
+      "whyWeRecommend": "Intimate 28-guest maximum capacity with gourmet hot and cold canapés and curated beverages.",
+      "highlights": [
+        "Premium Zambezi sunset cruise on the Zambezi Royal",
+        "Hot and cold gourmet canapés",
+        "Curated cocktails and beverages",
+        "Possible wildlife sightings along the riverbanks"
+      ],
+      "whatsIncluded": [
+        "Return Victoria Falls town hotel/B&B transfers (Wild Horizons)",
+        "Gourmet hot and cold canapés and premium beverages",
+        "Captain’s presentation"
+      ],
+      "whatsExcluded": [
+        "National park fees (specifically excluded by Wild Horizons and payable separately)"
+      ],
+      "goodToKnow": [
+        "Official maximum vessel capacity is 28 guests.",
+        "Summer sailing approx. 16:30–18:30; winter approx. 16:00–18:00 (subject to change).",
+        "Supply dietary requests in advance."
+      ],
+      "faqs": [
+        {
+          "q": "How many guests can the vessel take?",
+          "a": "Wild Horizons states a maximum of 28 guests."
+        },
+        {
+          "q": "Are park fees included?",
+          "a": "No, on the public Wild Horizons Zambezi Royal product, national park fees are payable separately."
+        }
+      ],
+      "localExpertTip": "Advise any dietary preferences at the time of booking so the galley can prepare accordingly.",
+      "relatedIds": [
+        "upper-zambezi-sunset-cruise",
+        "breakfast-cruise",
+        "boma-dinner-show"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons (Zambezi Royal)",
+        "productVariant": "Zambezi Royal Sunset Cruise (max 28 guests)",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://wildhorizons.co.za/experiences/zambezi-royal-sunset-cruise/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Reconcile potential duplication with Upper Zambezi Luxury Sunset Cruise; confirm current river/park fee."
+      }
+    },
+    {
+      "slug": "breakfast-cruise",
+      "title": "Zambezi River Sunrise & Breakfast Cruise",
+      "subtitle": "Peaceful early-morning cruise on the Upper Zambezi",
+      "duration": "Approx. 2 Hours (confirm pickup & on-water times)",
+      "location": "Upper Zambezi River, Victoria Falls",
+      "shortDescription": "Experience a peaceful early-morning cruise on the Upper Zambezi while watching the river and its birdlife awaken.",
+      "fullOverview": "Experience a peaceful early-morning cruise on the Upper Zambezi while watching the river and its birdlife awaken in the morning light.",
+      "whyWeRecommend": "A calm, uncrowded morning river experience ideal for photography and birdwatching before the midday heat.",
+      "highlights": [
+        "Morning birdwatching possibilities",
+        "Gentle Upper Zambezi river scenery",
+        "Quiet atmosphere before the heat of the day",
+        "Light morning refreshments"
+      ],
+      "whatsIncluded": [
+        "Tea, coffee, juice, water, and muffins (on Shearwater Early Morning Sunrise Cruise)"
+      ],
+      "whatsExcluded": [
+        "A cooked breakfast is NOT confirmed on the referenced Shearwater cruise",
+        "River/park fees, transfers, and extra catering unless confirmed on your quotation"
+      ],
+      "goodToKnow": [
+        "Distinguish a light breakfast (drinks and muffins) from a full cooked breakfast depending on the vessel booked.",
+        "Bring binoculars, a camera, and a warm layer during cooler mornings.",
+        "Wildlife sightings are not guaranteed."
+      ],
+      "faqs": [
+        {
+          "q": "Is a hot cooked breakfast served?",
+          "a": "Not on the published Shearwater sunrise cruise description, which lists tea, coffee, juice, water, and muffins."
+        },
+        {
+          "q": "Is it suitable for birdwatchers?",
+          "a": "The quieter morning period suits birdwatching, though no sightings are guaranteed."
+        }
+      ],
+      "localExpertTip": "Ask us to confirm the exact vessel and breakfast menu (light muffins/drinks vs plated breakfast) for your travel date.",
+      "relatedIds": [
+        "upper-zambezi-sunset-cruise",
+        "canoeing-zambezi",
+        "game-drive-zambezi"
+      ],
+      "verification": {
+        "supplierName": "Shearwater Early Morning Sunrise Cruise (example)",
+        "productVariant": "Light breakfast (drinks & muffins) vs cooked breakfast vessel",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "unknown",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/experience/river-cruise/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm exact contracted boat, whether cooked breakfast or drinks/muffins is served, transfer inclusions, and river fees."
+      }
+    },
+    {
+      "slug": "fishing-trips",
+      "title": "Zambezi Tiger Fishing Excursion",
+      "subtitle": "Guided angling on the Upper Zambezi above Victoria Falls",
+      "duration": "Half Day (confirm exact hours with captain)",
+      "location": "Upper Zambezi River, Victoria Falls",
+      "shortDescription": "Go fishing with an experienced river guide on the Upper Zambezi, targeting tigerfish and other species while enjoying river scenery.",
+      "fullOverview": "Go fishing with an experienced river guide on the Upper Zambezi, targeting tigerfish and other suitable species while enjoying the scenery of the river above Victoria Falls.",
+      "whyWeRecommend": "Specialist guided angling on scenic Upper Zambezi channels with catch-and-release practices.",
+      "highlights": [
+        "Specialist guided angling",
+        "Upper Zambezi river setting",
+        "Chance to target tigerfish",
+        "Relaxed outing suited to various skill levels where operator allows"
+      ],
+      "whatsIncluded": [
+        "Boat and river guide; confirm tackle, bait/lures, refreshments, and transfers with the selected operator before booking"
+      ],
+      "whatsExcluded": [
+        "Fishing licences, park/river fees, extra tackle, and transport unless confirmed on your quotation"
+      ],
+      "goodToKnow": [
+        "Use catch-and-release practices as required by the operator and local regulations.",
+        "Follow boat safety briefings; crocodiles and hippos are present in the river.",
+        "Season and water conditions influence catch chances."
+      ],
+      "faqs": [
+        {
+          "q": "Will I catch a tigerfish?",
+          "a": "Guides take you to suitable fishing grounds, but a catch is never guaranteed."
+        },
+        {
+          "q": "Is fishing tackle included?",
+          "a": "Tackle and bait inclusions depend on the selected fishing operator and are confirmed with your quote."
+        }
+      ],
+      "localExpertTip": "Confirm whether tackle, lures, licences, and river fees are bundled before departure.",
+      "relatedIds": [
+        "canoeing-zambezi",
+        "upper-zambezi-sunset-cruise",
+        "breakfast-cruise"
+      ],
+      "verification": {
+        "supplierName": "Joe’s Fishing Vic Falls (possible provider — unconfirmed)",
+        "productVariant": "Half-day guided tiger fishing",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "unknown",
+        "sourceUrl": "https://www.joesfishingvicfalls.com/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Identify exact contracted fishing operator; confirm duration (3.5h?), tackle/bait, fishing licence, river fees, and refreshments."
+      }
+    },
+    {
+      "slug": "canoeing-zambezi",
+      "title": "Upper Zambezi Guided Canoe Safari",
+      "subtitle": "Guided canoe safari through Upper Zambezi islands and channels",
+      "duration": "Half Day / Full Day (varies by route & water level)",
+      "location": "Upper Zambezi River, Victoria Falls",
+      "shortDescription": "Paddle sections of the Upper Zambezi in guided canoes for close-to-nature river scenery and wildlife observation from a safe distance.",
+      "fullOverview": "Paddle sections of the Upper Zambezi in guided canoes for close-to-nature river scenery and opportunities to observe birds and wildlife from a safe distance.",
+      "whyWeRecommend": "A quiet, nature-immersive way to explore Upper Zambezi channels with qualified river guides.",
+      "highlights": [
+        "River safari from canoe level",
+        "Views of islands and river channels",
+        "Birding opportunities",
+        "Professional guide and river-safety briefing"
+      ],
+      "whatsIncluded": [
+        "Qualified river guides and canoeing equipment (confirm transfers, meals, safety vessel support, and permits for your itinerary)"
+      ],
+      "whatsExcluded": [
+        "River/park fees and additional transport or catering unless confirmed on your package"
+      ],
+      "goodToKnow": [
+        "Large wildlife including hippos and crocodiles are present; only join an appropriately guided product and obey the guide’s route and distance instructions.",
+        "Requires participant fitness and age assessment.",
+        "Exact half-day or full-day hours vary with route and water levels."
+      ],
+      "faqs": [
+        {
+          "q": "Is it safe near hippos?",
+          "a": "Wildlife risk is real; you must obey your qualified guide’s route and safe-distance instructions at all times."
+        },
+        {
+          "q": "Can I book a full day?",
+          "a": "Operators offer multiple duration options, with differing inclusions and routes."
+        }
+      ],
+      "localExpertTip": "Wear quick-dry clothing, a sun hat, and secure sandals, and keep cameras in a dry bag.",
+      "relatedIds": [
+        "fishing-trips",
+        "game-drive-zambezi",
+        "breakfast-cruise"
+      ],
+      "verification": {
+        "supplierName": "River Wild Safaris (documented operator example)",
+        "productVariant": "Half Day vs Full Day Guided Canoe Safari",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "unknown",
+        "sourceUrl": "https://riverwildsafaris.com/canoe-safaris/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Match exact contracted canoe operator; confirm half-day vs full-day hours, safety boat support, meals, transfers, and park/river fees."
+      }
+    },
+    {
+      "slug": "local-village-tour",
+      "title": "Zimbabwean Cultural Village Tour",
+      "subtitle": "Pre-arranged, locally guided community cultural exchange",
+      "duration": "Approx. 2.5 Hours (confirm with partner)",
+      "location": "Victoria Falls Surrounding Community, Zimbabwe",
+      "shortDescription": "Visit a local Zimbabwean community through a pre-arranged, locally guided cultural exchange to learn about heritage and daily life.",
+      "fullOverview": "Visit a local Zimbabwean community through a pre-arranged, locally guided cultural exchange. Learn about the community’s way of life, heritage, and everyday practices in a respectful setting.",
+      "whyWeRecommend": "Offers respectful cultural context and opportunities to support community makers beyond the main Falls area.",
+      "highlights": [
+        "Conversations with local hosts where invited",
+        "Context on local history and customs",
+        "Opportunities to support community makers",
+        "Cultural experience beyond the Falls"
+      ],
+      "whatsIncluded": [
+        "Community guide or hosted visit where explicitly included; exact transfers and refreshments are confirmed on quotation"
+      ],
+      "whatsExcluded": [
+        "Community donations, craft purchases, and travel costs unless specified"
+      ],
+      "goodToKnow": [
+        "Guests must respect photography requests, privacy, and community customs.",
+        "Always ask permission from hosts before taking photographs.",
+        "Exact village partner, programme, and duration are confirmed with your quotation."
+      ],
+      "faqs": [
+        {
+          "q": "Is this a staged village?",
+          "a": "The visit is arranged with informed community participation; exact partner and visit programme are confirmed when quoting."
+        },
+        {
+          "q": "Can we take pictures?",
+          "a": "Only with explicit permission from the people and hosts involved."
+        }
+      ],
+      "localExpertTip": "Ask your guide about respectful etiquette and photography guidelines before arriving.",
+      "relatedIds": [
+        "art-galleries-markets",
+        "boma-dinner-show",
+        "simunye-theatre-show"
+      ],
+      "verification": {
+        "supplierName": "Unidentified community partner (Wild Horizons offers community tours)",
+        "productVariant": "Community cultural visit",
+        "country": "Zimbabwe",
+        "confidence": "C",
+        "verificationStatus": "supplier_unidentified",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://wildhorizons.co.za/victoria-falls-itinerary-wallow-lodge/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Identify actual village/community partner, guide, revenue-sharing terms, duration, and transfer inclusions before claiming \"authentic\"."
+      }
+    },
+    {
+      "slug": "art-galleries-markets",
+      "title": "Victoria Falls Craft Markets & Art Galleries",
+      "subtitle": "Browse local sculptures, jewellery, textiles, and artisan studios",
+      "duration": "Flexible, self-paced (approx. 2 Hours suggested)",
+      "location": "Elephants’ Walk (Adam Stander Drive) & Victoria Falls Town",
+      "shortDescription": "Explore Victoria Falls art, craft, and shopping venues including local sculptures, jewellery, textiles, and galleries.",
+      "fullOverview": "Explore Victoria Falls art, craft, and shopping venues, including local sculptures, jewellery, carved objects, textiles, and galleries. Visitors can meet creators at workshops or studios where available.",
+      "whyWeRecommend": "A relaxed way to browse local Zimbabwean craftsmanship and meet artisans at Elephants’ Walk and nearby markets.",
+      "highlights": [
+        "Local artwork and handmade crafts",
+        "Gallery and artisan studio browsing",
+        "Chance to meet local makers",
+        "Flexible time to browse and shop"
+      ],
+      "whatsIncluded": [
+        "Entry to participating public retail areas such as Elephants’ Walk is generally free to browse; a separately booked guided shopping service covers only what is specified on your quote"
+      ],
+      "whatsExcluded": [
+        "Art/craft purchases, packaging, international shipping, guide fees, and transport unless paid for in a specific package"
+      ],
+      "goodToKnow": [
+        "Elephants’ Walk Shopping & Artists’ Village is located on Adam Stander Drive in Victoria Falls.",
+        "Confirm opening times per shop; international shipping and customs rules depend on item and destination."
+      ],
+      "faqs": [
+        {
+          "q": "Is there an entrance fee to browse?",
+          "a": "No standard entrance fee is verified for browsing Elephants’ Walk; any quoted fee applies only if you book an optional guided shopping service."
+        },
+        {
+          "q": "Can art be shipped abroad?",
+          "a": "Some galleries may arrange shipping, but delivery and customs rules must be confirmed directly with the seller."
+        }
+      ],
+      "localExpertTip": "Elephants’ Walk is also home to the Victoria Falls Theatre Company (Simunye), making it easy to pair an afternoon browse with the evening show.",
+      "relatedIds": [
+        "simunye-theatre-show",
+        "local-village-tour",
+        "guided-tour-falls"
+      ],
+      "verification": {
+        "supplierName": "Elephants’ Walk Shopping & Artists’ Village (venue); guide supplier unconfirmed",
+        "productVariant": "Independent browse vs optional guided shopping tour",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://www.elephantswalk.com/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm whether US$35 is an optional contracted guided shopping tour or if listing should show free-to-browse / guide on request."
+      }
+    },
+    {
+      "slug": "hwange-day-safari",
+      "title": "Hwange National Park Full Day Safari",
+      "subtitle": "Full-day guided safari excursion to Zimbabwe’s largest park",
+      "duration": "Full Day (early ~06:00 departure; approx. 11 Hours)",
+      "location": "Hwange National Park, Zimbabwe (from Victoria Falls)",
+      "shortDescription": "Leave Victoria Falls early for a guided safari excursion into Hwange National Park, known for its elephants and varied habitats.",
+      "fullOverview": "Leave Victoria Falls early for a guided safari excursion into Hwange National Park, known for its elephants, varied habitats, and other free-ranging wildlife.",
+      "whyWeRecommend": "A full-day immersion in Zimbabwe’s premier national park, accessible as a long day trip from Victoria Falls.",
+      "highlights": [
+        "Safari in Zimbabwe’s largest national park",
+        "Opportunities to see elephants and diverse wildlife",
+        "Guided game viewing",
+        "Excursion through varied bush landscapes"
+      ],
+      "whatsIncluded": [
+        "Vehicle, professional guide, and game drives according to the specific operator itinerary (meals, transfers, and park entry vary by vendor)"
+      ],
+      "whatsExcluded": [
+        "National Parks entry fees and meal inclusions unless explicitly confirmed in writing for the booked operator"
+      ],
+      "goodToKnow": [
+        "Expect an early start (~06:00 departure), extended road transfer, and heat or dust.",
+        "Bring water, layers, sun protection, and a camera.",
+        "Wildlife sightings (including lions) are never guaranteed."
+      ],
+      "faqs": [
+        {
+          "q": "Does the safari include National Parks fees?",
+          "a": "That depends on the operator and package; some include them and some quote them separately."
+        },
+        {
+          "q": "Will we see lions?",
+          "a": "No operator can guarantee wild lion sightings."
+        }
+      ],
+      "localExpertTip": "Ask us to confirm park fees, lunch, vehicle type, and pickup/return times for your travel date.",
+      "relatedIds": [
+        "chobe-day-safari",
+        "game-drive-zambezi",
+        "rhino-tracking-safari"
+      ],
+      "verification": {
+        "supplierName": "Hwange Safaris day-trip operator (documented example)",
+        "productVariant": "Full Day Excursion from Victoria Falls",
+        "country": "Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "varies_by_variant",
+        "sourceUrl": "https://www.hwangesafaris.com/day-trips",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm exact contracted Hwange day-trip operator, park fees, lunch inclusion, vehicle type, and return time."
+      }
+    },
+    {
+      "slug": "livingstone-zambia-tour",
+      "title": "Livingstone Town & Zambian Falls Day Trip",
+      "subtitle": "Cross-border visit to Zambia’s Falls viewpoints and Livingstone",
+      "duration": "Approx. 2 Hours (Falls only) to 5 Hours (combined tour)",
+      "location": "Livingstone & Mosi-oa-Tunya, Zambia",
+      "shortDescription": "Cross from Victoria Falls, Zimbabwe, into Livingstone, Zambia, to see the Falls from Zambian viewpoints and explore nearby heritage sites.",
+      "fullOverview": "Cross from Victoria Falls, Zimbabwe, into Livingstone, Zambia, to see the Falls from the Zambian rainforest viewpoints and explore nearby heritage attractions if included in the chosen package.",
+      "whyWeRecommend": "Offers a complementary cross-border perspective of Victoria Falls and Livingstone’s historic town.",
+      "highlights": [
+        "Alternative views of Victoria Falls from Zambia",
+        "Historic border and Victoria Falls Bridge crossing",
+        "Optional Livingstone town or museum visit (package-dependent)",
+        "Local historical and cultural context"
+      ],
+      "whatsIncluded": [
+        "Only the named tour components, guiding, and transport explicitly listed in your selected cross-border quotation"
+      ],
+      "whatsExcluded": [
+        "Cross-border visas, Zimbabwe re-entry permits, Zambian park fees, Livingstone Museum entry, and meals unless expressly included"
+      ],
+      "goodToKnow": [
+        "A valid passport is required. Check Zimbabwe re-entry and Zambia entry rules for each traveller’s nationality.",
+        "KAZA Univisa validity depends on eligible nationality and specific itinerary—do not assume it applies automatically.",
+        "The Falls’ water volume and visibility vary seasonally on the Zambian side."
+      ],
+      "faqs": [
+        {
+          "q": "Is the KAZA Univisa always accepted?",
+          "a": "Do not assume so. Eligibility, permitted travel, and current immigration rules must be checked for each guest’s nationality and route."
+        },
+        {
+          "q": "Does this automatically include a Livingstone Museum tour?",
+          "a": "No. Museum entry and town sightseeing must be explicitly included in the selected itinerary and fee breakdown."
+        }
+      ],
+      "localExpertTip": "Confirm whether you want the ~2-hour Zambian Falls tour or a 5-hour combined Livingstone town & Falls itinerary.",
+      "relatedIds": [
+        "guided-tour-falls",
+        "chobe-day-safari",
+        "bungee-jump"
+      ],
+      "verification": {
+        "supplierName": "Wild Horizons (Zambian Tour of the Falls) / Livingstone Museum",
+        "productVariant": "2h Falls-only vs 5h combined town + Falls",
+        "country": "Zambia / Zimbabwe",
+        "confidence": "B",
+        "verificationStatus": "variant_unconfirmed",
+        "parkFeeStatus": "excluded",
+        "sourceUrl": "https://wildhorizons.co.za/experiences/zambian-tour-of-the-falls/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Clarify whether Outbound sells the 2-hour Zambia-side Falls tour or a 5-hour combined town-and-Falls product, plus visa/park-fee breakdown."
+      }
+    },
+    {
+      "slug": "simunye-theatre-show",
+      "title": "Simunye – Spirit of Africa Theatre Show",
+      "subtitle": "Open-air African theatre combining music, dance, and puppetry",
+      "duration": "1 Hour Show (Check-in 19:30, Show 20:00–21:00)",
+      "location": "Victoria Falls Theatre (Elephants’ Walk area), Zimbabwe",
+      "shortDescription": "Watch Simunye: The Spirit of Africa, a live open-air theatre production combining music, dance, puppetry, and storytelling.",
+      "fullOverview": "Watch Simunye: The Spirit of Africa, a live theatre production in Victoria Falls combining music, dance, puppetry, visuals, and storytelling about connection, courage, and unity.",
+      "whyWeRecommend": "An original, family-friendly evening cultural performance in an intimate open-air theatre setting.",
+      "highlights": [
+        "Original live African theatre performance",
+        "Music, movement, and puppetry",
+        "Story of Bomani and Ndlovu",
+        "Evening cultural option for families and couples"
+      ],
+      "whatsIncluded": [
+        "Theatre admission to the booked performance and seating according to ticket category"
+      ],
+      "whatsExcluded": [
+        "Dinner and hotel transfers (unless selected as part of an arranged combination)"
+      ],
+      "goodToKnow": [
+        "Located at Victoria Falls Theatre within the Elephants’ Walk area.",
+        "Open-air theatre (NOT an air-conditioned indoor auditorium).",
+        "Shearwater lists shows Tuesday–Sunday, 20:00–21:00, with check-in at 19:30; confirm current schedule and child age bands (Shearwater currently advertises under-12 half price) directly with the theatre."
+      ],
+      "faqs": [
+        {
+          "q": "How long is the show?",
+          "a": "The referenced Shearwater operator page states one hour, 20:00–21:00, with check-in at 19:30 (Tue–Sun)."
+        },
+        {
+          "q": "Is dinner included?",
+          "a": "Not in the standard performance ticket; enquire about separate dining packages."
+        }
+      ],
+      "localExpertTip": "Arrive by 19:30 for check-in at the open-air theatre in Elephants’ Walk.",
+      "relatedIds": [
+        "boma-dinner-show",
+        "art-galleries-markets",
+        "upper-zambezi-sunset-cruise"
+      ],
+      "verification": {
+        "supplierName": "Victoria Falls Theatre Company (tickets sold via Shearwater)",
+        "productVariant": "Standard evening performance (Tue–Sun 20:00–21:00)",
+        "country": "Zimbabwe",
+        "confidence": "A",
+        "verificationStatus": "operator_verified",
+        "parkFeeStatus": "not_applicable",
+        "sourceUrl": "https://simunye.live/",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Confirm current seasonal show schedule, under-12 discount terms, and photography rules with the theatre."
+      }
+    }
+  ],
+  "accommodations": [
+    {
+      "slug": "victoria-falls-rainbow-hotel",
+      "isNew": true,
+      "name": "Victoria Falls Rainbow Hotel",
+      "category": "Hotel",
+      "accommodationCategory": "hotels",
+      "rating": 4.3,
+      "reviewCount": 0,
+      "location": "Parkway Drive, Victoria Falls, Zimbabwe",
+      "distanceFromFalls": "Approx. 0.5 km from town centre",
+      "airportDistance": "Approx. 25 min from VFA Airport",
+      "priceFromUSD": 0,
+      "publicationStatus": "draft",
+      "tagline": "Central Rainbow Tourism Group hotel with rooftop Panorama Deck",
+      "shortDescription": "A centrally located Rainbow Tourism Group hotel on Parkway Drive, about 0.5 km from the town centre, featuring a rooftop Panorama Deck and outdoor pool.",
+      "editorialOverview": "A centrally located Rainbow Tourism Group hotel on Parkway Drive, about 0.5 km from the town centre. Its rooftop Panorama Deck offers views of the Falls spray and surrounding landscape, and the property has an outdoor pool and dining facilities.",
+      "whyWeRecommend": "Convenient central location on Parkway Drive with 88 rooms across twin, double, family suite, and deluxe suite categories.",
+      "filterTags": [
+        "family-friendly",
+        "best-value"
+      ],
+      "atAGlance": {
+        "type": "Hotel",
+        "starRating": "Confirm rating",
+        "bestFor": "Leisure, Families & Groups",
+        "distanceFromFalls": "Approx. 0.5 km from town centre",
+        "pool": "Outdoor swimming pool with Swim ’n’ Sip bar",
+        "restaurant": "Hotel restaurants and bars",
+        "wifi": "High-speed Wi-Fi",
+        "familyFriendly": "Yes (Family Suites & interleading options)",
+        "transfers": "Scheduled complimentary transfer to Victoria Falls (verify timetable)",
+        "roomTypesSummary": "88 rooms (54 Twin, 30 Double, 2 Family Suites, 2 Deluxe Suites)"
+      },
+      "facilities": [
+        {
+          "name": "Rooftop Panorama Deck",
+          "category": "Views"
+        },
+        {
+          "name": "Outdoor Swimming Pool & Swim ’n’ Sip Bar",
+          "category": "Leisure"
+        },
+        {
+          "name": "Hotel Restaurants & Bars",
+          "category": "Dining"
+        },
+        {
+          "name": "Tour Desk",
+          "category": "Services"
+        },
+        {
+          "name": "High-Speed Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Scheduled Transfer to Victoria Falls (verify timetable)",
+          "category": "Transport"
+        },
+        {
+          "name": "Secure Parking",
+          "category": "Parking"
+        },
+        {
+          "name": "Laundry & Babysitting on Request",
+          "category": "Services"
+        }
+      ],
+      "locationInfo": {
+        "address": "Parkway Drive, Victoria Falls, Zimbabwe",
+        "distanceToFalls": "Approx. 0.5 km from town centre",
+        "distanceToAirport": "Approx. 25 min from VFA Airport",
+        "nearbyAttractions": [
+          "Victoria Falls Rainforest",
+          "Victoria Falls Town Centre"
+        ],
+        "nearbyRestaurants": [
+          "Hotel Restaurants",
+          "Town Centre Dining"
+        ],
+        "departurePoints": "Direct hotel lobby pick-up"
+      },
+      "amenities": [
+        "wifi",
+        "pool",
+        "restaurant",
+        "parking",
+        "air-conditioning"
+      ],
+      "verification": {
+        "supplierName": "Rainbow Tourism Group (Victoria Falls Rainbow Hotel)",
+        "productVariant": "88 rooms total (13 family-bunk & 13 interleading sets are configurations within stock)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://rtgafrica.com/victoria-falls-rainbow-hotel/",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Confirm contracted rates, room m² sizes, occupancy limits, approved room photos, and scheduled Falls transfer timetable before publishing."
+      },
+      "roomTypes": [
+        {
+          "id": "unit_vf_rainbow_std_twin",
+          "name": "Standard Twin Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": 54,
+          "occupancy": "Confirm occupancy & bed assignment",
+          "shortDescription": "A convenient twin-bedded room with an en-suite bathroom and the hotel’s essential in-room comforts.",
+          "description": "The Standard Twin Room is suited to friends, relatives or colleagues seeking separate beds close to Victoria Falls town. Rainbow Tourism Group lists 54 Standard Twins, with individually controlled air conditioning, satellite television, Wi-Fi, tea and coffee-making facilities and a private bathroom. Request the exact bed arrangement and whether an interleading or family configuration is available for your dates.",
+          "features": [
+            "Two ¾-size twin beds (twin configurations)",
+            "En-suite bathroom",
+            "Air conditioning",
+            "Satellite TV",
+            "Wi-Fi",
+            "Tea/coffee facilities",
+            "Minibar",
+            "Hairdryer",
+            "Room safe",
+            "Mosquito protection"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_vf_rainbow_std_double",
+          "name": "Standard Double Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": 30,
+          "occupancy": "Confirm bed size & max occupancy",
+          "shortDescription": "An en-suite double room offering practical comforts and easy access to Victoria Falls attractions.",
+          "description": "Rainbow Hotel’s Standard Double Rooms are an option for couples or solo guests preferring one bed. The hotel lists 30 Standard Doubles, with air conditioning, Wi-Fi, television, tea and coffee-making facilities, an in-room safe and a private bathroom. Guests have access to the wider hotel’s pool, dining and rooftop viewing facilities.",
+          "features": [
+            "Double or queen bed (allocation to confirm)",
+            "En-suite bathroom",
+            "Air conditioning",
+            "Satellite TV",
+            "Wi-Fi",
+            "Tea/coffee station",
+            "Minibar",
+            "Hairdryer",
+            "Safe",
+            "Mosquito protection"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_vf_rainbow_family_suite",
+          "name": "Family Suite",
+          "unitCategory": "Suite",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": 2,
+          "occupancy": "Confirm occupants & bedding",
+          "shortDescription": "A family-oriented suite option at Rainbow Hotel, with room configuration to be confirmed for the travelling party.",
+          "description": "Rainbow Tourism Group identifies two Family Suites in its 88-room accommodation inventory. These provide a dedicated family accommodation category within easy reach of Victoria Falls. The hotel also reports family rooms with bunk beds and interleading-room options elsewhere in its stock. We will confirm the suite’s exact beds, internal layout, capacity and photographs before preparing a family quotation.",
+          "features": [
+            "Family suite category published by operator",
+            "Access to hotel swimming pool",
+            "Air conditioning and Wi-Fi advertised across hotel rooms",
+            "En-suite accommodation"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_vf_rainbow_deluxe_suite",
+          "name": "Deluxe Suite",
+          "unitCategory": "Suite",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": 2,
+          "occupancy": "Confirm suite max occupancy",
+          "shortDescription": "A suite category for guests looking for an upgraded stay at the centrally located Rainbow Hotel.",
+          "description": "Rainbow Tourism Group lists two Deluxe Suites among its accommodation categories. These suites are available to enquire about as an alternative to the Standard Rooms. Before promising an upgraded view, extra living space or suite amenities, we will confirm the current layout and inclusions with the hotel.",
+          "features": [
+            "Official Deluxe Suite category",
+            "Hotel-wide dining and pool access",
+            "Hotel-wide air conditioning and Wi-Fi"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "n1-hotel-campsite-victoria-falls",
+      "isNew": true,
+      "name": "N1 Hotel & Campsite Victoria Falls",
+      "category": "Hotel",
+      "accommodationCategory": "hotels",
+      "rating": 4.1,
+      "reviewCount": 0,
+      "location": "Victoria Falls Town Centre, Zimbabwe",
+      "distanceFromFalls": "Central Victoria Falls town",
+      "airportDistance": "Approx. 25 min from VFA Airport",
+      "priceFromUSD": 0,
+      "publicationStatus": "draft",
+      "tagline": "Practical central hotel, dormitory, and serviced campsite",
+      "shortDescription": "A practical, centrally located Victoria Falls hotel and campsite, with hotel rooms, a dormitory and serviced camping facilities.",
+      "editorialOverview": "A practical, centrally located Victoria Falls hotel and campsite, with hotel rooms, a dormitory and serviced camping facilities. Convenient for travellers who want to spend most of their time exploring the town and Falls.",
+      "whyWeRecommend": "Value-focused central base offering private hotel rooms, dormitory beds, and serviced camping pitches.",
+      "filterTags": [
+        "best-value",
+        "walking-distance"
+      ],
+      "atAGlance": {
+        "type": "Hotel & Campsite",
+        "starRating": "Value / Budget",
+        "bestFor": "Budget Travellers, Overlanders & Groups",
+        "distanceFromFalls": "Central town access",
+        "pool": "Swimming pool",
+        "restaurant": "Breakfast service available (may cost extra)",
+        "wifi": "Wi-Fi access",
+        "familyFriendly": "Family Room option available",
+        "transfers": "Transfers arranged on request",
+        "roomTypesSummary": "Hotel Rooms, Dormitory & Campsite"
+      },
+      "facilities": [
+        {
+          "name": "Swimming Pool",
+          "category": "Leisure"
+        },
+        {
+          "name": "Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Breakfast Service (confirm if extra)",
+          "category": "Dining"
+        },
+        {
+          "name": "Hotel Rooms & Dormitory",
+          "category": "Accommodation"
+        },
+        {
+          "name": "Camping Ablutions, Plug Points & Braai Areas",
+          "category": "Camping"
+        },
+        {
+          "name": "Security",
+          "category": "Services"
+        }
+      ],
+      "locationInfo": {
+        "address": "Victoria Falls Town Centre, Zimbabwe",
+        "distanceToFalls": "Central Victoria Falls town",
+        "distanceToAirport": "Approx. 25 min from VFA Airport",
+        "nearbyAttractions": [
+          "Victoria Falls Town Centre",
+          "Victoria Falls Rainforest"
+        ],
+        "nearbyRestaurants": [
+          "Town Centre Cafés & Restaurants"
+        ],
+        "departurePoints": "Direct hotel pick-up"
+      },
+      "amenities": [
+        "wifi",
+        "pool",
+        "air-conditioning",
+        "parking"
+      ],
+      "verification": {
+        "supplierName": "N1 Hotel & Campsite Victoria Falls",
+        "productVariant": "Hotel Rooms + Dormitory + Campsite (distinct price bases)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://www.n1hotel.co.zw/victoriafalls/",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Official site displays $0 placeholders — NEVER publish $0. Confirm current room, dorm bed, and campsite per-person/per-pitch rates, room counts, and approved photos."
+      },
+      "roomTypes": [
+        {
+          "id": "unit_n1_std_double",
+          "name": "Standard Double Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm on selected booking",
+          "shortDescription": "A straightforward en-suite room with double bedding and useful everyday amenities.",
+          "description": "N1’s Standard Double Room is designed for travellers looking for a comfortable, uncomplicated base in the centre of Victoria Falls. The official N1 website lists air conditioning, a private bathroom, safe, satellite television, Wi-Fi, a work area and tea and coffee facilities. Breakfast is available at the property but should not be assumed to be included in a bed-only rate.",
+          "features": [
+            "Air conditioning",
+            "En-suite bathroom",
+            "Room safe",
+            "Satellite TV",
+            "Wi-Fi access",
+            "Work area",
+            "Tea and coffee facilities",
+            "Toiletries"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_n1_std_twin",
+          "name": "Standard Twin Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm on selected booking",
+          "shortDescription": "A practical twin-bedded room with en-suite facilities for friends or guests travelling together.",
+          "description": "The Standard Twin Room offers two separate sleeping places and the same core hotel amenities listed for N1’s entry-level rooms: air conditioning, en-suite bathroom, Wi-Fi, television, room safe and tea/coffee station. It is a sensible choice for travellers prioritising a central location and value.",
+          "features": [
+            "Air conditioning",
+            "En-suite bathroom",
+            "Room safe",
+            "Satellite TV",
+            "Wi-Fi access",
+            "Work area",
+            "Tea and coffee facilities",
+            "Toiletries"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_n1_deluxe_double",
+          "name": "Deluxe Double Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm on selected booking",
+          "shortDescription": "An upgraded double-room category at N1 Hotel with essential in-room comforts.",
+          "description": "N1 lists a separate Deluxe Double Room category alongside its Standard Double Rooms. The published amenities include air conditioning, en-suite bathroom, satellite TV, Wi-Fi, room safe, work area and tea and coffee-making facilities. The hotel does not clearly publish floor size or a detailed difference from the Standard Room, so these should be confirmed before marketing extra space.",
+          "features": [
+            "Air conditioning",
+            "En-suite bathroom",
+            "Room safe",
+            "Satellite TV",
+            "Wi-Fi access",
+            "Work area",
+            "Tea and coffee facilities",
+            "Toiletries"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_n1_superior_double",
+          "name": "Superior Double Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm on selected booking",
+          "shortDescription": "An en-suite double room with the added convenience of an in-room fridge.",
+          "description": "N1’s Superior Double Room provides the usual room comforts together with a fridge, useful for drinks or snacks during a Victoria Falls stay. The official list includes air conditioning, an en-suite bathroom, satellite TV, Wi-Fi, room safe, tea and coffee-making facilities and a work area. Confirm any additional space or special view directly with N1.",
+          "features": [
+            "Air conditioning",
+            "En-suite bathroom",
+            "Room safe",
+            "Satellite TV",
+            "Wi-Fi access",
+            "Work area",
+            "Tea and coffee facilities",
+            "Toiletries",
+            "Fridge"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_n1_family_room",
+          "name": "Family Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm adults, children & beds",
+          "shortDescription": "A family accommodation option with an en-suite bathroom, air conditioning and a fridge.",
+          "description": "Families seeking a conveniently located Victoria Falls base can enquire about N1’s Family Room. It offers air conditioning, Wi-Fi, en-suite facilities, a room safe, television, tea and coffee station and a fridge. The hotel should confirm exact bed count, whether children share existing beds, and the maximum number of guests before a quotation is issued.",
+          "features": [
+            "Air conditioning",
+            "En-suite bathroom",
+            "Room safe",
+            "Satellite TV",
+            "Wi-Fi access",
+            "Work area",
+            "Tea and coffee facilities",
+            "Toiletries",
+            "Fridge"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_n1_dormitory",
+          "name": "Dormitory",
+          "unitCategory": "Dormitory",
+          "wing": "Shared ablution area",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Sold per bed; confirm dorm capacity",
+          "shortDescription": "A budget-oriented dormitory bed with basic linen and access to communal ablutions.",
+          "description": "The N1 dormitory is an option for independent travellers who do not need a private hotel room. According to the official property listing, dormitory accommodation includes air conditioning, ablutions, a room safe, Wi-Fi and basic linen. Confirm whether the quoted price is for a single dorm bed and how many people share the sleeping space.",
+          "features": [
+            "Air conditioning",
+            "Communal ablutions",
+            "Wi-Fi",
+            "Room safe",
+            "Basic linen"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About Availability",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_bed",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_n1_campsite",
+          "name": "Campsite",
+          "unitCategory": "Campsite",
+          "wing": "Campsite grounds",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm pitch capacity & child policy",
+          "shortDescription": "A serviced camping option with shared ablutions, electrical plug points and braai facilities.",
+          "description": "N1’s campsite caters to travellers bringing their own camping equipment. The official facilities list includes shared ablutions, plug points, braai points, Wi-Fi, security and a liquor store. This is a campsite pitch rather than a hotel bedroom and must have a separate per-person or per-pitch price basis as confirmed with the supplier.",
+          "features": [
+            "Shared ablutions",
+            "Electrical plug points",
+            "Braai/BBQ points",
+            "Wi-Fi",
+            "Security",
+            "On-site convenience/liquor store"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Campsite",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_campsite",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "cresta-sprayview",
+      "isNew": true,
+      "name": "Cresta Sprayview",
+      "category": "Hotel",
+      "accommodationCategory": "hotels",
+      "rating": 4.4,
+      "reviewCount": 0,
+      "location": "Victoria Falls (approx. 1.4 km from rainforest)",
+      "distanceFromFalls": "Approx. 1.4 km from Victoria Falls rainforest entrance",
+      "airportDistance": "Approx. 25 min from VFA Airport",
+      "priceFromUSD": 0,
+      "publicationStatus": "draft",
+      "tagline": "Garden-set hotel close to Victoria Falls rainforest",
+      "shortDescription": "A garden-set Cresta hotel approximately 1.4 km from the Victoria Falls rainforest entrance, with an outdoor pool and alfresco dining.",
+      "editorialOverview": "A garden-set Cresta hotel approximately 1.4 km from the Victoria Falls rainforest entrance. The property promotes an outdoor swimming pool, relaxed alfresco dining and renovated rooms close to the main attractions.",
+      "whyWeRecommend": "Eight acres of landscaped gardens and renovated rooms within easy reach of the rainforest.",
+      "filterTags": [
+        "family-friendly",
+        "best-value"
+      ],
+      "atAGlance": {
+        "type": "Hotel",
+        "starRating": "Confirm rating",
+        "bestFor": "Couples, Families & Events",
+        "distanceFromFalls": "Approx. 1.4 km from rainforest",
+        "pool": "Large outdoor swimming pool",
+        "restaurant": "Alfresco dining and bar",
+        "wifi": "Complimentary Wi-Fi",
+        "familyFriendly": "Confirm Family Room availability",
+        "transfers": "Transfers arranged on request",
+        "roomTypesSummary": "Standard Double, Standard Twin, Suite / Executive Queen"
+      },
+      "facilities": [
+        {
+          "name": "Eight Acres of Landscaped Gardens",
+          "category": "Grounds"
+        },
+        {
+          "name": "Large Outdoor Swimming Pool",
+          "category": "Leisure"
+        },
+        {
+          "name": "Alfresco Dining & Bar",
+          "category": "Dining"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Leisure & Event Facilities",
+          "category": "Events"
+        }
+      ],
+      "locationInfo": {
+        "address": "Victoria Falls, Zimbabwe",
+        "distanceToFalls": "Approx. 1.4 km from Victoria Falls rainforest entrance",
+        "distanceToAirport": "Approx. 25 min from VFA Airport",
+        "nearbyAttractions": [
+          "Victoria Falls Rainforest",
+          "Victoria Falls Town Centre"
+        ],
+        "nearbyRestaurants": [
+          "Cresta Sprayview Dining",
+          "Town Centre"
+        ],
+        "departurePoints": "Direct hotel pick-up"
+      },
+      "amenities": [
+        "wifi",
+        "pool",
+        "restaurant",
+        "air-conditioning",
+        "parking"
+      ],
+      "verification": {
+        "supplierName": "Cresta Hotels (Cresta Sprayview)",
+        "productVariant": "Suite vs Executive Queen naming & Family Room confirmation",
+        "verificationStatus": "variant_unconfirmed",
+        "sourceUrl": "https://www.crestahotels.com/hotels/zimbabwe/victoria-falls/cresta-sprayview",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Reconcile Suite vs Executive Queen naming; confirm whether Family Room (Wetu only) is currently bookable; confirm post-renovation room counts (65 distributor total) and contracted rates."
+      },
+      "roomTypes": [
+        {
+          "id": "unit_cresta_std_double",
+          "name": "Standard Double Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "2 Guests (operator)",
+          "shortDescription": "A renovated double room with air conditioning and satellite television.",
+          "description": "The Standard Double is a comfortable option for a couple or solo traveller wanting to stay near Victoria Falls in a quiet garden setting. Cresta’s renovation announcement describes a standard double bed, satellite television and air conditioning. The property also provides Wi-Fi and access to the pool, gardens and restaurant.",
+          "features": [
+            "Double bed",
+            "Air conditioning",
+            "Satellite television",
+            "Hotel Wi-Fi",
+            "En-suite bathroom (distribution listing)"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_cresta_std_twin",
+          "name": "Standard Twin Room",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm bedding/children",
+          "shortDescription": "A recently upgraded room with separate twin beds, satellite TV and air conditioning.",
+          "description": "Cresta Sprayview’s Standard Twin Room is intended for friends or colleagues travelling together. It features two single beds, air conditioning and satellite television, with hotel Wi-Fi and access to the pool and garden surroundings. Breakfast and transfers are dependent on the booked package.",
+          "features": [
+            "Two single beds",
+            "Air conditioning",
+            "Satellite television",
+            "Hotel Wi-Fi",
+            "En-suite bathroom (distribution listing)"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_cresta_suite_exec_queen",
+          "name": "Suite / Executive Queen (confirm category label)",
+          "unitCategory": "Suite",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "2 Guests (renovation notice)",
+          "shortDescription": "An upgraded option with queen-size bedding and an additional seating area.",
+          "description": "The hotel’s current accommodation page labels this offering as Suite, whereas its renovation announcement describes an Executive Queen category with a queen-size bed and separate sitting area. An accommodation distributor lists three Suites. Until Cresta clarifies whether these names refer to the same inventory, Outbound Holidays keeps this provisional record in draft.",
+          "features": [
+            "Queen-size bed (Executive Queen wording)",
+            "Separate sitting area",
+            "Air conditioning",
+            "Satellite television",
+            "Hotel Wi-Fi"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_cresta_family_pending",
+          "name": "Family Room — pending confirmation",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Unknown; confirm with hotel",
+          "shortDescription": "A family accommodation configuration listed by hotel distribution sources, pending confirmation by Cresta.",
+          "description": "Hotel accommodation distribution information describes two Family Rooms, but Cresta’s current main property page does not list a separate Family Room category. This remains an unpublished draft until the hotel verifies the room layout, family occupancy, correct name, images and available stock.",
+          "features": [
+            "Family room category documented by accommodation distributor",
+            "Property-wide pool, gardens and Wi-Fi"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "elephant-hills-resort",
+      "isNew": true,
+      "name": "Elephant Hills Resort",
+      "category": "Resort",
+      "accommodationCategory": "hotels",
+      "rating": 4.5,
+      "reviewCount": 0,
+      "location": "Upper Zambezi Bluff, Victoria Falls, Zimbabwe",
+      "distanceFromFalls": "Approx. 4 km upstream from Victoria Falls",
+      "airportDistance": "Approx. 25 min from VFA Airport",
+      "priceFromUSD": 0,
+      "publicationStatus": "draft",
+      "tagline": "African Sun resort with 18-hole golf course & Zambezi views",
+      "shortDescription": "African Sun’s large resort on a bluff overlooking the upper Zambezi, known for its 18-hole championship golf course, dining, and conference facilities.",
+      "editorialOverview": "African Sun’s large resort on a bluff overlooking the upper Zambezi. Known for its 18-hole championship golf course, views towards the river or golf course, several restaurants, swimming pool, sporting facilities and extensive conference venues.",
+      "whyWeRecommend": "Full-service resort with golf course, sports courts, and upper Zambezi outlooks (note: planned Nov 2026 closure was deferred; operating 2026–2027).",
+      "filterTags": [
+        "family-friendly",
+        "luxury-lodges"
+      ],
+      "atAGlance": {
+        "type": "Resort Hotel",
+        "starRating": "Confirm rating",
+        "bestFor": "Golfers, Families & Conferences",
+        "distanceFromFalls": "Approx. 4 km upstream",
+        "pool": "Swimming pool",
+        "restaurant": "Restaurants and bars",
+        "wifi": "Complimentary Wi-Fi",
+        "familyFriendly": "Yes",
+        "transfers": "Transfers arranged on request",
+        "roomTypesSummary": "261 Standard Rooms, 11 Executive Suites, Presidential Suite"
+      },
+      "facilities": [
+        {
+          "name": "18-Hole Championship Golf Course",
+          "category": "Leisure"
+        },
+        {
+          "name": "Swimming Pool",
+          "category": "Leisure"
+        },
+        {
+          "name": "Tennis & Squash Courts",
+          "category": "Sports"
+        },
+        {
+          "name": "Gym",
+          "category": "Wellness"
+        },
+        {
+          "name": "Restaurants & Bars",
+          "category": "Dining"
+        },
+        {
+          "name": "Conference & Event Facilities",
+          "category": "Events"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        }
+      ],
+      "locationInfo": {
+        "address": "Parkway Drive Extension, Victoria Falls, Zimbabwe",
+        "distanceToFalls": "Approx. 4 km upstream from Victoria Falls",
+        "distanceToAirport": "Approx. 25 min from VFA Airport",
+        "nearbyAttractions": [
+          "18-Hole Golf Course",
+          "Upper Zambezi River",
+          "Victoria Falls Rainforest"
+        ],
+        "nearbyRestaurants": [
+          "Elephant Hills Resort Restaurants"
+        ],
+        "departurePoints": "Direct resort pick-up"
+      },
+      "amenities": [
+        "wifi",
+        "pool",
+        "restaurant",
+        "air-conditioning",
+        "parking",
+        "gym"
+      ],
+      "verification": {
+        "supplierName": "African Sun (Elephant Hills Resort)",
+        "productVariant": "261 Standard + 11 Executive + 1 Presidential (Deluxe Suite conflict)",
+        "verificationStatus": "variant_unconfirmed",
+        "sourceUrl": "https://africansun.com/hotels/elephant-hills-resort/",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Confirm Deluxe Suite status (listed on elephanthillshotel.com but omitted from African Sun main page); confirm room m², contracted rates, and approved photos."
+      },
+      "roomTypes": [
+        {
+          "id": "unit_eh_standard",
+          "name": "Standard Room",
+          "unitCategory": "Room",
+          "wing": "East/golf-course side or west/river side according to allocation",
+          "sizeSqm": null,
+          "unitCount": 261,
+          "occupancy": "Sleeps 2 (property accommodation site)",
+          "shortDescription": "An air-conditioned room with Wi-Fi and outlooks towards the golf course or Zambezi, depending on location.",
+          "description": "The Standard Room provides a comfortable base at Elephant Hills Resort, with views across the golf course or the upper Zambezi River depending on the assigned room. African Sun lists 261 Standard Rooms, air conditioning, complimentary Wi-Fi, telephone, safe and hairdryer. A separate room-listing website also describes a private balcony, television and tea/coffee station; confirm these specifics for the allocated room.",
+          "features": [
+            "Air conditioning",
+            "Complimentary Wi-Fi",
+            "Hairdryer",
+            "Telephone",
+            "Safe",
+            "Guest amenities",
+            "Golf-course or river views (allocation-dependent)"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_eh_executive_suite",
+          "name": "Executive Suite",
+          "unitCategory": "Suite",
+          "wing": "Wing & view depend on allocation",
+          "sizeSqm": null,
+          "unitCount": 11,
+          "occupancy": "Sleeps 2 (property accommodation site)",
+          "shortDescription": "An upgraded Elephant Hills suite with air conditioning, Wi-Fi and views of the resort grounds or Zambezi River.",
+          "description": "African Sun lists 11 Executive Suites at Elephant Hills Resort. The accommodation includes air conditioning, complimentary Wi-Fi, in-room safe, telephone, hairdryer and guest amenities. The broader property offers panoramic river and golf-course outlooks. Ask the resort to confirm the lounge layout, exact bedding, suite size and view before guaranteeing them in a quotation.",
+          "features": [
+            "Air conditioning",
+            "Wi-Fi",
+            "Hairdryer",
+            "Telephone",
+            "Safe",
+            "Guest amenities"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_eh_deluxe_suite_pending",
+          "name": "Deluxe Suite — supplier confirmation",
+          "unitCategory": "Suite",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Sleeps 2 (separate listing)",
+          "shortDescription": "A separate deluxe suite category appearing in Elephant Hills accommodation and historical inventory sources.",
+          "description": "Elephant Hills accommodation listings identify a Deluxe Suite category. However, the current African Sun hotel-owned page prominently lists Standard Rooms, Executive Suites and the Presidential Suite, without a detailed Deluxe Suite entry. Keep this category in draft until the resort confirms it is still offered, its exact features, size and current count.",
+          "features": [
+            "Suite category present on separate property listing",
+            "General resort access to Wi-Fi and facilities"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "id": "unit_eh_presidential_suite",
+          "name": "Presidential Suite",
+          "unitCategory": "Suite",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": 1,
+          "occupancy": "Sleeps 2 (separate listing)",
+          "shortDescription": "The resort’s highest listed suite category, with air conditioning, Wi-Fi and access to its extensive hotel facilities.",
+          "description": "The Presidential Suite is Elephant Hills Resort’s top accommodation category. African Sun confirms an in-room safe, telephone, Wi-Fi, hairdryer, air conditioning and complimentary guest amenities. Its outlook and any special features such as a private lounge, bar or dedicated service should be obtained in writing from the resort rather than assumed.",
+          "features": [
+            "Air conditioning",
+            "Wi-Fi",
+            "Hairdryer",
+            "Telephone",
+            "Safe",
+            "Guest amenities"
+          ],
+          "status": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "featured": false,
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "victoria-falls-safari-lodge",
+      "isNew": false,
+      "name": "Victoria Falls Safari Lodge",
+      "shortDescription": "A wildlife-oriented lodge overlooking bushveld and a waterhole on the Victoria Falls Safari Collection estate.",
+      "editorialOverview": "A wildlife-oriented lodge overlooking bushveld and a waterhole on the Victoria Falls Safari Collection estate. The lodge includes a two-tiered swimming pool, MaKuwa-Kuwa Restaurant, Buffalo Bar and complimentary scheduled town shuttle.",
+      "facilities": [
+        {
+          "name": "Waterhole Viewing",
+          "category": "Wildlife"
+        },
+        {
+          "name": "Two-Tiered Swimming Pool",
+          "category": "Leisure"
+        },
+        {
+          "name": "MaKuwa-Kuwa Restaurant",
+          "category": "Dining"
+        },
+        {
+          "name": "Buffalo Bar",
+          "category": "Dining"
+        },
+        {
+          "name": "Safari Spa on the Estate",
+          "category": "Wellness"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Scheduled Town/Falls Shuttle",
+          "category": "Transport"
+        },
+        {
+          "name": "Activities Booking Desk",
+          "category": "Services"
+        }
+      ],
+      "atAGlance": {
+        "pool": "Two-tiered swimming pool",
+        "restaurant": "MaKuwa-Kuwa Restaurant & Buffalo Bar",
+        "transfers": "Scheduled town/Falls shuttle",
+        "roomTypesSummary": "72 rooms (24 Standard, 42 Waterhole Facing, 6 Waterhole Facing Suites)"
+      },
+      "verification": {
+        "supplierName": "Victoria Falls Safari Collection",
+        "productVariant": "Victoria Falls Safari Lodge (72 rooms — distinct from Safari Club / Safari Suites)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://victoria-falls-safari-collection.com/en-US/accommodation/victoria-falls-safari-lodge",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Confirm room m², child/extra-bed policies, and reconcile existing live room price ($120 on Waterhole View Room) with current contract tariff."
+      },
+      "roomTypes": [
+        {
+          "matchNames": [
+            "Lodge Standard Room",
+            "Standard Room"
+          ],
+          "id": "unit_vfsl_standard",
+          "name": "Lodge Standard Room",
+          "unitCategory": "Room",
+          "wing": "Victoria Falls Safari Lodge estate",
+          "sizeSqm": null,
+          "unitCount": 24,
+          "occupancy": "2 Adults (confirm child/extra-bed policy)",
+          "shortDescription": "An air-conditioned lodge room with comfortable beds, mosquito nets and a private balcony.",
+          "description": "The Lodge Standard Room offers a restful stay at Victoria Falls Safari Lodge, with a private balcony and access to the estate’s waterhole-viewing facilities. It includes air conditioning, ceiling fan, Wi-Fi, tea/coffee facilities and twin three-quarter beds that can be combined into a king. The minibar is stocked on request at guests’ cost, unlike the suite category.",
+          "features": [
+            "Private balcony",
+            "Air conditioning and ceiling fan",
+            "Convertible twin-to-king bedding",
+            "Mosquito nets",
+            "Wi-Fi",
+            "Tea/coffee facilities",
+            "Insect repellent and sunscreen toiletries"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_person_sharing",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_waterhole-view-room_1"
+          ],
+          "matchNames": [
+            "Waterhole View Room",
+            "Lodge Waterhole Facing Room"
+          ],
+          "id": "unit_waterhole-view-room_1",
+          "name": "Lodge Waterhole Facing Room",
+          "unitCategory": "Room",
+          "wing": "Waterhole-facing",
+          "sizeSqm": null,
+          "unitCount": 42,
+          "occupancy": "2 Adults (confirm on requested dates)",
+          "shortDescription": "A comfortable lodge room with a balcony facing the wildlife waterhole and surrounding bush.",
+          "description": "Choose the Lodge Waterhole Facing Room for its position overlooking the active waterhole at Victoria Falls Safari Lodge. Rooms include convertible twin-to-king beds, air conditioning, ceiling fans, mosquito nets, Wi-Fi and tea/coffee facilities. Wildlife sightings are possible but never guaranteed. Minibar supplies are on request at guests’ cost.",
+          "features": [
+            "Waterhole-facing private balcony",
+            "Convertible twin-to-king bedding",
+            "Air conditioning and ceiling fan",
+            "Mosquito nets",
+            "Wi-Fi",
+            "Tea/coffee facilities"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_person_sharing",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_waterhole-view-suite_2"
+          ],
+          "matchNames": [
+            "Waterhole View Suite",
+            "Lodge Waterhole Facing Suite"
+          ],
+          "id": "unit_waterhole-view-suite_2",
+          "name": "Lodge Waterhole Facing Suite",
+          "unitCategory": "Suite",
+          "wing": "Waterhole-facing",
+          "sizeSqm": null,
+          "unitCount": 6,
+          "occupancy": "Confirm suite occupancy & child policy",
+          "shortDescription": "A more spacious waterhole-facing suite with a bathtub and daily complimentary minibar service.",
+          "description": "The Lodge Waterhole Facing Suite is the lodge’s premium category, with a view towards its wildlife waterhole and additional suite comforts. The hotel states that only its six Waterhole Facing Suites include bathtubs, and that a complimentary minibar is restocked each day with selected local beverages. Guests also have Wi-Fi, air conditioning and access to lodge dining and leisure facilities.",
+          "features": [
+            "Waterhole-facing accommodation",
+            "Bathtub",
+            "Daily complimentary selected minibar",
+            "Air conditioning and ceiling fan",
+            "Wi-Fi",
+            "Private balcony"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_person_sharing",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "ilala-lodge-hotel",
+      "isNew": false,
+      "name": "Ilala Lodge Hotel",
+      "shortDescription": "A boutique hotel within walking distance of the rainforest entrance, set across Garden, Pool and Deluxe wings with Cassia Restaurant.",
+      "editorialOverview": "A boutique hotel within walking distance of the rainforest entrance, set across Garden, Pool and Deluxe wings. Guest facilities include gardens, swimming pool and Cassia Restaurant (the current name, replacing older Palm Restaurant references).",
+      "facilities": [
+        {
+          "name": "Cassia Restaurant",
+          "category": "Dining"
+        },
+        {
+          "name": "Swimming Pool",
+          "category": "Leisure"
+        },
+        {
+          "name": "Gardens & Wildlife Sightings",
+          "category": "Grounds"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Concierge & Activity Arrangements",
+          "category": "Services"
+        }
+      ],
+      "atAGlance": {
+        "restaurant": "Cassia Restaurant",
+        "roomTypesSummary": "73 rooms across 5 official categories (36–128 m²)"
+      },
+      "locationInfo": {
+        "nearbyRestaurants": [
+          "Cassia Restaurant (on-site)",
+          "The Lookout Café"
+        ]
+      },
+      "verification": {
+        "supplierName": "Ilala Lodge Hotel",
+        "productVariant": "73 rooms across 5 official categories",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://www.ilalalodge.com/our-rooms",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Category-by-category room counts not published (only 73 total); confirm Strathearn Suite wing & cruise/breakfast inclusions against Outbound contract rates. Preserve live prices ($271 Classic, $421 Classic Suite)."
+      },
+      "roomTypes": [
+        {
+          "matchIds": [
+            "unit_deluxe-garden-room_1"
+          ],
+          "matchNames": [
+            "Classic",
+            "Classic Rooms",
+            "Classic Room"
+          ],
+          "id": "unit_deluxe-garden-room_1",
+          "name": "Classic Rooms",
+          "unitCategory": "Room",
+          "wing": "Garden Wing / Pool Wing (exact wing by booking)",
+          "sizeSqm": 36,
+          "unitCount": null,
+          "occupancy": "Maximum 2 per hotel",
+          "shortDescription": "Teak-furnished rooms with a king or two three-quarter beds and a shower en-suite.",
+          "description": "Classic Rooms at Ilala Lodge feature timber furnishings, an en-suite shower bathroom and a private patio or balcony overlooking the gardens and lawns. Guests may request king bedding or a twin configuration using two three-quarter beds. The hotel lists Wi-Fi, air conditioning, tea/coffee facilities, satellite TV and an in-room safe.",
+          "features": [
+            "36 m²",
+            "King or twin (two ¾ beds)",
+            "En-suite separate shower",
+            "Patio or balcony",
+            "Air conditioning",
+            "Wi-Fi",
+            "Satellite TV",
+            "In-room safe",
+            "Tea/coffee facilities"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Deluxe Rooms",
+            "Deluxe Room"
+          ],
+          "id": "unit_ilala_deluxe_room",
+          "name": "Deluxe Rooms",
+          "unitCategory": "Room",
+          "wing": "Deluxe Wing",
+          "sizeSqm": 44,
+          "unitCount": null,
+          "occupancy": "Maximum 2 per hotel",
+          "shortDescription": "Refined rooms with garden-view patio or balcony and spacious shower bathrooms with double vanities.",
+          "description": "The Deluxe Rooms are located in Ilala’s Deluxe Wing. Their 44 m² layout combines classic teak detailing and contemporary comforts, with either king bedding or two three-quarter twin beds. Each has a walk-in shower, double bathroom vanity and a private patio or balcony facing the gardens and surrounding natural landscape.",
+          "features": [
+            "44 m²",
+            "King or twin bedding",
+            "Walk-in shower",
+            "Double basins",
+            "Patio/balcony",
+            "Air conditioning",
+            "Wi-Fi",
+            "Tea/coffee facilities"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_executive-suite_2"
+          ],
+          "matchNames": [
+            "Classic Suite",
+            "Classic Suites"
+          ],
+          "id": "unit_executive-suite_2",
+          "name": "Classic Suites",
+          "unitCategory": "Suite",
+          "wing": "Upper floor (exact wing by booking)",
+          "sizeSqm": 75,
+          "unitCount": null,
+          "occupancy": "Up to 3 in suite (interconnecting separately verified)",
+          "shortDescription": "A suite with king and additional three-quarter beds, a balcony and optional interconnecting room.",
+          "description": "Ilala’s Classic Suites are 75 m² and located on the upper level, with balconies towards the gardens and rising Falls spray. The sleeping layout includes a king bed and a separate three-quarter bed, making the suite useful for a small family. Selected arrangements can interconnect with a Classic Twin Room for larger families, subject to availability.",
+          "features": [
+            "75 m²",
+            "King + three-quarter bed",
+            "Private balcony",
+            "Possible adjoining Classic Twin Room",
+            "Air conditioning",
+            "Wi-Fi",
+            "Minibar as published for suite"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_mwl7albk_l7h2z"
+          ],
+          "matchNames": [
+            "Executive-Suite",
+            "Executive Suites",
+            "Executive Suite"
+          ],
+          "id": "unit_mwl7albk_l7h2z",
+          "name": "Executive Suites",
+          "unitCategory": "Suite",
+          "wing": "Deluxe Wing",
+          "sizeSqm": 104,
+          "unitCount": null,
+          "occupancy": "Up to 2 per hotel",
+          "shortDescription": "Spacious suites with separate lounge, king bedroom and wraparound balcony facing the Falls direction.",
+          "description": "Ilala’s 104 m² Executive Suites offer a separate living room and bedroom, a king bed and a generous bathroom with walk-in shower, separate bathtub and twin basins. The balcony extends across the suite with views towards the Falls and surrounding vegetation. Added comforts include Wi-Fi and a complimentary minibar as described for the category.",
+          "features": [
+            "104 m²",
+            "Separate lounge",
+            "King bed",
+            "Bathtub and walk-in shower",
+            "Double basins",
+            "Private wraparound balcony",
+            "Air conditioning",
+            "Wi-Fi"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Strathearn Suite"
+          ],
+          "id": "unit_ilala_strathearn_suite",
+          "name": "Strathearn Suite",
+          "unitCategory": "Suite",
+          "wing": "Private balcony (confirm wing)",
+          "sizeSqm": 128,
+          "unitCount": 1,
+          "occupancy": "Up to 4 (confirm bed/cot & related rooms)",
+          "shortDescription": "The hotel’s signature suite with lounge, kitchenette and an outdoor heated spa bath on the balcony.",
+          "description": "The 128 m² Strathearn Suite is named after the hotel’s founder. It features a king bedroom, separate lounge and kitchenette, an indoor bathroom with bathtub, shower and double vanity, and a balcony with a heated spa bath looking towards the rising Falls spray. The hotel describes additional benefits such as in-room continental breakfast, sparkling wine and a river cruise subject to availability. Confirm which benefits apply to Outbound Holidays’ booked rate.",
+          "features": [
+            "128 m²",
+            "King bedroom",
+            "Private lounge",
+            "Kitchenette",
+            "Indoor bath and shower",
+            "Heated balcony spa bath",
+            "Air conditioning",
+            "Wi-Fi",
+            "Interleading configurations possible"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "pioneers-victoria-falls",
+      "isNew": false,
+      "name": "Pioneers Victoria Falls",
+      "shortDescription": "A 50-room lodge on Mahogany Road, with landscaped gardens, two swimming pools, restaurant/lounge and spa.",
+      "editorialOverview": "A 50-room lodge on Mahogany Road, with landscaped gardens, two swimming pools, restaurant/lounge and spa. Its rooms have garden outlooks, air conditioning, tea/coffee amenities and double-vanity en-suite showers.",
+      "facilities": [
+        {
+          "name": "Two Outdoor Swimming Pools",
+          "category": "Leisure"
+        },
+        {
+          "name": "Garden Restaurant & Bar",
+          "category": "Dining"
+        },
+        {
+          "name": "Spa",
+          "category": "Wellness"
+        },
+        {
+          "name": "Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Solar-Assisted Power",
+          "category": "Utilities"
+        },
+        {
+          "name": "Guest Services",
+          "category": "Services"
+        }
+      ],
+      "atAGlance": {
+        "pool": "Two outdoor pools",
+        "roomTypesSummary": "50 rooms overall (including 4 Family Rooms with Annex)"
+      },
+      "verification": {
+        "supplierName": "Pioneers Victoria Falls",
+        "productVariant": "50 rooms overall (4 Family Rooms with Annex; remaining standard count inferred, leave blank)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://www.pioneersvicfalls.com/our-facilities/",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Confirm exact Standard room count, room m², and family occupancy/cot rules. Note: official category is Family Room with Annex (not Family Interconnecting Suite with two en-suites)."
+      },
+      "roomTypes": [
+        {
+          "matchIds": [
+            "unit_family-interconnecting-suite_2"
+          ],
+          "matchNames": [
+            "King Rooms",
+            "Standard / King or Twin Room",
+            "Standard Room"
+          ],
+          "id": "unit_family-interconnecting-suite_2",
+          "name": "Standard / King or Twin Room",
+          "unitCategory": "Room",
+          "wing": "Garden-facing rooms",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm bed configuration & occupancy",
+          "shortDescription": "Comfortable garden-facing accommodation with king or twin arrangements and modern en-suite facilities.",
+          "description": "The lodge’s principal rooms feature tasteful classic furnishings and views of its gardens. They include a well-appointed en-suite shower bathroom with double vanity, mosquito nets, fans and air conditioning, room safe, hairdryer, tea and coffee facilities and Wi-Fi. King or twin bedding can be requested and the operator can advise on cots or extra beds for children.",
+          "features": [
+            "Garden view",
+            "King or twin on request",
+            "En-suite shower and double vanity",
+            "Air conditioning and ceiling fan",
+            "Mosquito nets",
+            "Wi-Fi",
+            "Tea and coffee facilities",
+            "Hairdryer",
+            "Digital safe"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_deluxe-garden-room_1"
+          ],
+          "matchNames": [
+            "Family Rooms",
+            "Family Room with Annex",
+            "Family Interconnecting Suite"
+          ],
+          "id": "unit_deluxe-garden-room_1",
+          "name": "Family Room with Annex",
+          "unitCategory": "Room",
+          "wing": "Garden-facing",
+          "sizeSqm": null,
+          "unitCount": 4,
+          "occupancy": "Confirm adults, children & total capacity",
+          "shortDescription": "A family room with a main bedroom and connected twin-bedded children’s annex.",
+          "description": "Pioneers has four purpose-designed family rooms, each with a main room and an annex featuring twin beds decorated with children in mind. Guests have the standard lodge’s air conditioning, en-suite bathroom amenities and garden surroundings. Confirm the ages, sleeping arrangement, whether a cot is required and maximum occupancy before confirming the booking.",
+          "features": [
+            "Main bedroom",
+            "Attached twin-bedded children’s annex",
+            "Garden outlook",
+            "Air conditioning",
+            "En-suite bathroom",
+            "Wi-Fi",
+            "Tea/coffee facilities"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "batonka-guest-lodge",
+      "isNew": false,
+      "name": "Batonka Guest Lodge",
+      "shortDescription": "A garden-set 27-room lodge with indoor/outdoor dining, lounge, curio shop and pools.",
+      "editorialOverview": "A garden-set 27-room lodge with indoor/outdoor dining, lounge, curio shop and pools. Its main sellable categories are Garden View Rooms and Pool View Rooms; the Flame Lily Wing is an area within the existing Pool View inventory.",
+      "facilities": [
+        {
+          "name": "Swimming Pools",
+          "category": "Leisure"
+        },
+        {
+          "name": "Indoor & Outdoor Dining & Lounge",
+          "category": "Dining"
+        },
+        {
+          "name": "Garden Setting",
+          "category": "Grounds"
+        },
+        {
+          "name": "Activity Desk",
+          "category": "Services"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Curio Shop",
+          "category": "Shopping"
+        }
+      ],
+      "atAGlance": {
+        "roomTypesSummary": "27 rooms (11 Garden View, 16 Pool View incl. 5 in Flame Lily Wing)"
+      },
+      "verification": {
+        "supplierName": "Batonka Guest Lodge",
+        "productVariant": "11 Garden View + 16 Pool View (5 in Flame Lily Wing included in 16)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://batonkaguestlodge.com/",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Confirm room m², extra bed/cot rules, and child annex availability in Garden View stock."
+      },
+      "roomTypes": [
+        {
+          "matchIds": [
+            "unit_deluxe-garden-room_1"
+          ],
+          "matchNames": [
+            "Garden View Rooms",
+            "Garden View Room",
+            "Deluxe Garden Room"
+          ],
+          "id": "unit_deluxe-garden-room_1",
+          "name": "Garden View Room",
+          "unitCategory": "Room",
+          "wing": "Garden View",
+          "sizeSqm": null,
+          "unitCount": 11,
+          "occupancy": "2 Adults (check extra bed/cot for children)",
+          "shortDescription": "A garden-facing room with private patio, double-vanity bathroom and walk-in shower.",
+          "description": "Each Garden View Room has a spacious patio overlooking manicured lawns and trees visited by local birdlife. Batonka’s Garden View rooms include modern en-suite bathrooms with double basins and large shower, air conditioning, ceiling fan, king or twin arrangement on request, Wi-Fi, tea/coffee facilities and in-room safe. Eight of these rooms interlead, and one has a child-friendly annex, subject to room allocation.",
+          "features": [
+            "Private garden-facing patio",
+            "Walk-in shower",
+            "Double basins",
+            "King or twin on request",
+            "Air conditioning and fan",
+            "Mosquito nets",
+            "Wi-Fi",
+            "Safe",
+            "Mini-fridge with complimentary water",
+            "USB sockets"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_mwmujusg_8qdgk"
+          ],
+          "matchNames": [
+            "Pool View Rooms",
+            "Pool View Room"
+          ],
+          "id": "unit_mwmujusg_8qdgk",
+          "name": "Pool View Room",
+          "unitCategory": "Room",
+          "wing": "Pool View (some in Flame Lily Wing)",
+          "sizeSqm": null,
+          "unitCount": 16,
+          "occupancy": "2 Adults (confirm occupancy, extra beds & cots)",
+          "shortDescription": "A comfortable pool-facing room with a private patio and bathroom offering both bath and shower.",
+          "description": "Batonka’s Pool View Rooms open to private patios facing landscaped lawns and a tranquil swimming pool. These rooms have an en-suite bathroom with double vanities, a bathtub and walk-in shower, air conditioning, Wi-Fi, in-room safe and tea/coffee station. Five of the 16 are located in the Flame Lily Wing, which has its own pool and shared leisure spaces.",
+          "features": [
+            "Private pool-facing patio",
+            "Bathtub and walk-in shower",
+            "Double vanities",
+            "King or twin on request",
+            "Air conditioning",
+            "Wi-Fi",
+            "Mosquito netting",
+            "Safe",
+            "Mini-fridge with complimentary water"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "palm-river-hotel",
+      "isNew": false,
+      "name": "The Palm River Hotel",
+      "shortDescription": "A five-star hotel on the upper Zambezi River with gardens, river-view accommodation, dining, pool and riverfront ambience.",
+      "editorialOverview": "A five-star hotel on the upper Zambezi River with gardens, river-view accommodation, dining, pool and riverfront ambience. Its 73-room accommodation offering includes six named options; the exclusive villa is assembled from specific underlying room/suite types.",
+      "facilities": [
+        {
+          "name": "Zambezi Riverside Setting",
+          "category": "Location"
+        },
+        {
+          "name": "Hotel Swimming Pool",
+          "category": "Leisure"
+        },
+        {
+          "name": "Riverside Restaurant & Bar",
+          "category": "Dining"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Private Balconies & Verandas",
+          "category": "Rooms"
+        }
+      ],
+      "atAGlance": {
+        "roomTypesSummary": "73 rooms overall across 6 options (incl. Palm River Villa)"
+      },
+      "verification": {
+        "supplierName": "The Palm River Hotel",
+        "productVariant": "6 official classes (Villa is assembled from Executive Suite + Honeymoon Suite + Twin Deluxe Room)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://www.palmriverhotel.com/accommodation/",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Confirm category-by-category room counts, m² sizes, breakfast inclusion on contract rate, and Romantic Suite vs Honeymoon Suite mapping."
+      },
+      "roomTypes": [
+        {
+          "matchNames": [
+            "Deluxe Room",
+            "Deluxe River Room"
+          ],
+          "id": "unit_palmriver_deluxe_room",
+          "name": "Deluxe Room",
+          "unitCategory": "Room",
+          "wing": "Riverside gardens",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm capacity & bedding",
+          "shortDescription": "An elegant room with a private balcony, writing desk, spacious shower and double-vanity bathroom.",
+          "description": "Deluxe Rooms combine contemporary furnishings and riverside garden outlooks with a private balcony. The bedroom has a writing desk, luggage storage and tea/coffee station; the bathroom includes a generous shower and double vanity. The hotel publishes continental buffet and hot breakfast items with its accommodation rates; final supplier inclusions should be checked.",
+          "features": [
+            "Private balcony",
+            "Garden/river outlook",
+            "Writing desk",
+            "Tea/coffee station",
+            "Walk-in shower",
+            "Double-vanity bathroom",
+            "Storage/wardrobe"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_deluxe-river-room_1"
+          ],
+          "matchNames": [
+            "Deluxe Suite"
+          ],
+          "id": "unit_deluxe-river-room_1",
+          "name": "Deluxe Suite",
+          "unitCategory": "Suite",
+          "wing": "Riverside gardens",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm adult/child occupancy & rate basis",
+          "shortDescription": "Family-oriented connected accommodation made of two Deluxe bedrooms with a shared lounge and verandah.",
+          "description": "The Deluxe Suite is intended for guests wanting separate sleeping areas and a communal living space. It consists of two Deluxe Rooms interleading with a shared lounge and private verandah. The two bathrooms include a bathtub, open shower and double vanity. Clarify room allocation, child suitability and whether both bedrooms are included in the quoted suite rate.",
+          "features": [
+            "Two interleading Deluxe bedrooms",
+            "Shared private lounge",
+            "Private verandah",
+            "Bathrooms with bath and shower",
+            "Double vanities",
+            "Tea/coffee facilities"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_mwnw9ftc_8j7pb"
+          ],
+          "matchNames": [
+            "Executive Suite"
+          ],
+          "id": "unit_mwnw9ftc_8j7pb",
+          "name": "Executive Suite",
+          "unitCategory": "Suite",
+          "wing": "Riverside",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm suite bedding & occupancy",
+          "shortDescription": "A spacious suite with a separate bedroom, lounge and balcony overlooking the Zambezi River.",
+          "description": "The Executive Suites provide additional privacy and room to unwind. The operator describes a bedroom paired with an inviting lounge, high ceilings and a private balcony overlooking the river. Full bathroom and additional VIP details should be checked in the selected current suite specification.",
+          "features": [
+            "Bedroom plus private lounge",
+            "River-facing balcony",
+            "Spacious open-plan feel",
+            "Hotel breakfast arrangement as specified in selected rate"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_mwnvra0f_r7c7c"
+          ],
+          "matchNames": [
+            "Romantic Suite",
+            "Honeymoon Suite"
+          ],
+          "id": "unit_mwnvra0f_r7c7c",
+          "name": "Honeymoon Suite",
+          "unitCategory": "Suite",
+          "wing": "Riverside treetop position",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm max occupancy & children policy",
+          "shortDescription": "A romantic suite with an outdoor lounge, hanging daybed and open-air shower on its private balcony.",
+          "description": "The Honeymoon Suites focus on indoor-outdoor relaxation. Each includes a king bed, desk and lounge chairs, a spacious bathroom with bathtub and double shower, and a leafy private balcony with an outdoor sitting area, suspended daybed and open-air shower. Ideal for couples celebrating special occasions, subject to availability.",
+          "features": [
+            "King bed",
+            "Private treetop balcony",
+            "Outdoor lounge and daybed",
+            "Open-air shower",
+            "Indoor bathtub and double shower",
+            "Desk and lounge seating"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Presidential Suite"
+          ],
+          "id": "unit_palmriver_presidential_suite",
+          "name": "Presidential Suite",
+          "unitCategory": "Suite",
+          "wing": "River-facing (confirm wing)",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm occupancy & butler options",
+          "shortDescription": "The hotel’s high-end suite option with an oversized king bed, balcony and generous bathroom.",
+          "description": "The Palm River Presidential Suite offers a spacious bedroom with a super-king bed, private mini-balcony and dedicated wardrobe/changing areas. The main bathroom includes a bathtub, double vanity and double shower. Confirm its current size, maximum occupancy and premium-service inclusions with the hotel before issuing a final quotation.",
+          "features": [
+            "Super-king-size bed",
+            "Private mini-balcony",
+            "Dressing/wardrobe area",
+            "Bathtub",
+            "Double vanity",
+            "Double shower"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Palm River Villa"
+          ],
+          "id": "unit_palmriver_villa",
+          "name": "Palm River Villa",
+          "unitCategory": "Villa",
+          "wing": "Private villa compound",
+          "sizeSqm": null,
+          "unitCount": 1,
+          "occupancy": "Confirm total guests & sleeping setup",
+          "shortDescription": "An exclusive-use villa with three sleeping units, private pool, kitchen, dining room and spacious outdoor areas.",
+          "description": "The Palm River Villa combines an Executive Suite, Honeymoon Suite and Twin Deluxe Room in a private compound. It includes a shared kitchen, lounge, dining room, guest parking, private swimming pool, patio and garden. This is appropriate for families or small groups wanting exclusive use, with room configurations, occupancy and meals confirmed for the selected dates.",
+          "features": [
+            "Exclusive-use compound",
+            "Executive Suite + Honeymoon Suite + Twin Deluxe Room",
+            "Three sleeping units",
+            "Private pool",
+            "Kitchen and dining",
+            "Shared lounge",
+            "Private parking and patio"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Villa",
+          "isEntireProperty": true,
+          "pricing": {
+            "priceBasis": "per_villa",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "lokuthula-lodges",
+      "isNew": false,
+      "name": "Lokuthula Lodges",
+      "shortDescription": "Family-friendly thatched lodges on the Victoria Falls Safari Collection estate, offering self-catering and B&B options.",
+      "editorialOverview": "Family-friendly thatched lodges on the Victoria Falls Safari Collection estate, offering self-catering and B&B options. Facilities include kitchens, terraces, braai areas, a residents’ pool area at the Boma complex, and children’s play facilities.",
+      "facilities": [
+        {
+          "name": "Self-Catering Kitchens",
+          "category": "Dining"
+        },
+        {
+          "name": "Terraces & Braai Areas",
+          "category": "Outdoor"
+        },
+        {
+          "name": "Residents’ Swimming Pools at Boma Complex",
+          "category": "Leisure"
+        },
+        {
+          "name": "Playground & Pickleball Court",
+          "category": "Family"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Activities Desk via Safari Lodge",
+          "category": "Services"
+        },
+        {
+          "name": "Breakfast at Boma Café (B&B packages)",
+          "category": "Dining"
+        }
+      ],
+      "atAGlance": {
+        "pool": "Residents’ pools at Boma complex (not Safari Lodge hotel pool)",
+        "roomTypesSummary": "2-Bedroom (max 6) & 3-Bedroom (max 8) Self-Catering Lodges + B&B option"
+      },
+      "verification": {
+        "supplierName": "Victoria Falls Safari Collection",
+        "productVariant": "Self-catering (per lodge) vs B&B (per person)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://victoria-falls-safari-collection.com/en-US/accommodation/lokuthula-lodges",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Total physical lodge count not published; confirm whether One-Bedroom B&B is an allocation of existing lodges or separate stock, and separate per-lodge vs per-person tariffs."
+      },
+      "roomTypes": [
+        {
+          "matchIds": [
+            "unit_2-bedroom-thatched-lodge_1"
+          ],
+          "matchNames": [
+            "2-Bedroom Thatched Lodge",
+            "Two-Bedroom Self-Catering Lodge"
+          ],
+          "id": "unit_2-bedroom-thatched-lodge_1",
+          "name": "Two-Bedroom Self-Catering Lodge",
+          "unitCategory": "Chalet",
+          "wing": "Lokuthula estate",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Maximum 6 (including 2 lounge sofa-bed spaces)",
+          "shortDescription": "A self-catering two-bedroom thatched lodge for up to six guests including sofa-bed spaces.",
+          "description": "The two-bedroom lodge provides a kitchen, lounge, terrace and outdoor braai area for families or friends. Ground-floor bedroom spaces are air-conditioned, while lounge and loft accommodation has ceiling fans. The operator permits up to six guests, with the extra two using lounge sofa beds recommended for children. Meals and activities are not automatically included.",
+          "features": [
+            "Two bedrooms",
+            "Kitchen",
+            "Lounge",
+            "Outdoor terrace and braai",
+            "Ground-floor bedroom air conditioning",
+            "Ceiling fans in lounge/loft",
+            "Wi-Fi",
+            "Two lounge sofa beds"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Lodge",
+          "isEntireProperty": true,
+          "pricing": {
+            "priceBasis": "per_lodge",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Three-Bedroom Self-Catering Lodge",
+            "3-Bedroom Self-Catering Lodge"
+          ],
+          "id": "unit_lokuthula_3br_sc",
+          "name": "Three-Bedroom Self-Catering Lodge",
+          "unitCategory": "Chalet",
+          "wing": "Lokuthula estate",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Maximum 8 (including 2 lounge sofa-bed spaces)",
+          "shortDescription": "A larger self-catering lodge offering three bedrooms, lounge, kitchen and space for up to eight guests.",
+          "description": "Three-bedroom Lokuthula lodges provide a flexible family/group base with lounge, equipped kitchen and private outdoor terrace and braai. The hotel lists a maximum of eight guests, with the extra two accommodated on lounge sofa beds recommended for children. The main bedroom has an en-suite bathroom with shower over the bath and a second bathroom provides a walk-in shower.",
+          "features": [
+            "Three bedrooms",
+            "Fully equipped kitchen",
+            "Lounge and terrace",
+            "Private braai",
+            "Two bathrooms",
+            "Ground-floor air conditioning",
+            "Wi-Fi",
+            "Sofa beds for two extra guests"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Lodge",
+          "isEntireProperty": true,
+          "pricing": {
+            "priceBasis": "per_lodge",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "One-Bedroom B&B Lodge Configuration"
+          ],
+          "id": "unit_lokuthula_1br_bb",
+          "name": "One-Bedroom B&B Lodge Configuration",
+          "unitCategory": "Chalet",
+          "wing": "Lokuthula estate",
+          "sizeSqm": null,
+          "unitCount": null,
+          "occupancy": "Confirm occupancy & kitchenette access",
+          "shortDescription": "A one-bedroom bed-and-breakfast arrangement with breakfast at The Boma Café.",
+          "description": "Lokuthula’s bed-and-breakfast products include a one-bedroom lodge configuration with a bathroom offering a shower over the bath. Breakfast is served at The Boma Café when booked on that basis. This may represent an allocation or configuration of existing lodge inventory rather than a separate physical class, so ask the estate how it is allocated before creating a sellable stock count.",
+          "features": [
+            "One-bedroom B&B configuration",
+            "Bathroom with shower over bath",
+            "Breakfast at The Boma Café on B&B rate",
+            "Resort pool access"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Lodge",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_person",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "shearwater-explorers-village",
+      "isNew": false,
+      "name": "Shearwater Explorers Village",
+      "shortDescription": "A central Victoria Falls lodge and camping base located around 400 m from the Falls, combining chalets with serviced tents and camping.",
+      "editorialOverview": "A central Victoria Falls lodge and camping base located around 400 m from the Falls, combining Standard and Deluxe Rooms with serviced camping tents and self-sufficient camping stations.",
+      "facilities": [
+        {
+          "name": "Swimming Pool",
+          "category": "Leisure"
+        },
+        {
+          "name": "Restaurant & Bar",
+          "category": "Dining"
+        },
+        {
+          "name": "Complimentary Wi-Fi",
+          "category": "Connectivity"
+        },
+        {
+          "name": "Shearwater Activity Booking Desk",
+          "category": "Services"
+        },
+        {
+          "name": "Gardens",
+          "category": "Grounds"
+        },
+        {
+          "name": "Chalet & Camping Options",
+          "category": "Accommodation"
+        }
+      ],
+      "atAGlance": {
+        "roomTypesSummary": "42 Standard, 80 Deluxe, 27 Serviced Tents, 5 Camping Stations"
+      },
+      "verification": {
+        "supplierName": "Shearwater Explorers Village",
+        "productVariant": "2026 live site: 42 Standard + 80 Deluxe + 27 Tents + 5 Stations (2025 PDF listed 54 Deluxe)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://www.shearwatervictoriafalls.com/stay/",
+        "sourceCheckedOn": "2026-11-20",
+        "needsConfirmation": "Reconcile 80 Deluxe (2026 site) vs 54 Deluxe (2025 PDF); confirm per-person sharing B&B room rates vs camping/tent rates and camping station inclusions."
+      },
+      "roomTypes": [
+        {
+          "matchIds": [
+            "unit_standard-air-con-chalet_1"
+          ],
+          "matchNames": [
+            "Standard Air-Con Chalet",
+            "Standard Room / Chalet",
+            "Standard Room"
+          ],
+          "id": "unit_standard-air-con-chalet_1",
+          "name": "Standard Room / Chalet",
+          "unitCategory": "Chalet",
+          "wing": "Standard accommodation area",
+          "sizeSqm": null,
+          "unitCount": 42,
+          "occupancy": "Confirm bedding & child policy",
+          "shortDescription": "A comfortable en-suite chalet with air conditioning, Wi-Fi and a private outdoor patio.",
+          "description": "Standard Rooms at Shearwater Explorers Village offer a practical base within walking distance of the Victoria Falls rainforest. They have twin or king-size bedding, private en-suite bathroom, air conditioning, mosquito netting, Wi-Fi, safe and tea/coffee facilities. A patio gives guests outdoor space between excursions.",
+          "features": [
+            "Twin or king bed",
+            "En-suite bathroom",
+            "Air conditioning and mosquito nets",
+            "Private patio",
+            "Wi-Fi",
+            "Room safe",
+            "Tea/coffee facilities",
+            "USB charging",
+            "Housekeeping"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Lodge",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_person_sharing",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Deluxe Room / Chalet",
+            "Deluxe Room",
+            "Deluxe Chalet"
+          ],
+          "id": "unit_sev_deluxe_chalet",
+          "name": "Deluxe Room / Chalet",
+          "unitCategory": "Chalet",
+          "wing": "Deluxe accommodation area",
+          "sizeSqm": null,
+          "unitCount": 80,
+          "occupancy": "Confirm occupants & interleading setup",
+          "shortDescription": "A more spacious en-suite chalet with private patio and garden outlook.",
+          "description": "Deluxe Rooms provide a more refined stay within Shearwater Explorers Village, with twin or king bedding, en-suite bathroom, air conditioning, mosquito nets, Wi-Fi, safe, tea/coffee setup, USB charging and a patio with a small garden. Some Deluxe Rooms are interleading; request this specific configuration for families.",
+          "features": [
+            "Twin or king bed",
+            "En-suite bathroom",
+            "Air conditioning",
+            "Mosquito nets",
+            "Private patio/small garden",
+            "Wi-Fi",
+            "Safe",
+            "USB charging",
+            "Daily housekeeping"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Lodge",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_person_sharing",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Serviced Camping Tent"
+          ],
+          "id": "unit_sev_serviced_tent",
+          "name": "Serviced Camping Tent",
+          "unitCategory": "Safari Tent",
+          "wing": "Serviced camping area",
+          "sizeSqm": null,
+          "unitCount": 27,
+          "occupancy": "Confirm tent capacity & ages",
+          "shortDescription": "A basic serviced tent for travellers happy using communal bathroom and kitchen facilities.",
+          "description": "Serviced camping tents provide an economical stay with twin beds and fresh linen, a bedside lamp and power point, plus access to communal ablutions, showers and kitchen area. Housekeeping makes beds daily. Breakfast is available separately at the restaurant rather than automatically included.",
+          "features": [
+            "Twin beds with linen",
+            "Daily bed service",
+            "Communal showers and toilets",
+            "Shared kitchen",
+            "Lamp and power point",
+            "Boiling kettle"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Option",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_person",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Self-Sufficient Camping Station"
+          ],
+          "id": "unit_sev_camping_station",
+          "name": "Self-Sufficient Camping Station",
+          "unitCategory": "Campsite",
+          "wing": "Camping stations",
+          "sizeSqm": null,
+          "unitCount": 5,
+          "occupancy": "Confirm campsite capacity",
+          "shortDescription": "A camping station for guests travelling with their own camping equipment.",
+          "description": "Shearwater lists five self-sufficient camping stations for travellers who prefer to bring their own tents and supplies. Site-specific amenities, capacity and payment basis should be confirmed before booking.",
+          "features": [
+            "Access to Explorers Village setting",
+            "Camping station; own equipment required"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Ask About This Campsite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_campsite",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "victoria-falls-hotel",
+      "isNew": false,
+      "name": "The Victoria Falls Hotel",
+      "atAGlance": {
+        "roomTypesSummary": "149 rooms & suites across 8 official categories"
+      },
+      "verification": {
+        "supplierName": "The Victoria Falls Hotel",
+        "productVariant": "8 official categories (149 total: 11 Premium / 4 Deluxe Suites on current site vs 13 / 2 in older PDF)",
+        "verificationStatus": "operator_verified",
+        "sourceUrl": "https://www.victoriafallshotel.com/rooms",
+        "sourceCheckedOn": "2026-11-19",
+        "needsConfirmation": "Reconcile 11 Premium + 4 Deluxe Suites (current site) vs 13 + 2 (older fact sheet); review existing live \"Deluxe Room\" (unit_deluxe-bridge-view-room_1) which is not an official category; confirm child 0–2 vs 2–11 overlap, occupancy limits, and approved room photos."
+      },
+      "roomTypes": [
+        {
+          "matchNames": [
+            "Standard Rooms",
+            "Standard Room"
+          ],
+          "id": "unit_vfh_standard_rooms",
+          "name": "Standard Rooms",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": null,
+          "unitCount": 55,
+          "occupancy": "Confirm bed configuration & occupancy",
+          "shortDescription": "A classic room category at The Victoria Falls Hotel, offering a base for exploring the Falls while enjoying the facilities of the historic five-star property.",
+          "description": "Stay at one of Victoria Falls' best-known heritage hotels, established in 1904, with access to the property's gardens, restaurants and guest services. Standard Rooms are one of the hotel's official accommodation categories. The current accommodation listing does not provide enough room-specific detail to confirm their floor area, precise bed options, bathroom layout or individual views. Outbound Holidays can request the preferred bed configuration and confirm details with the hotel when preparing a quotation.",
+          "features": [
+            "Hotel-wide complimentary Wi-Fi",
+            "Access to hotel hospitality facilities",
+            "Air conditioning (fact sheet)",
+            "Tea and coffee facilities (fact sheet)",
+            "Television, safe, telephone & hairdryer (fact sheet)"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Classic Rooms",
+            "Classic Room"
+          ],
+          "id": "unit_vfh_classic_rooms",
+          "name": "Classic Rooms",
+          "unitCategory": "Room",
+          "wing": "",
+          "sizeSqm": 30,
+          "unitCount": 30,
+          "occupancy": "Confirm occupancy & bedding",
+          "shortDescription": "Comfortable 30 m² rooms with elegant furnishings, modern conveniences and shower-only bathrooms; selected rooms can interconnect for families.",
+          "description": "Classic Rooms combine understated décor in grey and dark tones with timber furnishings and modern in-room comforts. Each room has a shower-only bathroom, tea and coffee-making facilities, a safe, minibar, air conditioning, IP television and USB charging points. Some rooms are interleading, making them useful for guests travelling as a family. The hotel also describes a component-room arrangement in which three Classic Rooms can operate under one key; this must be confirmed for the dates and group size requested.",
+          "features": [
+            "Average size 30 m²",
+            "Convertible bed configuration",
+            "Shower-only bathroom",
+            "Tea and coffee-making facilities",
+            "In-room safe & minibar",
+            "Air conditioning & IP TV",
+            "USB charging points",
+            "Wi-Fi, telephone & hairdryer",
+            "Some interleading rooms"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_mwndtgg9_e45j0"
+          ],
+          "matchNames": [
+            "Stables Signature Wing Rooms",
+            "Stables Signature Wing"
+          ],
+          "id": "unit_mwndtgg9_e45j0",
+          "name": "Stables Signature Wing Rooms",
+          "unitCategory": "Room",
+          "wing": "Stables Signature Wing",
+          "sizeSqm": null,
+          "unitCount": 44,
+          "occupancy": "Confirm occupancy & bedding",
+          "shortDescription": "Rooms in the hotel's exclusive Stables Signature Wing, overlooking the lawns or courtyard, with a dedicated lounge and private check-in.",
+          "description": "The Stables Signature Wing is a separate section of The Victoria Falls Hotel with a more personalised arrival experience. Rooms combine contemporary furnishings with the property's heritage character and look towards the front lawns or landscaped courtyard. Each room has a bathroom with a bathtub and separate walk-in shower. Guests on eligible bookings can make use of the Stables lounge, private check-in, afternoon tea refreshments and other published benefits. The hotel's website excludes some of these benefits for upgrades and groups of five rooms or more, so their availability must be checked when quoting.",
+          "features": [
+            "Views towards front lawns or courtyard (room-dependent)",
+            "Twin or double beds",
+            "Bathtub and separate walk-in shower",
+            "In-room safe, minibar & Wi-Fi",
+            "TV, telephone & hairdryer",
+            "Air conditioning & tea/coffee facilities",
+            "Dedicated check-in & Stables lounge",
+            "Published benefits subject to eligibility"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchIds": [
+            "unit_mwmwdiyi_ct354"
+          ],
+          "matchNames": [
+            "Premium Rooms",
+            "Premium Room"
+          ],
+          "id": "unit_mwmwdiyi_ct354",
+          "name": "Premium Rooms",
+          "unitCategory": "Room",
+          "wing": "Various hotel locations",
+          "sizeSqm": 55,
+          "unitCount": 11,
+          "occupancy": "Confirm exact occupancy",
+          "shortDescription": "Spacious 55 m² rooms with a dedicated lounge area, flexible king or twin bedding and views of the gardens or Batoka Gorge, depending on room allocation.",
+          "description": "The Premium Rooms offer a more spacious stay within The Victoria Falls Hotel, with an average floor area of 55 m² and a separate lounge area for relaxing. Rooms are found in different parts of the hotel and may overlook either the landscaped gardens or Batoka Gorge. They feature convertible king or twin bedding, an elegant bathroom with shower, air conditioning, IP television, a safe and tea and coffee-making facilities. The hotel also lists access to the Bulawayo Premium Lounge, a daily complimentary minibar and a welcome gift as Premium Room benefits. Early check-in may be available but is not guaranteed.",
+          "features": [
+            "Average size 55 m²",
+            "Dedicated lounge area",
+            "Convertible king or twin beds",
+            "Garden or gorge-facing locations (allocation-dependent)",
+            "Bathroom with shower",
+            "Bulawayo Premium Lounge access",
+            "Daily complimentary minibar & welcome gift",
+            "Wi-Fi, safe, IP TV & air conditioning"
+          ],
+          "defaultStatus": "published",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Room",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Deluxe Suites",
+            "Deluxe Suite"
+          ],
+          "id": "unit_vfh_deluxe_suites",
+          "name": "Deluxe Suites",
+          "unitCategory": "Suite",
+          "wing": "",
+          "sizeSqm": 70,
+          "unitCount": 4,
+          "occupancy": "Confirm occupancy & view",
+          "shortDescription": "Elegant 70 m² suites with spacious living areas and bathrooms, offering views towards the Falls spray or Batoka Gorge.",
+          "description": "Deluxe Suites provide additional space and comfort in the hotel's heritage surroundings. With an average area of 70 m², they have generous living space, spacious bathrooms with showers and king-size beds that can be converted where required. The hotel's official description highlights views of either the rising spray from Victoria Falls or Batoka Gorge. Guests are also offered access to the Bulawayo Premium Lounge and in-suite comforts including a minibar, safe, Wi-Fi, air conditioning, IP television and tea and coffee-making facilities. The specific view and bed arrangement should be confirmed when reserving.",
+          "features": [
+            "Average size 70 m²",
+            "Convertible king-size bedding",
+            "Spacious lounge / sitting area",
+            "Large bathroom with shower",
+            "View towards Falls spray or Batoka Gorge (suite-dependent)",
+            "Bulawayo Premium Lounge access",
+            "Minibar, safe, Wi-Fi, IP TV & air conditioning"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Executive Suites",
+            "Executive Suite"
+          ],
+          "id": "unit_vfh_executive_suites",
+          "name": "Executive Suites",
+          "unitCategory": "Suite",
+          "wing": "North & South Hammerhead Wings",
+          "sizeSqm": 70,
+          "unitCount": 3,
+          "occupancy": "Confirm suite assignment & occupancy",
+          "shortDescription": "Distinctive 70 m² heritage suites with separate lounges, walk-in wardrobes, bathtubs and showers, overlooking the hotel's gardens.",
+          "description": "The hotel's three Executive Suites — Songwe, Baines and Jubilee — each have their own character inspired by Victorian and Edwardian style. Located within the North and South Hammerhead Wings, the suites average 70 m² and feature a private lounge separate from the bedroom, a walk-in wardrobe and a spacious bathroom with both a bathtub and separate shower. The hotel describes manicured garden views and special welcome touches such as flowers, fruit and chocolates. Additional comforts include a minibar, safe, Wi-Fi, air conditioning, IP television and tea and coffee-making facilities.",
+          "features": [
+            "Average size 70 m²",
+            "Named suites: Songwe, Baines & Jubilee",
+            "Separate lounge and bedroom",
+            "Walk-in wardrobe",
+            "Bathtub and separate shower",
+            "Garden views",
+            "Published welcome touches",
+            "Wi-Fi, minibar, safe, IP TV & air conditioning"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Royal Batoka Suite"
+          ],
+          "id": "unit_vfh_royal_batoka_suite",
+          "name": "Royal Batoka Suite",
+          "unitCategory": "Suite",
+          "wing": "Central hotel building",
+          "sizeSqm": 121,
+          "unitCount": 1,
+          "occupancy": "Confirm max overnight occupancy",
+          "shortDescription": "An exclusive 121 m² two-bedroom suite with private living and dining spaces, a kitchenette and panoramic views towards Batoka Gorge and Victoria Falls Bridge.",
+          "description": "Situated in the central section of The Victoria Falls Hotel, the Royal Batoka Suite combines classic Edwardian character with a spacious two-bedroom layout. The master bedroom has a king-size bed and en-suite bathroom with a freestanding bath and walk-in shower. The second bedroom offers a king or twin configuration and its own en-suite shower. A separate living room, dining room, guest toilet and kitchenette make the suite well suited to travellers seeking privacy and space to spend time together. The hotel's website highlights views of Batoka Gorge and the Victoria Falls Bridge. Butler service is described as available, but should be arranged and priced with the hotel.",
+          "features": [
+            "121 m²; one suite",
+            "Two bedrooms and two en-suite bathrooms",
+            "Master bedroom with freestanding bath & walk-in shower",
+            "Second bedroom (king/twin) with walk-in shower",
+            "Living room & separate dining room",
+            "Guest toilet, kitchenette & minibar",
+            "Views of Batoka Gorge & Victoria Falls Bridge",
+            "Butler service available by arrangement",
+            "Wi-Fi, safe, TV & air conditioning"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        },
+        {
+          "matchNames": [
+            "Presidential Suite",
+            "Livingstone Suite"
+          ],
+          "id": "unit_vfh_presidential_suite",
+          "name": "Presidential Suite",
+          "unitCategory": "Suite",
+          "wing": "",
+          "sizeSqm": 205,
+          "unitCount": 1,
+          "occupancy": "Confirm occupancy & bedding per bedroom",
+          "shortDescription": "A distinguished 205 m² three-bedroom suite with a private balcony, separate lounge and dining room, kitchen and garden views.",
+          "description": "Known as the Livingstone Suite, The Victoria Falls Hotel's Presidential Suite is its most expansive accommodation category. Across 205 m², it offers three individually decorated bedrooms, a private balcony with views over the hotel's gardens and generous spaces for relaxing, dining and entertaining. The master bedroom has a spacious bathroom with separate showers and a bathtub. The suite also includes a dedicated kitchen, separate dining room, lounge, dressing space and in-room amenities such as Wi-Fi, minibar, safe, television and air conditioning. Butler service is available by arrangement, allowing guests to tailor the stay to their requirements.",
+          "features": [
+            "205 m²; one suite",
+            "Three bedrooms",
+            "Private balcony overlooking gardens",
+            "Spacious lounge",
+            "Separate dining room & dedicated kitchen",
+            "Master bathroom with bath & separate showers",
+            "Walk-in wardrobe",
+            "Minibar, Wi-Fi, safe, TV & air conditioning",
+            "Butler service available by arrangement"
+          ],
+          "defaultStatus": "draft",
+          "availabilityStatus": "on_request",
+          "customCtaLabel": "Enquire About This Suite",
+          "isEntireProperty": false,
+          "pricing": {
+            "priceBasis": "per_room",
+            "rateStatus": "provisional"
+          }
+        }
+      ]
+    }
+  ]
+}

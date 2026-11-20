@@ -522,27 +522,28 @@ export const BungeeExperiencePage: React.FC<BungeeExperiencePageProps> = ({
               currency={currency}
               itemTitle="Victoria Falls Bungee Jump"
               itemSlug="bungee-jump"
-              basePriceUSD={168}
+              basePriceUSD={160}
               priceLabelPrefix={editorial("travel/BungeeExperiencePage.text91")}
               priceSuffix={editorial("travel/BungeeExperiencePage.text93")}
               durationLabel={editorial("travel/BungeeExperiencePage.text94")}
               minimumAge={14}
-              ageNotice="Victoria Falls Bungee Jump requires participants to be at least 14 years old and 40 kg."
+              ageNotice="Victoria Falls Bungee Jump requires participants to be at least 14 years old and between 40 kg and 120 kg (Shearwater terms)."
               extras={[
                 {
                   id: 'transfers',
-                  label: editorial("travel/BungeeExperiencePage.text97"),
-                  pricePerPersonUSD: 15,
+                  label: 'Request return hotel transfer quote (not included by default)',
+                  pricePerPersonUSD: undefined,
                 },
                 {
                   id: 'video',
-                  label: editorial("travel/BungeeExperiencePage.text98"),
-                  pricePerPersonUSD: 50,
+                  label: 'Request optional photo & video package quote',
+                  pricePerPersonUSD: undefined,
                 },
               ]}
               trustTitle={editorial("travel/BungeeExperiencePage.text101")}
               trustBody={editorial("travel/BungeeExperiencePage.text102")}
-              whatsappButtonLabel="Enquire About Availability"
+              whatsappButtonLabel="Enquire on WhatsApp"
+              buildHolidayLabel="Add to My Holiday Plan"
               onBuildHoliday={onOpenPlanHoliday}
             />
           </aside>

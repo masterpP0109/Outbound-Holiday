@@ -263,7 +263,7 @@ test('Holiday Builder calculator syncs live CMS experience prices, Where to Stay
   const stayOptions = resolveBuilderAccommodations(customAccs);
   const ilala = stayOptions.find((o) => o.id === 'ilala-lodge-hotel' || o.slug === 'ilala-lodge-hotel');
   const derived = stayOptions.find((o) => o.id === 'acc-room-derived');
-  assert.equal(ilala?.pricePerNightUSD, 295);
+  assert.equal(ilala?.pricePerNightUSD, 271);
   assert.equal(derived?.pricePerNightUSD, 340, 'Uses lowest published room rate ($340) ignoring draft ($99)');
 
   // Estimate math parity check: 2A + 1C (2 rooms), 3 nights @ $295, activities $70 + $85 = $155, shared-shuttle $60

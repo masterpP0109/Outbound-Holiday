@@ -32,6 +32,7 @@ $outbound_modules = array(
     'inc/promotions.php',
     'inc/seo.php',
     'inc/migration.php',
+    'inc/content-reconciliation.php',
 );
 
 foreach ($outbound_modules as $outbound_module) {

@@ -587,9 +587,58 @@ function outbound_editor_render_experience_fields(WP_Post $post, bool $in_cms_hu
         </div>
     </details>
     <?php
+    outbound_editor_render_verification_fields($post_id, 'experience');
     if ($in_cms_hub) {
         outbound_editor_render_seo_block($post_id, (array) ($base['seo'] ?? array()), false);
     }
+}
+
+/**
+ * Render editor-only supplier verification metadata & private confirmation notes (never exposed publicly).
+ */
+function outbound_editor_render_verification_fields(int $post_id, string $post_type): void {
+    $supplier       = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_supplier_name', true) : '';
+    $variant        = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_product_variant', true) : '';
+    $ver_status     = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_verification_status', true) : '';
+    $source_url     = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_source_url', true) : '';
+    $verified_date  = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_verified_date', true) : '';
+    $supplier_notes = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_supplier_notes', true) : '';
+    $park_fee_stat  = $post_id > 0 ? (string) get_post_meta($post_id, '_outbound_park_fee_status', true) : '';
+    ?>
+    <details class="outbound-editor-section">
+        <summary>Editor-Only Supplier Verification &amp; Confirmation Notes (Not Public)</summary>
+        <div class="outbound-editor-section-body">
+            <p class="description" style="margin-top:0;">Private CMS records for supplier tracking. Never displayed on the public website.</p>
+            <div class="outbound-meta-grid">
+                <p><label><strong>Supplier / Operator Name</strong><br><input type="text" name="outbound_meta[_outbound_supplier_name]" value="<?php echo outbound_cms_esc_attr($supplier); ?>" class="widefat" placeholder="e.g. Shearwater / Wild Horizons" /></label></p>
+                <p><label><strong>Product / Variant</strong><br><input type="text" name="outbound_meta[_outbound_product_variant]" value="<?php echo outbound_cms_esc_attr($variant); ?>" class="widefat" placeholder="e.g. Classic Day Trip / Riversong" /></label></p>
+                <p><label><strong>Verification Status</strong><br>
+                    <select name="outbound_meta[_outbound_verification_status]" class="widefat">
+                        <option value="" <?php selected($ver_status, ''); ?>>— Unspecified —</option>
+                        <option value="operator_verified" <?php selected($ver_status, 'operator_verified'); ?>>A — Operator Verified</option>
+                        <option value="variant_unconfirmed" <?php selected($ver_status, 'variant_unconfirmed'); ?>>B — Variant Unconfirmed</option>
+                        <option value="supplier_unidentified" <?php selected($ver_status, 'supplier_unidentified'); ?>>C — Supplier Unidentified</option>
+                        <option value="needs_confirmation" <?php selected($ver_status, 'needs_confirmation'); ?>>Needs Supplier Confirmation</option>
+                    </select>
+                </label></p>
+                <p><label><strong>Last Verified Date</strong><br><input type="date" name="outbound_meta[_outbound_verified_date]" value="<?php echo outbound_cms_esc_attr($verified_date); ?>" class="widefat" /></label></p>
+                <p><label><strong>Official Source URL</strong><br><input type="url" name="outbound_meta[_outbound_source_url]" value="<?php echo outbound_cms_esc_attr($source_url); ?>" class="widefat" placeholder="https://..." /></label></p>
+                <?php if ($post_type === 'experience') : ?>
+                <p><label><strong>Park / River Fee Status</strong><br>
+                    <select name="outbound_meta[_outbound_park_fee_status]" class="widefat">
+                        <option value="" <?php selected($park_fee_stat, ''); ?>>— Confirm on Quote —</option>
+                        <option value="included" <?php selected($park_fee_stat, 'included'); ?>>Included in Package</option>
+                        <option value="excluded" <?php selected($park_fee_stat, 'excluded'); ?>>Excluded / Payable Separately</option>
+                        <option value="varies_by_variant" <?php selected($park_fee_stat, 'varies_by_variant'); ?>>Varies by Product Variant</option>
+                        <option value="not_applicable" <?php selected($park_fee_stat, 'not_applicable'); ?>>Not Applicable</option>
+                    </select>
+                </label></p>
+                <?php endif; ?>
+            </div>
+            <p><label><strong>Needs Supplier Confirmation / Private Editor Notes</strong><br><textarea name="outbound_meta[_outbound_supplier_notes]" rows="3" class="large-text" placeholder="Outstanding supplier questions, unconfirmed rates, inventory conflicts..."><?php echo outbound_cms_esc_html($supplier_notes); ?></textarea></label></p>
+        </div>
+    </details>
+    <?php
 }
 
 /**
@@ -1086,6 +1135,7 @@ function outbound_editor_render_accommodation_fields(WP_Post $post, bool $in_cms
                     ?>
                 </div>
             </details>
+            <?php outbound_editor_render_verification_fields($post_id, 'accommodation'); ?>
         </div>
 
         <!-- TAB 8: SEO & PUBLISHING -->
@@ -1721,9 +1771,9 @@ function outbound_save_structured_item_meta(int $post_id, string $post_type, arr
             }
             if (str_ends_with($safe_key, '_json')) {
                 update_post_meta($post_id, $safe_key, (string) $raw_val);
-            } elseif (str_ends_with($safe_key, '_canonical')) {
+            } elseif (str_ends_with($safe_key, '_canonical') || $safe_key === '_outbound_source_url') {
                 update_post_meta($post_id, $safe_key, outbound_cms_sanitize_url((string) $raw_val));
-            } elseif (in_array($safe_key, array('_outbound_why_recommend', '_outbound_expert_tip', '_outbound_story_intro', '_outbound_why_chose_stay', '_outbound_seo_description'), true)) {
+            } elseif (in_array($safe_key, array('_outbound_why_recommend', '_outbound_expert_tip', '_outbound_story_intro', '_outbound_why_chose_stay', '_outbound_seo_description', '_outbound_supplier_notes'), true)) {
                 update_post_meta($post_id, $safe_key, outbound_cms_sanitize_textarea((string) $raw_val));
             } else {
                 update_post_meta($post_id, $safe_key, outbound_cms_sanitize_text((string) $raw_val));
